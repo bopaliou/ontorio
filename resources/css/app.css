@@ -1,0 +1,811 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ========================================
+   DESIGN SYSTEM ONTARIO GROUP
+   Variables CSS globales pour uniformité
+   ======================================== */
+
+:root {
+    /* Couleurs principales Ontario */
+    --ontario-blue: #1A365D;
+    --ontario-blue-light: #243B55;
+    --ontario-blue-dark: #0F2942;
+    --ontario-red: #D32F2F;
+    --ontario-red-light: #E53935;
+    --ontario-red-dark: #C62828;
+
+    /* Couleurs neutres */
+    --gray-50: #f8fafc;
+    --gray-100: #f1f5f9;
+    --gray-200: #e2e8f0;
+    --gray-300: #cbd5e1;
+    --gray-400: #94a3b8;
+    --gray-500: #64748b;
+    --gray-600: #475569;
+    --gray-700: #334155;
+    --gray-800: #1e293b;
+    --gray-900: #0f172a;
+
+    /* Couleurs de statut */
+    --success: #16a34a;
+    --success-light: #22c55e;
+    --warning: #f59e0b;
+    --danger: #dc2626;
+    --info: #0ea5e9;
+
+    /* Espacements formulaires */
+    --input-padding: 0.875rem 1rem;
+    --input-radius: 0.75rem;
+    --input-border: 2px solid var(--gray-200);
+
+    /* Ombres */
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+}
+
+@layer base {
+
+    /* Transitions fluides et optimisées - ONTARIO SPA ENGINE */
+    .section-pane {
+        will-change: opacity, transform;
+        transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .section-pane.hidden {
+        display: none !important;
+    }
+
+    .section-pane.opacity-0 {
+        opacity: 0;
+        transform: translateY(15px) scale(0.98);
+        pointer-events: none;
+    }
+
+    /* Barre de progression premium en haut */
+    #page-loader-bar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3.5px;
+        background: linear-gradient(90deg, #cb2d2d, #f87171, #cb2d2d);
+        background-size: 200% 100%;
+        z-index: 9999;
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 0.4s cubic-bezier(0.65, 0, 0.35, 1), opacity 0.3s ease;
+        pointer-events: none;
+        box-shadow: 0 1px 10px rgba(203, 45, 45, 0.3);
+    }
+
+    #page-loader-bar.loading {
+        transform: scaleX(1);
+        animation: progress-slide 1.5s infinite linear;
+    }
+
+    @keyframes progress-slide {
+        0% {
+            background-position: 100% 0;
+        }
+
+        100% {
+            background-position: -100% 0;
+        }
+    }
+
+    /* Optimisations de rendu */
+    * {
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+
+    input,
+    select,
+    textarea {
+        font-family: inherit;
+    }
+}
+
+/* Styles du Sidebar moderne */
+.sidebar-nav-link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1.25rem;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+    border-left: 3px solid transparent;
+    margin: 0.125rem 0;
+}
+
+.sidebar-nav-link:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.1);
+    border-left-color: rgba(255, 255, 255, 0.3);
+}
+
+.sidebar-nav-link-active {
+    color: #ffffff !important;
+    background: linear-gradient(90deg, rgba(211, 47, 47, 0.3), rgba(211, 47, 47, 0.1)) !important;
+    border-left-color: #D32F2F !important;
+}
+
+.sidebar-nav-link i {
+    width: 1.5rem;
+    text-align: center;
+}
+
+/* ========================================
+   DESIGN SYSTÈME ONTARIO - FORMULAIRES
+   ======================================== */
+
+/* Classes Ontario uniformes */
+.ontario-form-group {
+    margin-bottom: 1.5rem;
+}
+
+.ontario-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--gray-700);
+    margin-bottom: 0.75rem;
+}
+
+.ontario-label svg {
+    color: var(--ontario-red);
+}
+
+.ontario-input {
+    width: 100%;
+    padding: 1rem 1.25rem;
+    font-size: 1rem;
+    font-weight: 500;
+    border: 2px solid var(--gray-200);
+    border-radius: 0.75rem;
+    background-color: var(--gray-50);
+    transition: all 0.2s ease;
+}
+
+.ontario-input:hover {
+    border-color: var(--gray-300);
+}
+
+.ontario-input:focus {
+    background-color: white;
+    border-color: var(--ontario-red);
+    box-shadow: 0 0 0 4px rgba(211, 47, 47, 0.1);
+    outline: none;
+}
+
+.ontario-input::placeholder {
+    color: var(--gray-400);
+}
+
+/* Inputs généraux - MODE ULTRA COMPACT */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="tel"],
+input[type="date"],
+input[type="url"],
+select,
+textarea {
+    padding: 0.5rem 0.75rem !important;
+    /* Très compact: 8px 12px */
+    font-size: 0.875rem !important;
+    /* 14px */
+    font-weight: 500 !important;
+    border-radius: 0.5rem !important;
+    border: 2px solid var(--gray-200) !important;
+    background-color: var(--gray-50) !important;
+    transition: all 0.2s ease !important;
+    height: auto !important;
+    min-height: 38px !important;
+    /* Force une hauteur minimale raisonnable */
+}
+
+input:hover,
+select:hover,
+textarea:hover {
+    border-color: var(--gray-300) !important;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    background-color: white !important;
+    border-color: var(--ontario-red) !important;
+    box-shadow: 0 0 0 2px rgba(211, 47, 47, 0.1) !important;
+    /* Shadow réduit */
+    outline: none !important;
+}
+
+/* Labels - Ultra Compacts */
+label {
+    font-size: 0.7rem !important;
+    /* 11px environ */
+    font-weight: 800 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+    color: var(--gray-500) !important;
+    margin-bottom: 0.25rem !important;
+    /* 4px */
+}
+
+/* Espacements formulaires réduits */
+.ontario-form-group {
+    margin-bottom: 0.75rem !important;
+}
+
+.space-y-6>*+* {
+    margin-top: 0.75rem !important;
+}
+
+.space-y-5>*+*,
+.space-y-4>*+*,
+.space-y-3>*+* {
+    margin-top: 0.5rem !important;
+    /* Ecrase les utilitaires Tailwind standards dans les formulaires */
+}
+
+/* Ajustement des selecteurs spécifiques */
+select {
+    background-position: right 0.5rem center !important;
+    padding-right: 2rem !important;
+}
+
+/* Modales plus compactes globalement */
+.ontario-modal-header {
+    padding: 1rem 1.25rem !important;
+}
+
+.ontario-modal-body {
+    padding: 1.25rem !important;
+}
+
+/* ========================================
+   BOUTONS ONTARIO
+   ======================================== */
+
+.ontario-btn,
+button[type="submit"] {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 1rem 1.5rem !important;
+    font-size: 1rem !important;
+    font-weight: 600 !important;
+    border-radius: 0.75rem !important;
+    transition: all 0.2s ease !important;
+}
+
+.ontario-btn-primary {
+    background: linear-gradient(135deg, var(--ontario-red-dark), var(--ontario-red));
+    color: white;
+    box-shadow: 0 4px 14px rgba(211, 47, 47, 0.35);
+}
+
+.ontario-btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(211, 47, 47, 0.45);
+}
+
+.ontario-btn-secondary {
+    background: white;
+    color: var(--gray-700);
+    border: 2px solid var(--gray-200);
+}
+
+.ontario-btn-secondary:hover {
+    background: var(--gray-50);
+    border-color: var(--gray-300);
+}
+
+/* ========================================
+   TABLEAUX ONTARIO
+   ======================================== */
+
+.ontario-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.ontario-table thead {
+    background: linear-gradient(135deg, var(--ontario-blue), var(--ontario-blue-light));
+}
+
+.ontario-table thead th {
+    padding: 1rem 1.5rem !important;
+    color: white !important;
+    font-size: 0.75rem !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+    background: transparent !important;
+}
+
+.ontario-table tbody tr {
+    border-bottom: 1px solid var(--gray-100);
+    transition: background 0.15s ease;
+}
+
+.ontario-table tbody tr:hover {
+    background-color: var(--gray-50);
+}
+
+.ontario-table tbody td {
+    padding: 1rem 1.5rem !important;
+    font-size: 0.9375rem !important;
+}
+
+/* Tableaux classiques */
+table th {
+    padding: 1rem 1.25rem !important;
+    font-weight: 700 !important;
+    text-transform: uppercase;
+    font-size: 0.75rem !important;
+    letter-spacing: 0.05em;
+    background: var(--ontario-blue) !important;
+    color: white !important;
+}
+
+table td {
+    padding: 1rem 1.25rem !important;
+}
+
+table tbody tr:hover {
+    background-color: var(--gray-50);
+}
+
+/* ========================================
+   MODALES ONTARIO
+   ======================================== */
+
+.ontario-modal-header {
+    background: linear-gradient(135deg, var(--ontario-blue), var(--ontario-blue-light));
+    padding: 1.5rem 2rem;
+    color: white;
+}
+
+.ontario-modal-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+.ontario-modal-subtitle {
+    font-size: 0.875rem;
+    color: rgba(255, 255, 255, 0.7);
+    margin-top: 0.25rem;
+}
+
+/* Tailles modales */
+.sm\:max-w-lg {
+    max-width: 40rem !important;
+}
+
+.sm\:max-w-xl {
+    max-width: 48rem !important;
+}
+
+.sm\:max-w-2xl {
+    max-width: 56rem !important;
+}
+
+/* ========================================
+   CARDS ONTARIO
+   ======================================== */
+
+.ontario-card {
+    background: white;
+    border-radius: 1rem;
+    border: 1px solid var(--gray-100);
+    box-shadow: var(--shadow-md);
+    transition: all 0.2s ease;
+}
+
+.ontario-card:hover {
+    box-shadow: var(--shadow-lg);
+}
+
+.ontario-card-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--gray-100);
+    background: var(--gray-50);
+}
+
+.ontario-card-body {
+    padding: 1.5rem;
+}
+
+/* Cards avec ombres */
+.rounded-2xl,
+.rounded-3xl {
+    box-shadow: var(--shadow-md);
+}
+
+/* ========================================
+   STATS & KPI
+   ======================================== */
+
+.ontario-stat {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 1rem;
+    border: 1px solid var(--gray-100);
+    box-shadow: var(--shadow-md);
+}
+
+.ontario-stat-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--gray-400);
+}
+
+.ontario-stat-value {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--ontario-blue);
+    margin-top: 0.5rem;
+}
+
+.text-4xl {
+    font-weight: 800 !important;
+}
+
+/* ========================================
+   TITRES
+   ======================================== */
+
+h2,
+h3 {
+    color: var(--ontario-blue);
+}
+
+header h1 {
+    font-size: 1.5rem !important;
+    font-weight: 700 !important;
+    color: var(--ontario-blue);
+}
+
+/* Espacement formulaires */
+.space-y-3>*+* {
+    margin-top: 1rem !important;
+}
+
+.space-y-5>*+* {
+    margin-top: 1.5rem !important;
+}
+
+/* Modales plus grandes */
+.sm\:max-w-lg {
+    max-width: 36rem !important;
+}
+
+.sm\:max-w-xl {
+    max-width: 42rem !important;
+}
+
+.sm\:max-w-2xl {
+    max-width: 48rem !important;
+}
+
+/* Cards du dashboard */
+.rounded-2xl,
+.rounded-3xl {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+/* Tableaux plus lisibles */
+table {
+    font-size: 0.95rem;
+}
+
+table th {
+    padding: 1rem 1.25rem !important;
+    font-weight: 700 !important;
+    text-transform: uppercase;
+    font-size: 0.75rem !important;
+    letter-spacing: 0.05em;
+    background: #f8fafc !important;
+}
+
+table td {
+    padding: 1rem 1.25rem !important;
+}
+
+table tbody tr:hover {
+    background-color: #f8fafc;
+}
+
+/* Titres de section */
+h2,
+h3 {
+    color: #1A365D;
+}
+
+/* Stats cards */
+.text-4xl {
+    font-weight: 800 !important;
+}
+
+/* Espacement des formulaires dans les modales */
+.space-y-3>*+* {
+    margin-top: 1rem !important;
+}
+
+/* Bouton Ontario avec ombre prononcée */
+.btn-ontario,
+button.bg-\[\#cb2d2d\],
+button.bg-\[\#D32F2F\] {
+    background: linear-gradient(135deg, #C62828 0%, #D32F2F 100%) !important;
+    box-shadow: 0 4px 14px 0 rgba(211, 47, 47, 0.4) !important;
+    transition: all 0.3s ease !important;
+}
+
+.btn-ontario:hover,
+button.bg-\[\#cb2d2d\]:hover,
+button.bg-\[\#D32F2F\]:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 20px 0 rgba(211, 47, 47, 0.5) !important;
+}
+
+/* Header du dashboard plus imposant */
+header h1 {
+    font-size: 1.5rem !important;
+    font-weight: 700 !important;
+}
+
+/* Icônes dans les inputs */
+input+svg,
+.relative svg {
+    color: #9ca3af;
+}
+
+input:focus+svg,
+.relative:focus-within svg {
+    color: #D32F2F;
+}
+
+/* ========================================
+   RESPONSIVE DESIGN
+   ======================================== */
+
+/* Mobile First - Base styles are for mobile */
+
+/* Tablettes (768px et plus) */
+@media (min-width: 768px) {
+    .main-shell {
+        margin-left: 16rem;
+    }
+}
+
+/* Mobile (moins de 768px) */
+@media (max-width: 767px) {
+
+    /* Sidebar caché par défaut sur mobile */
+    #sidebar {
+        width: 280px;
+    }
+
+    /* Header compact */
+    header {
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+    }
+
+    header h1 {
+        font-size: 1.125rem !important;
+    }
+
+    /* Masquer la recherche sur mobile */
+    header .hidden.sm\:block {
+        display: none !important;
+    }
+
+    /* Contenu principal */
+    main {
+        padding: 1rem !important;
+    }
+
+    /* Cards en full width */
+    .lg\:grid-cols-12 {
+        grid-template-columns: 1fr !important;
+    }
+
+    .lg\:col-span-4,
+    .lg\:col-span-5,
+    .lg\:col-span-3 {
+        grid-column: span 1 !important;
+    }
+
+    /* Formulaires - inputs plus petits sur mobile */
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="number"],
+    input[type="tel"],
+    input[type="date"],
+    select,
+    textarea {
+        padding: 0.75rem 0.875rem !important;
+        font-size: 0.9375rem !important;
+    }
+
+    /* Modales full-screen sur mobile */
+    .sm\:max-w-lg,
+    .sm\:max-w-xl,
+    .sm\:max-w-2xl {
+        max-width: 100% !important;
+        margin: 0.5rem !important;
+        border-radius: 1rem !important;
+    }
+
+    /* Tableaux scrollables */
+    table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+
+    table th,
+    table td {
+        padding: 0.75rem 1rem !important;
+        font-size: 0.875rem !important;
+    }
+
+    /* Stats en colonne */
+    .grid-cols-3 {
+        grid-template-columns: 1fr !important;
+    }
+
+    /* Boutons full width */
+    .btn-ontario,
+    button[type="submit"] {
+        width: 100%;
+    }
+
+    /* Logo sidebar plus petit sur mobile */
+    #sidebar .h-32 {
+        height: 6rem !important;
+    }
+
+    /* Navigation verticale espacée */
+    .sidebar-nav-link {
+        padding: 1rem 1.25rem !important;
+    }
+
+    /* Textes de stats plus petits */
+    .text-4xl {
+        font-size: 2rem !important;
+    }
+
+    .text-3xl {
+        font-size: 1.5rem !important;
+    }
+
+    .text-2xl {
+        font-size: 1.25rem !important;
+    }
+
+    /* User info compact dans header */
+    header .leading-tight div:last-child {
+        display: none;
+    }
+
+    /* Bouton déconnexion icône seul */
+    header form button span:not(.bi) {
+        display: none;
+    }
+}
+
+/* Très petits écrans (moins de 480px) */
+@media (max-width: 479px) {
+
+    /* Header ultra compact */
+    header {
+        height: 60px !important;
+    }
+
+    /* Logo plus petit */
+    #sidebar .h-32 {
+        height: 5rem !important;
+        padding: 0.5rem !important;
+    }
+
+    #sidebar .rounded-2xl {
+        border-radius: 0.75rem !important;
+        padding: 0.5rem !important;
+    }
+
+    /* Inputs encore plus compacts */
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    select,
+    textarea {
+        padding: 0.625rem 0.75rem !important;
+        font-size: 0.875rem !important;
+    }
+
+    /* Modal header compact */
+    .px-5.py-3 {
+        padding: 0.75rem 1rem !important;
+    }
+
+    /* Titre modal plus petit */
+    .text-base {
+        font-size: 0.9375rem !important;
+    }
+}
+
+/* Paysage mobile */
+@media (max-width: 767px) and (orientation: landscape) {
+
+    /* Réduire les hauteurs */
+    header {
+        height: 56px !important;
+    }
+
+    #sidebar .h-32 {
+        height: 4.5rem !important;
+    }
+
+    /* Modal scrollable */
+    .fixed.inset-0.z-10.w-screen.overflow-y-auto {
+        padding-top: 1rem !important;
+    }
+}
+
+/* Desktop large (1280px et plus) */
+@media (min-width: 1280px) {
+
+    /* Formulaires extra larges */
+    .sm\:max-w-lg {
+        max-width: 40rem !important;
+    }
+
+    .sm\:max-w-xl {
+        max-width: 48rem !important;
+    }
+
+    /* Inputs plus généreux */
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    select,
+    textarea {
+        padding: 1rem 1.25rem !important;
+        font-size: 1.0625rem !important;
+    }
+}
+
+/* Print styles */
+@media print {
+
+    #sidebar,
+    header,
+    .btn-ontario,
+    button {
+        display: none !important;
+    }
+
+    .main-shell {
+        margin-left: 0 !important;
+    }
+
+    main {
+        padding: 0 !important;
+    }
+}
