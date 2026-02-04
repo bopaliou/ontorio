@@ -1,3 +1,4 @@
+# CI Configuration - Optimized for clean runs
 name: CI (Tests & Linting)
 
 on:
