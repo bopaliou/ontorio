@@ -31,7 +31,7 @@
                        autofocus 
                        autocomplete="username"
                        placeholder="votre@email.com"
-                       class="input-focus block w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none transition-all duration-200">
+                       class="input-focus block w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl text-base text-gray-900 placeholder-gray-400 focus:outline-none transition-all duration-200">
             </div>
             <x-input-error :messages="$errors->get('email')" class="mt-2" />
         </div>
@@ -53,7 +53,7 @@
                        required 
                        autocomplete="current-password"
                        placeholder="••••••••"
-                       class="input-focus block w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none transition-all duration-200">
+                       class="input-focus block w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl text-base text-gray-900 placeholder-gray-400 focus:outline-none transition-all duration-200">
             </div>
             <x-input-error :messages="$errors->get('password')" class="mt-2" />
         </div>

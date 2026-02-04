@@ -1,125 +1,147 @@
 <div class="h-full flex flex-col gap-8" id="locataires-section-container">
     
     <div id="loc-view-list" class="loc-sub-view space-y-8">
-        <!-- Header -->
-        <div class="flex items-end justify-between border-b border-gray-100 pb-6">
-            <div>
-                <h2 class="text-3xl font-bold text-gray-900 tracking-tight">Locataires</h2>
-                <p class="text-sm text-gray-500 mt-2 font-medium">Gestion des dossiers locataires et historique.</p>
-            </div>
-            @if(App\Helpers\PermissionHelper::can('locataires.create'))
-            <button onclick="locSection.openModal('create')" class="bg-[#cb2d2d] text-white px-6 py-3 rounded-xl text-sm font-bold shadow-lg shadow-red-900/20 hover:bg-[#a82020] transition-all flex items-center gap-2 transform hover:-translate-y-0.5">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
-                Nouveau Dossier
-            </button>
-            @endif
-        </div>
+        <!-- Header Uniforme -->
+        @include('components.section-header', [
+            'title' => 'Locataires',
+            'subtitle' => 'Gestion des dossiers locataires et historique.',
+            'icon' => 'users',
+            'actions' => App\Helpers\PermissionHelper::can('locataires.create') 
+                ? '<button onclick="locSection.openModal(\'create\')" class="bg-[#cb2d2d] text-white px-6 py-3 rounded-xl text-sm font-bold shadow-lg shadow-red-900/20 hover:bg-[#a82020] transition-all flex items-center gap-2 transform hover:-translate-y-0.5">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+                    Nouveau Dossier
+                </button>' 
+                : ''
+        ])
 
-        <!-- KPIs -->
+        <!-- KPIs Uniformes -->
         <div id="loc-kpi-container" class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center justify-between">
-                <div>
-                    <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Total Locataires</p>
-                    <p class="text-3xl font-black text-gray-900">{{ count($data['locataires_list']) }}</p>
-                </div>
-                <div class="w-12 h-12 bg-gray-50 rounded-xl flex items-center justify-center text-gray-400">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-                </div>
-            </div>
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center justify-between">
-                <div>
-                    <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">En Location</p>
-                    <p class="text-3xl font-black text-blue-600">{{ $data['locataires_list']->where('contrats_count', '>', 0)->count() }}</p>
-                </div>
-                 <div class="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center text-blue-500">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
-                </div>
-            </div>
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center justify-between">
-                <div>
-                    <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Nouveaux (Mois)</p>
-                    <p class="text-3xl font-black text-green-600">{{ $data['locataires_list']->where('created_at', '>=', now()->startOfMonth())->count() }}</p>
-                </div>
-                 <div class="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center text-green-500">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-                </div>
-            </div>
+            @include('components.kpi-card', [
+                'label' => 'Total Locataires',
+                'value' => count($data['locataires_list']),
+                'icon' => 'users',
+                'color' => 'gray'
+            ])
+            @include('components.kpi-card', [
+                'label' => 'En Location',
+                'value' => $data['locataires_list']->where('contrats_count', '>', 0)->count(),
+                'icon' => 'home',
+                'color' => 'blue'
+            ])
+            @include('components.kpi-card', [
+                'label' => 'Nouveaux (Mois)',
+                'value' => $data['locataires_list']->where('created_at', '>=', now()->startOfMonth())->count(),
+                'icon' => 'plus',
+                'color' => 'green'
+            ])
         </div>
 
         <!-- Table -->
-        <div id="loc-table-container" class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
-            <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse">
-                    <thead class="bg-white border-b border-gray-100">
-                        <tr>
-                            <th class="px-8 py-5 text-xs font-bold text-gray-400 uppercase tracking-wider w-24">Ref</th>
-                            <th class="px-8 py-5 text-xs font-bold text-gray-400 uppercase tracking-wider">Locataire</th>
-                            <th class="px-8 py-5 text-xs font-bold text-gray-400 uppercase tracking-wider">Contact</th>
-                            <th class="px-8 py-5 text-xs font-bold text-gray-400 uppercase tracking-wider">Logement</th>
-                            <th class="px-8 py-5 text-right text-xs font-bold text-gray-400 uppercase tracking-wider">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-50 text-sm font-medium text-gray-600">
-                        @forelse($data['locataires_list'] as $loc)
-                        <tr class="hover:bg-gray-50/50 transition duration-150 group">
-                            <td class="px-8 py-5 text-gray-400 font-mono text-xs">L-{{ str_pad($loc->id, 3, '0', STR_PAD_LEFT) }}</td>
-                            <td class="px-8 py-5">
-                                <div class="flex items-center gap-4">
-                                    <div class="w-10 h-10 bg-gray-100 text-gray-600 rounded-full flex items-center justify-center font-bold text-base group-hover:bg-[#cb2d2d] group-hover:text-white transition-colors">
-                                        {{ substr($loc->nom, 0, 1) }}
+        <div id="loc-table-container">
+            <x-data-table :headers="[
+                ['label' => 'Ref', 'classes' => 'w-24 text-white/80'],
+                ['label' => 'Locataire', 'classes' => 'text-white/80'],
+                ['label' => 'Contact', 'classes' => 'text-white/80'],
+                ['label' => 'Logement', 'classes' => 'text-white/80'],
+                ['label' => 'Actions', 'classes' => 'text-right text-white/80']
+            ]" emptyMessage="Aucun locataire enregistré pour le moment.">
+                
+                @forelse($data['locataires_list'] as $loc)
+                <tr class="hover:bg-gray-50/50 transition-all duration-300 group">
+                    <td class="px-6 py-4 text-gray-400 font-mono text-xs">L-{{ str_pad($loc->id, 3, '0', STR_PAD_LEFT) }}</td>
+                    <td class="px-6 py-4">
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 bg-gray-100 text-gray-600 rounded-full flex items-center justify-center font-bold text-base group-hover:bg-[#cb2d2d] group-hover:text-white transition-colors">
+                                {{ substr($loc->nom, 0, 1) }}
+                            </div>
+                            <span class="font-bold text-gray-900 text-base capitalize">{{ $loc->nom }}</span>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="text-gray-900 font-mono text-sm">{{ $loc->telephone ?? '--' }}</div>
+                        <div class="text-xs text-gray-400 mt-0.5">{{ $loc->email }}</div>
+                    </td>
+                    <td class="px-6 py-4">
+                        @if($loc->contrats->isNotEmpty() && $loc->contrats->first()->bien)
+                            <span class="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-50 text-blue-700 rounded-full text-xs font-bold">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                                {{ Str::limit($loc->contrats->first()->bien->nom, 20) }}
+                            </span>
+                        @else
+                            <span class="text-gray-400 text-xs italic pl-2">Aucun contrat</span>
+                        @endif
+                    </td>
+                    <td class="px-6 py-4 text-right">
+                        <div class="flex items-center justify-end gap-2">
+                            <button onclick="locSection.showDetails({{ json_encode($loc) }})" class="p-2 text-gray-400 hover:text-gray-900 hover:bg-white rounded-lg transition" title="Voir Dossier">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                            </button>
+                            @if(App\Helpers\PermissionHelper::can('locataires.edit'))
+                            <button onclick="locSection.openModal('edit', {{ json_encode($loc) }})" class="p-2 text-gray-400 hover:text-[#cb2d2d] hover:bg-white rounded-lg transition" title="Modifier">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                            </button>
+                            @endif
+                            @if(App\Helpers\PermissionHelper::can('locataires.delete'))
+                            <button onclick="locSection.requestDelete({{ $loc->id }})" class="p-2 text-gray-400 hover:text-red-600 hover:bg-white rounded-lg transition" title="Supprimer">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                            </button>
+                            @endif
+                        </div>
+                    </td>
+                </tr>
+                @empty
+                    <!-- Géré par le composant -->
+                @endforelse
+
+                <x-slot name="mobile">
+                    @if(count($data['locataires_list']) > 0)
+                        @foreach($data['locataires_list'] as $loc)
+                            <x-data-card 
+                                title="{{ $loc->nom }}" 
+                                status="{{ $loc->contrats->isNotEmpty() ? 'Loué' : 'Inactif' }}" 
+                                statusColor="{{ $loc->contrats->isNotEmpty() ? 'green' : 'gray' }}"
+                            >
+                                <div class="flex flex-col gap-1 text-gray-600">
+                                    <div class="text-sm border-b border-gray-100 pb-2 mb-2">Ref: L-{{ str_pad($loc->id, 3, '0', STR_PAD_LEFT) }}</div>
+                                    <div class="flex items-center gap-2">
+                                        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+                                        <span class="text-sm font-medium">{{ $loc->telephone ?? '--' }}</span>
                                     </div>
-                                    <span class="font-bold text-gray-900 text-base capitalize">{{ $loc->nom }}</span>
+                                    @if($loc->contrats->isNotEmpty())
+                                        <div class="flex items-center gap-2 text-blue-600 mt-1">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                                            <span class="text-xs font-bold">{{ Str::limit($loc->contrats->first()->bien->nom, 25) }}</span>
+                                        </div>
+                                    @endif
                                 </div>
-                            </td>
-                            <td class="px-8 py-5">
-                                <div class="text-gray-900 font-mono text-sm">{{ $loc->telephone ?? '--' }}</div>
-                                <div class="text-xs text-gray-400 mt-0.5">{{ $loc->email }}</div>
-                            </td>
-                            <td class="px-8 py-5">
-                                @if($loc->contrats->isNotEmpty() && $loc->contrats->first()->bien)
-                                    <span class="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-50 text-blue-700 rounded-full text-xs font-bold">
-                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
-                                        {{ Str::limit($loc->contrats->first()->bien->nom, 20) }}
-                                    </span>
-                                @else
-                                    <span class="text-gray-400 text-xs italic pl-2">Aucun contrat</span>
-                                @endif
-                            </td>
-                            <td class="px-8 py-5 text-right">
-                                <div class="flex items-center justify-end gap-2">
-                                    <button onclick="locSection.showDetails({{ json_encode($loc) }})" class="p-2 text-gray-400 hover:text-gray-900 hover:bg-white rounded-lg transition" title="Voir Dossier">
+
+                                <x-slot name="actions">
+                                    <button onclick="locSection.showDetails({{ json_encode($loc) }})" class="p-3 bg-gray-50 text-gray-500 rounded-lg hover:bg-gray-100" title="Détails">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
                                     </button>
                                     @if(App\Helpers\PermissionHelper::can('locataires.edit'))
-                                    <button onclick="locSection.openModal('edit', {{ json_encode($loc) }})" class="p-2 text-gray-400 hover:text-[#cb2d2d] hover:bg-white rounded-lg transition" title="Modifier">
+                                    <button onclick="locSection.openModal('edit', {{ json_encode($loc) }})" class="p-3 bg-gray-50 text-gray-500 rounded-lg hover:text-blue-600 hover:bg-gray-100" title="Modifier">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
                                     </button>
                                     @endif
                                     @if(App\Helpers\PermissionHelper::can('locataires.delete'))
-                                    <button onclick="locSection.requestDelete({{ $loc->id }})" class="p-2 text-gray-400 hover:text-red-600 hover:bg-white rounded-lg transition" title="Supprimer">
+                                    <button onclick="locSection.requestDelete({{ $loc->id }})" class="p-3 bg-gray-50 text-gray-500 rounded-lg hover:text-red-600 hover:bg-gray-100" title="Supprimer">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                                     </button>
                                     @endif
-                                </div>
-                            </td>
-                        </tr>
-                        @empty
-                        <tr>
-                            <td colspan="5" class="px-8 py-16 text-center text-gray-400 italic bg-gray-50/30">
-                                Aucun locataire enregistré pour le moment.
-                            </td>
-                        </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
+                                </x-slot>
+                            </x-data-card>
+                        @endforeach
+                    @endif
+                </x-slot>
+            </x-data-table>
         </div>
     </div>
 
     <!-- SUB-SECTION: DETAILS -->
     <div id="loc-view-details" class="loc-sub-view hidden space-y-8">
         <div class="flex items-center gap-4">
-            <button onclick="locSection.showView('list')" class="p-2 hover:bg-gray-100 rounded-full transition text-gray-600">
+            <button onclick="locSection.showView('list')" class="p-2 hover:bg-gray-100 rounded-full transition text-gray-600" aria-label="Retour à la liste">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
             </button>
             <h2 class="text-2xl font-bold text-gray-900">Dossier Locataire</h2>
@@ -194,19 +216,19 @@
     </div>
 
     <!-- MODAL (ULTRA COMPACT GRID) -->
-    <div id="loc-modal-wrapper" class="relative z-[100] hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div id="loc-modal-wrapper" class="relative z-[100] hidden" aria-labelledby="loc-modal-title" role="dialog" aria-modal="true">
         <div id="loc-modal-overlay" class="fixed inset-0 bg-gray-900/40 backdrop-blur-md transition-opacity opacity-0 duration-300"></div>
         <div class="fixed inset-0 z-10 w-screen overflow-y-auto" onclick="if(event.target === this) locSection.closeModal()">
-            <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0" onclick="if(event.target === this) locSection.closeModal()">
-                <div id="loc-modal-container" class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-xl opacity-0 scale-95 duration-300 border border-gray-100">
+            <div class="flex min-h-full items-end justify-center p-0 text-center sm:items-center sm:p-0" onclick="if(event.target === this) locSection.closeModal()">
+                <div id="loc-modal-container" class="relative transform overflow-hidden bg-white text-left shadow-2xl transition-all w-full h-full sm:h-auto sm:w-full sm:max-w-xl sm:my-8 rounded-none sm:rounded-2xl opacity-0 scale-95 duration-300 border border-gray-100">
                     
                     <!-- Header -->
                     <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-white">
                         <div>
                             <h3 id="loc-modal-title" class="text-base font-bold text-gray-900">Nouveau Dossier</h3>
-                            <p class="text-[10px] text-gray-500 font-medium">Informations locataire.</p>
+                            <p class="text-[11px] text-gray-500 font-medium">Informations locataire.</p>
                         </div>
-                        <button onclick="locSection.closeModal()" class="text-gray-400 hover:text-gray-600 hover:bg-gray-100 p-1.5 rounded-full transition">
+                        <button onclick="locSection.closeModal()" class="text-gray-400 hover:text-gray-600 hover:bg-gray-100 p-1.5 rounded-full transition" aria-label="Fermer">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                         </button>
                     </div>
@@ -217,32 +239,32 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <!-- Nom -->
                             <div class="relative bg-gray-50 rounded-xl border border-gray-200 px-3 py-2 focus-within:ring-2 focus-within:ring-[#cb2d2d]/10 focus-within:border-[#cb2d2d] transition-all">
-                                <label class="block text-[9px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Nom Complet</label>
-                                <input type="text" name="nom" id="loc-input-nom" required class="block w-full bg-transparent border-none p-0 text-sm font-bold text-gray-900 placeholder-gray-300 focus:ring-0" placeholder="Ex: Moussa Diop">
+                                <label class="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Nom Complet</label>
+                                <input type="text" name="nom" id="loc-input-nom" required class="block w-full bg-transparent border-none p-0 text-base sm:text-sm font-bold text-gray-900 placeholder-gray-300 focus:ring-0" placeholder="Ex: Moussa Diop">
                             </div>
 
                             <!-- CNI -->
                             <div class="relative bg-gray-50 rounded-xl border border-gray-200 px-3 py-2 focus-within:ring-2 focus-within:ring-[#cb2d2d]/10 focus-within:border-[#cb2d2d] transition-all">
-                                <label class="block text-[9px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Numéro CNI</label>
-                                <input type="text" name="cni" id="loc-input-cni" class="block w-full bg-transparent border-none p-0 text-sm font-bold text-gray-900 placeholder-gray-300 focus:ring-0" placeholder="ID Document">
+                                <label class="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Numéro CNI</label>
+                                <input type="text" name="cni" id="loc-input-cni" class="block w-full bg-transparent border-none p-0 text-base sm:text-sm font-bold text-gray-900 placeholder-gray-300 focus:ring-0" placeholder="ID Document">
                             </div>
 
                             <!-- Email -->
                             <div class="relative bg-gray-50 rounded-xl border border-gray-200 px-3 py-2 focus-within:ring-2 focus-within:ring-[#cb2d2d]/10 focus-within:border-[#cb2d2d] transition-all">
-                                <label class="block text-[9px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Email</label>
-                                <input type="email" name="email" id="loc-input-email" class="block w-full bg-transparent border-none p-0 text-sm font-bold text-gray-900 placeholder-gray-300 focus:ring-0" placeholder="email@exemple.com">
+                                <label class="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Email</label>
+                                <input type="email" name="email" id="loc-input-email" class="block w-full bg-transparent border-none p-0 text-base sm:text-sm font-bold text-gray-900 placeholder-gray-300 focus:ring-0" placeholder="email@exemple.com">
                             </div>
 
                             <!-- Tel -->
                             <div class="relative bg-gray-50 rounded-xl border border-gray-200 px-3 py-2 focus-within:ring-2 focus-within:ring-[#cb2d2d]/10 focus-within:border-[#cb2d2d] transition-all">
-                                <label class="block text-[9px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Téléphone</label>
-                                <input type="text" name="telephone" id="loc-input-tel" class="block w-full bg-transparent border-none p-0 text-sm font-bold text-gray-900 placeholder-gray-300 focus:ring-0" placeholder="77 ...">
+                                <label class="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Téléphone</label>
+                                <input type="text" name="telephone" id="loc-input-tel" class="block w-full bg-transparent border-none p-0 text-base sm:text-sm font-bold text-gray-900 placeholder-gray-300 focus:ring-0" placeholder="77 ...">
                             </div>
 
                             <!-- Adresse -->
                             <div class="col-span-1 md:col-span-2 relative bg-gray-50 rounded-xl border border-gray-200 px-3 py-2 focus-within:ring-2 focus-within:ring-[#cb2d2d]/10 focus-within:border-[#cb2d2d] transition-all">
-                                <label class="block text-[9px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Infos Complémentaires</label>
-                                <textarea name="adresse" id="loc-input-adresse" class="block w-full bg-transparent border-none p-0 text-sm font-bold text-gray-900 placeholder-gray-300 focus:ring-0 resize-none" rows="1" placeholder="Adresse complète..."></textarea>
+                                <label class="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Infos Complémentaires</label>
+                                <textarea name="adresse" id="loc-input-adresse" class="block w-full bg-transparent border-none p-0 text-base sm:text-sm font-bold text-gray-900 placeholder-gray-300 focus:ring-0 resize-none" rows="1" placeholder="Adresse complète..."></textarea>
                             </div>
                         </div>
 
@@ -261,12 +283,12 @@
     </div>
 
     <!-- DELETE CONFIRMATION MODAL (UNCHANGED) -->
-    <div id="loc-delete-modal" onclick="if(event.target === this) locSection.closeDeleteModal()" class="fixed inset-0 z-[120] hidden bg-gray-900/60 backdrop-blur-sm flex items-center justify-center p-4 transition-opacity opacity-0 duration-300">
+    <div id="loc-delete-modal" role="dialog" aria-modal="true" aria-labelledby="loc-delete-modal-title" onclick="if(event.target === this) locSection.closeDeleteModal()" class="fixed inset-0 z-[120] hidden bg-gray-900/60 backdrop-blur-sm flex items-center justify-center p-4 transition-opacity opacity-0 duration-300">
         <div id="loc-delete-container" class="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-8 text-center transform scale-95 transition-all duration-300">
             <div class="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm">
                  <svg class="w-10 h-10 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7a4 4 0 11-8 0 4 4 0 018 0zM9 14a6 6 0 00-6 6v1h12v-1a6 6 0 00-6-6zM21 12h-6"/></svg>
             </div>
-            <h3 class="text-xl font-bold text-gray-900 mb-2">Supprimer ce locataire ?</h3>
+            <h3 id="loc-delete-modal-title" class="text-xl font-bold text-gray-900 mb-2">Supprimer ce locataire ?</h3>
             <p class="text-sm text-gray-500 mb-8 leading-relaxed">Cette action est irréversible. Toutes les données associées (contrats, historique) seront affectées.</p>
             <div class="flex flex-col gap-3">
                 <button id="loc-confirm-delete-btn" class="w-full px-6 py-3.5 bg-red-600 text-white font-bold rounded-xl hover:bg-red-700 transition shadow-lg shadow-red-900/20 text-sm tracking-wide">
@@ -280,15 +302,15 @@
     </div>
 
     <!-- DOCUMENT UPLOAD MODAL (ULTRA COMPACT) -->
-    <div id="loc-doc-modal" onclick="if(event.target === this) locSection.closeDocumentModal()" class="fixed inset-0 z-[130] hidden bg-gray-900/60 backdrop-blur-sm flex items-center justify-center p-4 transition-opacity opacity-0 duration-300">
+    <div id="loc-doc-modal" role="dialog" aria-modal="true" aria-labelledby="loc-doc-modal-title" onclick="if(event.target === this) locSection.closeDocumentModal()" class="fixed inset-0 z-[130] hidden bg-gray-900/60 backdrop-blur-sm flex items-center justify-center p-4 transition-opacity opacity-0 duration-300">
         <div id="loc-doc-container" class="bg-white rounded-2xl shadow-2xl max-w-lg w-full transform scale-95 transition-all duration-300 overflow-hidden border border-gray-100">
             <!-- Header -->
             <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-white">
                 <div>
-                    <h3 class="text-base font-bold text-gray-900">Ajouter un Document</h3>
-                    <p class="text-[10px] text-gray-500 font-medium">PDF, JPG, PNG, DOC (max 10 Mo)</p>
+                    <h3 id="loc-doc-modal-title" class="text-base font-bold text-gray-900">Ajouter un Document</h3>
+                    <p class="text-[11px] text-gray-500 font-medium">PDF, JPG, PNG, DOC (max 10 Mo)</p>
                 </div>
-                <button onclick="locSection.closeDocumentModal()" class="text-gray-400 hover:text-gray-600 hover:bg-gray-100 p-2 rounded-full transition">
+                <button onclick="locSection.closeDocumentModal()" class="text-gray-400 hover:text-gray-600 hover:bg-gray-100 p-2 rounded-full transition" aria-label="Fermer">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                 </button>
             </div>
@@ -299,8 +321,8 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <!-- Type de document -->
                     <div class="relative bg-gray-50 rounded-xl border border-gray-200 px-3 py-2 focus-within:ring-2 focus-within:ring-[#cb2d2d]/10 focus-within:border-[#cb2d2d] transition-all">
-                        <label class="block text-[9px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Type de Document</label>
-                        <select name="type" id="doc-type" required class="block w-full bg-transparent border-none p-0 text-sm font-bold text-gray-900 focus:ring-0 appearance-none cursor-pointer">
+                        <label class="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Type de Document</label>
+                        <select name="type" id="doc-type" required class="block w-full bg-transparent border-none p-0 text-base sm:text-sm font-bold text-gray-900 focus:ring-0 appearance-none cursor-pointer">
                             <option value="">Sélectionner...</option>
                             <option value="cni">Carte d'Identité</option>
                             <option value="contrat_signe">Contrat Signé</option>
@@ -318,7 +340,7 @@
                                 <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
                             </div>
                             <div class="overflow-hidden">
-                                <p class="text-[10px] font-black text-gray-500 uppercase tracking-widest leading-none mb-1">Choisir un fichier</p>
+                                <p class="text-[11px] font-black text-gray-500 uppercase tracking-widest leading-none mb-1">Choisir un fichier</p>
                                 <p class="text-xs font-bold text-gray-900 truncate">Parcourir...</p>
                             </div>
                         </div>
@@ -352,12 +374,12 @@
     </div>
 
     <!-- DELETE DOCUMENT CONFIRMATION MODAL -->
-    <div id="loc-doc-delete-modal" onclick="if(event.target === this) locSection.closeDocDeleteModal()" class="fixed inset-0 z-[140] hidden bg-gray-900/60 backdrop-blur-sm flex items-center justify-center p-4 transition-opacity opacity-0 duration-300">
+    <div id="loc-doc-delete-modal" role="dialog" aria-modal="true" aria-labelledby="loc-doc-delete-modal-title" onclick="if(event.target === this) locSection.closeDocDeleteModal()" class="fixed inset-0 z-[140] hidden bg-gray-900/60 backdrop-blur-sm flex items-center justify-center p-4 transition-opacity opacity-0 duration-300">
         <div id="loc-doc-delete-container" class="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-8 text-center transform scale-95 transition-all duration-300">
             <div class="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-5 shadow-sm">
                  <svg class="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
             </div>
-            <h3 class="text-lg font-bold text-gray-900 mb-2">Supprimer ce document ?</h3>
+            <h3 id="loc-doc-delete-modal-title" class="text-lg font-bold text-gray-900 mb-2">Supprimer ce document ?</h3>
             <p class="text-sm text-gray-500 mb-6">Cette action est irréversible.</p>
             <div class="flex gap-3">
                 <button onclick="locSection.closeDocDeleteModal()" class="flex-1 px-4 py-3 bg-white border border-gray-200 text-gray-700 font-bold rounded-xl hover:bg-gray-50 transition text-sm">
@@ -373,6 +395,16 @@
 </div>
 
 <script>
+
+    // Fonction globale pour l'aperçu des documents
+    window.previewDoc = function(doc) {
+        if (doc && doc.url) {
+            window.open(doc.url, '_blank');
+        } else {
+            showToast('Impossible d\'ouvrir le document', 'error');
+        }
+    };
+
     window.locSection = {
         deleteTargetId: null,
         currentLocataireId: null,
@@ -453,11 +485,11 @@
                         </div>
                         <div class="grid grid-cols-2 gap-4">
                              <div class="bg-blue-50 rounded-2xl p-5 border border-blue-100">
-                                 <p class="text-[10px] font-black text-blue-400 uppercase tracking-widest leading-none mb-2">Loyer Actuel</p>
+                                 <p class="text-[11px] font-black text-blue-400 uppercase tracking-widest leading-none mb-2">Loyer Actuel</p>
                                  <p class="font-black text-blue-900 text-2xl">${new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 0 }).format(con.loyer_montant)} F</p>
                              </div>
                              <div class="bg-green-50 rounded-2xl p-5 border border-green-100">
-                                 <p class="text-[10px] font-black text-green-400 uppercase tracking-widest leading-none mb-2">Statut</p>
+                                 <p class="text-[11px] font-black text-green-400 uppercase tracking-widest leading-none mb-2">Statut</p>
                                  <p class="font-black text-green-700 text-lg uppercase">Actif</p>
                              </div>
                         </div>
@@ -759,7 +791,8 @@
                 const data = await response.json();
                 if(data.success) {
                     showToast('Locataire supprimé', 'success');
-                    window.location.reload();
+                    if(window.dashboard) window.dashboard.refresh();
+                    else window.location.reload();
                 } else {
                     showToast(data.message || 'Erreur', 'error');
                 }
@@ -820,11 +853,12 @@
 
             const data = await response.json();
 
-            if(response.ok && data.success) {
-                showToast(data.message || 'Succès', 'success');
-                locSection.closeModal();
-                window.location.reload();
-            } else {
+                if(response.ok && data.success) {
+                    showToast(data.message || 'Succès', 'success');
+                    locSection.closeModal();
+                    if(window.dashboard) window.dashboard.refresh();
+                    else window.location.reload();
+                } else {
                 showToast(data.message || 'Erreur de validation', 'error');
             }
         } catch(e) {

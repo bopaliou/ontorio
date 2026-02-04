@@ -18,9 +18,9 @@ Route::get('/', function () {
 Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])->name('dashboard');
 Route::post('/dashboard/proprietaires', [DashboardController::class, 'storeProprietaire'])
-    ->middleware(['auth', 'role:admin,gestionnaire'])->name('dashboard.proprietaires.store');
+    ->middleware(['auth', 'role:admin|gestionnaire'])->name('dashboard.proprietaires.store');
 Route::put('/dashboard/proprietaires/{proprietaire}', [DashboardController::class, 'updateProprietaire'])
-    ->middleware(['auth', 'role:admin,gestionnaire'])->name('dashboard.proprietaires.update');
+    ->middleware(['auth', 'role:admin|gestionnaire'])->name('dashboard.proprietaires.update');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -28,8 +28,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-// Routes accessibles à Admin et Gestionnaire
-Route::middleware(['auth', 'role:admin,direction,gestionnaire'])->group(function () {
+// Routes accessibles à Admin et Gestionnaire (Gestion du patrimoine)
+Route::middleware(['auth', 'role:admin|direction|gestionnaire'])->group(function () {
     // Propriétaires
     Route::resource('proprietaires', ProprietaireController::class);
     Route::get('/proprietaires/{proprietaire}/bilan', [\App\Http\Controllers\ProprietaireController::class, 'bilanPDF'])->name('proprietaires.bilan');
@@ -61,27 +61,57 @@ Route::middleware(['auth', 'role:admin,direction,gestionnaire'])->group(function
     Route::resource('depenses', \App\Http\Controllers\DepenseController::class)->only(['store', 'update', 'destroy']);
 });
 
-// Routes accessibles à Admin et Comptable
-Route::middleware(['auth', 'role:admin,direction,comptable'])->group(function () {
+// Routes accessibles à Admin et Comptable (Gestion financière)
+Route::middleware(['auth', 'role:admin|direction|comptable'])->group(function () {
     // Paiements
     Route::resource('paiements', PaiementController::class)->only(['index', 'create', 'store', 'show']);
     Route::delete('/dashboard/paiements/{paiement}', [PaiementController::class, 'destroy'])->name('paiements.destroy');
 });
 
-// Routes accessibles à Admin seulement
+// Routes accessibles à Admin seulement (Administration système)
 Route::middleware(['auth', 'role:admin'])->group(function () {
     // Documents
     Route::resource('documents', DocumentController::class);
     // Gestion Utilisateurs
     Route::resource('users', \App\Http\Controllers\UserController::class)->only(['store', 'update', 'destroy']);
+    // Gestion Rôles (nouvelle route)
+    Route::get('/settings/roles', [\App\Http\Controllers\RoleController::class, 'index'])->name('settings.roles');
+    Route::post('/settings/roles/{role}/permissions', [\App\Http\Controllers\RoleController::class, 'updatePermissions'])->name('settings.roles.permissions');
 });
 
-// Routes accessibles à Direction, Admin et Gestionnaire
-Route::middleware(['auth', 'role:admin,direction,gestionnaire'])->group(function () {
+// Routes accessibles à Direction, Admin et Gestionnaire (Rapports)
+Route::middleware(['auth', 'role:admin|direction|gestionnaire|comptable'])->group(function () {
     Route::get('/rapports/loyers', function () { return view('rapports.loyers'); })->name('rapports.loyers');
     Route::get('/rapports/impayees', function () { return view('rapports.impayees'); })->name('rapports.impayees');
     Route::get('/rapports/commissions', function () { return view('rapports.commissions'); })->name('rapports.commissions');
     Route::get('/rapports/mensuel/{mois?}', [DashboardController::class, 'exporterRapportMensuel'])->name('rapports.mensuel');
 });
+
+// API Routes - Stats et Alertes (pour widgets AJAX)
+Route::middleware(['auth'])->prefix('api')->group(function () {
+    Route::get('/stats/kpis', function () {
+        $service = new \App\Services\DashboardStatsService();
+        return response()->json($service->getFinancialKPIs());
+    })->name('api.stats.kpis');
+    
+    Route::get('/stats/parc', function () {
+        $service = new \App\Services\DashboardStatsService();
+        return response()->json($service->getParcStats());
+    })->name('api.stats.parc');
+    
+    Route::get('/stats/charts', function () {
+        $service = new \App\Services\DashboardStatsService();
+        return response()->json($service->getChartData());
+    })->name('api.stats.charts');
+    
+    Route::get('/alerts', function () {
+        $service = new \App\Services\DashboardStatsService();
+        return response()->json($service->getAlerts());
+    })->name('api.alerts');
+});
+
+// Route Système pour Déploiement Mutualisé (Protégée par Token)
+Route::get('/system/migrate/{token}', [\App\Http\Controllers\SystemController::class, 'migrate'])
+    ->name('system.migrate');
 
 require __DIR__.'/auth.php';

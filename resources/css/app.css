@@ -8,15 +8,20 @@
    ======================================== */
 
 :root {
-    /* Couleurs principales Ontario */
-    --ontario-blue: #1A365D;
-    --ontario-blue-light: #243B55;
-    --ontario-blue-dark: #0F2942;
-    --ontario-red: #D32F2F;
-    --ontario-red-light: #E53935;
-    --ontario-red-dark: #C62828;
+    /* Couleurs principales Ontario - CONFIRMÉES */
+    --ontario-blue: #274256;
+    /* Bleu Pétrole Nuit */
+    --ontario-blue-light: #375a76;
+    --ontario-blue-dark: #1a2e3d;
+    --ontario-blue-gradient: linear-gradient(135deg, #274256 0%, #1a2e3d 100%);
 
-    /* Couleurs neutres */
+    --ontario-red: #cb2d2d;
+    /* Rouge Vif Ontario */
+    --ontario-red-light: #ef4444;
+    --ontario-red-dark: #991b1b;
+    --ontario-red-gradient: linear-gradient(135deg, #cb2d2d 0%, #ef4444 100%);
+
+    /* Couleurs neutres & Surface */
     --gray-50: #f8fafc;
     --gray-100: #f1f5f9;
     --gray-200: #e2e8f0;
@@ -28,31 +33,58 @@
     --gray-800: #1e293b;
     --gray-900: #0f172a;
 
-    /* Couleurs de statut */
-    --success: #16a34a;
-    --success-light: #22c55e;
-    --warning: #f59e0b;
-    --danger: #dc2626;
-    --info: #0ea5e9;
+    --radius-sm: 0.5rem;
+    /* 8px */
+    --radius-md: 0.75rem;
+    /* 12px */
+    --radius-lg: 1rem;
+    /* 16px */
+    --radius-xl: 1.5rem;
+    /* 24px */
+}
 
-    /* Espacements formulaires */
-    --input-padding: 0.875rem 1rem;
-    --input-radius: 0.75rem;
-    --input-border: 2px solid var(--gray-200);
+/* Force branding on standardized elements */
+.text-brand-blue {
+    color: var(--ontario-blue) !important;
+}
 
-    /* Ombres */
-    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-    --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+.bg-brand-blue {
+    background-color: var(--ontario-blue) !important;
+}
+
+.text-brand-red {
+    color: var(--ontario-red) !important;
+}
+
+.bg-brand-red {
+    background-color: var(--ontario-red) !important;
+}
+
+.bg-ontario-gradient {
+    background: var(--ontario-blue-gradient) !important;
+}
+
+.bg-ontario-red-gradient {
+    background: var(--ontario-red-gradient) !important;
 }
 
 @layer base {
 
+    #page-loader-bar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 3px;
+        background: #cb2d2d;
+        z-index: 9999;
+        width: 0;
+        transition: width 0.4s ease, opacity 0.4s ease;
+    }
+
     /* Transitions fluides et optimisées - ONTARIO SPA ENGINE */
     .section-pane {
         will-change: opacity, transform;
-        transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .section-pane.hidden {
@@ -61,8 +93,59 @@
 
     .section-pane.opacity-0 {
         opacity: 0;
-        transform: translateY(15px) scale(0.98);
+        transform: translateY(20px) scale(0.99);
         pointer-events: none;
+    }
+
+    /* Staggered entrance for children */
+    .section-pane:not(.opacity-0)>* {
+        animation: slide-up-fade 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    /* Transition utility */
+    .transition-premium {
+        transition: all var(--transition-premium);
+    }
+
+    @keyframes slide-up-fade {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .animate-stagger>* {
+        opacity: 0;
+        animation: slide-up-fade 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .animate-stagger>*:nth-child(1) {
+        animation-delay: 0.1s;
+    }
+
+    .animate-stagger>*:nth-child(2) {
+        animation-delay: 0.15s;
+    }
+
+    .animate-stagger>*:nth-child(3) {
+        animation-delay: 0.2s;
+    }
+
+    .animate-stagger>*:nth-child(4) {
+        animation-delay: 0.25s;
+    }
+
+    .animate-stagger>*:nth-child(5) {
+        animation-delay: 0.3s;
+    }
+
+    .animate-stagger>*:nth-child(n+6) {
+        animation-delay: 0.35s;
     }
 
     /* Barre de progression premium en haut */
@@ -95,6 +178,12 @@
         100% {
             background-position: -100% 0;
         }
+    }
+
+    /* Focus Indicator */
+    :focus-visible {
+        outline: 2px solid var(--ontario-red) !important;
+        outline-offset: 2px !important;
     }
 
     /* Optimisations de rendu */
@@ -231,8 +320,8 @@ textarea:focus {
 
 /* Labels - Ultra Compacts */
 label {
-    font-size: 0.7rem !important;
-    /* 11px environ */
+    font-size: 0.75rem !important;
+    /* 12px */
     font-weight: 800 !important;
     text-transform: uppercase !important;
     letter-spacing: 0.05em !important;
@@ -296,8 +385,12 @@ button[type="submit"] {
 }
 
 .ontario-btn-primary:hover {
-    transform: translateY(-2px);
+    transform: translateY(-2px) scale(1.02);
     box-shadow: 0 6px 20px rgba(211, 47, 47, 0.45);
+}
+
+.ontario-btn-primary:active {
+    transform: translateY(0) scale(0.98);
 }
 
 .ontario-btn-secondary {
@@ -309,6 +402,7 @@ button[type="submit"] {
 .ontario-btn-secondary:hover {
     background: var(--gray-50);
     border-color: var(--gray-300);
+    transform: translateY(-1px);
 }
 
 /* ========================================
@@ -405,16 +499,20 @@ table tbody tr:hover {
    CARDS ONTARIO
    ======================================== */
 
-.ontario-card {
-    background: white;
-    border-radius: 1rem;
-    border: 1px solid var(--gray-100);
-    box-shadow: var(--shadow-md);
-    transition: all 0.2s ease;
+.ontario-card-lift {
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: transform, box-shadow;
 }
 
-.ontario-card:hover {
-    box-shadow: var(--shadow-lg);
+.ontario-card-lift:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
+    border-color: var(--ontario-blue-light);
+}
+
+.ontario-card-lift:active {
+    transform: translateY(-2px);
+    transition-duration: 0.1s;
 }
 
 .ontario-card-header {
@@ -551,14 +649,20 @@ button.bg-\[\#cb2d2d\],
 button.bg-\[\#D32F2F\] {
     background: linear-gradient(135deg, #C62828 0%, #D32F2F 100%) !important;
     box-shadow: 0 4px 14px 0 rgba(211, 47, 47, 0.4) !important;
-    transition: all 0.3s ease !important;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
 .btn-ontario:hover,
 button.bg-\[\#cb2d2d\]:hover,
 button.bg-\[\#D32F2F\]:hover {
-    transform: translateY(-2px) !important;
+    transform: translateY(-2px) scale(1.02) !important;
     box-shadow: 0 6px 20px 0 rgba(211, 47, 47, 0.5) !important;
+}
+
+.btn-ontario:active,
+button.bg-\[\#cb2d2d\]:active,
+button.bg-\[\#D32F2F\]:active {
+    transform: translateY(0) scale(0.98) !important;
 }
 
 /* Header du dashboard plus imposant */
@@ -643,13 +747,26 @@ input:focus+svg,
         font-size: 0.9375rem !important;
     }
 
-    /* Modales full-screen sur mobile */
+    /* Modales plein écran sur mobile - PREMIUM UPGRADE */
     .sm\:max-w-lg,
     .sm\:max-w-xl,
     .sm\:max-w-2xl {
         max-width: 100% !important;
-        margin: 0.5rem !important;
-        border-radius: 1rem !important;
+        margin: 0 !important;
+        border-radius: 0 !important;
+        height: 100% !important;
+        height: 100dvh !important;
+        display: flex !important;
+        flex-direction: column !important;
+    }
+
+    /* Ajustement du scroll dans les modales full screen */
+    .sm\:max-w-lg form,
+    .sm\:max-w-xl form,
+    .sm\:max-w-2xl form {
+        flex: 1 !important;
+        overflow-y: auto !important;
+        padding-bottom: 2rem !important;
     }
 
     /* Tableaux scrollables */

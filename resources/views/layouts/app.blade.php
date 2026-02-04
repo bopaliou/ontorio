@@ -21,6 +21,11 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="font-sans antialiased bg-gray-50">
+        <!-- Skip to content -->
+        <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[200] focus:bg-white focus:text-[#cb2d2d] focus:px-4 focus:py-2 focus:rounded-xl focus:shadow-2xl focus:font-bold focus:outline-none focus:ring-2 focus:ring-[#cb2d2d]">
+            Passer au contenu principal
+        </a>
+
         <!-- Barre de chargement globale -->
         <div id="page-loader-bar"></div>
 
@@ -34,7 +39,7 @@
                 @include('layouts.topbar')
 
                 <!-- Main Content -->
-                <main class="flex-1 p-4 sm:p-6 lg:p-8">
+                <main id="main-content" class="flex-1 p-4 sm:p-6 lg:p-8">
                     {{ $slot }}
                 </main>
             </div>
@@ -43,7 +48,7 @@
         <div id="toast-container" class="fixed top-24 right-6 z-[100] flex flex-col gap-3 pointer-events-none"></div>
 
         <!-- Document Preview Modal Globale -->
-        <div id="global-doc-preview-modal" onclick="if(event.target === this) closeGlobalPreview()" class="fixed inset-0 z-[150] hidden bg-gray-900/80 backdrop-blur-md flex flex-col items-center justify-center p-4 transition-opacity opacity-0 duration-300">
+        <div id="global-doc-preview-modal" role="dialog" aria-modal="true" aria-labelledby="global-preview-doc-name" onclick="if(event.target === this) closeGlobalPreview()" class="fixed inset-0 z-[150] hidden bg-gray-900/80 backdrop-blur-md flex flex-col items-center justify-center p-4 transition-opacity opacity-0 duration-300">
             <div class="w-full max-w-5xl h-[90vh] bg-white rounded-3xl overflow-hidden shadow-2xl flex flex-col transform scale-95 transition-all duration-300" id="global-doc-preview-container">
                 <!-- Header -->
                 <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-white shrink-0">
@@ -61,7 +66,7 @@
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
                             Télécharger
                         </a>
-                        <button onclick="closeGlobalPreview()" class="text-gray-400 hover:text-gray-600 hover:bg-gray-100 p-2 rounded-full transition">
+                        <button onclick="closeGlobalPreview()" class="text-gray-400 hover:text-gray-600 hover:bg-gray-100 p-2 rounded-full transition" aria-label="Fermer la prévisualisation">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                         </button>
                     </div>
@@ -119,6 +124,19 @@
             };
 
             window.previewDoc = function(doc) {
+                const url = doc.url.toLowerCase();
+                const ext = doc.nom_original ? doc.nom_original.split('.').pop().toLowerCase() : url.split('.').pop().split('?')[0];
+                
+                // Seulement les PDFs générés dynamiquement (routes Laravel) s'ouvrent dans un nouvel onglet
+                // car les iframes ont parfois des problèmes avec les PDFs en streaming
+                const isDynamicPDF = url.includes('/loyers/') || url.includes('/contrats/') || url.includes('/rapports/') || url.includes('/quittance') || url.includes('/print') || url.includes('/bilan');
+                
+                if (isDynamicPDF) {
+                    window.open(doc.url, '_blank');
+                    return;
+                }
+                
+                // Pour tous les autres fichiers (images, PDFs statiques), utiliser la modale d'aperçu
                 const modal = document.getElementById('global-doc-preview-modal');
                 const container = document.getElementById('global-doc-preview-container');
                 const imgCont = document.getElementById('global-preview-img-cont');
@@ -139,14 +157,10 @@
                 img.src = '';
                 frame.src = '';
                 
-                const url = doc.url.toLowerCase();
-                const ext = doc.nom_original ? doc.nom_original.split('.').pop().toLowerCase() : url.split('.').pop().split('?')[0];
-                
                 if(['jpg', 'jpeg', 'png', 'webp', 'gif'].includes(ext)) {
                     imgCont.classList.remove('hidden');
                     img.src = doc.url;
-                } else if(['pdf'].includes(ext) || url.includes('quittance') || url.includes('contrat') || url.includes('mensuel') || url.includes('rapport')) {
-                    // Les routes quittance, contrat et rapports génèrent des PDF
+                } else if(ext === 'pdf') {
                     frameCont.classList.remove('hidden');
                     frame.src = doc.url;
                 } else {
@@ -175,6 +189,85 @@
                     document.getElementById('global-preview-frame').src = '';
                 }, 300);
             };
+            window.toggleSidebar = function() {
+                const sidebar = document.getElementById('main-sidebar');
+                const overlay = document.getElementById('sidebar-overlay');
+                
+                if (sidebar.classList.contains('-translate-x-full')) {
+                    // Open
+                    sidebar.classList.remove('-translate-x-full');
+                    overlay.classList.remove('hidden');
+                    setTimeout(() => overlay.classList.add('opacity-100'), 10);
+                } else {
+                    // Close
+                    sidebar.classList.add('-translate-x-full');
+                    overlay.classList.remove('opacity-100');
+                    setTimeout(() => overlay.classList.add('hidden'), 300);
+                }
+            };
+
+            // Fermer les modaux avec la touche Échap
+            document.addEventListener('keydown', function(event) {
+                if (event.key === 'Escape') {
+                    // Chercher tous les modaux ouverts (ceux qui n'ont pas la classe 'hidden')
+                    // et appeler leur fonction de fermeture respective
+                    
+                    // Global Preview
+                    if (!document.getElementById('global-doc-preview-modal').classList.contains('hidden')) {
+                        closeGlobalPreview();
+                    }
+                    
+                    // Biens
+                    if (window.bienSection && !document.getElementById('bien-modal-wrapper').classList.contains('hidden')) {
+                        bienSection.closeModal();
+                    }
+                    if (window.bienSection && !document.getElementById('bien-delete-modal').classList.contains('hidden')) {
+                        bienSection.closeDeleteModal();
+                    }
+
+                    // Locataires
+                    if (window.locSection) {
+                        if (!document.getElementById('loc-modal-wrapper').classList.contains('hidden')) locSection.closeModal();
+                        if (!document.getElementById('loc-delete-modal').classList.contains('hidden')) locSection.closeDeleteModal();
+                        if (!document.getElementById('loc-doc-modal').classList.contains('hidden')) locSection.closeDocumentModal();
+                        if (!document.getElementById('loc-doc-delete-modal').classList.contains('hidden')) locSection.closeDocDeleteModal();
+                    }
+
+                    // Loyers / Paiements
+                    if (window.loySection) {
+                        if (!document.getElementById('loy-payment-modal').classList.contains('hidden')) loySection.closePaymentModal();
+                        if (!document.getElementById('loy-edit-modal').classList.contains('hidden')) loySection.closeEditModal();
+                    }
+                    
+                    if (window.paiSection) {
+                        if (!document.getElementById('pai-modal-overlay').classList.contains('hidden')) paiSection.closeModal();
+                        if (!document.getElementById('pai-delete-modal').classList.contains('hidden')) paiSection.closeDeleteModal();
+                    }
+
+                    // Dépenses
+                    if (window.depSection) {
+                        if (!document.getElementById('dep-modal-wrapper').classList.contains('hidden')) depSection.closeModal();
+                        if (!document.getElementById('dep-delete-modal').classList.contains('hidden')) depSection.closeDeleteModal();
+                    }
+
+                    // Contrats
+                    if (window.conSection) {
+                        if (!document.getElementById('con-modal-wrapper').classList.contains('hidden')) conSection.closeModal();
+                        if (!document.getElementById('con-delete-modal').classList.contains('hidden')) conSection.closeDeleteModal();
+                    }
+
+                    // Propriétaires / Agence
+                    if (window.propSection) {
+                        if (!document.getElementById('prop-modal-wrapper').classList.contains('hidden')) propSection.closeModal();
+                    }
+
+                    // Utilisateurs
+                    if (window.userSection) {
+                        if (!document.getElementById('user-modal-wrapper').classList.contains('hidden')) userSection.closeModal();
+                        if (!document.getElementById('user-delete-modal').classList.contains('hidden')) userSection.closeDeleteModal();
+                    }
+                }
+            });
         </script>
     </body>
 </html>

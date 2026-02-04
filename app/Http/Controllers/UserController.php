@@ -19,7 +19,7 @@ class UserController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
-            'role' => 'required|in:admin,gestionnaire,comptable,direction',
+            'role' => 'required|exists:roles,name',
             'password' => 'required|string|min:8',
         ]);
 
@@ -35,6 +35,9 @@ class UserController extends Controller
                 'password' => Hash::make($request->password),
                 'email_verified_at' => now(),
             ]);
+            
+            // Sync Spatie Role
+            $user->assignRole($request->role);
 
             ActivityLogger::log('Création Utilisateur', "Création de l'utilisateur {$user->name} ({$user->role})", 'success', $user);
 
@@ -53,7 +56,7 @@ class UserController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
-            'role' => 'required|in:admin,gestionnaire,comptable,direction',
+            'role' => 'required|exists:roles,name',
             'password' => 'nullable|string|min:8',
         ]);
 
@@ -73,6 +76,9 @@ class UserController extends Controller
             }
 
             $user->update($data);
+            
+            // Sync Spatie Role
+            $user->syncRoles([$request->role]);
 
             ActivityLogger::log('Modification Utilisateur', "Mise à jour de l'utilisateur {$user->name}", 'info', $user);
 

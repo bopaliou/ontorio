@@ -2,58 +2,48 @@
     
     <!-- LIST VIEW -->
     <div id="bien-view-list" class="bien-sub-view space-y-8">
-        <!-- Header -->
-        <div class="flex items-end justify-between border-b border-gray-100 pb-6">
-            <div>
-                <h2 class="text-3xl font-bold text-gray-900 tracking-tight">Parc Immobilier</h2>
-                <p class="text-sm text-gray-500 mt-2 font-medium">Gestion locative des appartements, villas et autres biens.</p>
-            </div>
-            @if(App\Helpers\PermissionHelper::can('biens.create'))
-            <button onclick="bienSection.openModal('create')" class="bg-[#cb2d2d] text-white px-6 py-3 rounded-xl text-sm font-bold shadow-lg shadow-red-900/20 hover:bg-[#a82020] transition-all flex items-center gap-2 transform hover:-translate-y-0.5">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
-                Nouveau Bien
-            </button>
-            @endif
-        </div>
+        <!-- Header Uniforme -->
+        @include('components.section-header', [
+            'title' => 'Parc Immobilier',
+            'subtitle' => 'Gestion locative des appartements, villas et autres biens.',
+            'icon' => 'building',
+            'actions' => App\Helpers\PermissionHelper::can('biens.create') 
+                ? '<button onclick="bienSection.openModal(\'create\')" class="bg-[#cb2d2d] text-white px-6 py-3 rounded-xl text-sm font-bold shadow-lg shadow-red-900/20 hover:bg-[#a82020] transition-all flex items-center gap-2 transform hover:-translate-y-0.5">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+                    Nouveau Bien
+                </button>' 
+                : ''
+        ])
 
-        <!-- KPIs -->
+        <!-- KPIs Uniformes -->
         <div id="bien-kpi-container" class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center justify-between">
-                <div>
-                     <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Total Biens</p>
-                     <p class="text-3xl font-black text-gray-900">{{ count($data['biens_list']) }}</p>
-                </div>
-                <div class="w-12 h-12 bg-gray-50 rounded-xl flex items-center justify-center text-gray-400">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
-                </div>
-            </div>
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center justify-between">
-                 <div>
-                     <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Occupés</p>
-                     <p class="text-3xl font-black text-blue-600">{{ $data['biens_list']->where('statut', 'occupé')->count() }}</p>
-                </div>
-                 <div class="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center text-blue-500">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
-                </div>
-            </div>
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center justify-between">
-                <div>
-                     <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Disponibles</p>
-                     <p class="text-3xl font-black text-green-600">{{ $data['biens_list']->whereIn('statut', ['libre', 'disponible'])->count() }}</p>
-                </div>
-                <div class="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center text-green-500">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                </div>
-            </div>
+            @include('components.kpi-card', [
+                'label' => 'Total Biens',
+                'value' => count($data['biens_list']),
+                'icon' => 'building',
+                'color' => 'gray'
+            ])
+            @include('components.kpi-card', [
+                'label' => 'Occupés',
+                'value' => $data['biens_list']->where('statut', 'occupé')->count(),
+                'icon' => 'user',
+                'color' => 'blue'
+            ])
+            @include('components.kpi-card', [
+                'label' => 'Disponibles',
+                'value' => $data['biens_list']->whereIn('statut', ['libre', 'disponible'])->count(),
+                'icon' => 'check',
+                'color' => 'green'
+            ])
         </div>
 
         <!-- Grid -->
         <div id="bien-grid-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             @forelse($data['biens_list'] as $bien)
-            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:border-gray-200 transition-all duration-300 group overflow-hidden cursor-pointer" onclick="bienSection.showDetails({{ json_encode($bien) }})">
+            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm ontario-card-lift group overflow-hidden cursor-pointer" onclick="bienSection.showDetails({{ json_encode($bien) }})">
                 <div class="h-48 bg-gray-50 relative overflow-hidden">
                     @if($bien->imagePrincipale)
-                        <img src="{{ Storage::url($bien->imagePrincipale->chemin) }}" class="w-full h-full object-cover transform group-hover:scale-105 transition duration-700">
+                        <img src="{{ Storage::url($bien->imagePrincipale->chemin) }}" alt="Photo de {{ $bien->nom }}" class="w-full h-full object-cover transform group-hover:scale-105 transition duration-700">
                     @else
                         <div class="w-full h-full flex items-center justify-center bg-gray-50 text-gray-300">
                             <svg class="w-16 h-16 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"></path></svg>
@@ -61,7 +51,7 @@
                     @endif
                     
                     <div class="absolute top-4 right-4">
-                        <span class="px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-widest shadow-sm backdrop-blur-md {{ $bien->statut === 'occupé' ? 'bg-blue-500/90 text-white' : 'bg-green-500/90 text-white' }}">
+                        <span class="px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-widest shadow-sm backdrop-blur-md {{ $bien->statut === 'occupé' ? 'bg-blue-500/90 text-white' : 'bg-green-500/90 text-white' }}">
                             {{ $bien->statut }}
                         </span>
                     </div>
@@ -79,7 +69,7 @@
                     
                     <div class="mt-5 pt-4 border-t border-gray-50 flex items-center justify-between">
                         <div class="flex flex-col">
-                             <span class="text-[10px] uppercase font-bold text-gray-400">Loyer</span>
+                             <span class="text-[11px] uppercase font-bold text-gray-400">Loyer</span>
                              <span class="font-black text-gray-900 text-lg">{{ number_format($bien->loyer_mensuel, 0, ',', ' ') }} <span class="text-xs font-bold text-gray-400">F</span></span>
                         </div>
                         <div class="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center text-gray-300 group-hover:bg-[#cb2d2d] group-hover:text-white transition-all">
@@ -103,7 +93,7 @@
     <!-- DETAILS VIEW -->
     <div id="bien-view-details" class="bien-sub-view hidden space-y-6">
         <div class="flex items-center gap-4">
-            <button onclick="bienSection.showView('list')" class="p-2 hover:bg-gray-100 rounded-full transition text-gray-600">
+            <button onclick="bienSection.showView('list')" class="p-2 hover:bg-gray-100 rounded-full transition text-gray-600" aria-label="Retour à la liste">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
             </button>
             <h2 class="text-2xl font-bold text-gray-900">Détails du Bien</h2>
@@ -154,7 +144,7 @@
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
                             </div>
                             <div>
-                                <p class="text-[10px] font-bold text-gray-400 uppercase">Pièces</p>
+                                <p class="text-[11px] font-bold text-gray-400 uppercase">Pièces</p>
                                 <p class="font-bold text-gray-900" id="det-bien-pieces">-</p>
                             </div>
                         </div>
@@ -163,7 +153,7 @@
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5h2M11 5v16M11 21h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
                             </div>
                             <div>
-                                <p class="text-[10px] font-bold text-gray-400 uppercase">Type</p>
+                                <p class="text-[11px] font-bold text-gray-400 uppercase">Type</p>
                                 <p class="font-bold text-gray-900" id="det-bien-meuble">-</p>
                             </div>
                         </div>
@@ -183,19 +173,19 @@
     </div>
 
     <!-- MODAL FORM (ULTRA COMPACT GRID) -->
-    <div id="bien-modal-wrapper" class="relative z-[100] hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div id="bien-modal-wrapper" class="relative z-[100] hidden" aria-labelledby="bien-modal-title" role="dialog" aria-modal="true">
         <div id="bien-modal-overlay" class="fixed inset-0 bg-gray-900/40 backdrop-blur-md transition-opacity opacity-0 duration-300"></div>
         <div class="fixed inset-0 z-10 w-screen overflow-y-auto" onclick="if(event.target === this) bienSection.closeModal()">
-            <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0" onclick="if(event.target === this) bienSection.closeModal()">
-                <div id="bien-modal-container" class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-xl opacity-0 scale-95 duration-300 border border-gray-100">
+            <div class="flex min-h-full items-end justify-center p-0 text-center sm:items-center sm:p-0" onclick="if(event.target === this) bienSection.closeModal()">
+                <div id="bien-modal-container" class="relative transform overflow-hidden bg-white text-left shadow-2xl transition-all w-full h-full sm:h-auto sm:w-full sm:max-w-xl sm:my-8 rounded-none sm:rounded-2xl opacity-0 scale-95 duration-300 border border-gray-100">
                     
                     <!-- Header -->
                     <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-white">
                         <div>
                             <h3 id="bien-modal-title" class="text-base font-bold text-gray-900">Nouveau Bien</h3>
-                            <p class="text-[10px] text-gray-500 font-medium">Informations du logement.</p>
+                            <p class="text-[11px] text-gray-500 font-medium">Informations du logement.</p>
                         </div>
-                        <button onclick="bienSection.closeModal()" class="text-gray-400 hover:text-gray-600 hover:bg-gray-100 p-1.5 rounded-full transition">
+                        <button onclick="bienSection.closeModal()" class="text-gray-400 hover:text-gray-600 hover:bg-gray-100 p-1.5 rounded-full transition" aria-label="Fermer">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                         </button>
                     </div>
@@ -206,14 +196,14 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <!-- Nom du Bien -->
                             <div class="col-span-1 md:col-span-2 relative bg-gray-50 rounded-xl border border-gray-200 px-3 py-2 focus-within:ring-2 focus-within:ring-[#cb2d2d]/10 focus-within:border-[#cb2d2d] transition-all">
-                                <label class="block text-[9px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Nom du Bien</label>
-                                <input type="text" name="nom" id="bien-input-nom" required class="block w-full bg-transparent border-none p-0 text-sm font-bold text-gray-900 placeholder-gray-300 focus:ring-0" placeholder="Ex: Appartement Résidence Paix">
+                                <label class="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Nom du Bien</label>
+                                <input type="text" name="nom" id="bien-input-nom" required class="block w-full bg-transparent border-none p-0 text-base sm:text-sm font-bold text-gray-900 placeholder-gray-300 focus:ring-0" placeholder="Ex: Appartement Résidence Paix">
                             </div>
 
                             <!-- Type -->
                             <div class="relative bg-gray-50 rounded-xl border border-gray-200 px-3 py-2 focus-within:ring-2 focus-within:ring-[#cb2d2d]/10 focus-within:border-[#cb2d2d] transition-all">
-                                <label class="block text-[9px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Type de Bien</label>
-                                <select name="type" id="bien-input-type" class="block w-full bg-transparent border-none p-0 text-sm font-bold text-gray-900 focus:ring-0 appearance-none cursor-pointer">
+                                <label class="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Type de Bien</label>
+                                <select name="type" id="bien-input-type" class="block w-full bg-transparent border-none p-0 text-base sm:text-sm font-bold text-gray-900 focus:ring-0 appearance-none cursor-pointer">
                                     <option value="appartement">Appartement</option>
                                     <option value="villa">Villa</option>
                                     <option value="studio">Studio</option>
@@ -226,25 +216,25 @@
 
                             <!-- Loyer -->
                             <div class="relative bg-gray-50 rounded-xl border border-gray-200 px-3 py-2 focus-within:ring-2 focus-within:ring-[#cb2d2d]/10 focus-within:border-[#cb2d2d] transition-all">
-                                <label class="block text-[9px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Loyer Mensuel (F CFA)</label>
-                                <input type="number" name="loyer_mensuel" id="bien-input-loyer" required class="block w-full bg-transparent border-none p-0 text-sm font-bold text-gray-900 placeholder-gray-300 focus:ring-0 text-right" placeholder="0">
+                                <label class="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Loyer Mensuel (F CFA)</label>
+                                <input type="number" name="loyer_mensuel" id="bien-input-loyer" required class="block w-full bg-transparent border-none p-0 text-base sm:text-sm font-bold text-gray-900 placeholder-gray-300 focus:ring-0 text-right" placeholder="0">
                             </div>
 
                             <!-- Adresse -->
                             <div class="col-span-1 md:col-span-2 relative bg-gray-50 rounded-xl border border-gray-200 px-3 py-2 focus-within:ring-2 focus-within:ring-[#cb2d2d]/10 focus-within:border-[#cb2d2d] transition-all">
-                                <label class="block text-[9px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Adresse Complète</label>
-                                <input type="text" name="adresse" id="bien-input-adresse" class="block w-full bg-transparent border-none p-0 text-sm font-bold text-gray-900 placeholder-gray-300 focus:ring-0" placeholder="Ex: Grand Dakar, Rue 10">
+                                <label class="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Adresse Complète</label>
+                                <input type="text" name="adresse" id="bien-input-adresse" class="block w-full bg-transparent border-none p-0 text-base sm:text-sm font-bold text-gray-900 placeholder-gray-300 focus:ring-0" placeholder="Ex: Grand Dakar, Rue 10">
                             </div>
 
                             <!-- Nombre de pièces -->
                             <div class="relative bg-gray-50 rounded-xl border border-gray-200 px-3 py-2 focus-within:ring-2 focus-within:ring-[#cb2d2d]/10 focus-within:border-[#cb2d2d] transition-all">
-                                <label class="block text-[9px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Nombre de pièces</label>
-                                <input type="number" name="nombre_pieces" id="bien-input-pieces" class="block w-full bg-transparent border-none p-0 text-sm font-bold text-gray-900 placeholder-gray-300 focus:ring-0" placeholder="Ex: 3">
+                                <label class="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Nombre de pièces</label>
+                                <input type="number" name="nombre_pieces" id="bien-input-pieces" class="block w-full bg-transparent border-none p-0 text-base sm:text-sm font-bold text-gray-900 placeholder-gray-300 focus:ring-0" placeholder="Ex: 3">
                             </div>
 
                             <!-- Meublé -->
                             <div class="relative bg-gray-50 rounded-xl border border-gray-200 px-3 py-2 flex items-center justify-between">
-                                <label class="text-[9px] font-black text-gray-400 uppercase tracking-widest">Bien Meublé ?</label>
+                                <label class="text-[11px] font-black text-gray-400 uppercase tracking-widest">Bien Meublé ?</label>
                                 <label class="relative inline-flex items-center cursor-pointer">
                                     <input type="checkbox" name="meuble" id="bien-input-meuble" value="1" class="sr-only peer">
                                     <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:translate-x-[-100%] peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#cb2d2d]"></div>
@@ -257,9 +247,9 @@
                                 <div class="text-center">
                                     <div class="flex items-center justify-center gap-2 mb-1">
                                          <svg class="w-4 h-4 text-[#cb2d2d]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                                         <span class="text-[10px] font-bold text-gray-500 uppercase tracking-wide">Photos du Bien (Une ou plusieurs)</span>
+                                         <span class="text-[11px] font-bold text-gray-500 uppercase tracking-wide">Photos du Bien (Une ou plusieurs)</span>
                                     </div>
-                                    <p id="file-name-display" class="text-[9px] font-black text-[#cb2d2d] truncate max-w-[300px]"></p>
+                                    <p id="file-name-display" class="text-[11px] font-black text-[#cb2d2d] truncate max-w-[300px]"></p>
                                 </div>
                             </div>
                         </div>
@@ -279,12 +269,12 @@
     </div>
 
     <!-- DELETE MODAL (UNCHANGED) -->
-    <div id="bien-delete-modal" onclick="if(event.target === this) bienSection.closeDeleteModal()" class="fixed inset-0 z-[120] hidden bg-gray-900/60 backdrop-blur-sm flex items-center justify-center p-4 transition-opacity opacity-0 duration-300">
+    <div id="bien-delete-modal" role="dialog" aria-modal="true" aria-labelledby="bien-delete-modal-title" onclick="if(event.target === this) bienSection.closeDeleteModal()" class="fixed inset-0 z-[120] hidden bg-gray-900/60 backdrop-blur-sm flex items-center justify-center p-4 transition-opacity opacity-0 duration-300">
         <div id="bien-delete-container" class="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-8 text-center transform scale-95 transition-all duration-300">
              <div class="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm">
                 <svg class="w-10 h-10 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
             </div>
-            <h3 class="text-xl font-bold text-gray-900 mb-2">Supprimer ce bien ?</h3>
+            <h3 id="bien-delete-modal-title" class="text-xl font-bold text-gray-900 mb-2">Supprimer ce bien ?</h3>
             <p class="text-sm text-gray-500 mb-8 leading-relaxed">Cette action est irréversible. Toutes les données associées (photos, historique) seront supprimées.</p>
             <div class="flex flex-col gap-3">
                 <button id="bien-confirm-delete-btn" class="w-full px-6 py-3.5 bg-red-600 text-white font-bold rounded-xl hover:bg-red-700 transition shadow-lg shadow-red-900/20 text-sm tracking-wide">
@@ -371,7 +361,7 @@
             if(bien.image_principale || (bien.images && bien.images.length > 0)) {
                 const imgPath = bien.image_principale ? bien.image_principale.chemin : bien.images[0].chemin;
                 const src = imgPath.startsWith('http') ? imgPath : '/storage/' + imgPath;
-                imgContainer.innerHTML = `<img src="${src}" class="w-full h-full object-cover cursor-pointer hover:scale-105 transition-transform duration-500" onclick="window.previewDoc({url: '${src}', nom_original: '${bien.nom}.jpg', type_label: 'Photo du Bien'})">`;
+                imgContainer.innerHTML = `<img src="${src}" alt="Photo de ${bien.nom}" class="w-full h-full object-cover cursor-pointer hover:scale-105 transition-transform duration-500" onclick="window.previewDoc({url: '${src}', nom_original: '${bien.nom}.jpg', type_label: 'Photo du Bien'})">`;
             } else {
                 imgContainer.innerHTML = `<div class="w-full h-full flex items-center justify-center text-gray-300 bg-gray-50"><svg class="w-12 h-12 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"></path></svg></div>`;
             }
@@ -388,7 +378,7 @@
                                 ${loc.nom.substring(0,1).toUpperCase()}
                             </div>
                             <div>
-                                <p class="text-[10px] font-bold text-gray-400 uppercase">Locataire Actuel</p>
+                                <p class="text-[11px] font-bold text-gray-400 uppercase">Locataire Actuel</p>
                                 <p class="font-bold text-gray-900">${loc.nom}</p>
                                 <p class="text-xs text-gray-500">${loc.telephone || ''}</p>
                             </div>
@@ -586,18 +576,11 @@
                 showToast(data.message || 'Succès', 'success');
                 bienSection.closeModal();
                 
-                // Use the Refresher instead of simple reload to guarantee Fresh Data from Server
-                // by using a timestamped request which breaks any browser cache
-                // and then replacing the body.
-                // Actually, window.location.href = window.location.href + '?t=' + new Date().getTime() 
-                // is a crude way to force reload.
-                
-                // Let's stick to the Iframe Refresh Pattern for smooth experience OR force a hard reload.
-                
-                // Force Reload with Cache Busting
-                const currentUrl = new URL(window.location.href);
-                currentUrl.searchParams.set('t', new Date().getTime());
-                window.location.href = currentUrl.toString();
+                if(window.dashboard) {
+                    window.dashboard.refresh();
+                } else {
+                    window.location.reload();
+                }
 
             } else {
                 showToast(data.message || 'Erreur de validation', 'error');

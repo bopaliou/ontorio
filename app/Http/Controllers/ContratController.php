@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\Contrat;
 use App\Models\Bien;
 use App\Helpers\ActivityLogger;
+use App\Http\Requests\StoreContratRequest;
+use App\Services\LoyerService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 use Barryvdh\DomPDF\Facade\Pdf;
 
 class ContratController extends Controller
@@ -15,26 +17,9 @@ class ContratController extends Controller
     /**
      * Store a newly created contrat in storage.
      */
-    public function store(Request $request)
+    public function store(StoreContratRequest $request)
     {
-        $validator = Validator::make($request->all(), [
-            'bien_id' => 'required|exists:biens,id',
-            'locataire_id' => 'required|exists:locataires,id',
-            'date_debut' => 'required|date',
-            'loyer_montant' => 'required|numeric|min:0',
-            'caution' => 'nullable|numeric|min:0',
-            'frais_dossier' => 'nullable|numeric|min:0',
-            'type_bail' => 'required|string|in:habitation,commercial,professionnel',
-            'date_signature' => 'nullable|date',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => $validator->errors()->first(),
-                'errors' => $validator->errors()
-            ], 422);
-        }
+        // Validation déjà faite par StoreContratRequest
 
         // Vérifier si le bien est déjà occupé
         $bien = Bien::find($request->bien_id);
@@ -53,11 +38,14 @@ class ContratController extends Controller
                 'bien_id' => $request->bien_id,
                 'locataire_id' => $request->locataire_id,
                 'date_debut' => $request->date_debut,
+                'date_fin' => $request->date_fin,
                 'loyer_montant' => $request->loyer_montant,
                 'caution' => $request->caution,
                 'frais_dossier' => $request->frais_dossier,
                 'type_bail' => $request->type_bail ?? 'habitation',
                 'date_signature' => $request->date_signature,
+                'renouvellement_auto' => $request->renouvellement_auto ?? false,
+                'preavis_mois' => $request->preavis_mois ?? 3,
                 'statut' => 'actif',
             ]);
 

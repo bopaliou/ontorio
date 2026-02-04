@@ -19,16 +19,16 @@
                 <table class="w-full text-left border-collapse">
                     <thead class="bg-white border-b border-gray-100">
                         <tr>
-                            <th class="px-8 py-5 text-xs font-bold text-gray-400 uppercase tracking-wider">Identité</th>
-                            <th class="px-8 py-5 text-xs font-bold text-gray-400 uppercase tracking-wider">Rôle</th>
-                            <th class="px-8 py-5 text-xs font-bold text-gray-400 uppercase tracking-wider">Contact</th>
-                            <th class="px-8 py-5 text-center text-xs font-bold text-gray-400 uppercase tracking-wider">Depuis</th>
-                            <th class="px-8 py-5 text-right text-xs font-bold text-gray-400 uppercase tracking-wider">Actions</th>
+                            <th scope="col" class="px-8 py-5 text-xs font-bold text-gray-400 uppercase tracking-wider">Identité</th>
+                            <th scope="col" class="px-8 py-5 text-xs font-bold text-gray-400 uppercase tracking-wider">Rôle</th>
+                            <th scope="col" class="px-8 py-5 text-xs font-bold text-gray-400 uppercase tracking-wider">Contact</th>
+                            <th scope="col" class="px-8 py-5 text-center text-xs font-bold text-gray-400 uppercase tracking-wider">Depuis</th>
+                            <th scope="col" class="px-8 py-5 text-right text-xs font-bold text-gray-400 uppercase tracking-wider">Actions</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-50 text-sm font-medium text-gray-600">
                         @forelse($data['users_list'] as $u)
-                        <tr class="hover:bg-gray-50/50 transition duration-150 group">
+                        <tr class="hover:bg-gray-50/50 transition-all duration-300 group">
                             <td class="px-8 py-5">
                                 <div class="flex items-center gap-4">
                                     <div class="w-10 h-10 bg-gray-100 text-gray-500 rounded-full flex items-center justify-center font-bold text-sm group-hover:bg-[#cb2d2d] group-hover:text-white transition-colors">
@@ -40,10 +40,10 @@
                             <td class="px-8 py-5">
                                 @php
                                     $roleColors = [
-                                        'admin' => 'bg-purple-50 text-purple-700 border-purple-100',
-                                        'direction' => 'bg-blue-50 text-blue-700 border-blue-100',
+                                        'admin' => 'bg-red-50 text-red-700 border-red-100',
+                                        'direction' => 'bg-[#274256]/10 text-[#274256] border-[#274256]/20',
                                         'comptable' => 'bg-green-50 text-green-700 border-green-100',
-                                        'gestionnaire' => 'bg-orange-50 text-orange-700 border-orange-100'
+                                        'gestionnaire' => 'bg-blue-50 text-blue-700 border-blue-100'
                                     ];
                                     $cls = $roleColors[$u->role] ?? 'bg-gray-50 text-gray-600';
                                 @endphp
@@ -78,19 +78,19 @@
     </div>
 
     <!-- MAIN FORM MODAL (ULTRA COMPACT GRID) -->
-    <div id="user-modal-wrapper" class="relative z-[100] hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div id="user-modal-wrapper" class="relative z-[100] hidden" aria-labelledby="user-modal-title" role="dialog" aria-modal="true">
         <div id="user-modal-overlay" class="fixed inset-0 bg-gray-900/40 backdrop-blur-md transition-opacity opacity-0 duration-300"></div>
         <div class="fixed inset-0 z-10 w-screen overflow-y-auto" onclick="if(event.target === this) userSection.closeModal()">
-            <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0" onclick="if(event.target === this) userSection.closeModal()">
-                <div id="user-modal-container" class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-xl opacity-0 scale-95 duration-300 border border-gray-100">
+            <div class="flex min-h-full items-end justify-center p-0 text-center sm:items-center sm:p-0" onclick="if(event.target === this) userSection.closeModal()">
+                <div id="user-modal-container" class="relative transform overflow-hidden bg-white text-left shadow-2xl transition-all w-full h-full sm:h-auto sm:w-full sm:max-w-xl sm:my-8 rounded-none sm:rounded-2xl opacity-0 scale-95 duration-300 border border-gray-100">
                     
                     <!-- Header -->
-                    <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-white">
+                    <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-[#274256]">
                         <div>
-                            <h3 id="user-modal-title" class="text-base font-bold text-gray-900">Gestion Utilisateur</h3>
-                            <p class="text-[10px] text-gray-500 font-medium">Paramètres du compte.</p>
+                            <h3 id="user-modal-title" class="text-base font-bold text-white">Gestion Utilisateur</h3>
+                            <p class="text-[11px] text-blue-100 font-medium">Paramètres du compte.</p>
                         </div>
-                        <button onclick="userSection.closeModal()" class="text-gray-400 hover:text-gray-600 hover:bg-gray-100 p-1.5 rounded-full transition">
+                        <button onclick="userSection.closeModal()" class="text-white/60 hover:text-white hover:bg-white/10 p-1.5 rounded-full transition" aria-label="Fermer">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                         </button>
                     </div>
@@ -101,35 +101,35 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <!-- Nom -->
                             <div class="relative bg-gray-50 rounded-xl border border-gray-200 px-3 py-2 focus-within:ring-2 focus-within:ring-[#cb2d2d]/10 focus-within:border-[#cb2d2d] transition-all">
-                                <label class="block text-[9px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Nom Complet</label>
-                                <input type="text" name="name" id="user-input-name" required class="block w-full bg-transparent border-none p-0 text-sm font-bold text-gray-900 placeholder-gray-300 focus:ring-0" placeholder="Ex: Jean Dupont">
+                                <label class="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Nom Complet</label>
+                                <input type="text" name="name" id="user-input-name" required class="block w-full bg-transparent border-none p-0 text-base sm:text-sm font-bold text-gray-900 placeholder-gray-300 focus:ring-0" placeholder="Ex: Jean Dupont">
                             </div>
 
                             <!-- Email -->
                             <div class="relative bg-gray-50 rounded-xl border border-gray-200 px-3 py-2 focus-within:ring-2 focus-within:ring-[#cb2d2d]/10 focus-within:border-[#cb2d2d] transition-all">
-                                <label class="block text-[9px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Email Professionnel</label>
-                                <input type="email" name="email" id="user-input-email" required class="block w-full bg-transparent border-none p-0 text-sm font-bold text-gray-900 placeholder-gray-300 focus:ring-0" placeholder="jean@ontariogroup.net">
+                                <label class="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Email Professionnel</label>
+                                <input type="email" name="email" id="user-input-email" required class="block w-full bg-transparent border-none p-0 text-base sm:text-sm font-bold text-gray-900 placeholder-gray-300 focus:ring-0" placeholder="jean@ontariogroup.net">
                             </div>
 
                             <!-- Role -->
                             <div class="relative bg-gray-50 rounded-xl border border-gray-200 px-3 py-2 focus-within:ring-2 focus-within:ring-[#cb2d2d]/10 focus-within:border-[#cb2d2d] transition-all">
-                                <label class="block text-[9px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Rôle / Accès</label>
-                                <select name="role" id="user-input-role" class="block w-full bg-transparent border-none p-0 text-sm font-bold text-gray-900 focus:ring-0 appearance-none cursor-pointer">
-                                    <option value="gestionnaire">Gestionnaire</option>
-                                    <option value="comptable">Comptable</option>
-                                    <option value="direction">Direction</option>
-                                    <option value="admin">Administrateur</option>
+                                <label class="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Rôle / Accès</label>
+                                <select name="role" id="user-input-role" class="block w-full bg-transparent border-none p-0 text-base sm:text-sm font-bold text-gray-900 focus:ring-0 appearance-none cursor-pointer">
+                                    <option value="">-- Sélectionner un rôle --</option>
+                                    @foreach(\Spatie\Permission\Models\Role::all() as $role)
+                                        <option value="{{ $role->name }}">{{ ucfirst(str_replace('_', ' ', $role->name)) }}</option>
+                                    @endforeach
                                 </select>
                             </div>
 
                             <!-- Password -->
                             <div class="relative bg-gray-50 rounded-xl border border-gray-200 px-3 py-2 focus-within:ring-2 focus-within:ring-[#cb2d2d]/10 focus-within:border-[#cb2d2d] transition-all">
-                                <label class="block text-[9px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Mot de passe</label>
-                                <input type="password" name="password" id="user-input-password" class="block w-full bg-transparent border-none p-0 text-sm font-bold text-gray-900 placeholder-gray-300 focus:ring-0" placeholder="••••••••">
+                                <label class="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Mot de passe</label>
+                                <input type="password" name="password" id="user-input-password" class="block w-full bg-transparent border-none p-0 text-base sm:text-sm font-bold text-gray-900 placeholder-gray-300 focus:ring-0" placeholder="••••••••">
                             </div>
                         </div>
 
-                        <p class="text-[9px] text-gray-400 italic hidden text-center" id="user-pwd-hint">Laisser vide pour conserver l'actuel</p>
+                        <p class="text-[11px] text-gray-400 italic hidden text-center" id="user-pwd-hint">Laisser vide pour conserver l'actuel</p>
 
                         <!-- Footer Actions -->
                         <div class="pt-4 flex items-center justify-end gap-3 border-t border-gray-100">
@@ -146,12 +146,12 @@
     </div>
 
     <!-- DELETE CONFIRMATION MODAL (UNCHANGED) -->
-    <div id="user-delete-modal" onclick="if(event.target === this) userSection.closeDeleteModal()" class="fixed inset-0 z-[120] hidden bg-gray-900/60 backdrop-blur-sm flex items-center justify-center p-4 transition-opacity opacity-0 duration-300">
+    <div id="user-delete-modal" role="dialog" aria-modal="true" aria-labelledby="user-delete-modal-title" onclick="if(event.target === this) userSection.closeDeleteModal()" class="fixed inset-0 z-[120] hidden bg-gray-900/60 backdrop-blur-sm flex items-center justify-center p-4 transition-opacity opacity-0 duration-300">
         <div id="user-delete-container" class="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-8 text-center transform scale-95 transition-all duration-300">
             <div class="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm">
                 <svg class="w-10 h-10 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7a4 4 0 11-8 0 4 4 0 018 0zM9 14a6 6 0 00-6 6v1h12v-1a6 6 0 00-6-6zM21 12h-6"/></svg>
             </div>
-            <h3 class="text-xl font-bold text-gray-900 mb-2">Supprimer l'accès ?</h3>
+            <h3 id="user-delete-modal-title" class="text-xl font-bold text-gray-900 mb-2">Supprimer l'accès ?</h3>
             <p class="text-sm text-gray-500 mb-8 leading-relaxed">Cet utilisateur ne pourra plus se connecter à la plateforme. Êtes-vous sûr ?</p>
             <div class="flex flex-col gap-3">
                 <button id="user-confirm-delete-btn" class="w-full px-6 py-3.5 bg-red-600 text-white font-bold rounded-xl hover:bg-red-700 transition shadow-lg shadow-red-900/20 text-sm tracking-wide">
@@ -259,7 +259,8 @@
                 
                 if(response.ok) {
                     showToast('Utilisateur supprimé', 'success');
-                    window.location.reload();
+                    if(window.dashboard) window.dashboard.refresh();
+                    else window.location.reload();
                 } else {
                     showToast('Erreur lors de la suppression', 'error');
                 }
@@ -306,7 +307,8 @@
             if(response.ok) {
                 showToast('Utilisateur enregistré', 'success');
                 userSection.closeModal();
-                window.location.reload();
+                if(window.dashboard) window.dashboard.refresh();
+                else window.location.reload();
             } else {
                 if(data.errors) {
                      showToast(Object.values(data.errors)[0][0], 'error');

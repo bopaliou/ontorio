@@ -148,7 +148,7 @@
         <table style="width: 100%;">
             <tr>
                 <td style="width: 60%;">
-                    <img src="{{ public_path('images/ontorio-logo.png') }}" style="max-height: 70px; margin-bottom: 10px;">
+                    <img src="{{ public_path('images/ontorio-logo.png') }}" alt="Ontario Group Logo" style="max-height: 70px; margin-bottom: 10px;">
                     <div class="logo-sub">Bien loger dans un bon logement</div>
                 </td>
                 <td style="width: 40%; text-align: right; font-size: 10px; color: #64748b;">

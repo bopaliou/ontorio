@@ -1,7 +1,7 @@
 <header class="h-16 bg-white border-b border-gray-100 flex items-center justify-between px-4 sm:px-6 lg:px-8 z-20">
     <!-- Left: Breadcrumb / Title -->
     <div class="flex items-center gap-4">
-        <button class="lg:hidden p-2 text-gray-500 hover:bg-gray-100 rounded-lg">
+        <button onclick="toggleSidebar()" class="lg:hidden p-2 text-gray-500 hover:bg-gray-100 rounded-lg" aria-label="Ouvrir le menu">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
             </svg>

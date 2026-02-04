@@ -21,7 +21,7 @@
 
         @if($agence)
         <!-- Main Identity Card -->
-        <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="bg-white rounded-3xl shadow-sm border border-gray-100 ontario-card-lift overflow-hidden">
             <div class="p-8 lg:p-12 grid grid-cols-1 lg:grid-cols-12 gap-12">
                 
                 <!-- Col 1: Logo & Identity (4 cols) -->
@@ -74,7 +74,7 @@
                 <!-- Col 3: Quick Stats (3 cols) -->
                 <div class="lg:col-span-3 bg-gradient-to-br from-gray-50 to-white rounded-3xl p-8 flex flex-col justify-center gap-8 border border-gray-100">
                     <div>
-                        <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3">Patrimoine</p>
+                        <p class="text-[11px] font-black text-gray-400 uppercase tracking-widest mb-3">Patrimoine</p>
                         <div class="flex items-baseline gap-2">
                              <p class="text-4xl font-black text-gray-900">{{ $agence->logements_count ?? 0 }}</p>
                              <span class="text-sm font-medium text-gray-500">Biens</span>
@@ -84,7 +84,7 @@
                     <div class="w-full h-px bg-gray-200 dashed"></div>
 
                     <div>
-                        <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3">Revenus (Mois)</p>
+                        <p class="text-[11px] font-black text-gray-400 uppercase tracking-widest mb-3">Revenus (Mois)</p>
                          <p class="text-3xl font-black text-[#cb2d2d]">{{ number_format($agence->loyers_encaisses_mois ?? 0, 0, ',', ' ') }} <span class="text-sm text-gray-400 font-medium">F CFA</span></p>
                     </div>
 
@@ -113,7 +113,7 @@
                     </div>
                     <p class="text-xs font-black text-gray-400 uppercase tracking-widest mb-1">Recettes Totales</p>
                     <p class="text-3xl font-black text-gray-900">{{ number_format($agence->total_encaisse_global ?? 0, 0, ',', ' ') }} <span class="text-sm font-medium text-gray-400">F</span></p>
-                    <p class="text-[10px] text-green-600 font-bold mt-2 flex items-center gap-1">
+                    <p class="text-[11px] text-green-600 font-bold mt-2 flex items-center gap-1">
                         <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg>
                         Flux entrant constant
                     </p>
@@ -129,7 +129,7 @@
                     </div>
                     <p class="text-xs font-black text-gray-400 uppercase tracking-widest mb-1">Dépenses Cumulées</p>
                     <p class="text-3xl font-black text-gray-900">{{ number_format($agence->total_depenses ?? 0, 0, ',', ' ') }} <span class="text-sm font-medium text-gray-400">F</span></p>
-                    <p class="text-[10px] text-gray-500 font-bold mt-2">Maintenance & Opérations</p>
+                    <p class="text-[11px] text-gray-500 font-bold mt-2">Maintenance & Opérations</p>
                 </div>
             </div>
 
@@ -148,9 +148,9 @@
                     <div class="mt-4 flex items-center justify-between">
                          <div class="inline-flex items-center gap-2 px-3 py-1.5 bg-green-500/20 rounded-full">
                               <div class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div>
-                              <span class="text-[9px] font-black text-green-300 uppercase tracking-widest">Rentabilité Positive</span>
+                              <span class="text-[11px] font-black text-green-300 uppercase tracking-widest">Rentabilité Positive</span>
                          </div>
-                         <a href="{{ route('proprietaires.bilan', $agence->id) }}" target="_blank" class="px-4 py-1.5 bg-white/10 hover:bg-white/20 border border-white/20 text-white rounded-lg text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2">
+                         <a href="{{ route('proprietaires.bilan', $agence->id) }}" target="_blank" class="px-4 py-1.5 bg-white/10 hover:bg-white/20 border border-white/20 text-white rounded-lg text-[11px] font-black uppercase tracking-widest transition-all flex items-center gap-2">
                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                             Exporter Bilan
                          </a>
@@ -175,19 +175,19 @@
     </div>
 
     <!-- MODAL: CONFIGURATION AGENCE (ULTRA COMPACT GRID) -->
-    <div id="prop-modal-wrapper" class="relative z-[100] hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div id="prop-modal-wrapper" class="relative z-[100] hidden" aria-labelledby="prop-modal-title" role="dialog" aria-modal="true">
         <div id="prop-modal-overlay" class="fixed inset-0 bg-gray-900/40 backdrop-blur-md transition-opacity opacity-0 duration-300"></div>
         <div class="fixed inset-0 z-10 w-screen overflow-y-auto" onclick="if(event.target === this) propSection.closeModal()">
-            <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0" onclick="if(event.target === this) propSection.closeModal()">
-                <div id="prop-modal-container" class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-xl opacity-0 scale-95 duration-300 border border-gray-100">
+            <div class="flex min-h-full items-end justify-center p-0 text-center sm:items-center sm:p-0" onclick="if(event.target === this) propSection.closeModal()">
+                <div id="prop-modal-container" class="relative transform overflow-hidden bg-white text-left shadow-2xl transition-all w-full h-full sm:h-auto sm:w-full sm:max-w-xl sm:my-8 rounded-none sm:rounded-2xl opacity-0 scale-95 duration-300 border border-gray-100">
                     
                     <!-- Header -->
                     <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-white">
                         <div>
                             <h3 id="prop-modal-title" class="text-base font-bold text-gray-900">Configuration Agence</h3>
-                            <p class="text-[10px] text-gray-500 font-medium">Coordonnées légales de l'entité.</p>
+                            <p class="text-[11px] text-gray-500 font-medium">Coordonnées légales de l'entité.</p>
                         </div>
-                        <button onclick="propSection.closeModal()" class="text-gray-400 hover:text-gray-600 hover:bg-gray-100 p-1.5 rounded-full transition">
+                        <button onclick="propSection.closeModal()" class="text-gray-400 hover:text-gray-600 hover:bg-gray-100 p-1.5 rounded-full transition" aria-label="Fermer">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                         </button>
                     </div>
@@ -199,32 +199,32 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <!-- Nom -->
                             <div class="relative bg-gray-50 rounded-xl border border-gray-200 px-3 py-2 focus-within:ring-2 focus-within:ring-[#cb2d2d]/10 focus-within:border-[#cb2d2d] transition-all">
-                                <label class="block text-[9px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Nom de l'Entité</label>
-                                <input type="text" name="nom" id="prop-input-nom" required class="block w-full bg-transparent border-none p-0 text-sm font-bold text-gray-900 placeholder-gray-300 focus:ring-0" placeholder="Ex: Ontario Group">
+                                <label class="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Nom de l'Entité</label>
+                                <input type="text" name="nom" id="prop-input-nom" required class="block w-full bg-transparent border-none p-0 text-base sm:text-sm font-bold text-gray-900 placeholder-gray-300 focus:ring-0" placeholder="Ex: Ontario Group">
                             </div>
 
                             <!-- Suffixe -->
                             <div class="relative bg-gray-50 rounded-xl border border-gray-200 px-3 py-2 focus-within:ring-2 focus-within:ring-[#cb2d2d]/10 focus-within:border-[#cb2d2d] transition-all">
-                                <label class="block text-[9px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Suffixe Juridique</label>
-                                <input type="text" name="prenom" id="prop-input-prenom" class="block w-full bg-transparent border-none p-0 text-sm font-bold text-gray-900 placeholder-gray-300 focus:ring-0" placeholder="S.A.R.L / S.A">
+                                <label class="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Suffixe Juridique</label>
+                                <input type="text" name="prenom" id="prop-input-prenom" class="block w-full bg-transparent border-none p-0 text-base sm:text-sm font-bold text-gray-900 placeholder-gray-300 focus:ring-0" placeholder="S.A.R.L / S.A">
                             </div>
 
                             <!-- Téléphone -->
                             <div class="relative bg-gray-50 rounded-xl border border-gray-200 px-3 py-2 focus-within:ring-2 focus-within:ring-[#cb2d2d]/10 focus-within:border-[#cb2d2d] transition-all">
-                                <label class="block text-[9px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Téléphone</label>
-                                <input type="text" name="telephone" id="prop-input-telephone" class="block w-full bg-transparent border-none p-0 text-sm font-bold text-gray-900 placeholder-gray-300 focus:ring-0" placeholder="Ex: 33 822 ...">
+                                <label class="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Téléphone</label>
+                                <input type="text" name="telephone" id="prop-input-telephone" class="block w-full bg-transparent border-none p-0 text-base sm:text-sm font-bold text-gray-900 placeholder-gray-300 focus:ring-0" placeholder="Ex: 33 822 ...">
                             </div>
 
                             <!-- Email -->
                             <div class="relative bg-gray-50 rounded-xl border border-gray-200 px-3 py-2 focus-within:ring-2 focus-within:ring-[#cb2d2d]/10 focus-within:border-[#cb2d2d] transition-all">
-                                <label class="block text-[9px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Email Officiel</label>
-                                <input type="email" name="email" id="prop-input-email" required class="block w-full bg-transparent border-none p-0 text-sm font-bold text-gray-900 placeholder-gray-300 focus:ring-0" placeholder="contact@ontariogroup.net">
+                                <label class="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Email Officiel</label>
+                                <input type="email" name="email" id="prop-input-email" required class="block w-full bg-transparent border-none p-0 text-base sm:text-sm font-bold text-gray-900 placeholder-gray-300 focus:ring-0" placeholder="contact@ontariogroup.net">
                             </div>
 
                             <!-- Adresse (Full width in grid) -->
                             <div class="md:col-span-2 relative bg-gray-50 rounded-xl border border-gray-200 px-3 py-2 focus-within:ring-2 focus-within:ring-[#cb2d2d]/10 focus-within:border-[#cb2d2d] transition-all">
-                                <label class="block text-[9px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Adresse Siège Social</label>
-                                <textarea name="adresse" id="prop-input-adresse" rows="1" class="block w-full bg-transparent border-none p-0 text-sm font-bold text-gray-900 placeholder-gray-300 focus:ring-0 resize-none" placeholder="Adresse complète..."></textarea>
+                                <label class="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Adresse Siège Social</label>
+                                <textarea name="adresse" id="prop-input-adresse" rows="1" class="block w-full bg-transparent border-none p-0 text-base sm:text-sm font-bold text-gray-900 placeholder-gray-300 focus:ring-0 resize-none" placeholder="Adresse complète..."></textarea>
                             </div>
                         </div>
 

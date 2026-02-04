@@ -146,7 +146,7 @@
         <table style="width: 100%;">
             <tr>
                 <td style="width: 50%; vertical-align: top;">
-                    <img src="{{ public_path('images/ontorio-logo.png') }}" style="max-height: 60px; margin-bottom: 5px;">
+                    <img src="{{ public_path('images/ontorio-logo.png') }}" alt="Ontario Group Logo" style="max-height: 60px; margin-bottom: 5px;">
                     <div class="logo-sub">Bien loger dans un bon logement</div>
                     <div style="margin-top: 10px; font-size: 10px; color: #64748b;">
                         5 Félix Faure x Colbert<br>

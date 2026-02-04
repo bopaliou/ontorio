@@ -13,6 +13,7 @@ use App\Models\Proprietaire;
 use App\Models\User;
 use App\Models\ActivityLog;
 use App\Helpers\ActivityLogger;
+use App\Services\DashboardStatsService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -26,46 +27,55 @@ class DashboardController extends Controller
         $moisActuel = Carbon::now()->format('Y-m');
         
         // 1. Récupération des stats Ontario Group (Optimisée avec Sous-requêtes)
-        $proprietaires = Proprietaire::withCount(['biens as logements_count'])
-            ->addSelect([
-                'loyers_factures_mois' => Loyer::selectRaw('sum(montant)')
-                    ->whereColumn('loyers.contrat_id', 'contrats.id')
-                    ->where('loyers.mois', $moisActuel)
-                    ->where('loyers.statut', '!=', 'annulé')
-                    ->join('contrats', 'loyers.contrat_id', '=', 'contrats.id')
-                    ->join('biens', 'contrats.bien_id', '=', 'biens.id')
-                    ->whereColumn('biens.proprietaire_id', 'proprietaires.id'),
+        // 1. Récupération des stats Ontario Group (Optimisée selon le rôle)
+        // Les sous-requêtes financières sont lourdes, on ne les lance que pour Admin/Direction/Gestionnaire
+        $proprietaires = collect([]);
+        
+        if (in_array($user->role, ['admin', 'gestionnaire', 'direction'])) {
+            $proprietaires = Proprietaire::withCount(['biens as logements_count'])
+                ->addSelect([
+                    'loyers_factures_mois' => Loyer::selectRaw('sum(montant)')
+                        ->whereColumn('loyers.contrat_id', 'contrats.id')
+                        ->where('loyers.mois', $moisActuel)
+                        ->where('loyers.statut', '!=', 'annulé')
+                        ->join('contrats', 'loyers.contrat_id', '=', 'contrats.id')
+                        ->join('biens', 'contrats.bien_id', '=', 'biens.id')
+                        ->whereColumn('biens.proprietaire_id', 'proprietaires.id'),
 
-                'loyers_encaisses_mois' => Loyer::selectRaw('sum(montant)')
-                    ->whereColumn('loyers.contrat_id', 'contrats.id')
-                    ->where('loyers.mois', $moisActuel)
-                    ->where('loyers.statut', 'payé')
-                    ->join('contrats', 'loyers.contrat_id', '=', 'contrats.id')
-                    ->join('biens', 'contrats.bien_id', '=', 'biens.id')
-                    ->whereColumn('biens.proprietaire_id', 'proprietaires.id'),
+                    'loyers_encaisses_mois' => Loyer::selectRaw('sum(montant)')
+                        ->whereColumn('loyers.contrat_id', 'contrats.id')
+                        ->where('loyers.mois', $moisActuel)
+                        ->where('loyers.statut', 'payé')
+                        ->join('contrats', 'loyers.contrat_id', '=', 'contrats.id')
+                        ->join('biens', 'contrats.bien_id', '=', 'biens.id')
+                        ->whereColumn('biens.proprietaire_id', 'proprietaires.id'),
 
-                'total_impayes' => Loyer::selectRaw('SUM(loyers.montant - COALESCE((SELECT SUM(montant) FROM paiements WHERE paiements.loyer_id = loyers.id), 0))')
-                    ->whereIn('loyers.statut', ['en_retard', 'émis', 'emis', 'partiellement_payé'])
-                    ->join('contrats', 'loyers.contrat_id', '=', 'contrats.id')
-                    ->join('biens', 'contrats.bien_id', '=', 'biens.id')
-                    ->whereColumn('biens.proprietaire_id', 'proprietaires.id'),
+                    'total_impayes' => Loyer::selectRaw('SUM(loyers.montant - COALESCE((SELECT SUM(montant) FROM paiements WHERE paiements.loyer_id = loyers.id), 0))')
+                        ->whereIn('loyers.statut', ['en_retard', 'émis', 'emis', 'partiellement_payé'])
+                        ->join('contrats', 'loyers.contrat_id', '=', 'contrats.id')
+                        ->join('biens', 'contrats.bien_id', '=', 'biens.id')
+                        ->whereColumn('biens.proprietaire_id', 'proprietaires.id'),
 
-                'total_depenses' => \App\Models\Depense::selectRaw('sum(montant)')
-                    ->join('biens', 'depenses.bien_id', '=', 'biens.id')
-                    ->whereColumn('biens.proprietaire_id', 'proprietaires.id'),
+                    'total_depenses' => \App\Models\Depense::selectRaw('sum(montant)')
+                        ->join('biens', 'depenses.bien_id', '=', 'biens.id')
+                        ->whereColumn('biens.proprietaire_id', 'proprietaires.id'),
 
-                'total_encaisse_global' => Paiement::selectRaw('sum(paiements.montant)')
-                    ->join('loyers', 'paiements.loyer_id', '=', 'loyers.id')
-                    ->join('contrats', 'loyers.contrat_id', '=', 'contrats.id')
-                    ->join('biens', 'contrats.bien_id', '=', 'biens.id')
-                    ->whereColumn('biens.proprietaire_id', 'proprietaires.id'),
+                    'total_encaisse_global' => Paiement::selectRaw('sum(paiements.montant)')
+                        ->join('loyers', 'paiements.loyer_id', '=', 'loyers.id')
+                        ->join('contrats', 'loyers.contrat_id', '=', 'contrats.id')
+                        ->join('biens', 'contrats.bien_id', '=', 'biens.id')
+                        ->whereColumn('biens.proprietaire_id', 'proprietaires.id'),
 
-                'depenses_mois' => \App\Models\Depense::selectRaw('sum(montant)')
-                    ->where('date_depense', 'like', $moisActuel . '%')
-                    ->join('biens', 'depenses.bien_id', '=', 'biens.id')
-                    ->whereColumn('biens.proprietaire_id', 'proprietaires.id'),
-            ])
-            ->get();
+                    'depenses_mois' => \App\Models\Depense::selectRaw('sum(montant)')
+                        ->where('date_depense', 'like', $moisActuel . '%')
+                        ->join('biens', 'depenses.bien_id', '=', 'biens.id')
+                        ->whereColumn('biens.proprietaire_id', 'proprietaires.id'),
+                ])
+                ->get();
+        } else {
+            // Version légère pour Comptable (juste la liste pour info)
+            $proprietaires = Proprietaire::withCount(['biens as logements_count'])->limit(50)->get();
+        }
 
         // Données communes optimisées (Sélection des colonnes nécessaires)
         $commonData = [
@@ -84,7 +94,8 @@ class DashboardController extends Controller
                                 ->latest()
                                 ->limit(50)
                                 ->get(),
-            'loyers_list' => Loyer::with(['contrat:id,locataire_id,bien_id', 'contrat.locataire:id,nom', 'contrat.bien:id,nom'])
+            'loyers_list' => Loyer::withMontantPaye()
+                                 ->with(['contrat:id,locataire_id,bien_id', 'contrat.locataire:id,nom', 'contrat.bien:id,nom'])
                                  ->orderBy('id', 'desc')
                                  ->limit(200)
                                  ->get(),
@@ -439,8 +450,7 @@ class DashboardController extends Controller
         $loyersEmisMois = Loyer::where('mois', $moisActuel)->where('statut', '!=', 'annulé')->sum('montant');
         $loyersPayesMois = Loyer::where('mois', $moisActuel)->where('statut', 'payé')->sum('montant');
         $loyersEnRetard = Loyer::whereIn('statut', ['en_retard', 'émis', 'emis', 'partiellement_payé'])
-            ->get()
-            ->sum(function($l) { return $l->montant - $l->montant_paye_cache; });
+            ->sum(DB::raw('montant - (SELECT COALESCE(SUM(montant), 0) FROM paiements WHERE paiements.loyer_id = loyers.id)'));
         
         return [
             'role' => 'gestionnaire',
@@ -462,8 +472,7 @@ class DashboardController extends Controller
         $loyersEmis = Loyer::where('mois', $moisActuel)->where('statut', '!=', 'annulé')->sum('montant');
         $loyersPayes = Loyer::where('mois', $moisActuel)->where('statut', 'payé')->sum('montant');
         $totalImpaye = Loyer::whereIn('statut', ['en_retard', 'émis', 'emis', 'partiellement_payé'])
-            ->get()
-            ->sum(function($l) { return $l->montant - $l->montant_paye_cache; });
+            ->sum(DB::raw('montant - (SELECT COALESCE(SUM(montant), 0) FROM paiements WHERE paiements.loyer_id = loyers.id)'));
         
         return [
             'role' => 'comptable',
@@ -490,8 +499,7 @@ class DashboardController extends Controller
         $tauxCollecte = $loyersEmisMois > 0 ? round(($loyersPayesMois / $loyersEmisMois) * 100) : 0;
         
         $impayesTotal = Loyer::whereIn('statut', ['en_retard', 'émis', 'emis', 'partiellement_payé'])
-            ->get()
-            ->sum(function($l) { return $l->montant - $l->montant_paye_cache; });
+            ->sum(DB::raw('montant - (SELECT COALESCE(SUM(montant), 0) FROM paiements WHERE paiements.loyer_id = loyers.id)'));
         $valeurPortefeuille = Bien::sum('loyer_mensuel');
         
         $commissionMensuelle = round($loyersPayesMois * 0.10);
@@ -555,8 +563,7 @@ class DashboardController extends Controller
         $loyersEmis = $loyersMois->where('statut', '!=', 'annulé')->sum('montant');
         $loyersPayes = $loyersMois->where('statut', 'payé')->sum('montant');
         $totalImpaye = Loyer::whereIn('statut', ['en_retard', 'émis', 'emis', 'partiellement_payé'])
-            ->get()
-            ->sum(function($l) { return $l->montant - $l->montant_paye_cache; });
+            ->sum(DB::raw('montant - (SELECT COALESCE(SUM(montant), 0) FROM paiements WHERE paiements.loyer_id = loyers.id)'));
         
         $tauxCollecte = $loyersEmis > 0 ? round(($loyersPayes / $loyersEmis) * 100) : 0;
         $commissionMensuelle = round($loyersPayes * 0.10); // 10% de commission

@@ -22,25 +22,27 @@
                 font-family: 'Inter', sans-serif;
             }
             .gradient-bg {
-                background: linear-gradient(135deg, #1A365D 0%, #243B55 50%, #2D4A6F 100%);
+                /* Gradient Bleu Pétrole Ontario */
+                background: linear-gradient(135deg, #274256 0%, #1a2e3d 100%);
             }
             .glass-card {
                 background: rgba(255, 255, 255, 0.95);
                 backdrop-filter: blur(20px);
-                box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+                box-shadow: 0 25px 50px -12px rgba(39, 66, 86, 0.25);
+                border: 1px solid rgba(255, 255, 255, 0.2);
             }
             .ontario-btn {
-                background: linear-gradient(135deg, #C62828 0%, #D32F2F 100%);
-                transition: all 0.3s ease;
+                background: linear-gradient(135deg, #cb2d2d 0%, #ef4444 100%);
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             }
             .ontario-btn:hover {
-                background: linear-gradient(135deg, #D32F2F 0%, #E53935 100%);
+                background: linear-gradient(135deg, #ef4444 0%, #f87171 100%);
                 transform: translateY(-2px);
-                box-shadow: 0 10px 25px -5px rgba(211, 47, 47, 0.4);
+                box-shadow: 0 10px 25px -5px rgba(203, 45, 45, 0.4);
             }
             .input-focus:focus {
-                border-color: #D32F2F;
-                box-shadow: 0 0 0 3px rgba(211, 47, 47, 0.15);
+                border-color: #cb2d2d;
+                box-shadow: 0 0 0 4px rgba(203, 45, 45, 0.1);
             }
             .floating-buildings {
                 animation: float 6s ease-in-out infinite;

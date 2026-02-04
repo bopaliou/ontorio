@@ -40,6 +40,11 @@ class Bien extends Model
         return $this->hasOne(Contrat::class)->where('statut', 'actif');
     }
 
+    public function depenses()
+    {
+        return $this->hasMany(Depense::class);
+    }
+
     /**
      * Toutes les images du bien
      */

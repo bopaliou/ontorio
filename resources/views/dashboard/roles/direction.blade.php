@@ -20,8 +20,8 @@
     </div>
 
     <!-- KPIs Direction -->
-    <div id="dashboard-kpi-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div data-show-section="loyers" class="bg-[#274256] text-white p-8 rounded-[2rem] shadow-2xl relative overflow-hidden group cursor-pointer hover:bg-[#1a2e3d] transition-colors">
+    <div id="dashboard-kpi-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 animate-stagger">
+        <div data-show-section="loyers" class="bg-[#274256] text-white p-8 rounded-[2rem] shadow-2xl relative overflow-hidden group cursor-pointer ontario-card-lift">
             <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-white/5 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-700"></div>
             <p class="text-[10px] font-black text-blue-300 uppercase tracking-[0.2em] mb-3">Revenus Encaissés (Mensuel)</p>
             <h3 class="text-3xl font-black">{{ number_format($data['kpis']['revenu_mensuel'], 0, ',', ' ') }} <span class="text-xs font-normal">F CFA</span></h3>
@@ -30,7 +30,7 @@
             </div>
         </div>
 
-        <div data-show-section="paiements" class="bg-white p-8 rounded-[2rem] shadow-sm border border-gray-100 group cursor-pointer hover:border-blue-500 transition-colors">
+        <div data-show-section="paiements" class="bg-white p-8 rounded-[2rem] shadow-sm border border-gray-100 group cursor-pointer ontario-card-lift">
             <p class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-3">Commissions Agence</p>
             <h3 class="text-3xl font-black text-green-600">{{ number_format($data['kpis']['commission_mensuelle'], 0, ',', ' ') }} <span class="text-xs font-normal">F CFA</span></h3>
             <div class="mt-6 flex items-center gap-2">
@@ -41,13 +41,13 @@
             </div>
         </div>
 
-        <div data-show-section="biens" class="bg-white p-8 rounded-[2rem] shadow-sm border border-gray-100 cursor-pointer hover:border-blue-500 transition-colors">
+        <div data-show-section="biens" class="bg-white p-8 rounded-[2rem] shadow-sm border border-gray-100 cursor-pointer ontario-card-lift">
             <p class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-3">Taux d'Occupation</p>
             <h3 class="text-3xl font-black text-[#274256]">{{ $data['kpis']['taux_occupation'] }}%</h3>
             <p class="text-xs text-gray-500 mt-4">{{ $data['kpis']['biens_occupes'] }} sur {{ $data['kpis']['total_logements'] }} unités sous gestion</p>
         </div>
 
-        <div data-show-section="loyers" class="bg-white p-8 rounded-[2rem] shadow-sm border {{ ($data['kpis']['impayes'] ?? 0) > 0 ? 'border-red-50 ring-4 ring-red-50/50 hover:border-red-500' : 'border-gray-100 hover:border-blue-500' }} cursor-pointer transition-colors">
+        <div data-show-section="loyers" class="bg-white p-8 rounded-[2rem] shadow-sm border {{ ($data['kpis']['impayes'] ?? 0) > 0 ? 'border-red-50 ring-4 ring-red-50/50' : 'border-gray-100' }} cursor-pointer ontario-card-lift">
             <p class="text-[10px] font-black text-red-400 uppercase tracking-[0.2em] mb-3">Impayés à Recouvrer</p>
             <h3 class="text-3xl font-black text-red-600">{{ number_format($data['kpis']['impayes'], 0, ',', ' ') }} <span class="text-xs font-normal">F CFA</span></h3>
             <div class="mt-6">

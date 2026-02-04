@@ -2,153 +2,186 @@
     
     <!-- SECTION: LISTE PRINCIPALE -->
     <div id="pai-view-list" class="pai-sub-view space-y-6">
-        <div class="flex items-center justify-between">
-            <div>
-                <h2 class="text-2xl font-bold text-[#1A365D]">Journal des Encaissements</h2>
-                <p class="text-sm text-gray-500 mt-1">Historique complet des transactions financières.</p>
-            </div>
-            @if(in_array(auth()->user()->role, ['admin', 'comptable']))
-            <button onclick="paiSection.openModal('create')" class="bg-[#D32F2F] text-white px-6 py-3 rounded-xl text-sm font-bold shadow-lg shadow-red-200 hover:bg-[#C62828] transition-all hover:-translate-y-0.5 flex items-center gap-2">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
-                Enregistrer un Paiement
-            </button>
-            @endif
-        </div>
+        <!-- Header Uniforme -->
+        @include('components.section-header', [
+            'title' => 'Journal des Encaissements',
+            'subtitle' => 'Historique complet des transactions financières.',
+            'icon' => 'money',
+            'actions' => in_array(auth()->user()->role, ['admin', 'comptable']) 
+                ? '<button onclick="paiSection.openModal(\'create\')" class="bg-[#cb2d2d] text-white px-6 py-3 rounded-xl text-sm font-bold shadow-lg shadow-red-900/20 hover:bg-[#a82020] transition-all hover:-translate-y-0.5 flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+                    Enregistrer un Paiement
+                </button>' 
+                : ''
+        ])
 
-        <!-- KPIs Comptabilité -->
+        @php
+            $encaisseToday = $data['paiements_list']->filter(function($p) {
+                return \Carbon\Carbon::parse($p->date_paiement)->isToday();
+            })->sum('montant');
+            
+            $thisMonth = \Carbon\Carbon::now()->format('Y-m');
+            $encaisseMonth = $data['paiements_list']->filter(function($p) use ($thisMonth) {
+                return \Carbon\Carbon::parse($p->date_paiement)->format('Y-m') === $thisMonth;
+            })->sum('montant');
+            
+            $transactionsMonth = $data['paiements_list']->filter(function($p) use ($thisMonth) {
+                return \Carbon\Carbon::parse($p->date_paiement)->format('Y-m') === $thisMonth;
+            })->count();
+        @endphp
+
+        <!-- KPIs Uniformes -->
         <div id="pai-kpi-container" class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="bg-white p-6 rounded-2xl shadow-md border border-gray-100 hover:shadow-lg transition-shadow">
-                <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Encaissé Aujourd'hui</p>
-                @php
-                    $encaisseToday = $data['paiements_list']->filter(function($p) {
-                        return \Carbon\Carbon::parse($p->date_paiement)->isToday();
-                    })->sum('montant');
-                    
-                    $thisMonth = \Carbon\Carbon::now()->format('Y-m');
-                    $encaisseMonth = $data['paiements_list']->filter(function($p) use ($thisMonth) {
-                        return \Carbon\Carbon::parse($p->date_paiement)->format('Y-m') === $thisMonth;
-                    })->sum('montant');
-                @endphp
-                <p class="text-3xl font-extrabold text-green-600 mt-2">{{ number_format($encaisseToday, 0, ',', ' ') }} <span class="text-lg">F</span></p>
-            </div>
-            <div class="bg-gradient-to-br from-[#1A365D] to-[#243B55] p-6 rounded-2xl shadow-lg text-white">
-                <p class="text-xs font-bold text-blue-200 uppercase tracking-wider">Global Mois Actuel</p>
-                <p class="text-3xl font-extrabold mt-2">{{ number_format($encaisseMonth, 0, ',', ' ') }} <span class="text-lg">F</span></p>
-            </div>
-            <div class="bg-white p-6 rounded-2xl shadow-md border border-gray-100 hover:shadow-lg transition-shadow">
-                <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Transactions (Mois)</p>
-                <p class="text-3xl font-extrabold text-[#1A365D] mt-2">{{ $data['paiements_list']->filter(function($p) use ($thisMonth) {
-                    return \Carbon\Carbon::parse($p->date_paiement)->format('Y-m') === $thisMonth;
-                })->count() }}</p>
-            </div>
+            @include('components.kpi-card', [
+                'label' => 'Encaissé Aujourd\'hui',
+                'value' => number_format($encaisseToday, 0, ',', ' '),
+                'suffix' => 'F',
+                'icon' => 'check',
+                'color' => 'green'
+            ])
+            @include('components.kpi-card', [
+                'label' => 'Global Mois Actuel',
+                'value' => number_format($encaisseMonth, 0, ',', ' '),
+                'suffix' => 'F',
+                'icon' => 'money',
+                'color' => 'gradient'
+            ])
+            @include('components.kpi-card', [
+                'label' => 'Transactions (Mois)',
+                'value' => $transactionsMonth,
+                'icon' => 'chart',
+                'color' => 'gray'
+            ])
         </div>
 
         <!-- Table -->
-        <div id="pai-table-container" class="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
-            <div class="overflow-x-auto">
-                <table class="ontario-table w-full text-left border-collapse">
-                    <thead class="bg-[#1A365D]">
-                        <tr>
-                            <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-white">Date & Référence</th>
-                            <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-white">Locataire</th>
-                            <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-white text-center">Méthode</th>
-                            <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-white text-right">Montant Encaissé</th>
-                            <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-white text-center">Preuve</th>
-                            <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-white text-right">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-100">
-                        @forelse($data['paiements_list'] as $pai)
-                        <tr class="hover:bg-gray-50 transition group">
-                            <td class="px-6 py-4">
-                                <div class="font-bold text-gray-900">{{ \Carbon\Carbon::parse($pai->date_paiement)->translatedFormat('d M Y') }}</div>
-                                <div class="text-xs text-gray-400 font-medium mt-0.5">REF: {{ $pai->reference ?? 'TRAN-'.$pai->id }}</div>
-                            </td>
-                            <td class="px-6 py-4">
-                                <div class="font-bold text-gray-800 capitalize">{{ $pai->loyer->contrat->locataire->nom ?? 'Inconnu' }}</div>
-                                <div class="text-xs text-gray-400">Mois: {{ \Carbon\Carbon::parse($pai->loyer->mois)->translatedFormat('F Y') }}</div>
-                            </td>
-                            <td class="px-6 py-4 text-center">
-                                <span class="inline-flex px-3 py-1.5 rounded-full text-xs font-bold uppercase
-                                    @if(($pai->mode ?? 'espèces') == 'espèces') bg-amber-100 text-amber-700
-                                    @elseif($pai->mode == 'virement') bg-blue-100 text-blue-700
-                                    @else bg-purple-100 text-purple-700
-                                    @endif">
-                                    {{ $pai->mode ?? 'Espèces' }}
-                                </span>
-                            </td>
-                            <td class="px-6 py-4 text-right">
-                                <span class="font-extrabold text-green-600 text-lg">+ {{ number_format($pai->montant, 0, ',', ' ') }} F</span>
-                            </td>
-                            <td class="px-6 py-4 text-center">
-                                @if($pai->preuve)
-                                <button onclick="window.previewDoc({url: '{{ asset('storage/' . $pai->preuve) }}', nom_original: 'Preuve_{{ $pai->reference }}.{{ pathinfo($pai->preuve, PATHINFO_EXTENSION) }}', type_label: 'Preuve de Paiement'})" 
-                                   class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-blue-50 text-blue-500 hover:bg-blue-600 hover:text-white transition-all" 
-                                   title="Voir Preuve">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
-                                </button>
-                                @else
-                                <span class="text-gray-300 text-[10px] font-bold uppercase italic">N/A</span>
-                                @endif
-                            </td>
-                            <td class="px-6 py-4 text-right">
-                                <div class="flex items-center justify-end gap-2">
-                                    <button onclick="window.previewDoc({url: '{{ route('loyers.quittance', $pai->loyer_id) }}', nom_original: 'Quittance_{{ str_replace([' ', "'"], ['_', '_'], $pai->loyer->contrat->locataire->nom) }}.pdf', type_label: 'Quittance de Loyer'})" 
-                                       class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-gray-100 text-gray-500 hover:bg-[#D32F2F] hover:text-white transition-all" 
-                                       title="Visualiser le Reçu">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+        <!-- Table -->
+        <div id="pai-table-container">
+            <x-data-table :headers="[
+                ['label' => 'Date & Référence', 'classes' => 'text-white'],
+                ['label' => 'Locataire', 'classes' => 'text-white'],
+                ['label' => 'Méthode', 'classes' => 'text-white text-center'],
+                ['label' => 'Montant Encaissé', 'classes' => 'text-right text-white'],
+                ['label' => 'Preuve', 'classes' => 'text-center text-white'],
+                ['label' => 'Actions', 'classes' => 'text-right text-white']
+            ]" emptyMessage="Aucun paiement enregistré pour le moment.">
+
+                @forelse($data['paiements_list'] as $pai)
+                <tr class="hover:bg-gray-50/80 transition-all duration-300 group">
+                    <td class="px-6 py-4">
+                        <div class="font-bold text-gray-900">{{ \Carbon\Carbon::parse($pai->date_paiement)->translatedFormat('d M Y') }}</div>
+                        <div class="text-xs text-gray-400 font-medium mt-0.5">REF: {{ $pai->reference ?? 'TRAN-'.$pai->id }}</div>
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="font-bold text-gray-800 capitalize">{{ $pai->loyer->contrat->locataire->nom ?? 'Inconnu' }}</div>
+                        <div class="text-xs text-gray-400">Mois: {{ \Carbon\Carbon::parse($pai->loyer->mois)->translatedFormat('F Y') }}</div>
+                    </td>
+                    <td class="px-6 py-4 text-center">
+                        <span class="inline-flex px-3 py-1.5 rounded-full text-xs font-bold uppercase
+                            @if(($pai->mode ?? 'espèces') == 'espèces') bg-amber-100 text-amber-700
+                            @elseif($pai->mode == 'virement') bg-blue-100 text-blue-700
+                            @else bg-purple-100 text-purple-700
+                            @endif">
+                            {{ $pai->mode ?? 'Espèces' }}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 text-right">
+                        <span class="font-extrabold text-green-600 text-lg">{{ number_format($pai->montant, 0, ',', ' ') }} F</span>
+                    </td>
+                    <td class="px-6 py-4 text-center">
+                        @if($pai->preuve)
+                        <button onclick="window.previewDoc({url: '/storage/{{ $pai->preuve }}', nom_original: 'Preuve_{{ $pai->reference }}.{{ pathinfo($pai->preuve, PATHINFO_EXTENSION) }}', type_label: 'Preuve de Paiement'})" 
+                           class="inline-flex items-center justify-center gap-1 px-2.5 py-1.5 rounded-lg bg-amber-50 text-amber-600 hover:bg-amber-500 hover:text-white transition-all text-xs font-bold" 
+                           title="Voir la preuve jointe">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/></svg>
+                            Preuve
+                        </button>
+                        @else
+                        <span class="text-xs text-gray-300 italic">—</span>
+                        @endif
+                    </td>
+                    <td class="px-6 py-4 text-right">
+                        <div class="flex items-center justify-end gap-2">
+                             <button onclick="window.previewDoc({url: '{{ route('loyers.quittance', $pai->loyer_id) }}', nom_original: 'Recu_{{ $pai->id }}.pdf', type_label: 'Reçu'})" 
+                                class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-gray-100 text-gray-500 hover:bg-blue-600 hover:text-white transition-all" 
+                                title="Reçu">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                            </button>
+                            @if(in_array(auth()->user()->role, ['admin', 'comptable']))
+                            <button onclick="paiSection.confirmDelete({{ $pai->id }})" 
+                               class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-red-50 text-red-500 hover:bg-gradient-to-r from-[#cb2d2d] to-[#ef4444] hover:text-white transition-all" 
+                               title="Supprimer">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                            </button>
+                            @endif
+                        </div>
+                    </td>
+                </tr>
+                @empty
+                    <!-- Géré par le composant -->
+                @endforelse
+
+                <x-slot name="mobile">
+                    @if(count($data['paiements_list']) > 0)
+                        @foreach($data['paiements_list'] as $pai)
+                            <x-data-card 
+                                title="{{ \Carbon\Carbon::parse($pai->date_paiement)->translatedFormat('d M Y') }}" 
+                                status="Payé" 
+                                statusColor="green"
+                            >
+                                <div class="flex flex-col gap-1 text-gray-600">
+                                    <div class="font-bold text-gray-900 capitalize">{{ $pai->loyer->contrat->locataire->nom ?? 'Inconnu' }}</div>
+                                    <div class="flex justify-between items-center mt-1">
+                                        <div class="font-bold text-green-600">{{ number_format($pai->montant, 0, ',', ' ') }} F</div>
+                                        <span class="text-xs px-2 py-0.5 rounded-full bg-gray-100 uppercase">{{ $pai->mode ?? 'Espèces' }}</span>
+                                    </div>
+                                </div>
+
+                                <x-slot name="actions">
+                                    @if($pai->preuve)
+                                        <button onclick="window.previewDoc({url: '/storage/{{ $pai->preuve }}', nom_original: 'Preuve_{{ $pai->id }}.{{ pathinfo($pai->preuve, PATHINFO_EXTENSION) }}', type_label: 'Preuve de Paiement'})" class="p-3 bg-amber-50 text-amber-600 rounded-lg hover:bg-amber-100" title="Voir la preuve jointe">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/></svg>
+                                        </button>
+                                    @endif
+                                    <button onclick="window.previewDoc({url: '{{ route('loyers.quittance', $pai->loyer_id) }}', nom_original: 'Recu_{{ $pai->id }}.pdf', type_label: 'Reçu'})" class="p-3 bg-gray-50 text-gray-500 rounded-lg hover:bg-gray-100" title="Reçu">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                                     </button>
                                     @if(in_array(auth()->user()->role, ['admin', 'comptable']))
-                                    <button onclick="paiSection.confirmDelete({{ $pai->id }})" 
-                                       class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-red-50 text-red-500 hover:bg-red-600 hover:text-white transition-all" 
-                                       title="Supprimer (Annuler)">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                                    <button onclick="paiSection.confirmDelete({{ $pai->id }})" class="p-3 bg-red-50 text-red-500 rounded-lg hover:text-red-600 hover:bg-red-100" title="Supprimer">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                                     </button>
                                     @endif
-                                </div>
-                            </td>
-                        </tr>
-                        @empty
-                        <tr>
-                            <td colspan="6" class="px-6 py-16 text-center">
-                                <div class="flex flex-col items-center">
-                                    <div class="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mb-4">
-                                        <svg class="w-8 h-8 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2z"/></svg>
-                                    </div>
-                                    <p class="text-gray-400 font-medium">Aucun paiement enregistré</p>
-                                    <p class="text-gray-300 text-sm mt-1">Les encaissements apparaîtront ici</p>
-                                </div>
-                            </td>
-                        </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
+                                </x-slot>
+                            </x-data-card>
+                        @endforeach
+                    @endif
+                </x-slot>
+            </x-data-table>
         </div>
     </div>
 
     <!-- MODAL (ULTRA COMPACT GRID) -->
-    <div id="pai-modal-overlay" onclick="if(event.target === this) paiSection.closeModal()" class="fixed inset-0 z-[60] hidden bg-slate-900/40 backdrop-blur-md transition-all duration-300 flex items-center justify-center p-4">
-        <div id="pai-modal-container" class="bg-white w-full sm:max-w-xl rounded-2xl shadow-2xl transform scale-95 opacity-0 transition-all duration-300 overflow-hidden border border-gray-100">
+    <div id="pai-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="pai-modal-title" onclick="if(event.target === this) paiSection.closeModal()" class="fixed inset-0 z-[60] hidden bg-slate-900/40 backdrop-blur-md transition-all duration-300 flex items-end sm:items-center justify-center p-0 sm:p-4">
+        <div id="pai-modal-container" class="bg-white w-full h-full sm:h-auto sm:max-w-xl rounded-none sm:rounded-2xl shadow-2xl transform scale-95 opacity-0 transition-all duration-300 overflow-hidden border border-gray-100">
             
             <!-- Header Compact -->
-            <div class="bg-[#1A365D] px-6 py-4 flex items-center justify-between">
+            <div class="bg-[#274256] px-6 py-4 flex items-center justify-between">
                 <div>
-                    <h3 class="text-base font-bold text-white">Nouvel Encaissement</h3>
-                    <p class="text-blue-100/60 text-[10px] uppercase font-black tracking-widest mt-0.5">Enregistrer un paiement</p>
+                    <h3 id="pai-modal-title" class="text-base font-bold text-white">Nouvel Encaissement</h3>
+                    <p class="text-blue-100/60 text-[11px] uppercase font-black tracking-widest mt-0.5">Enregistrer un paiement</p>
                 </div>
-                <button onclick="paiSection.closeModal()" class="text-white/60 hover:text-white p-1.5 rounded-full hover:bg-white/10 transition">
+                <button onclick="paiSection.closeModal()" class="text-white/60 hover:text-white p-1.5 rounded-full hover:bg-white/10 transition" aria-label="Fermer">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                 </button>
             </div>
 
-            <form id="pai-main-form" action="{{ route('paiements.store') }}" method="POST" target="pai_post_target" class="p-6 space-y-4">
+            <form id="pai-main-form" action="{{ route('paiements.store') }}" method="POST" enctype="multipart/form-data" target="pai_post_target" class="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
                 @csrf
                 
                 <!-- Sélection Loyer -->
-                <div class="relative bg-gray-50 rounded-xl border border-gray-200 px-3 py-2 focus-within:ring-2 focus-within:ring-[#1A365D]/10 focus-within:border-[#1A365D] transition-all">
-                    <label class="block text-[9px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Loyer à solder</label>
-                    <select name="loyer_id" id="pai-select-loyer" required class="block w-full bg-transparent border-none p-0 text-sm font-bold text-gray-900 focus:ring-0 appearance-none cursor-pointer">
+                <div class="relative bg-gray-50 rounded-xl border border-gray-200 px-3 py-2 focus-within:ring-2 focus-within:ring-[#274256]/10 focus-within:border-[#274256] transition-all">
+                    <label class="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Loyer à solder</label>
+                    <select name="loyer_id" id="pai-select-loyer" required class="block w-full bg-transparent border-none p-0 text-base sm:text-sm font-bold text-gray-900 focus:ring-0 appearance-none cursor-pointer">
                         @php
                             $unpaidLoyers = $data['loyers_list']->filter(fn($l) => strtolower(trim($l->statut)) !== 'payé');
                         @endphp
@@ -169,31 +202,31 @@
                 <!-- Info Card Compact -->
                 <div id="pai-locataire-card" class="hidden bg-blue-50/50 rounded-xl p-3 border border-blue-100 flex items-center justify-between">
                     <div>
-                        <p class="text-[9px] font-black text-[#1A365D] uppercase tracking-widest opacity-60">Locataire</p>
+                        <p class="text-[11px] font-black text-[#274256] uppercase tracking-widest opacity-60">Locataire</p>
                         <p id="pai-card-locataire" class="text-xs font-bold text-gray-900 leading-tight">--</p>
-                        <p id="pai-card-mois" class="text-[10px] text-gray-500 mt-0.5">--</p>
+                        <p id="pai-card-mois" class="text-[11px] text-gray-500 mt-0.5">--</p>
                     </div>
                     <div class="text-right">
-                        <p class="text-[9px] font-black text-[#cb2d2d] uppercase tracking-widest opacity-60">Montant Dû</p>
-                        <p id="pai-card-montant" class="text-sm font-black text-[#1A365D] leading-tight">0 F</p>
+                        <p class="text-[11px] font-black text-[#cb2d2d] uppercase tracking-widest opacity-60">Montant Dû</p>
+                        <p id="pai-card-montant" class="text-sm font-black text-[#274256] leading-tight">0 F</p>
                     </div>
                 </div>
 
                 <!-- Grid Montant / Date -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="relative bg-gray-50 rounded-xl border border-gray-200 px-3 py-2 focus-within:ring-2 focus-within:ring-[#1A365D]/10 focus-within:border-[#1A365D] transition-all">
-                        <label class="block text-[9px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Montant Encaissé (F)</label>
-                        <input type="number" name="montant" id="pai-input-montant" required class="block w-full bg-transparent border-none p-0 text-sm font-bold text-gray-900 focus:ring-0 text-right font-mono" placeholder="0">
+                    <div class="relative bg-gray-50 rounded-xl border border-gray-200 px-3 py-2 focus-within:ring-2 focus-within:ring-[#274256]/10 focus-within:border-[#274256] transition-all">
+                        <label class="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Montant Encaissé (F)</label>
+                        <input type="number" name="montant" id="pai-input-montant" required class="block w-full bg-transparent border-none p-0 text-base sm:text-sm font-bold text-gray-900 focus:ring-0 text-right font-mono" placeholder="0">
                     </div>
-                    <div class="relative bg-gray-50 rounded-xl border border-gray-200 px-3 py-2 focus-within:ring-2 focus-within:ring-[#1A365D]/10 focus-within:border-[#1A365D] transition-all">
-                        <label class="block text-[9px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Date Paiement</label>
-                        <input type="date" name="date_paiement" value="{{ date('Y-m-d') }}" required class="block w-full bg-transparent border-none p-0 text-sm font-bold text-gray-900 focus:ring-0">
+                    <div class="relative bg-gray-50 rounded-xl border border-gray-200 px-3 py-2 focus-within:ring-2 focus-within:ring-[#274256]/10 focus-within:border-[#274256] transition-all">
+                        <label class="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Date Paiement</label>
+                        <input type="date" name="date_paiement" value="{{ date('Y-m-d') }}" required class="block w-full bg-transparent border-none p-0 text-base sm:text-sm font-bold text-gray-900 focus:ring-0">
                     </div>
                 </div>
 
                 <!-- Mode de Règlement Compact -->
                 <div>
-                     <label class="block text-[9px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Mode de Règlement</label>
+                     <label class="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Mode de Règlement</label>
                      <div class="grid grid-cols-3 gap-3">
                         <label class="cursor-pointer group">
                             <input type="radio" name="mode" value="espèces" checked class="hidden peer">
@@ -219,6 +252,31 @@
                      </div>
                 </div>
 
+                <!-- Preuve de Paiement (Upload) -->
+                <div>
+                    <label class="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Preuve de Paiement (Optionnel)</label>
+                    <div class="relative bg-gray-50 rounded-xl border-2 border-dashed border-gray-200 hover:border-amber-400 transition-all cursor-pointer group" onclick="document.getElementById('pai-preuve-input').click()">
+                        <input type="file" name="preuve" id="pai-preuve-input" accept="image/*,.pdf" class="hidden" onchange="paiSection.updatePreuvePreview(this)">
+                        <div id="pai-preuve-placeholder" class="p-4 flex flex-col items-center justify-center text-center">
+                            <svg class="w-8 h-8 text-gray-300 group-hover:text-amber-500 transition mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/></svg>
+                            <p class="text-xs font-bold text-gray-500 group-hover:text-amber-600 transition">Cliquez pour joindre une preuve</p>
+                            <p class="text-[10px] text-gray-400 mt-1">Image ou PDF (Max 5 Mo)</p>
+                        </div>
+                        <div id="pai-preuve-preview" class="hidden p-3 flex items-center gap-3">
+                            <div class="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center text-amber-600">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p id="pai-preuve-name" class="text-xs font-bold text-gray-900 truncate">fichier.pdf</p>
+                                <p id="pai-preuve-size" class="text-[10px] text-gray-400">0 Ko</p>
+                            </div>
+                            <button type="button" onclick="event.stopPropagation(); paiSection.clearPreuve();" class="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Footer Actions -->
                 <div class="pt-4 flex items-center justify-end gap-3 border-t border-gray-100">
                     <button type="button" onclick="paiSection.closeModal()" class="px-4 py-2 text-gray-500 font-bold hover:bg-gray-50 rounded-xl transition text-[11px] uppercase tracking-widest">Annuler</button>
@@ -232,17 +290,17 @@
     </div>
 
     <!-- MODAL DELETE CONFIRMATION -->
-    <div id="pai-delete-modal" onclick="if(event.target === this) paiSection.closeDeleteModal()" class="fixed inset-0 z-[120] hidden bg-gray-900/60 backdrop-blur-sm flex items-center justify-center p-4 transition-opacity opacity-0 duration-300">
+    <div id="pai-delete-modal" role="dialog" aria-modal="true" aria-labelledby="pai-delete-modal-title" onclick="if(event.target === this) paiSection.closeDeleteModal()" class="fixed inset-0 z-[120] hidden bg-gray-900/60 backdrop-blur-sm flex items-center justify-center p-4 transition-opacity opacity-0 duration-300">
         <div id="pai-delete-container" class="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-8 text-center transform scale-95 transition-all duration-300">
              <div class="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm">
                 <svg class="w-10 h-10 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
             </div>
-            <h3 class="text-xl font-bold text-gray-900 mb-2">Annuler ce paiement ?</h3>
+            <h3 id="pai-delete-modal-title" class="text-xl font-bold text-gray-900 mb-2">Annuler ce paiement ?</h3>
             <p class="text-sm text-gray-500 mb-8 leading-relaxed">
                 Le montant sera retiré de la caisse et le loyer associé repassera en "Impayé" pour le locataire.
             </p>
             <div class="flex flex-col gap-3">
-                <button onclick="paiSection.executeDelete()" id="pai-confirm-delete-btn" class="w-full px-6 py-3.5 bg-red-600 text-white font-bold rounded-xl hover:bg-red-700 transition shadow-lg shadow-red-900/20 text-sm tracking-wide">
+                <button onclick="paiSection.executeDelete()" id="pai-confirm-delete-btn" class="w-full px-6 py-3.5 bg-gradient-to-r from-[#cb2d2d] to-[#ef4444] text-white font-bold rounded-xl hover:bg-red-700 transition shadow-lg shadow-red-900/20 text-sm tracking-wide">
                     Oui, Supprimer
                 </button>
                 <button onclick="paiSection.closeDeleteModal()" class="w-full px-6 py-3.5 bg-white border border-gray-200 text-gray-700 font-bold rounded-xl hover:bg-gray-50 transition text-sm">
@@ -276,39 +334,19 @@
         onStoreSuccess: function(msg) {
              const btn = document.getElementById('pai-submit-btn');
              btn.innerHTML = '✅ Encaissé !';
-             btn.classList.replace('from-[#C62828]', 'from-green-600');
-             btn.classList.replace('to-[#D32F2F]', 'to-green-500');
+             btn.disabled = false;
              
-             // Refresh UI logic
-             const refreshIframe = document.getElementById('pai_refresh_iframe');
-             refreshIframe.src = '{{ route('dashboard') }}#paiements';
-             refreshIframe.onload = () => {
-                 const iframeDoc = refreshIframe.contentDocument || refreshIframe.contentWindow.document;
-                 const newTable = iframeDoc.getElementById('pai-table-container');
-                 const newKpi = iframeDoc.getElementById('pai-kpi-container');
-                 const newSelect = iframeDoc.getElementById('pai-select-loyer');
-
-                 if(newTable) document.getElementById('pai-table-container').innerHTML = newTable.innerHTML;
-                 if(newKpi) document.getElementById('pai-kpi-container').innerHTML = newKpi.innerHTML;
-                 // Mettre à jour aussi le select car un loyer a disparu
-                 if(newSelect) document.getElementById('pai-select-loyer').innerHTML = newSelect.innerHTML;
-                 
-                 setTimeout(() => {
-                     this.closeModal();
-                     // Reset bouton
-                     btn.innerHTML = '<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg> Valider';
-                     btn.classList.replace('from-green-600', 'from-[#C62828]');
-                     btn.classList.replace('to-green-500', 'to-[#D32F2F]');
-                     btn.disabled = false;
-                 }, 1000);
-             };
+             // Simple feedback puis rechargement de la page
+             setTimeout(function() {
+                 window.location.reload();
+             }, 800);
         },
 
         onStoreError: function(msg) {
             const btn = document.getElementById('pai-submit-btn');
             btn.innerHTML = '<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg> Erreur';
             btn.disabled = false;
-            alert(msg); // Plus simple pour debug, mais on peut faire un toast si dispo
+            showToast(msg, 'error'); // Replacement of alert() for better UX
             setTimeout(() => {
                 btn.innerHTML = '<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg> Valider';
             }, 3000);
@@ -346,6 +384,32 @@
             inputMontant.value = '';
         }
     });
+
+    // Gestion de l'aperçu du fichier preuve
+    window.paiSection.updatePreuvePreview = function(input) {
+        const placeholder = document.getElementById('pai-preuve-placeholder');
+        const preview = document.getElementById('pai-preuve-preview');
+        const nameEl = document.getElementById('pai-preuve-name');
+        const sizeEl = document.getElementById('pai-preuve-size');
+        
+        if (input.files && input.files[0]) {
+            const file = input.files[0];
+            nameEl.textContent = file.name;
+            sizeEl.textContent = (file.size / 1024).toFixed(1) + ' Ko';
+            placeholder.classList.add('hidden');
+            preview.classList.remove('hidden');
+        }
+    };
+
+    window.paiSection.clearPreuve = function() {
+        const input = document.getElementById('pai-preuve-input');
+        const placeholder = document.getElementById('pai-preuve-placeholder');
+        const preview = document.getElementById('pai-preuve-preview');
+        
+        input.value = '';
+        placeholder.classList.remove('hidden');
+        preview.classList.add('hidden');
+    };
 
     // Gestion Suppression Paiement
     window.paiSection.confirmDelete = function(id) {
@@ -391,19 +455,9 @@
             const data = await response.json();
 
             if(data.success) {
-                // Refresh logic
-                const refreshIframe = document.getElementById('pai_refresh_iframe');
-                refreshIframe.src = '{{ route('dashboard') }}#paiements';
-                refreshIframe.onload = () => {
-                     const iframeDoc = refreshIframe.contentDocument || refreshIframe.contentWindow.document;
-                     const newTable = iframeDoc.getElementById('pai-table-container');
-                     const newKpi = iframeDoc.getElementById('pai-kpi-container');
-                     
-                     if(newTable) document.getElementById('pai-table-container').innerHTML = newTable.innerHTML;
-                     if(newKpi) document.getElementById('pai-kpi-container').innerHTML = newKpi.innerHTML;
-                     
-                     showToast('Paiement supprimé et loyer restauré', 'success');
-                };
+                showToast('Paiement supprimé et loyer restauré', 'success');
+                if(window.dashboard) window.dashboard.refresh();
+                else window.location.reload();
             } else {
                 showToast(data.message || 'Erreur lors de la suppression', 'error');
             }

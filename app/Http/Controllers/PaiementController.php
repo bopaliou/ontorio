@@ -21,7 +21,7 @@ class PaiementController extends Controller
             'montant' => 'required|numeric|min:0',
             'date_paiement' => 'required|date',
             'mode' => 'nullable|string',
-            'preuve' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048'
+            'preuve' => 'nullable|file|mimes:pdf,jpg,jpeg,png,webp,gif|max:5120'
         ]);
 
         if ($validator->fails()) {

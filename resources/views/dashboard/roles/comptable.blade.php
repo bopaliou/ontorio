@@ -18,21 +18,21 @@
     </div>
 
     <!-- KPIs Comptable -->
-    <div id="dashboard-kpi-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div id="dashboard-kpi-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 animate-stagger">
         <!-- Loyers Émis -->
-        <div data-show-section="loyers" class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 cursor-pointer hover:border-blue-500 transition-colors">
+        <div data-show-section="loyers" class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 cursor-pointer ontario-card-lift">
             <h3 class="text-gray-500 text-sm font-medium">Facturé ce mois</h3>
             <p class="text-2xl font-bold text-[#274256] mt-1">{{ number_format($data['kpis']['loyers_emis'], 0, ',', ' ') }} F CFA</p>
         </div>
 
         <!-- Loyers Payés -->
-        <div data-show-section="paiements" class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 cursor-pointer hover:border-blue-500 transition-colors">
+        <div data-show-section="paiements" class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 cursor-pointer ontario-card-lift">
             <h3 class="text-gray-500 text-sm font-medium">Encaissé ce mois</h3>
             <p class="text-2xl font-bold text-green-600 mt-1">{{ number_format($data['kpis']['loyers_payes'], 0, ',', ' ') }} F CFA</p>
         </div>
 
         <!-- Impayés -->
-        <div data-show-section="loyers" class="bg-white p-6 rounded-2xl shadow-sm border border-red-100 ring-2 ring-red-50 cursor-pointer hover:border-red-500 transition-colors">
+        <div data-show-section="loyers" class="bg-white p-6 rounded-2xl shadow-sm border border-red-100 ring-2 ring-red-50 cursor-pointer ontario-card-lift">
             <h3 class="text-red-600 text-sm font-medium">Impayés Global</h3>
             <p class="text-2xl font-bold text-red-600 mt-1">{{ number_format($data['kpis']['total_impaye'], 0, ',', ' ') }} F CFA</p>
         </div>
@@ -57,7 +57,7 @@
                 <table class="w-full text-left border-collapse">
                     <tbody class="divide-y divide-gray-100 text-sm">
                         @forelse($data['loyers_en_attente'] as $loyer)
-                        <tr class="hover:bg-gray-50 transition">
+                        <tr class="hover:bg-gray-50/50 transition-all duration-300 group">
                             <td class="px-6 py-4">
                                 <p class="font-medium text-gray-900">{{ $loyer->contrat->locataire->nom ?? 'Inconnu' }}</p>
                                 <p class="text-xs text-gray-500">{{ $loyer->contrat->bien->nom ?? '' }}</p>
@@ -88,7 +88,7 @@
                 <table class="w-full text-left border-collapse">
                     <tbody class="divide-y divide-gray-100 text-sm">
                         @forelse($data['derniers_paiements'] as $paiement)
-                        <tr class="hover:bg-gray-50 transition">
+                        <tr class="hover:bg-gray-50/50 transition-all duration-300 group">
                             <td class="px-6 py-4">
                                 <p class="font-medium text-gray-900">{{ $paiement->loyer->contrat->locataire->nom ?? 'Inconnu' }}</p>
                                 <p class="text-[10px] text-gray-400 uppercase">{{ \Carbon\Carbon::parse($paiement->date_paiement)->format('d F Y') }}</p>

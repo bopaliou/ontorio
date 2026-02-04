@@ -3,21 +3,19 @@
     <!-- IFRAME MASQUE POUR LES POST (Anti-Reload Pattern) -->
     <iframe name="rapport_post_target" class="hidden"></iframe>
 
-    <div class="flex items-center justify-between">
-        <div>
-            <h2 class="text-2xl font-bold text-[#274256]">Rapports & Analyses</h2>
-            <p class="text-sm text-gray-500 mt-1">Vue d'ensemble de la performance financière et immobilière.</p>
-        </div>
-        <div class="flex gap-3">
-             <form action="{{ route('rapports.mensuel') }}" method="GET" target="_blank" class="flex items-center gap-3">
-                 <input type="month" name="mois" value="{{ date('Y-m') }}" class="px-4 py-2 rounded-xl border border-gray-200 text-sm font-bold text-[#274256] focus:border-blue-500 outline-none">
-                 <button type="submit" class="bg-[#274256] text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-lg shadow-blue-900/10 hover:bg-[#1a2e3d] transition flex items-center gap-2">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                    Télécharger PDF
-                </button>
-             </form>
-        </div>
-    </div>
+    <!-- Header Uniforme -->
+    @include('components.section-header', [
+        'title' => 'Rapports & Analyses',
+        'subtitle' => 'Vue d\'ensemble de la performance financière et immobilière.',
+        'icon' => 'chart',
+        'actions' => '<form action="' . route('rapports.mensuel') . '" method="GET" target="_blank" class="flex items-center gap-3">
+             <input type="month" name="mois" value="' . date('Y-m') . '" class="px-4 py-2 rounded-xl border border-gray-200 text-sm font-bold text-[#274256] focus:border-blue-500 outline-none">
+             <button type="submit" class="bg-[#274256] text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-lg shadow-blue-900/10 hover:bg-[#1a2e3d] transition flex items-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                Télécharger PDF
+            </button>
+         </form>'
+    ])
 
     <!-- KPIs Financiers (Basés sur les données du rôle, sinon données globales) -->
     @php
@@ -31,41 +29,40 @@
     @endphp
 
     <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div class="bg-gradient-to-br from-[#274256] to-[#1a2e3d] p-6 rounded-3xl text-white shadow-xl shadow-blue-900/20">
-            <p class="text-[10px] font-black text-blue-200 uppercase tracking-widest mb-2">Revenus du Mois</p>
-            <h3 class="text-3xl font-black">{{ number_format($revenuMois, 0, ',', ' ') }} F</h3>
-            <p class="text-xs text-blue-300 mt-2 font-medium flex items-center gap-1">
-                <svg class="w-3 h-3 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg>
-                Encaissé
-            </p>
-        </div>
+        @include('components.kpi-card', [
+            'label' => 'Revenus du Mois',
+            'value' => number_format($revenuMois, 0, ',', ' '),
+            'suffix' => 'F',
+            'icon' => 'money',
+            'color' => 'gradient',
+            'subtext' => 'Encaissé'
+        ])
+        
+        @include('components.kpi-card', [
+            'label' => 'Impayés Cumulés',
+            'value' => number_format($impayes, 0, ',', ' '),
+            'suffix' => 'F',
+            'icon' => 'warning',
+            'color' => 'red',
+            'subtext' => $impayes > 0 ? 'Action requise' : 'Aucun retard'
+        ])
 
-        <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm relative overflow-hidden group hover:border-blue-100 transition">
-            <div class="absolute -right-6 -bottom-6 w-24 h-24 bg-red-50 rounded-full transition group-hover:scale-110"></div>
-            <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 relative z-10">Impayés Cumulés</p>
-            <h3 class="text-2xl font-black text-red-500 relative z-10">{{ number_format($impayes, 0, ',', ' ') }} F</h3>
-            @if($impayes > 0)
-                <p class="text-xs text-gray-400 mt-2 font-medium relative z-10">Action requise</p>
-            @else
-                <p class="text-xs text-green-500 mt-2 font-medium relative z-10">Aucun retard</p>
-            @endif
-        </div>
+        @include('components.kpi-card', [
+            'label' => 'Taux de Collecte',
+            'value' => $tauxCollecte,
+            'suffix' => '%',
+            'icon' => 'chart',
+            'color' => 'green'
+        ])
 
-        <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm relative overflow-hidden group hover:border-blue-100 transition">
-             <div class="absolute -right-6 -bottom-6 w-24 h-24 bg-green-50 rounded-full transition group-hover:scale-110"></div>
-            <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 relative z-10">Taux de Collecte</p>
-            <h3 class="text-2xl font-black text-green-600 relative z-10">{{ $tauxCollecte }}%</h3>
-            <div class="w-full bg-gray-100 h-1.5 rounded-full mt-3 overflow-hidden">
-                <div class="bg-green-500 h-full rounded-full" style="width: {{ $tauxCollecte }}%"></div>
-            </div>
-        </div>
-
-        <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm relative overflow-hidden group hover:border-blue-100 transition">
-             <div class="absolute -right-6 -bottom-6 w-24 h-24 bg-blue-50 rounded-full transition group-hover:scale-110"></div>
-            <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 relative z-10">Taux d'Occupation</p>
-            <h3 class="text-2xl font-black text-blue-600 relative z-10">{{ $tauxOccupation }}%</h3>
-            <p class="text-xs text-gray-400 mt-2 font-medium relative z-10">Sur {{ $totalLogements }} biens</p>
-        </div>
+        @include('components.kpi-card', [
+            'label' => 'Taux d\'Occupation',
+            'value' => $tauxOccupation,
+            'suffix' => '%',
+            'icon' => 'building',
+            'color' => 'blue',
+            'subtext' => 'Sur ' . $totalLogements . ' biens'
+        ])
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -100,11 +97,11 @@
                             <style> @keyframes growBar{{$loop->index}} { to { height: {{ $height }}%; } } </style>
                             
                             <!-- Tooltip -->
-                            <div class="absolute -top-10 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-[10px] font-bold py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
+                            <div class="absolute -top-10 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-[11px] font-bold py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
                                 {{ number_format($point['montant'], 0, ',', ' ') }} F
                             </div>
                         </div>
-                        <p class="text-[10px] font-bold text-gray-400 uppercase">{{ $point['mois'] }}</p>
+                        <p class="text-[11px] font-bold text-gray-400 uppercase">{{ $point['mois'] }}</p>
                     </div>
                 @endforeach
             </div>
