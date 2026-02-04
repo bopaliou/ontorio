@@ -5,7 +5,6 @@ namespace Tests\Feature;
 use App\Models\Bien;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class BienTest extends TestCase
@@ -17,7 +16,7 @@ class BienTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         // Créer un utilisateur Admin pour les tests
         $this->admin = User::factory()->create([
             'role' => 'admin',

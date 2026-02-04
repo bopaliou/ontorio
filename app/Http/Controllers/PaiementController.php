@@ -63,7 +63,7 @@ class PaiementController extends Controller
                     $loyer->statut = 'payé';
                 } else {
                     // Logique partielle non gérée pour l'instant
-                    $loyer->statut = 'partiel';
+                    $loyer->statut = 'partiellement_payé';
                 }
                 $loyer->save();
             }
@@ -126,7 +126,7 @@ class PaiementController extends Controller
 
                     // Si partiel (amélioration future)
                     if ($sommePaiements > 0) {
-                        $loyer->statut = 'partiel'; // Assurez-vous que l'enum supporte ça ou restez sur 'émis'/'en_retard'
+                        $loyer->statut = 'partiellement_payé'; // Assurez-vous que l'enum supporte ça ou restez sur 'émis'/'en_retard'
                     }
 
                     $loyer->save();

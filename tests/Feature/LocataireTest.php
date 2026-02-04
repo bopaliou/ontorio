@@ -5,7 +5,6 @@ namespace Tests\Feature;
 use App\Models\Locataire;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class LocataireTest extends TestCase
@@ -17,7 +16,7 @@ class LocataireTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         $this->admin = User::factory()->create([
             'role' => 'admin',
         ]);
@@ -61,7 +60,7 @@ class LocataireTest extends TestCase
     {
         $locataire = Locataire::factory()->create([
             'nom' => 'Ancien Nom',
-            'email' => 'old@example.com'
+            'email' => 'old@example.com',
         ]);
 
         $response = $this->actingAs($this->admin)

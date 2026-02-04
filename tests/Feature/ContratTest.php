@@ -8,7 +8,6 @@ use App\Models\Locataire;
 use App\Models\Loyer;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class ContratTest extends TestCase
@@ -20,7 +19,7 @@ class ContratTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         $this->admin = User::factory()->create([
             'role' => 'admin',
         ]);
@@ -57,7 +56,7 @@ class ContratTest extends TestCase
     {
         $bien = Bien::factory()->create(['statut' => 'occupé']);
         $locataire = Locataire::factory()->create();
-        
+
         // Créer un contrat actif existant
         Contrat::factory()->create([
             'bien_id' => $bien->id,
@@ -79,18 +78,18 @@ class ContratTest extends TestCase
     public function test_updating_rent_propagates_to_unpaid_loyers()
     {
         $contrat = Contrat::factory()->create(['loyer_montant' => 100000]);
-        
+
         // Créer des loyers (émis, payé, en_retard)
         $loyerEmis = Loyer::factory()->create([
             'contrat_id' => $contrat->id,
             'montant' => 100000,
-            'statut' => 'émis'
+            'statut' => 'émis',
         ]);
-        
+
         $loyerPayé = Loyer::factory()->create([
             'contrat_id' => $contrat->id,
             'montant' => 100000,
-            'statut' => 'payé'
+            'statut' => 'payé',
         ]);
 
         $response = $this->actingAs($this->admin)
@@ -104,7 +103,7 @@ class ContratTest extends TestCase
 
         // Vérifier que le loyer émis a été mis à jour
         $this->assertEquals(120000, $loyerEmis->fresh()->montant);
-        
+
         // Vérifier que le loyer payé n'a pas bougé
         $this->assertEquals(100000, $loyerPayé->fresh()->montant);
     }
@@ -114,7 +113,7 @@ class ContratTest extends TestCase
         $bien = Bien::factory()->create(['statut' => 'occupé']);
         $contrat = Contrat::factory()->create([
             'bien_id' => $bien->id,
-            'statut' => 'actif'
+            'statut' => 'actif',
         ]);
 
         $response = $this->actingAs($this->admin)
