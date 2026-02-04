@@ -17,7 +17,7 @@ class ContratFactory extends Factory
     public function definition(): array
     {
         return [
-            'bien_id' => \App\Models\Bien::factory(),
+            'bien_id' => $this->faker->randomElement([\App\Models\Bien::factory()]),
             'locataire_id' => \App\Models\Locataire::factory(),
             'date_debut' => $this->faker->dateTimeBetween('-1 year', 'now')->format('Y-m-d'),
             'date_fin' => $this->faker->dateTimeBetween('now', '+1 year')->format('Y-m-d'),

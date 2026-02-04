@@ -17,7 +17,6 @@ class BienTest extends TestCase
     {
         parent::setUp();
 
-        // Créer un utilisateur Admin pour les tests
         $this->admin = User::factory()->create([
             'role' => 'admin',
         ]);
@@ -48,8 +47,8 @@ class BienTest extends TestCase
     {
         $response = $this->actingAs($this->admin)
             ->postJson(route('dashboard.biens.store'), [
-                'nom' => '', // Validations: required
-                'loyer_mensuel' => 'not-a-number', // Validations: numeric
+                'nom' => '',
+                'loyer_mensuel' => 'not-a-number',
             ]);
 
         $response->assertStatus(422)
@@ -58,7 +57,6 @@ class BienTest extends TestCase
 
     public function test_admin_can_update_bien()
     {
-        // Création préalable (via le endpoint ou factory)
         $this->actingAs($this->admin)->postJson(route('dashboard.biens.store'), [
             'nom' => 'Old Name',
             'loyer_mensuel' => 100000,
@@ -106,7 +104,7 @@ class BienTest extends TestCase
 
     public function test_unauthorized_user_cannot_manage_biens()
     {
-        $user = User::factory()->create(['role' => 'comptable']); // Rôle autorisé mais pas pour cette ressource
+        $user = User::factory()->create(['role' => 'comptable']);
 
         $response = $this->actingAs($user)
             ->postJson(route('dashboard.biens.store'), [
@@ -115,6 +113,6 @@ class BienTest extends TestCase
                 'type' => 'appartement',
             ]);
 
-        $response->assertStatus(403); // Middleware role check
+        $response->assertStatus(403);
     }
 }

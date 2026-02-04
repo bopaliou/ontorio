@@ -44,7 +44,6 @@ class LocataireTest extends TestCase
 
     public function test_locataire_validation_fails()
     {
-        // Nom manquant et email invalide
         $response = $this->actingAs($this->admin)
             ->postJson(route('locataires.store'), [
                 'nom' => '',
@@ -95,8 +94,6 @@ class LocataireTest extends TestCase
 
     public function test_unauthorized_user_cannot_manage_locataires()
     {
-        // On utilise 'comptable' qui n'a pas accès à la ressource locataires (selon web.php)
-        // Note: web.php dit: Route::middleware(['auth', 'role:admin|direction|gestionnaire'])->group(...) pour locataires.
         $comptable = User::factory()->create(['role' => 'comptable']);
 
         $response = $this->actingAs($comptable)

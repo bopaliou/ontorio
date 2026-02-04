@@ -79,7 +79,7 @@ class ContratTest extends TestCase
     {
         $contrat = Contrat::factory()->create(['loyer_montant' => 100000]);
 
-        // Créer des loyers (émis, payé, en_retard)
+        // Créer des loyers (émis, payé)
         $loyerEmis = Loyer::factory()->create([
             'contrat_id' => $contrat->id,
             'montant' => 100000,
