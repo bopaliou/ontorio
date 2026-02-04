@@ -56,7 +56,7 @@
                         <div class="mb-3 px-5 text-xs font-semibold uppercase tracking-wider text-blue-300/70">Gestion</div>
                         <button type="button" data-show-section="proprietaires" class="sidebar-nav-link w-full text-left">
                             <i class="bi bi-people text-xl"></i>
-                            <span class="font-medium">Propriétaires</span>
+                            <span class="font-medium">Propriï¿½taires</span>
                         </button>
                         <button type="button" data-show-section="immeubles" class="sidebar-nav-link w-full text-left">
                             <i class="bi bi-buildings text-xl"></i>
@@ -137,7 +137,7 @@
                             @csrf
                             <button type="submit" class="btn-ontario-outline">
                                 <i class="bi bi-box-arrow-right"></i>
-                                Déconnexion
+                                Dï¿½connexion
                             </button>
                         </form>
                     </div>
@@ -178,7 +178,7 @@
 
         backdrop?.addEventListener('click', () => setSidebar(false));
 
-        // État initial : ouvert sur desktop, fermé sur mobile
+        // ï¿½tat initial : ouvert sur desktop, fermï¿½ sur mobile
         function handleSidebarOnResize() {
             if (window.innerWidth < 768) {
                 setSidebar(false);
@@ -190,7 +190,7 @@
         handleSidebarOnResize();
     </script>
     <script>
-        // Navigation sans rechargement complet (PJAX léger)
+        // Navigation sans rechargement complet (PJAX lï¿½ger)
         const mainContent = document.getElementById('mainContent');
         const pageTitle = document.getElementById('pageTitle');
         const breadcrumbList = document.getElementById('breadcrumbList');
@@ -217,7 +217,7 @@
                     breadcrumbList.innerHTML = newBreadcrumb.innerHTML;
                 }
 
-                // Mettre à jour les classes "active" de la sidebar
+                // Mettre ï¿½ jour les classes "active" de la sidebar
                 if (newSidebar) {
                     const oldNavLinks = document.querySelectorAll('.sidebar-nav a');
                     const newNavLinks = newSidebar.querySelectorAll('.sidebar-nav a');
@@ -234,7 +234,7 @@
                     history.pushState({}, '', url);
                 }
             } catch (e) {
-                console.error('Navigation AJAX échouée, rechargement classique', e);
+                console.error('Navigation AJAX ï¿½chouï¿½e, rechargement classique', e);
                 window.location.href = url;
             }
         }

@@ -3,7 +3,7 @@
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
             <h1 class="text-3xl font-bold text-[#274256] tracking-tight">
-                Gestion Immobilière �
+                Gestion Immobilière �
             </h1>
             <p class="text-gray-500 mt-2 text-lg">
                 Vue d'ensemble opérationnelle du parc.

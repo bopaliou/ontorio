@@ -190,7 +190,7 @@
 
     <!-- TEXTE PRINCIPAL -->
     <div class="main-content">
-        Je soussigné, <strong>ONTARIO GROUP S.A.</strong>, agissant en qualité de gérant de l'immeuble/bien sis �
+        Je soussigné, <strong>ONTARIO GROUP S.A.</strong>, agissant en qualité de gérant de l'immeuble/bien sis �
         <strong>{{ $loyer->contrat->bien->nom }}</strong>,
         déclare avoir reçu de Monsieur/Madame <strong>{{ $loyer->contrat->locataire->nom }}</strong>,
         la somme indiquée ci-dessous, en paiement du loyer et des charges pour la période de :

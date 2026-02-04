@@ -5,7 +5,7 @@
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
                 <h1 class="text-3xl font-bold text-[#274256] tracking-tight">
-                    Vue d'ensemble ğŸ
+                    Vue d'ensemble ï¿½
                 </h1>
                 <p class="text-gray-500 mt-2 text-lg">
                     Bienvenue {{ Auth::user()->name }}, voici ce qui se passe aujourd'hui.
