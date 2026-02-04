@@ -40,6 +40,18 @@
 - ✅ Configuration de l'agence
 - ✅ Commissions et suivis
 
+### Gestion des Dépenses & Travaux
+- ✅ Suivi des dépenses par bien (maintenance, travaux, taxes)
+- ✅ Upload de justificatifs
+- ✅ Catégorisation automatique
+- ✅ Bilan financier propriétaire (revenus - dépenses)
+
+### Sécurité
+- ✅ Middleware SecurityHeaders (OWASP)
+- ✅ Protection CSRF, XSS, Clickjacking
+- ✅ Logging des erreurs côté serveur
+- ✅ Audit de sécurité intégré
+
 ### Administration
 - ✅ Gestion des utilisateurs multi-rôles
 - ✅ Système de permissions granulaires
@@ -126,9 +138,11 @@ L'application sera accessible sur `http://localhost:8000`
 
 ```
 ├── app/
-│   ├── Http/Controllers/     # Contrôleurs
+│   ├── Http/
+│   │   ├── Controllers/      # Contrôleurs
+│   │   └── Middleware/       # Middlewares (SecurityHeaders, etc.)
 │   ├── Models/               # Modèles Eloquent
-│   └── Helpers/              # Helpers (Permissions, etc.)
+│   └── Helpers/              # Helpers (Permissions, ActivityLogger)
 ├── database/
 │   ├── migrations/           # Migrations de BDD
 │   └── seeders/              # Seeders de données
@@ -169,6 +183,9 @@ php artisan view:clear
 
 # Régénérer l'autoload
 composer dump-autoload
+
+# Seeder les biens du site public
+php artisan db:seed --class=OntarioPublicSiteSeeder
 ```
 
 ---
@@ -185,6 +202,14 @@ composer dump-autoload
 ---
 
 ## 📝 Changelog
+
+### v1.3.0 (2026-02-04)
+- 🔒 **Middleware SecurityHeaders** (X-Frame-Options, X-XSS-Protection, HSTS)
+- 🔒 Correction de 10 erreurs exposées (logging serveur + messages génériques)
+- ✨ **Gestion des dépenses** (maintenance, travaux, taxes, assurances)
+- ✨ Bilan financier global propriétaire (revenus - dépenses = bénéfice net)
+- ✨ **OntarioPublicSiteSeeder** avec 18 biens immobiliers réalistes
+- 🗑️ Nettoyage des fichiers temporaires
 
 ### v1.2.1 (2026-02-03)
 - 🔒 Audit de sécurité complet
