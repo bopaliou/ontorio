@@ -49,7 +49,9 @@ jobs:
         run: php artisan test
 
       - name: Check Code Style (Pint)
-        run: ./vendor/bin/pint --test
+        run: |
+          ./vendor/bin/pint --version
+          ./vendor/bin/pint --test
 
   frontend-build:
     runs-on: ubuntu-latest

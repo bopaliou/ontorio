@@ -2,11 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Models\Bien;
-use App\Models\Contrat;
-use App\Models\Locataire;
-use App\Models\Loyer;
-use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -20,55 +15,34 @@ class ContratTest extends TestCase
     {
         parent::setUp();
 
-        $this->admin = User::factory()->create([
-            'role' => 'admin',
-        ]);
+        $this->admin = \App\Models\User::factory()->create(['role' => 'admin']);
     }
 
     public function test_admin_can_create_contrat_and_it_updates_bien_status(): void
     {
-        $bien = Bien::factory()->create(['statut' => 'libre']);
-        $locataire = Locataire::factory()->create();
+        $bien = \App\Models\Bien::factory()->create(['statut' => 'libre']);
+        $locataire = \App\Models\Locataire::factory()->create();
 
         $response = $this->actingAs($this->admin)
-            ->postJson(route('contrats.store'), [
-                'bien_id' => $bien->id,
-                'locataire_id' => $locataire->id,
-                'date_debut' => now()->format('Y-m-d'),
-                'loyer_montant' => 200000,
-                'caution' => 200000,
-                'type_bail' => 'habitation',
-            ]);
+            ->postJson(route('contrats.store'), ['bien_id' => $bien->id, 'locataire_id' => $locataire->id, 'date_debut' => now()->format('Y-m-d'), 'loyer_montant' => 200000, 'caution' => 200000, 'type_bail' => 'habitation']);
 
         $response->assertStatus(200)
             ->assertJson(['success' => true]);
 
-        $this->assertDatabaseHas('contrats', [
-            'bien_id' => $bien->id,
-            'locataire_id' => $locataire->id,
-            'statut' => 'actif',
-        ]);
+        $this->assertDatabaseHas('contrats', ['bien_id' => $bien->id, 'locataire_id' => $locataire->id, 'statut' => 'actif']);
 
         $this->assertEquals('occupé', $bien->fresh()->statut);
     }
 
     public function test_cannot_create_contrat_for_occupied_bien(): void
     {
-        $bien = Bien::factory()->create(['statut' => 'occupé']);
-        $locataire = Locataire::factory()->create();
+        $bien = \App\Models\Bien::factory()->create(['statut' => 'occupé']);
+        $locataire = \App\Models\Locataire::factory()->create();
 
-        Contrat::factory()->create([
-            'bien_id' => $bien->id,
-            'statut' => 'actif',
-        ]);
+        \App\Models\Contrat::factory()->create(['bien_id' => $bien->id, 'statut' => 'actif']);
 
         $response = $this->actingAs($this->admin)
-            ->postJson(route('contrats.store'), [
-                'bien_id' => $bien->id,
-                'locataire_id' => $locataire->id,
-                'date_debut' => now()->addMonth()->format('Y-m-d'),
-                'loyer_montant' => 200000,
-            ]);
+            ->postJson(route('contrats.store'), ['bien_id' => $bien->id, 'locataire_id' => $locataire->id, 'date_debut' => now()->addMonth()->format('Y-m-d'), 'loyer_montant' => 200000]);
 
         $response->assertStatus(422)
             ->assertJson(['success' => false]);
@@ -76,26 +50,14 @@ class ContratTest extends TestCase
 
     public function test_updating_rent_propagates_to_unpaid_loyers(): void
     {
-        $contrat = Contrat::factory()->create(['loyer_montant' => 100000]);
+        $contrat = \App\Models\Contrat::factory()->create(['loyer_montant' => 100000]);
 
-        $loyerEmis = Loyer::factory()->create([
-            'contrat_id' => $contrat->id,
-            'montant' => 100000,
-            'statut' => 'émis',
-        ]);
+        $loyerEmis = \App\Models\Loyer::factory()->create(['contrat_id' => $contrat->id, 'montant' => 100000, 'statut' => 'émis']);
 
-        $loyerPayé = Loyer::factory()->create([
-            'contrat_id' => $contrat->id,
-            'montant' => 100000,
-            'statut' => 'payé',
-        ]);
+        $loyerPayé = \App\Models\Loyer::factory()->create(['contrat_id' => $contrat->id, 'montant' => 100000, 'statut' => 'payé']);
 
         $response = $this->actingAs($this->admin)
-            ->putJson(route('contrats.update', $contrat), [
-                'loyer_montant' => 120000,
-                'date_debut' => $contrat->date_debut->format('Y-m-d'),
-                'type_bail' => 'habitation',
-            ]);
+            ->putJson(route('contrats.update', $contrat), ['loyer_montant' => 120000, 'date_debut' => $contrat->date_debut->format('Y-m-d'), 'type_bail' => 'habitation']);
 
         $response->assertStatus(200);
 
@@ -105,11 +67,8 @@ class ContratTest extends TestCase
 
     public function test_deleting_contrat_frees_up_bien(): void
     {
-        $bien = Bien::factory()->create(['statut' => 'occupé']);
-        $contrat = Contrat::factory()->create([
-            'bien_id' => $bien->id,
-            'statut' => 'actif',
-        ]);
+        $bien = \App\Models\Bien::factory()->create(['statut' => 'occupé']);
+        $contrat = \App\Models\Contrat::factory()->create(['bien_id' => $bien->id, 'statut' => 'actif']);
 
         $response = $this->actingAs($this->admin)
             ->deleteJson(route('contrats.destroy', $contrat));
