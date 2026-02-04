@@ -123,17 +123,6 @@ L'application sera accessible sur `http://localhost:8000`
 
 ---
 
-## 🔑 Comptes de Test
-
-| Rôle | Email | Mot de passe |
-|------|-------|--------------|
-| Admin | admin@ontariogroup.net | password |
-| Direction | direction@ontariogroup.net | password |
-| Gestionnaire | gestionnaire@ontariogroup.net | password |
-| Comptable | comptable@ontariogroup.net | password |
-
----
-
 ## 📁 Structure du Projet
 
 ```
