@@ -1,5 +1,5 @@
 <div class="flex flex-col gap-6" id="depenses-section-container">
-    
+
     <!-- SECTION: LISTE PRINCIPALE -->
     <div id="dep-view-list" class="dep-sub-view space-y-6">
         <!-- Header Uniforme -->
@@ -7,11 +7,11 @@
             'title' => 'Gestion des Dépenses',
             'subtitle' => 'Suivi de la maintenance, des taxes et des travaux.',
             'icon' => 'calculator',
-            'actions' => in_array(auth()->user()->role, ['admin', 'gestionnaire']) 
+            'actions' => in_array(auth()->user()->role, ['admin', 'gestionnaire'])
                 ? '<button onclick="depSection.openModal(\'create\')" class="bg-[#cb2d2d] text-white px-6 py-3 rounded-xl text-base sm:text-sm font-bold shadow-lg shadow-red-900/20 hover:bg-[#a82020] transition-all hover:-translate-y-0.5 flex items-center gap-2">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
                     Nouvelle Dépense
-                </button>' 
+                </button>'
                 : ''
         ])
 
@@ -20,7 +20,7 @@
             $depensesMois = $data['depenses_list']->filter(function($d) use ($thisMonth) {
                 return \Carbon\Carbon::parse($d->date_depense)->format('Y-m') === $thisMonth;
             })->sum('montant');
-            
+
             $thisYear = \Carbon\Carbon::now()->year;
             $depensesAnnee = $data['depenses_list']->filter(function($d) use ($thisYear) {
                 return \Carbon\Carbon::parse($d->date_depense)->year === $thisYear;
@@ -95,7 +95,7 @@
                     <td class="px-6 py-4 text-right">
                         <div class="flex items-center justify-end gap-2">
                              @if($dep->justificatif)
-                                <button onclick="window.previewDoc({url: '/storage/{{ $dep->justificatif }}', nom_original: 'Note_{{ $dep->id }}.{{ pathinfo($dep->justificatif, PATHINFO_EXTENSION) }}', type_label: 'Justificatif Dépense'})" 
+                                <button onclick="window.previewDoc({url: '/storage/{{ $dep->justificatif }}', nom_original: 'Note_{{ $dep->id }}.{{ pathinfo($dep->justificatif, PATHINFO_EXTENSION) }}', type_label: 'Justificatif Dépense'})"
                                    class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-blue-50 text-blue-500 hover:bg-blue-600 hover:text-white transition-all">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
                                 </button>
@@ -114,9 +114,9 @@
                 <x-slot name="mobile">
                     @if(count($data['depenses_list']) > 0)
                         @foreach($data['depenses_list'] as $dep)
-                            <x-data-card 
-                                title="{{ $dep->titre }}" 
-                                status="{{ $dep->categorie }}" 
+                            <x-data-card
+                                title="{{ $dep->titre }}"
+                                status="{{ $dep->categorie }}"
                                 statusColor="blue"
                             >
                                 <div class="flex flex-col gap-1 text-gray-600">
@@ -156,7 +156,7 @@
         <div class="fixed inset-0 z-10 w-screen overflow-y-auto" onclick="if(event.target === this) depSection.closeModal()">
             <div class="flex min-h-full items-end justify-center p-0 text-center sm:items-center sm:p-0">
                 <div id="dep-modal-container" class="relative transform overflow-hidden bg-white text-left shadow-2xl transition-all w-full h-full sm:h-auto sm:w-full sm:max-w-lg sm:my-8 rounded-none sm:rounded-2xl opacity-0 scale-95 duration-300 border border-gray-100">
-                    
+
                     <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
                         <h3 id="dep-modal-title" class="text-lg font-bold text-gray-900">Enregistrer une dépense</h3>
                         <button onclick="depSection.closeModal()" class="text-gray-400 hover:text-gray-600 p-1.5 rounded-full hover:bg-gray-100 transition" aria-label="Fermer"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
@@ -165,7 +165,7 @@
                     <form id="dep-main-form" class="p-6 space-y-4" enctype="multipart/form-data">
                         @csrf
                         <input type="hidden" name="id" id="dep-input-id">
-                        
+
                         <div class="space-y-4">
                             <div>
                                 <label class="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-1.5">Bien Concerné</label>
@@ -271,7 +271,7 @@ window.depSection = {
         form.reset();
         document.getElementById('dep-input-id').value = '';
         document.getElementById('dep-file-name').classList.add('hidden');
-        
+
         if(mode === 'edit' && data) {
             title.innerText = 'Modifier la dépense';
             btn.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg> Mettre à jour';
@@ -331,7 +331,7 @@ window.depSection = {
             const formData = new FormData(form);
             const id = formData.get('id');
             const url = id ? `/depenses/${id}` : '/depenses';
-            
+
             if(id) formData.append('_method', 'PUT');
 
             try {

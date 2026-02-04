@@ -1,3 +1,15 @@
 {
-    "preset": "laravel"
+    "preset": "laravel",
+    "rules": {
+        "concat_space": {
+            "spacing": "one"
+        },
+        "trailing_comma_in_multiline": {
+            "elements": [
+                "arrays"
+            ]
+        },
+        "no_unused_imports": true,
+        "no_whitespace_in_blank_line": true
+    }
 }

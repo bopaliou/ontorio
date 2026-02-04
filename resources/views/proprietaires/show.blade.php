@@ -11,7 +11,7 @@
                 <div class="p-6 text-gray-900">
                     <div class="mb-6">
                         <h3 class="text-lg font-semibold mb-4">Informations</h3>
-                        
+
                         <div class="grid grid-cols-2 gap-4">
                             <div>
                                 <p class="text-sm text-gray-600">Nom</p>
@@ -67,11 +67,11 @@
                     </div>
 
                     <div class="flex items-center justify-between">
-                        <a href="{{ route('proprietaires.edit', $proprietaire) }}" 
+                        <a href="{{ route('proprietaires.edit', $proprietaire) }}"
                            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                             Éditer
                         </a>
-                        <a href="{{ route('proprietaires.index') }}" 
+                        <a href="{{ route('proprietaires.index') }}"
                            class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
                             Retour
                         </a>

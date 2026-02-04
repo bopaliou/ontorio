@@ -1,5 +1,5 @@
 <div class="flex flex-col gap-6" id="loyers-section-container">
-    
+
     <!-- SECTION: LISTE PRINCIPALE -->
     <div id="loy-view-list" class="loy-sub-view space-y-6">
         <!-- Header Uniforme -->
@@ -7,14 +7,14 @@
             'title' => 'Suivi des Loyers',
             'subtitle' => 'Pointage des quittances et gestion des impayés.',
             'icon' => 'money',
-            'actions' => App\Helpers\PermissionHelper::can('loyers.generate') 
+            'actions' => App\Helpers\PermissionHelper::can('loyers.generate')
                 ? '<form id="loy-gen-form" method="POST" action="' . route('loyers.genererMois') . '" target="loy_post_target" class="inline">
                     <input type="hidden" name="_token" value="' . csrf_token() . '">
                     <button type="submit" id="loy-gen-btn" class="bg-white border-2 border-gray-100 text-[#274256] px-5 py-2.5 rounded-xl text-sm font-black shadow-sm hover:bg-gray-50 transition flex items-center gap-2">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
                         <span id="loy-gen-text">Générer / Mettre à jour</span>
                     </button>
-                </form>' 
+                </form>'
                 : ''
         ])
 
@@ -110,7 +110,7 @@
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
                                 </button>
                             @endif
-                            
+
                             @if(App\Helpers\PermissionHelper::can('loyers.edit'))
                             <button onclick="loySection.openEditModal({{ json_encode($loy) }})" class="p-2 text-gray-400 hover:text-blue-600 transition" title="Modifier">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
@@ -131,9 +131,9 @@
                 <x-slot name="mobile">
                     @if(count($data['loyers_list']) > 0)
                         @foreach($data['loyers_list'] as $loy)
-                            <x-data-card 
-                                title="{{ \Carbon\Carbon::parse($loy->mois)->translatedFormat('F Y') }}" 
-                                status="{{ str_replace('_', ' ', $loy->statut) }}" 
+                            <x-data-card
+                                title="{{ \Carbon\Carbon::parse($loy->mois)->translatedFormat('F Y') }}"
+                                status="{{ str_replace('_', ' ', $loy->statut) }}"
                                 statusColor="{{ $loy->statut === 'payé' ? 'green' : ($loy->statut === 'en_retard' ? 'red' : 'gray') }}"
                             >
                                 <div class="flex flex-col gap-1 text-gray-600">
@@ -284,7 +284,7 @@
             <form id="loy-edit-form" class="p-6 space-y-4">
                 <input type="hidden" name="id" id="loy-edit-id">
                 <input type="hidden" name="mois" id="loy-edit-mois">
-                
+
                 <div class="relative bg-gray-50 rounded-xl border border-gray-200 px-3 py-2 focus-within:ring-2 focus-within:ring-blue-500/10 focus-within:border-blue-600 transition-all">
                     <label class="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Montant Loyer</label>
                     <input type="number" name="montant" id="loy-edit-montant" required class="block w-full bg-transparent border-none p-0 text-sm font-bold text-gray-900 focus:ring-0">
@@ -330,14 +330,14 @@
         openPaymentModal: function(loyer) {
             const overlay = document.getElementById('loy-payment-modal');
             const container = document.getElementById('loy-payment-container');
-            
+
             // Remplir les infos
             document.getElementById('loy-payment-loyer-id').value = loyer.id;
             document.getElementById('loy-payment-locataire').innerText = loyer.contrat.locataire.nom;
             document.getElementById('loy-payment-periode').innerText = 'Période: ' + new Date(loyer.mois + '-01').toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
             document.getElementById('loy-payment-montant').innerText = new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 0 }).format(loyer.montant) + ' F';
             document.getElementById('loy-payment-montant-input').value = Math.floor(loyer.montant);
-            
+
             overlay.classList.remove('hidden');
             setTimeout(() => { container.classList.remove('scale-95', 'opacity-0'); }, 10);
         },
@@ -351,11 +351,11 @@
 
         onStoreSuccess: function(msg) {
             showToast(msg, 'success');
-            
+
             const btn = document.getElementById('loy-payment-submit');
             const genBtn = document.getElementById('loy-gen-btn');
             const genText = document.getElementById('loy-gen-text');
-            
+
             if(genBtn && genText) {
                 genText.innerHTML = '✅ Terminé !';
                 genBtn.classList.replace('border-gray-100', 'border-green-500');
@@ -365,7 +365,7 @@
                 btn.innerHTML = '✅ Encaissé !';
                 btn.classList.replace('bg-green-600', 'bg-green-700');
             }
-            
+
             if(window.dashboard) {
                 setTimeout(() => {
                     this.closePaymentModal();
@@ -384,7 +384,7 @@
                 btn.classList.replace('bg-green-700', 'bg-green-600');
                 btn.disabled = false;
             }
-            
+
             const genBtn = document.getElementById('loy-gen-btn');
             const genText = document.getElementById('loy-gen-text');
             if(genBtn && genText) {
@@ -402,7 +402,7 @@
             document.getElementById('loy-edit-statut').value = loyer.statut;
             document.getElementById('loy-edit-note').value = loyer.note_annulation || '';
             document.getElementById('loy-edit-montant-paye').value = loyer.montant_paye_cache || 0;
-            
+
             this.toggleEditFields(loyer.statut);
 
             overlay.classList.remove('hidden');
@@ -412,7 +412,7 @@
         toggleEditFields: function(status) {
             const noteGroup = document.getElementById('loy-edit-note-group');
             const partialGroup = document.getElementById('loy-edit-partial-group');
-            
+
             if (status === 'annulé') {
                 noteGroup.classList.remove('hidden');
             } else {
@@ -438,7 +438,7 @@
             refreshIframe.src = '{{ route('dashboard') }}?t=' + new Date().getTime();
             refreshIframe.onload = () => {
                 const iframeDoc = refreshIframe.contentDocument || refreshIframe.contentWindow.document;
-                
+
                 // 1. Refresh Section Tables & KPIs
                 const newTable = iframeDoc.getElementById('loy-table-container');
                 const newKpi = iframeDoc.getElementById('loy-kpi-container');
@@ -449,7 +449,7 @@
                 // Now using robust ID selection 'dashboard-kpi-grid' added to all role views
                 const newGlobalGrid = iframeDoc.getElementById('dashboard-kpi-grid');
                 const oldGlobalGrid = document.getElementById('dashboard-kpi-grid');
-                
+
                 if (newGlobalGrid && oldGlobalGrid) {
                     oldGlobalGrid.innerHTML = newGlobalGrid.innerHTML;
                 }
@@ -474,7 +474,7 @@
         };
 
         try {
-            const res = await fetch(`/loyers/${id}`, { 
+            const res = await fetch(`/loyers/${id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

@@ -6,20 +6,20 @@
     <style>
         @page { margin: 40px; }
         body { font-family: 'Helvetica', sans-serif; color: #333; line-height: 1.6; font-size: 12px; margin: 0; padding: 0; }
-        
+
         /* Color Palette */
         .text-brand { color: #274256; }
         .bg-brand { background-color: #274256; color: white; }
-        
-        .header { 
-            border-bottom: 2px solid #274256; 
-            padding-bottom: 20px; 
+
+        .header {
+            border-bottom: 2px solid #274256;
+            padding-bottom: 20px;
             margin-bottom: 30px;
         }
-        .logo-text { 
-            font-size: 20px; 
-            font-weight: 900; 
-            color: #274256; 
+        .logo-text {
+            font-size: 20px;
+            font-weight: 900;
+            color: #274256;
             text-transform: uppercase;
         }
         .logo-sub {
@@ -28,7 +28,7 @@
             letter-spacing: 1px;
             text-transform: uppercase;
         }
-        
+
         .kpi-grid { display: table; width: 100%; margin: 30px 0; }
         .kpi-item { display: table-cell; width: 25%; padding: 10px; text-align: center; border-right: 1px solid #f0f0f0; }
         .kpi-item:last-child { border-right: none; }
@@ -36,21 +36,21 @@
         .kpi-value { font-size: 20px; font-weight: bold; color: #274256; }
         .kpi-value.green { color: #10b981; }
         .kpi-value.red { color: #ef4444; }
-        
+
         .section-title { font-weight: bold; color: #274256; border-bottom: 2px solid #e2e8f0; margin: 30px 0 15px; padding-bottom: 8px; font-size: 14px; text-transform: uppercase; }
-        
+
         .data-table { width: 100%; border-collapse: collapse; margin: 20px 0; }
         .data-table th { background: #f8fafc; padding: 10px; text-align: left; font-size: 10px; text-transform: uppercase; border-bottom: 1px solid #cbd5e1; color: #64748b; }
         .data-table td { padding: 8px 10px; border-bottom: 1px solid #e2e8f0; font-size: 11px; }
         .data-table tr:hover { background: #f1f5f9; }
-        
+
         .footer { position: fixed; bottom: -20px; left: 0; right: 0; text-align: center; font-size: 8px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 10px; }
-        
+
         .badge { display: inline-block; padding: 3px 8px; border-radius: 999px; font-size: 8px; font-weight: bold; text-transform: uppercase; }
         .badge-success { background: #dcfce7; color: #166534; }
         .badge-warning { background: #fef9c3; color: #854d0e; }
         .badge-danger { background: #fee2e2; color: #991b1b; }
-        
+
         .highlight-box { background: #eff6ff; border-left: 3px solid #274256; padding: 15px; margin: 20px 0; font-size: 11px; }
         .page-break { page-break-after: always; }
     </style>
@@ -104,7 +104,7 @@
     </div>
 
     <div class="section-title">📊 Synthèse Financière</div>
-    
+
     <table class="data-table">
         <thead>
             <tr>
@@ -144,7 +144,7 @@
     </table>
 
     <div class="highlight-box">
-        <strong>💡 ANALYSE :</strong> Le taux de collecte de ce mois s'élève à <strong>{{ $data['kpis']['taux_collecte'] }}%</strong>. 
+        <strong>💡 ANALYSE :</strong> Le taux de collecte de ce mois s'élève à <strong>{{ $data['kpis']['taux_collecte'] }}%</strong>.
         @if($data['kpis']['taux_collecte'] >= 90)
             Excellente performance de recouvrement.
         @elseif($data['kpis']['taux_collecte'] >= 75)
@@ -157,7 +157,7 @@
     <div class="page-break"></div>
 
     <div class="section-title">🏢 État du Parc Immobilier</div>
-    
+
     <table class="data-table">
         <thead>
             <tr>
@@ -191,7 +191,7 @@
     </table>
 
     <div class="section-title">📈 Évolution des Revenus (6 mois)</div>
-    
+
     <table class="data-table">
         <thead>
             <tr>

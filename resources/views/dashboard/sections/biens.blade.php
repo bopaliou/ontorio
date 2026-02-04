@@ -1,5 +1,5 @@
 <div class="h-full flex flex-col gap-8" id="biens-section-container">
-    
+
     <!-- LIST VIEW -->
     <div id="bien-view-list" class="bien-sub-view space-y-8">
         <!-- Header Uniforme -->
@@ -7,11 +7,11 @@
             'title' => 'Parc Immobilier',
             'subtitle' => 'Gestion locative des appartements, villas et autres biens.',
             'icon' => 'building',
-            'actions' => App\Helpers\PermissionHelper::can('biens.create') 
+            'actions' => App\Helpers\PermissionHelper::can('biens.create')
                 ? '<button onclick="bienSection.openModal(\'create\')" class="bg-[#cb2d2d] text-white px-6 py-3 rounded-xl text-sm font-bold shadow-lg shadow-red-900/20 hover:bg-[#a82020] transition-all flex items-center gap-2 transform hover:-translate-y-0.5">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
                     Nouveau Bien
-                </button>' 
+                </button>'
                 : ''
         ])
 
@@ -49,7 +49,7 @@
                             <svg class="w-16 h-16 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"></path></svg>
                         </div>
                     @endif
-                    
+
                     <div class="absolute top-4 right-4">
                         <span class="px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-widest shadow-sm backdrop-blur-md {{ $bien->statut === 'occupé' ? 'bg-blue-500/90 text-white' : 'bg-green-500/90 text-white' }}">
                             {{ $bien->statut }}
@@ -66,7 +66,7 @@
                         <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                         {{ $bien->adresse ?? 'Adresse non renseignée' }}
                     </p>
-                    
+
                     <div class="mt-5 pt-4 border-t border-gray-50 flex items-center justify-between">
                         <div class="flex flex-col">
                              <span class="text-[11px] uppercase font-bold text-gray-400">Loyer</span>
@@ -118,7 +118,7 @@
                      <h3 class="text-xl font-bold text-gray-900" id="det-bien-nom">...</h3>
                      <p class="text-xs text-gray-400 font-bold uppercase tracking-widest mt-1" id="det-bien-type">...
                      </p>
-                     
+
                      <div class="mt-6 flex justify-center mb-4">
                         <span id="det-bien-statut" class="px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest bg-gray-100 text-gray-500">...</span>
                      </div>
@@ -137,7 +137,7 @@
                 <div class="bg-white rounded-3xl p-8 border border-gray-100 shadow-sm">
                     <h4 class="text-xs font-bold text-gray-900 uppercase tracking-widest mb-4 border-b border-gray-50 pb-2">Localisation & Caractéristiques</h4>
                     <p class="text-gray-600 text-base mb-6" id="det-bien-adresse">...</p>
-                    
+
                     <div class="grid grid-cols-2 gap-4">
                         <div class="bg-gray-50 rounded-2xl p-4 flex items-center gap-3">
                             <div class="w-10 h-10 bg-white rounded-xl shadow-sm flex items-center justify-center text-[#cb2d2d]">
@@ -178,7 +178,7 @@
         <div class="fixed inset-0 z-10 w-screen overflow-y-auto" onclick="if(event.target === this) bienSection.closeModal()">
             <div class="flex min-h-full items-end justify-center p-0 text-center sm:items-center sm:p-0" onclick="if(event.target === this) bienSection.closeModal()">
                 <div id="bien-modal-container" class="relative transform overflow-hidden bg-white text-left shadow-2xl transition-all w-full h-full sm:h-auto sm:w-full sm:max-w-xl sm:my-8 rounded-none sm:rounded-2xl opacity-0 scale-95 duration-300 border border-gray-100">
-                    
+
                     <!-- Header -->
                     <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-white">
                         <div>
@@ -192,7 +192,7 @@
 
                     <form id="bien-main-form" class="p-6 space-y-4" enctype="multipart/form-data">
                         <input type="hidden" name="id" id="bien-input-id">
-                        
+
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <!-- Nom du Bien -->
                             <div class="col-span-1 md:col-span-2 relative bg-gray-50 rounded-xl border border-gray-200 px-3 py-2 focus-within:ring-2 focus-within:ring-[#cb2d2d]/10 focus-within:border-[#cb2d2d] transition-all">
@@ -336,11 +336,11 @@
             const wrapper = document.getElementById('bien-modal-wrapper');
             const overlay = document.getElementById('bien-modal-overlay');
             const container = document.getElementById('bien-modal-container');
-            
+
             overlay.classList.add('opacity-0');
             container.classList.remove('opacity-100', 'scale-100');
             container.classList.add('opacity-0', 'scale-95');
-            
+
             setTimeout(() => { wrapper.classList.add('hidden'); }, 300);
         },
 
@@ -351,7 +351,7 @@
             document.getElementById('det-bien-adresse').innerText = bien.adresse || (bien.nom + ' - ' + bien.type);
             document.getElementById('det-bien-pieces').innerText = bien.nombre_pieces ? bien.nombre_pieces + ' Pièce(s)' : 'Non spécifié';
             document.getElementById('det-bien-meuble').innerText = bien.meuble ? 'Meublé' : 'Non meublé';
-            
+
             const statutEl = document.getElementById('det-bien-statut');
             statutEl.innerText = bien.statut;
             statutEl.className = `px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest ${bien.statut === 'occupé' ? 'bg-blue-100 text-blue-700' : 'bg-green-100 text-green-700'}`;
@@ -412,11 +412,11 @@
         closeDeleteModal: function() {
             const modal = document.getElementById('bien-delete-modal');
             const container = document.getElementById('bien-delete-container');
-            
+
             modal.classList.add('opacity-0');
             container.classList.remove('scale-100');
             container.classList.add('scale-95');
-            
+
             setTimeout(() => {
                 modal.classList.add('hidden');
                 this.deleteTargetId = null;
@@ -461,8 +461,8 @@
                  fileInput.addEventListener('change', function() {
                     const display = document.getElementById('file-name-display');
                     if(this.files && this.files.length > 0) {
-                        display.innerText = this.files.length > 1 
-                            ? this.files.length + ' photos sélectionnées' 
+                        display.innerText = this.files.length > 1
+                            ? this.files.length + ' photos sélectionnées'
                             : this.files[0].name;
                         display.classList.remove('hidden');
                     } else {
@@ -475,7 +475,7 @@
 
     // Init
     window.bienSection.setupFileInput();
-    
+
     document.getElementById('bien-confirm-delete-btn').addEventListener('click', function() {
         bienSection.executeDelete();
     });
@@ -499,7 +499,7 @@
                 // 1. Refresh Global Dashboard KPIs (Direction / Comptable / Gestionnaire)
                 const newGlobalGrid = iframeDoc.getElementById('dashboard-kpi-grid');
                 const oldGlobalGrid = document.getElementById('dashboard-kpi-grid');
-                
+
                 if (newGlobalGrid && oldGlobalGrid) {
                     oldGlobalGrid.innerHTML = newGlobalGrid.innerHTML;
                     // Optional: Highlight effect to show update
@@ -512,35 +512,35 @@
                 // We might need to re-fetch the list HTML or reload just the list container.
                 // Since Biens list is large, parsing from iframe dashboard might work if the dashboard view contains the list.
                 // However, the dashboard index loads specific sections.
-                
+
                 // For simplicity and robustness given user request about "Dashboard Stats", simply reloading the page IS safer for the Property list itself,
                 // BUT the user specifically complained about "Comptabilite" stats not updating.
-                
+
                 // Compromise: We refresh the Global Stats via Iframe, AND then we update the local list if possible.
                 // Actually, since updating a Bien affects many things, a reload is fine, BUT user said "donnees mis a jour" not taken into account.
                 // This implies caching or lack of propagation.
-                
-                // Let's STICK to the reload for the Bien itself (to show new price in list), 
+
+                // Let's STICK to the reload for the Bien itself (to show new price in list),
                 // BUT PRE-FETCH the Global Stats or let the reload handle it?
                 // If the user says "it doesn't update", maybe the reload is too fast or hits cache?
                 // Or maybe the Controller didn't update the stats?
-                
+
                 // My update in DashboardController updates the underlying data.
                 // If I reload, it SHOULD show.
                 // Why did the user complain? "on dirait que y'a des donnees toujours codes en dur" -> I fixed that (70%).
-                // "Montant Encaissé ne prends pas en compte..." 
-                
-                // The most likely reason is: The underlying update logic I added takes place, 
+                // "Montant Encaissé ne prends pas en compte..."
+
+                // The most likely reason is: The underlying update logic I added takes place,
                 // then the page reloads. DOM should be fresh.
-                
+
                 // JUST IN CASE: I will execute the iframe refresh logic BEFORE the reload, or instead of it if I can fully swap the content.
                 // Actually, simply adding the iframe method allows us to refresh "Other" tabs/sections if we were using a single-page app approach.
                 // But here we are refreshing.
-                
+
                 // WAIT. If I reload the page, `loyers.blade.php`'s refresh logic is lost.
                 // The User might be looking at the KPI cards at the top of the page.
-                
-                window.location.reload(); 
+
+                window.location.reload();
             };
         }
     };
@@ -555,7 +555,7 @@
         const formData = new FormData(this);
         const id = document.getElementById('bien-input-id').value;
         const url = id ? `/dashboard/biens/${id}` : `{{ route('dashboard.biens.store') }}`;
-        
+
         if (id) {
             formData.append('_method', 'PUT');
         }
@@ -575,7 +575,7 @@
             if(response.ok && data.success) {
                 showToast(data.message || 'Succès', 'success');
                 bienSection.closeModal();
-                
+
                 if(window.dashboard) {
                     window.dashboard.refresh();
                 } else {

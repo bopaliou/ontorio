@@ -16,7 +16,7 @@
                     @endif
 
                     <div class="mb-4">
-                        <a href="{{ route('proprietaires.create') }}" 
+                        <a href="{{ route('proprietaires.create') }}"
                            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                             Créer un propriétaire
                         </a>
@@ -58,16 +58,16 @@
                                         {{ $proprietaire->immeubles->count() }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                        <a href="{{ route('proprietaires.show', $proprietaire) }}" 
+                                        <a href="{{ route('proprietaires.show', $proprietaire) }}"
                                            class="text-blue-600 hover:text-blue-900 mr-3">
                                             Voir
                                         </a>
-                                        <a href="{{ route('proprietaires.edit', $proprietaire) }}" 
+                                        <a href="{{ route('proprietaires.edit', $proprietaire) }}"
                                            class="text-indigo-600 hover:text-indigo-900 mr-3">
                                             Éditer
                                         </a>
-                                        <form action="{{ route('proprietaires.destroy', $proprietaire) }}" 
-                                              method="POST" 
+                                        <form action="{{ route('proprietaires.destroy', $proprietaire) }}"
+                                              method="POST"
                                               class="inline"
                                               onsubmit="return confirm('Confirmer la suppression ?');">
                                             @csrf

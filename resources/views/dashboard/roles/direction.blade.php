@@ -62,7 +62,7 @@
 
     <!-- Tier 2: Strategic Insights -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        
+
         <!-- Evolution Chart Area -->
         <div class="lg:col-span-2 bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100 flex flex-col">
             <div class="flex items-center justify-between mb-10">
@@ -74,7 +74,7 @@
                     <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded-md bg-[#274256]"></div> <span class="text-[10px] font-black text-gray-400 uppercase">Revenus</span></div>
                 </div>
             </div>
-            
+
             <div class="flex-1 h-64 flex items-end justify-between gap-6 px-4">
                 @php $maxVal = max(array_column($data['revenus_par_mois'], 'montant')) ?: 1; @endphp
                 @foreach(array_reverse($data['revenus_par_mois']) as $moisData)
@@ -185,7 +185,7 @@
             </div>
             <div class="p-8 space-y-4">
                 @forelse($data['contrats_expiration'] as $con)
-                    @php 
+                    @php
                         // Utilisation de diffInDays avec arrondi pour éviter les décimales
                         $days = round(\Carbon\Carbon::now()->diffInDays(\Carbon\Carbon::parse($con->date_fin), false));
                         $isOverdue = $days < 0;

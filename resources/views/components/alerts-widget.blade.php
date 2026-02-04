@@ -26,11 +26,11 @@
 async function loadAlerts() {
     const container = document.getElementById('alerts-container');
     container.innerHTML = '<div class="animate-pulse flex items-center gap-3 p-3 bg-white/10 rounded-xl"><div class="w-8 h-8 bg-white/20 rounded-lg"></div><div class="flex-1 h-4 bg-white/20 rounded"></div></div>';
-    
+
     try {
         const response = await fetch('/api/alerts');
         const alerts = await response.json();
-        
+
         if (alerts.length === 0) {
             container.innerHTML = `
                 <div class="flex items-center gap-3 p-3 bg-green-500/20 rounded-xl border border-green-500/30">
@@ -44,7 +44,7 @@ async function loadAlerts() {
             `;
             return;
         }
-        
+
         container.innerHTML = alerts.map(alert => {
             const colors = {
                 warning: { bg: 'bg-yellow-500/20', border: 'border-yellow-500/30', icon: 'text-yellow-400' },
@@ -52,15 +52,15 @@ async function loadAlerts() {
                 secondary: { bg: 'bg-gray-500/20', border: 'border-gray-500/30', icon: 'text-gray-300' }
             };
             const color = colors[alert.type] || colors.secondary;
-            
+
             const icons = {
                 'exclamation-triangle': '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>',
                 'calendar': '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>',
                 'home': '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>'
             };
-            
+
             return `
-                <a href="#" data-show-section="${alert.action}" onclick="dashboard.show('${alert.action}')" 
+                <a href="#" data-show-section="${alert.action}" onclick="dashboard.show('${alert.action}')"
                    class="flex items-center gap-3 p-3 ${color.bg} rounded-xl border ${color.border} hover:scale-[1.02] transition-transform cursor-pointer">
                     <div class="w-8 h-8 ${color.bg} rounded-lg flex items-center justify-center">
                         <svg class="w-5 h-5 ${color.icon}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -74,7 +74,7 @@ async function loadAlerts() {
                 </a>
             `;
         }).join('');
-        
+
     } catch (error) {
         console.error('Erreur chargement alertes:', error);
         container.innerHTML = `

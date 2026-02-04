@@ -1,16 +1,16 @@
 <div class="h-full flex flex-col gap-8" id="locataires-section-container">
-    
+
     <div id="loc-view-list" class="loc-sub-view space-y-8">
         <!-- Header Uniforme -->
         @include('components.section-header', [
             'title' => 'Locataires',
             'subtitle' => 'Gestion des dossiers locataires et historique.',
             'icon' => 'users',
-            'actions' => App\Helpers\PermissionHelper::can('locataires.create') 
+            'actions' => App\Helpers\PermissionHelper::can('locataires.create')
                 ? '<button onclick="locSection.openModal(\'create\')" class="bg-[#cb2d2d] text-white px-6 py-3 rounded-xl text-sm font-bold shadow-lg shadow-red-900/20 hover:bg-[#a82020] transition-all flex items-center gap-2 transform hover:-translate-y-0.5">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
                     Nouveau Dossier
-                </button>' 
+                </button>'
                 : ''
         ])
 
@@ -45,7 +45,7 @@
                 ['label' => 'Logement', 'classes' => 'text-white/80'],
                 ['label' => 'Actions', 'classes' => 'text-right text-white/80']
             ]" emptyMessage="Aucun locataire enregistré pour le moment.">
-                
+
                 @forelse($data['locataires_list'] as $loc)
                 <tr class="hover:bg-gray-50/50 transition-all duration-300 group">
                     <td class="px-6 py-4 text-gray-400 font-mono text-xs">L-{{ str_pad($loc->id, 3, '0', STR_PAD_LEFT) }}</td>
@@ -96,9 +96,9 @@
                 <x-slot name="mobile">
                     @if(count($data['locataires_list']) > 0)
                         @foreach($data['locataires_list'] as $loc)
-                            <x-data-card 
-                                title="{{ $loc->nom }}" 
-                                status="{{ $loc->contrats->isNotEmpty() ? 'Loué' : 'Inactif' }}" 
+                            <x-data-card
+                                title="{{ $loc->nom }}"
+                                status="{{ $loc->contrats->isNotEmpty() ? 'Loué' : 'Inactif' }}"
                                 statusColor="{{ $loc->contrats->isNotEmpty() ? 'green' : 'gray' }}"
                             >
                                 <div class="flex flex-col gap-1 text-gray-600">
@@ -146,7 +146,7 @@
             </button>
             <h2 class="text-2xl font-bold text-gray-900">Dossier Locataire</h2>
         </div>
-        
+
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div class="lg:col-span-1 space-y-6">
                  <!-- Main Info Card -->
@@ -156,7 +156,7 @@
                     </div>
                     <h3 class="text-2xl font-bold text-gray-900 capitalize mb-1" id="det-loc-nom">...</h3>
                     <p class="text-xs font-bold text-gray-400 uppercase tracking-widest">Particulier</p>
-                    
+
                     <div class="mt-8 space-y-5 text-left bg-gray-50/50 p-6 rounded-2xl border border-gray-50">
                         <div class="flex items-center gap-4">
                             <div class="w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-sm text-gray-400">
@@ -198,12 +198,12 @@
                             Ajouter
                         </button>
                     </div>
-                    
+
                     <!-- Liste des documents -->
                     <div id="det-loc-documents-list" class="space-y-3">
                         <!-- Populated by JS -->
                     </div>
-                    
+
                     <!-- État vide -->
                     <div id="det-loc-documents-empty" class="flex flex-col items-center justify-center py-10 text-gray-400 border-2 border-dashed border-gray-100 rounded-2xl bg-gray-50/50">
                         <svg class="w-10 h-10 mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
@@ -221,7 +221,7 @@
         <div class="fixed inset-0 z-10 w-screen overflow-y-auto" onclick="if(event.target === this) locSection.closeModal()">
             <div class="flex min-h-full items-end justify-center p-0 text-center sm:items-center sm:p-0" onclick="if(event.target === this) locSection.closeModal()">
                 <div id="loc-modal-container" class="relative transform overflow-hidden bg-white text-left shadow-2xl transition-all w-full h-full sm:h-auto sm:w-full sm:max-w-xl sm:my-8 rounded-none sm:rounded-2xl opacity-0 scale-95 duration-300 border border-gray-100">
-                    
+
                     <!-- Header -->
                     <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-white">
                         <div>
@@ -235,7 +235,7 @@
 
                     <form id="loc-main-form" class="p-6 space-y-4">
                         <input type="hidden" name="id" id="loc-input-id">
-                        
+
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <!-- Nom -->
                             <div class="relative bg-gray-50 rounded-xl border border-gray-200 px-3 py-2 focus-within:ring-2 focus-within:ring-[#cb2d2d]/10 focus-within:border-[#cb2d2d] transition-all">
@@ -317,7 +317,7 @@
 
             <form id="loc-doc-form" class="p-6 space-y-4" enctype="multipart/form-data">
                 <input type="hidden" id="doc-locataire-id" name="locataire_id">
-                
+
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <!-- Type de document -->
                     <div class="relative bg-gray-50 rounded-xl border border-gray-200 px-3 py-2 focus-within:ring-2 focus-within:ring-[#cb2d2d]/10 focus-within:border-[#cb2d2d] transition-all">
@@ -344,7 +344,7 @@
                                 <p class="text-xs font-bold text-gray-900 truncate">Parcourir...</p>
                             </div>
                         </div>
-                        
+
                         <div id="doc-file-preview" class="hidden w-full overflow-hidden">
                             <div class="flex items-center justify-between gap-3 bg-white rounded-lg px-2 py-1 shadow-sm border border-green-100">
                                 <div class="flex items-center gap-2 overflow-hidden">
@@ -422,7 +422,7 @@
             const form = document.getElementById('loc-main-form');
             const title = document.getElementById('loc-modal-title');
             const btn = document.getElementById('loc-submit-btn');
-            
+
             wrapper.classList.remove('hidden');
             setTimeout(() => {
                 overlay.classList.remove('opacity-0');
@@ -453,11 +453,11 @@
             const wrapper = document.getElementById('loc-modal-wrapper');
             const overlay = document.getElementById('loc-modal-overlay');
             const container = document.getElementById('loc-modal-container');
-            
+
             overlay.classList.add('opacity-0');
             container.classList.remove('opacity-100', 'scale-100');
             container.classList.add('opacity-0', 'scale-95');
-            
+
             setTimeout(() => { wrapper.classList.add('hidden'); }, 300);
         },
 
@@ -508,11 +508,11 @@
         // =====================
         // DOCUMENTS MANAGEMENT
         // =====================
-        
+
         loadDocuments: async function(locataireId) {
             const listContainer = document.getElementById('det-loc-documents-list');
             const emptyState = document.getElementById('det-loc-documents-empty');
-            
+
             listContainer.innerHTML = '<div class="text-center py-6"><div class="animate-spin w-6 h-6 border-2 border-gray-300 border-t-[#cb2d2d] rounded-full mx-auto"></div><p class="text-xs text-gray-400 mt-2">Chargement...</p></div>';
             emptyState.classList.add('hidden');
 
@@ -547,7 +547,7 @@
                 'justificatif': '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>',
                 'autre': '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>'
             };
-            
+
             const colorMap = {
                 'cni': 'bg-blue-50 text-blue-500 border-blue-100',
                 'contrat_signe': 'bg-green-50 text-green-500 border-green-100',
@@ -589,11 +589,11 @@
             const modal = document.getElementById('loc-doc-modal');
             const container = document.getElementById('loc-doc-container');
             const form = document.getElementById('loc-doc-form');
-            
+
             form.reset();
             this.clearFilePreview();
             document.getElementById('doc-locataire-id').value = this.currentLocataireId;
-            
+
             modal.classList.remove('hidden');
             setTimeout(() => {
                 modal.classList.remove('opacity-0');
@@ -605,11 +605,11 @@
         closeDocumentModal: function() {
             const modal = document.getElementById('loc-doc-modal');
             const container = document.getElementById('loc-doc-container');
-            
+
             modal.classList.add('opacity-0');
             container.classList.remove('scale-100');
             container.classList.add('scale-95');
-            
+
             setTimeout(() => {
                 modal.classList.add('hidden');
             }, 300);
@@ -685,7 +685,7 @@
             this.deleteDocId = docId;
             const modal = document.getElementById('loc-doc-delete-modal');
             const container = document.getElementById('loc-doc-delete-container');
-            
+
             modal.classList.remove('hidden');
             setTimeout(() => {
                 modal.classList.remove('opacity-0');
@@ -697,11 +697,11 @@
         closeDocDeleteModal: function() {
             const modal = document.getElementById('loc-doc-delete-modal');
             const container = document.getElementById('loc-doc-delete-container');
-            
+
             modal.classList.add('opacity-0');
             container.classList.remove('scale-100');
             container.classList.add('scale-95');
-            
+
             setTimeout(() => {
                 modal.classList.add('hidden');
                 this.deleteDocId = null;
@@ -762,11 +762,11 @@
         closeDeleteModal: function() {
             const modal = document.getElementById('loc-delete-modal');
             const container = document.getElementById('loc-delete-container');
-            
+
             modal.classList.add('opacity-0');
             container.classList.remove('scale-100');
             container.classList.add('scale-95');
-            
+
             setTimeout(() => {
                 modal.classList.add('hidden');
                 this.deleteTargetId = null;

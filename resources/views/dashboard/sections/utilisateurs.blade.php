@@ -1,5 +1,5 @@
 <div class="h-full flex flex-col gap-8" id="utilisateurs-section-container">
-    
+
     <div id="user-view-list" class="user-sub-view space-y-8">
         <!-- Header -->
         <div class="flex items-end justify-between border-b border-gray-100 pb-6">
@@ -83,7 +83,7 @@
         <div class="fixed inset-0 z-10 w-screen overflow-y-auto" onclick="if(event.target === this) userSection.closeModal()">
             <div class="flex min-h-full items-end justify-center p-0 text-center sm:items-center sm:p-0" onclick="if(event.target === this) userSection.closeModal()">
                 <div id="user-modal-container" class="relative transform overflow-hidden bg-white text-left shadow-2xl transition-all w-full h-full sm:h-auto sm:w-full sm:max-w-xl sm:my-8 rounded-none sm:rounded-2xl opacity-0 scale-95 duration-300 border border-gray-100">
-                    
+
                     <!-- Header -->
                     <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-[#274256]">
                         <div>
@@ -97,7 +97,7 @@
 
                     <form id="user-main-form" class="p-6 space-y-4">
                         <input type="hidden" name="id" id="user-input-id">
-                        
+
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <!-- Nom -->
                             <div class="relative bg-gray-50 rounded-xl border border-gray-200 px-3 py-2 focus-within:ring-2 focus-within:ring-[#cb2d2d]/10 focus-within:border-[#cb2d2d] transition-all">
@@ -176,7 +176,7 @@
             const form = document.getElementById('user-main-form');
             const title = document.getElementById('user-modal-title');
             const btn = document.getElementById('user-submit-btn');
-            
+
             wrapper.classList.remove('hidden');
             setTimeout(() => {
                 overlay.classList.remove('opacity-0');
@@ -206,11 +206,11 @@
             const wrapper = document.getElementById('user-modal-wrapper');
             const overlay = document.getElementById('user-modal-overlay');
             const container = document.getElementById('user-modal-container');
-            
+
             overlay.classList.add('opacity-0');
             container.classList.remove('opacity-100', 'scale-100');
             container.classList.add('opacity-0', 'scale-95');
-            
+
             setTimeout(() => { wrapper.classList.add('hidden'); }, 300);
         },
 
@@ -229,11 +229,11 @@
         closeDeleteModal: function() {
             const modal = document.getElementById('user-delete-modal');
             const container = document.getElementById('user-delete-container');
-            
+
             modal.classList.add('opacity-0');
             container.classList.remove('scale-100');
             container.classList.add('scale-95');
-            
+
             setTimeout(() => {
                 modal.classList.add('hidden');
                 this.deleteTargetId = null;
@@ -242,7 +242,7 @@
 
         executeDelete: async function() {
             if(!this.deleteTargetId) return;
-            
+
             const btn = document.getElementById('user-confirm-delete-btn');
             const originalText = btn.innerText;
             btn.innerText = 'Traitement...';
@@ -256,7 +256,7 @@
                         'Accept': 'application/json'
                     }
                 });
-                
+
                 if(response.ok) {
                     showToast('Utilisateur supprimé', 'success');
                     if(window.dashboard) window.dashboard.refresh();
@@ -301,7 +301,7 @@
                 },
                 body: JSON.stringify(jsonData)
             });
-            
+
             const data = await response.json();
 
             if(response.ok) {

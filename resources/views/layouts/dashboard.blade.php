@@ -1,4 +1,4 @@
-ï»¿<title>{{ config('app.name', 'Ontario Group') }} - Dashboard</title>
+<title>{{ config('app.name', 'Ontario Group') }} - Dashboard</title>
 <link rel="icon" type="image/png" href="{{ asset('images/ontorio-logo.png') }}">
 
 
@@ -56,7 +56,7 @@
                         <div class="mb-3 px-5 text-xs font-semibold uppercase tracking-wider text-blue-300/70">Gestion</div>
                         <button type="button" data-show-section="proprietaires" class="sidebar-nav-link w-full text-left">
                             <i class="bi bi-people text-xl"></i>
-                            <span class="font-medium">PropriÃ©taires</span>
+                            <span class="font-medium">Propriétaires</span>
                         </button>
                         <button type="button" data-show-section="immeubles" class="sidebar-nav-link w-full text-left">
                             <i class="bi bi-buildings text-xl"></i>
@@ -137,7 +137,7 @@
                             @csrf
                             <button type="submit" class="btn-ontario-outline">
                                 <i class="bi bi-box-arrow-right"></i>
-                                DÃ©connexion
+                                Déconnexion
                             </button>
                         </form>
                     </div>
@@ -178,7 +178,7 @@
 
         backdrop?.addEventListener('click', () => setSidebar(false));
 
-        // Ã‰tat initial : ouvert sur desktop, fermÃ© sur mobile
+        // État initial : ouvert sur desktop, fermé sur mobile
         function handleSidebarOnResize() {
             if (window.innerWidth < 768) {
                 setSidebar(false);
@@ -190,7 +190,7 @@
         handleSidebarOnResize();
     </script>
     <script>
-        // Navigation sans rechargement complet (PJAX lÃ©ger)
+        // Navigation sans rechargement complet (PJAX léger)
         const mainContent = document.getElementById('mainContent');
         const pageTitle = document.getElementById('pageTitle');
         const breadcrumbList = document.getElementById('breadcrumbList');
@@ -217,7 +217,7 @@
                     breadcrumbList.innerHTML = newBreadcrumb.innerHTML;
                 }
 
-                // Mettre Ã  jour les classes "active" de la sidebar
+                // Mettre à jour les classes "active" de la sidebar
                 if (newSidebar) {
                     const oldNavLinks = document.querySelectorAll('.sidebar-nav a');
                     const newNavLinks = newSidebar.querySelectorAll('.sidebar-nav a');
@@ -234,7 +234,7 @@
                     history.pushState({}, '', url);
                 }
             } catch (e) {
-                console.error('Navigation AJAX Ã©chouÃ©e, rechargement classique', e);
+                console.error('Navigation AJAX échouée, rechargement classique', e);
                 window.location.href = url;
             }
         }

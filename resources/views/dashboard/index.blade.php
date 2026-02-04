@@ -1,6 +1,6 @@
 <x-app-layout>
     <div id="dashboard-container" class="relative">
-        
+
         <!-- SECTION: OVERVIEW (Default) -->
         <div id="section-overview" role="tabpanel" aria-labelledby="nav-link-overview" class="section-pane">
             <div class="section-skeleton h-full">
@@ -241,7 +241,7 @@
                         e.preventDefault();
                         const sectionId = link.getAttribute('data-show-section');
                         this.show(sectionId);
-                        
+
                         // Fermer la sidebar sur mobile si elle est ouverte
                         const sidebar = document.getElementById('main-sidebar');
                         if (sidebar && !sidebar.classList.contains('-translate-x-full') && window.innerWidth < 1024) {
@@ -259,7 +259,7 @@
                 // Chargement initial
                 const initialSection = this.getSectionFromHash() || 'overview';
                 this.show(initialSection, false);
-                
+
                 // Forcer le skeleton sur l'overview au premier chargement si c'est la section active
                 if (initialSection === 'overview') {
                     const overview = document.getElementById('section-overview');
@@ -324,19 +324,19 @@
                 setTimeout(() => {
                     target.classList.remove('hidden');
                     this.loader.style.width = '70%';
-                    
+
                     requestAnimationFrame(() => {
                         target.classList.remove('opacity-0');
-                        
+
                         // Simulation d'un chargement de données (0.8s) pour apprécier le skeleton
                         setTimeout(() => {
                             if (skeleton && content) {
                                 skeleton.classList.add('hidden');
                                 content.classList.remove('hidden');
                             }
-                            
+
                             this.loader.style.width = '100%';
-                            
+
                             // Terminer le loader avec un léger délai pour stabiliser le rendu
                             setTimeout(() => {
                                 this.loader.style.opacity = '0';
@@ -352,7 +352,7 @@
                 document.querySelectorAll('.sidebar-nav-link').forEach(link => {
                     const isTarget = link.getAttribute('data-show-section') === sectionId;
                     link.setAttribute('aria-selected', isTarget ? 'true' : 'false');
-                    
+
                     if (isTarget) {
                         link.classList.remove('text-gray-400', 'hover:text-white', 'hover:bg-[#1e3342]');
                         link.classList.add('bg-[#cb2d2d]', 'text-white', 'shadow-md');
@@ -373,11 +373,11 @@
              */
             async refresh() {
                 if (!this.currentSection) return;
-                
+
                 // 1. Afficher le skeleton et le loader
                 this.loader.style.width = '20%';
                 this.loader.style.opacity = '1';
-                
+
                 const target = document.getElementById('section-' + this.currentSection);
                 const skeleton = target.querySelector('.section-skeleton');
                 const content = target.querySelector('.section-content');
@@ -391,24 +391,24 @@
                     // 2. Récupérer la page complète en tâche de fond
                     const response = await fetch(window.location.href);
                     const html = await response.text();
-                    
+
                     // 3. Parser et extraire le nouveau contenu
                     const parser = new DOMParser();
                     const doc = parser.parseFromString(html, 'text/html');
                     const newContent = doc.querySelector('#section-' + this.currentSection + ' .section-content');
-                    
+
                     if (newContent && content) {
                         // Utiliser createContextualFragment pour forcer l'exécution des scripts <script>
                         const range = document.createRange();
                         range.selectNode(content);
                         const fragment = range.createContextualFragment(newContent.innerHTML);
-                        
+
                         content.innerHTML = '';
                         content.appendChild(fragment);
                     }
 
                     this.loader.style.width = '100%';
-                    
+
                     // 4. Masquer le skeleton et afficher le contenu frais
                     setTimeout(() => {
                         if (skeleton && content) {

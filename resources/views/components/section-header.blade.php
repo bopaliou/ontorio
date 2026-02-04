@@ -1,4 +1,4 @@
-{{-- 
+{{--
     COMPOSANT: Section Header Uniforme
     Usage: @include('components.section-header', [
         'title' => 'Titre de la Section',
@@ -48,7 +48,7 @@
             @endif
         </div>
     </div>
-    
+
     @if($actions ?? false)
     <div class="flex flex-wrap items-center gap-2 sm:gap-3 shrink-0 w-full sm:w-auto">
         {!! $actions !!}

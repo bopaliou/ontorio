@@ -63,7 +63,7 @@
                 <!-- Decorative circles -->
                 <div class="absolute top-20 left-20 w-64 h-64 bg-white/5 rounded-full blur-3xl"></div>
                 <div class="absolute bottom-20 right-10 w-96 h-96 bg-orange-500/10 rounded-full blur-3xl"></div>
-                
+
                 <div class="flex flex-col justify-center items-center w-full px-12 z-10">
                     <!-- Logo & Title -->
                     <div class="text-center mb-8">
@@ -76,8 +76,8 @@
 
                     <!-- Illustration -->
                     <div class="floating-buildings">
-                        <img src="{{ asset('images/real-estate-illustration.png') }}" 
-                             alt="Gestion Immobilière" 
+                        <img src="{{ asset('images/real-estate-illustration.png') }}"
+                             alt="Gestion Immobilière"
                              class="max-w-md w-full drop-shadow-2xl">
                     </div>
 

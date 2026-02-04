@@ -1,5 +1,5 @@
 <div class="flex flex-col gap-6" id="paiements-section-container">
-    
+
     <!-- SECTION: LISTE PRINCIPALE -->
     <div id="pai-view-list" class="pai-sub-view space-y-6">
         <!-- Header Uniforme -->
@@ -7,11 +7,11 @@
             'title' => 'Journal des Encaissements',
             'subtitle' => 'Historique complet des transactions financières.',
             'icon' => 'money',
-            'actions' => in_array(auth()->user()->role, ['admin', 'comptable']) 
+            'actions' => in_array(auth()->user()->role, ['admin', 'comptable'])
                 ? '<button onclick="paiSection.openModal(\'create\')" class="bg-[#cb2d2d] text-white px-6 py-3 rounded-xl text-sm font-bold shadow-lg shadow-red-900/20 hover:bg-[#a82020] transition-all hover:-translate-y-0.5 flex items-center gap-2">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
                     Enregistrer un Paiement
-                </button>' 
+                </button>'
                 : ''
         ])
 
@@ -19,12 +19,12 @@
             $encaisseToday = $data['paiements_list']->filter(function($p) {
                 return \Carbon\Carbon::parse($p->date_paiement)->isToday();
             })->sum('montant');
-            
+
             $thisMonth = \Carbon\Carbon::now()->format('Y-m');
             $encaisseMonth = $data['paiements_list']->filter(function($p) use ($thisMonth) {
                 return \Carbon\Carbon::parse($p->date_paiement)->format('Y-m') === $thisMonth;
             })->sum('montant');
-            
+
             $transactionsMonth = $data['paiements_list']->filter(function($p) use ($thisMonth) {
                 return \Carbon\Carbon::parse($p->date_paiement)->format('Y-m') === $thisMonth;
             })->count();
@@ -90,8 +90,8 @@
                     </td>
                     <td class="px-6 py-4 text-center">
                         @if($pai->preuve)
-                        <button onclick="window.previewDoc({url: '/storage/{{ $pai->preuve }}', nom_original: 'Preuve_{{ $pai->reference }}.{{ pathinfo($pai->preuve, PATHINFO_EXTENSION) }}', type_label: 'Preuve de Paiement'})" 
-                           class="inline-flex items-center justify-center gap-1 px-2.5 py-1.5 rounded-lg bg-amber-50 text-amber-600 hover:bg-amber-500 hover:text-white transition-all text-xs font-bold" 
+                        <button onclick="window.previewDoc({url: '/storage/{{ $pai->preuve }}', nom_original: 'Preuve_{{ $pai->reference }}.{{ pathinfo($pai->preuve, PATHINFO_EXTENSION) }}', type_label: 'Preuve de Paiement'})"
+                           class="inline-flex items-center justify-center gap-1 px-2.5 py-1.5 rounded-lg bg-amber-50 text-amber-600 hover:bg-amber-500 hover:text-white transition-all text-xs font-bold"
                            title="Voir la preuve jointe">
                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/></svg>
                             Preuve
@@ -102,14 +102,14 @@
                     </td>
                     <td class="px-6 py-4 text-right">
                         <div class="flex items-center justify-end gap-2">
-                             <button onclick="window.previewDoc({url: '{{ route('loyers.quittance', $pai->loyer_id) }}', nom_original: 'Recu_{{ $pai->id }}.pdf', type_label: 'Reçu'})" 
-                                class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-gray-100 text-gray-500 hover:bg-blue-600 hover:text-white transition-all" 
+                             <button onclick="window.previewDoc({url: '{{ route('loyers.quittance', $pai->loyer_id) }}', nom_original: 'Recu_{{ $pai->id }}.pdf', type_label: 'Reçu'})"
+                                class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-gray-100 text-gray-500 hover:bg-blue-600 hover:text-white transition-all"
                                 title="Reçu">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                             </button>
                             @if(in_array(auth()->user()->role, ['admin', 'comptable']))
-                            <button onclick="paiSection.confirmDelete({{ $pai->id }})" 
-                               class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-red-50 text-red-500 hover:bg-gradient-to-r from-[#cb2d2d] to-[#ef4444] hover:text-white transition-all" 
+                            <button onclick="paiSection.confirmDelete({{ $pai->id }})"
+                               class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-red-50 text-red-500 hover:bg-gradient-to-r from-[#cb2d2d] to-[#ef4444] hover:text-white transition-all"
                                title="Supprimer">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                             </button>
@@ -124,9 +124,9 @@
                 <x-slot name="mobile">
                     @if(count($data['paiements_list']) > 0)
                         @foreach($data['paiements_list'] as $pai)
-                            <x-data-card 
-                                title="{{ \Carbon\Carbon::parse($pai->date_paiement)->translatedFormat('d M Y') }}" 
-                                status="Payé" 
+                            <x-data-card
+                                title="{{ \Carbon\Carbon::parse($pai->date_paiement)->translatedFormat('d M Y') }}"
+                                status="Payé"
                                 statusColor="green"
                             >
                                 <div class="flex flex-col gap-1 text-gray-600">
@@ -163,7 +163,7 @@
     <!-- MODAL (ULTRA COMPACT GRID) -->
     <div id="pai-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="pai-modal-title" onclick="if(event.target === this) paiSection.closeModal()" class="fixed inset-0 z-[60] hidden bg-slate-900/40 backdrop-blur-md transition-all duration-300 flex items-end sm:items-center justify-center p-0 sm:p-4">
         <div id="pai-modal-container" class="bg-white w-full h-full sm:h-auto sm:max-w-xl rounded-none sm:rounded-2xl shadow-2xl transform scale-95 opacity-0 transition-all duration-300 overflow-hidden border border-gray-100">
-            
+
             <!-- Header Compact -->
             <div class="bg-[#274256] px-6 py-4 flex items-center justify-between">
                 <div>
@@ -177,7 +177,7 @@
 
             <form id="pai-main-form" action="{{ route('paiements.store') }}" method="POST" enctype="multipart/form-data" target="pai_post_target" class="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
                 @csrf
-                
+
                 <!-- Sélection Loyer -->
                 <div class="relative bg-gray-50 rounded-xl border border-gray-200 px-3 py-2 focus-within:ring-2 focus-within:ring-[#274256]/10 focus-within:border-[#274256] transition-all">
                     <label class="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Loyer à solder</label>
@@ -185,7 +185,7 @@
                         @php
                             $unpaidLoyers = $data['loyers_list']->filter(fn($l) => strtolower(trim($l->statut)) !== 'payé');
                         @endphp
-                        
+
                         @if($unpaidLoyers->count() > 0)
                             <option value="">-- Sélectionner un loyer --</option>
                             @foreach($unpaidLoyers as $l)
@@ -335,7 +335,7 @@
              const btn = document.getElementById('pai-submit-btn');
              btn.innerHTML = '✅ Encaissé !';
              btn.disabled = false;
-             
+
              // Simple feedback puis rechargement de la page
              setTimeout(function() {
                  window.location.reload();
@@ -365,18 +365,18 @@
         const selected = this.options[this.selectedIndex];
         const card = document.getElementById('pai-locataire-card');
         const inputMontant = document.getElementById('pai-input-montant');
-        
+
         if (this.value) {
             const montant = selected.dataset.montant;
             const locataire = selected.dataset.locataire;
             const mois = selected.dataset.mois;
-            
+
             document.getElementById('pai-card-locataire').textContent = locataire;
             document.getElementById('pai-card-mois').textContent = 'Période: ' + mois;
             document.getElementById('pai-card-montant').textContent = new Intl.NumberFormat('fr-FR').format(montant) + ' F';
             inputMontant.value = montant;
             inputMontant.placeholder = montant;
-            
+
             card.classList.remove('hidden');
             card.classList.add('animate-fade-in');
         } else {
@@ -391,7 +391,7 @@
         const preview = document.getElementById('pai-preuve-preview');
         const nameEl = document.getElementById('pai-preuve-name');
         const sizeEl = document.getElementById('pai-preuve-size');
-        
+
         if (input.files && input.files[0]) {
             const file = input.files[0];
             nameEl.textContent = file.name;
@@ -405,7 +405,7 @@
         const input = document.getElementById('pai-preuve-input');
         const placeholder = document.getElementById('pai-preuve-placeholder');
         const preview = document.getElementById('pai-preuve-preview');
-        
+
         input.value = '';
         placeholder.classList.remove('hidden');
         preview.classList.add('hidden');
@@ -451,7 +451,7 @@
                     'Accept': 'application/json'
                 }
             });
-            
+
             const data = await response.json();
 
             if(data.success) {
@@ -478,16 +478,16 @@
         background-color: #FEF2F2 !important;
         box-shadow: 0 10px 15px -3px rgb(211 47 47 / 0.2) !important;
     }
-    
+
     .mode-card input:checked + div span:last-child {
         color: #D32F2F !important;
     }
-    
+
     @keyframes fade-in {
         from { opacity: 0; transform: translateY(-10px); }
         to { opacity: 1; transform: translateY(0); }
     }
-    
+
     .animate-fade-in {
         animation: fade-in 0.3s ease-out;
     }

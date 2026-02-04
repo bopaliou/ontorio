@@ -5,13 +5,13 @@
     <title>Contrat de Bail - {{ $contrat->locataire->nom }}</title>
     <style>
         @page { margin: 40px; }
-        body { 
-            font-family: 'Helvetica', 'Arial', sans-serif; 
-            font-size: 11px; 
-            color: #333; 
+        body {
+            font-family: 'Helvetica', 'Arial', sans-serif;
+            font-size: 11px;
+            color: #333;
             line-height: 1.4;
         }
-        
+
         /* Color Palette */
         .text-brand { color: #274256; }
         .bg-brand { background-color: #274256; color: white; }
@@ -28,17 +28,17 @@
         .mb-2 { margin-bottom: 8px; }
         .mb-4 { margin-bottom: 16px; }
         .mb-6 { margin-bottom: 24px; }
-        
+
         /* Layout Elements */
-        .header { 
-            border-bottom: 2px solid #274256; 
-            padding-bottom: 20px; 
+        .header {
+            border-bottom: 2px solid #274256;
+            padding-bottom: 20px;
             margin-bottom: 30px;
         }
-        .logo-text { 
-            font-size: 24px; 
-            font-weight: 900; 
-            color: #274256; 
+        .logo-text {
+            font-size: 24px;
+            font-weight: 900;
+            color: #274256;
             letter-spacing: -1px;
         }
         .logo-sub {
@@ -138,7 +138,7 @@
             border-top: 1px solid #e2e8f0;
             padding-top: 10px;
         }
-        
+
         .page-break { page-break-after: always; }
     </style>
 </head>
@@ -238,7 +238,7 @@
     <div class="mb-6">
         <h3 class="text-brand uppercase" style="border-bottom: 1px solid #e2e8f0; padding-bottom: 5px;">3. Durée du Contrat</h3>
         <p>
-            Le présent bail est consenti pour une durée déterminée ou indéterminée commençant le 
+            Le présent bail est consenti pour une durée déterminée ou indéterminée commençant le
             <strong>{{ \Carbon\Carbon::parse($contrat->date_debut)->translatedFormat('d F Y') }}</strong>
             @if($contrat->date_fin)
              et se terminant le <strong>{{ \Carbon\Carbon::parse($contrat->date_fin)->translatedFormat('d F Y') }}</strong>
@@ -249,7 +249,7 @@
     <!-- CLAUSES JURIDIQUES -->
     <div class="clauses">
         <h3 class="text-brand uppercase" style="border-bottom: 1px solid #e2e8f0; padding-bottom: 5px;">4. Clauses et Conditions Générales</h3>
-        
+
         <div class="clause-item">
             <span class="clause-title">4.1 - PAIEMENT DU LOYER</span>
             Le loyer est payable d'avance au domicile du Bailleur ou de son représentant. Tout retard de paiement pourra entraîner l'application de pénalités de retard et la résiliation du bail.
@@ -284,12 +284,12 @@
     <!-- SIGNATURES -->
     <div class="signatures">
         <p style="margin-bottom: 15px;">Fait à <strong>Dakar</strong>, le <strong>{{ now()->format('d/m/Y') }}</strong>, en deux exemplaires originaux.</p>
-        
+
         <div class="sig-box">
             <div class="party-title text-center">Le Bailleur (Ontario Group)</div>
             <div style="font-size: 9px; text-align: center; margin-bottom: 40px; color: #94a3b8;">(Lu et approuvé, cachet et signature)</div>
         </div>
-        
+
         <div class="sig-box sig-box-right">
             <div class="party-title text-center">Le Preneur</div>
             <div style="font-size: 9px; text-align: center; margin-bottom: 40px; color: #94a3b8;">(Lu et approuvé, signature précédée de la mention manuscrite)</div>

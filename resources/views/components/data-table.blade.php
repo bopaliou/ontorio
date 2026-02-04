@@ -16,7 +16,7 @@
                 </thead>
                 <tbody class="divide-y divide-gray-100">
                     {{ $slot }}
-                    
+
                     @if(trim($slot) === '')
                         <tr>
                             <td colspan="{{ count($headers) }}" class="px-6 py-12 text-center text-gray-500">
@@ -43,7 +43,7 @@
                 Vue mobile non définie pour ce tableau.
             </div>
         @endif
-        
+
         @if(trim($slot) === '' && (!isset($mobile) || trim($mobile) === ''))
              <div class="bg-white p-8 rounded-2xl border border-gray-100 text-center text-gray-500">
                 <div class="flex flex-col items-center justify-center">

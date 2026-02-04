@@ -71,7 +71,7 @@
                         </button>
                     </div>
                 </div>
-                
+
                 <!-- Content -->
                 <div class="flex-1 bg-gray-50 overflow-auto flex items-center justify-center p-4">
                     <div id="global-preview-img-cont" class="hidden h-full">
@@ -96,11 +96,11 @@
                 const container = document.getElementById('toast-container');
                 const toast = document.createElement('div');
                 toast.className = `pointer-events-auto flex items-center gap-3 px-6 py-4 rounded-2xl shadow-xl transform transition-all duration-300 translate-x-10 opacity-0 ${
-                    type === 'success' ? 'bg-[#274256] text-white' : 
+                    type === 'success' ? 'bg-[#274256] text-white' :
                     type === 'error' ? 'bg-red-500 text-white' : 'bg-blue-500 text-white'
                 }`;
-                
-                const icon = type === 'success' ? 
+
+                const icon = type === 'success' ?
                     '<svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>' :
                     (type === 'error' ? '<svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>' : '');
 
@@ -126,16 +126,16 @@
             window.previewDoc = function(doc) {
                 const url = doc.url.toLowerCase();
                 const ext = doc.nom_original ? doc.nom_original.split('.').pop().toLowerCase() : url.split('.').pop().split('?')[0];
-                
+
                 // Seulement les PDFs générés dynamiquement (routes Laravel) s'ouvrent dans un nouvel onglet
                 // car les iframes ont parfois des problèmes avec les PDFs en streaming
                 const isDynamicPDF = url.includes('/loyers/') || url.includes('/contrats/') || url.includes('/rapports/') || url.includes('/quittance') || url.includes('/print') || url.includes('/bilan');
-                
+
                 if (isDynamicPDF) {
                     window.open(doc.url, '_blank');
                     return;
                 }
-                
+
                 // Pour tous les autres fichiers (images, PDFs statiques), utiliser la modale d'aperçu
                 const modal = document.getElementById('global-doc-preview-modal');
                 const container = document.getElementById('global-doc-preview-container');
@@ -145,18 +145,18 @@
                 const img = document.getElementById('global-preview-img');
                 const frame = document.getElementById('global-preview-frame');
                 const dlBtn = document.getElementById('global-preview-download-btn');
-                
+
                 document.getElementById('global-preview-doc-name').innerText = doc.nom_original || 'Document';
                 document.getElementById('global-preview-doc-info').innerText = (doc.type_label || 'Fichier') + (doc.created_at ? ' • ' + doc.created_at : '');
                 dlBtn.href = doc.url;
-                
+
                 // Reset visibility
                 imgCont.classList.add('hidden');
                 frameCont.classList.add('hidden');
                 unsuppCont.classList.add('hidden');
                 img.src = '';
                 frame.src = '';
-                
+
                 if(['jpg', 'jpeg', 'png', 'webp', 'gif'].includes(ext)) {
                     imgCont.classList.remove('hidden');
                     img.src = doc.url;
@@ -166,7 +166,7 @@
                 } else {
                     unsuppCont.classList.remove('hidden');
                 }
-                
+
                 modal.classList.remove('hidden');
                 setTimeout(() => {
                     modal.classList.remove('opacity-0');
@@ -178,11 +178,11 @@
             window.closeGlobalPreview = function() {
                 const modal = document.getElementById('global-doc-preview-modal');
                 const container = document.getElementById('global-doc-preview-container');
-                
+
                 modal.classList.add('opacity-0');
                 container.classList.remove('scale-100');
                 container.classList.add('scale-95');
-                
+
                 setTimeout(() => {
                     modal.classList.add('hidden');
                     document.getElementById('global-preview-img').src = '';
@@ -192,7 +192,7 @@
             window.toggleSidebar = function() {
                 const sidebar = document.getElementById('main-sidebar');
                 const overlay = document.getElementById('sidebar-overlay');
-                
+
                 if (sidebar.classList.contains('-translate-x-full')) {
                     // Open
                     sidebar.classList.remove('-translate-x-full');
@@ -211,12 +211,12 @@
                 if (event.key === 'Escape') {
                     // Chercher tous les modaux ouverts (ceux qui n'ont pas la classe 'hidden')
                     // et appeler leur fonction de fermeture respective
-                    
+
                     // Global Preview
                     if (!document.getElementById('global-doc-preview-modal').classList.contains('hidden')) {
                         closeGlobalPreview();
                     }
-                    
+
                     // Biens
                     if (window.bienSection && !document.getElementById('bien-modal-wrapper').classList.contains('hidden')) {
                         bienSection.closeModal();
@@ -238,7 +238,7 @@
                         if (!document.getElementById('loy-payment-modal').classList.contains('hidden')) loySection.closePaymentModal();
                         if (!document.getElementById('loy-edit-modal').classList.contains('hidden')) loySection.closeEditModal();
                     }
-                    
+
                     if (window.paiSection) {
                         if (!document.getElementById('pai-modal-overlay').classList.contains('hidden')) paiSection.closeModal();
                         if (!document.getElementById('pai-delete-modal').classList.contains('hidden')) paiSection.closeDeleteModal();

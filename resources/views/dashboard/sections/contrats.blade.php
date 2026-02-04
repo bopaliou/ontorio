@@ -1,16 +1,16 @@
 <div class="h-full flex flex-col gap-8" id="contrats-section-container">
-    
+
     <div id="con-view-list" class="con-sub-view space-y-8">
         <!-- Header Uniforme -->
         @include('components.section-header', [
             'title' => 'Contrats de Bail',
             'subtitle' => 'Administration des baux et suivis locatifs.',
             'icon' => 'document',
-            'actions' => App\Helpers\PermissionHelper::can('contrats.create') 
+            'actions' => App\Helpers\PermissionHelper::can('contrats.create')
                 ? '<button onclick="conSection.openModal(\'create\')" class="bg-[#cb2d2d] text-white px-6 py-3 rounded-xl text-sm font-bold shadow-lg shadow-red-900/20 hover:bg-[#a82020] transition-all flex items-center gap-2 transform hover:-translate-y-0.5">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
                     Nouveau Bail
-                </button>' 
+                </button>'
                 : ''
         ])
 
@@ -103,9 +103,9 @@
                 <x-slot name="mobile">
                     @if(count($data['contrats_list']) > 0)
                         @foreach($data['contrats_list'] as $con)
-                            <x-data-card 
-                                title="{{ $con->bien->nom ?? 'Bien inconnu' }}" 
-                                status="{{ $con->statut }}" 
+                            <x-data-card
+                                title="{{ $con->bien->nom ?? 'Bien inconnu' }}"
+                                status="{{ $con->statut }}"
                                 statusColor="{{ $con->statut === 'actif' ? 'green' : 'gray' }}"
                             >
                                 <div class="flex flex-col gap-1 text-gray-600">
@@ -148,7 +148,7 @@
         <div class="fixed inset-0 z-10 w-screen overflow-y-auto" onclick="if(event.target === this) conSection.closeModal()">
             <div class="flex min-h-full items-end justify-center p-0 text-center sm:items-center sm:p-0" onclick="if(event.target === this) conSection.closeModal()">
                 <div id="con-modal-container" class="relative transform overflow-hidden bg-white text-left shadow-2xl transition-all w-full h-full sm:h-auto sm:w-full sm:max-w-xl sm:my-8 rounded-none sm:rounded-2xl opacity-0 scale-95 duration-300 border border-gray-100">
-                    
+
                     <!-- Header -->
                     <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-white">
                         <div>
@@ -162,7 +162,7 @@
 
                     <form id="con-main-form" class="p-6 space-y-4">
                         <input type="hidden" name="id" id="con-input-id">
-                        
+
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <!-- Bien -->
                             <div class="col-span-1 md:col-span-2 relative bg-gray-50 rounded-xl border border-gray-200 px-3 py-2 focus-within:ring-2 focus-within:ring-[#cb2d2d]/10 focus-within:border-[#cb2d2d] transition-all">
@@ -282,13 +282,13 @@
             const form = document.getElementById('con-main-form');
             const btn = document.getElementById('con-submit-btn');
             const title = document.getElementById('con-modal-title');
-            
+
             form.reset();
-            
+
             if (mode === 'edit' && data) {
                 this.editId = data.id;
                 title.innerText = 'Modifier le Bail';
-                
+
                 // Populate fields
                 document.getElementById('con-input-id').value = data.id;
                 document.getElementById('con-input-bien').value = data.bien_id;
@@ -311,20 +311,20 @@
                 title.innerText = 'Nouveau Bail';
                 document.getElementById('con-input-id').value = '';
                 document.getElementById('con-input-date').value = new Date().toISOString().split('T')[0];
-                
+
                 document.getElementById('con-input-bien').disabled = false;
                 document.getElementById('con-input-locataire').disabled = false;
-                
+
                 btn.innerHTML = '<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg> Activer le Bail';
             }
-            
+
             wrapper.classList.remove('hidden');
             setTimeout(() => {
                 overlay.classList.remove('opacity-0');
                 container.classList.remove('opacity-0', 'scale-95');
                 container.classList.add('opacity-100', 'scale-100');
             }, 10);
-            
+
             btn.disabled = false;
         },
 
@@ -332,11 +332,11 @@
             const wrapper = document.getElementById('con-modal-wrapper');
             const overlay = document.getElementById('con-modal-overlay');
             const container = document.getElementById('con-modal-container');
-            
+
             overlay.classList.add('opacity-0');
             container.classList.remove('opacity-100', 'scale-100');
             container.classList.add('opacity-0', 'scale-95');
-            
+
             setTimeout(() => { wrapper.classList.add('hidden'); }, 300);
         },
 
@@ -355,11 +355,11 @@
         closeDeleteModal: function() {
             const modal = document.getElementById('con-delete-modal');
             const container = document.getElementById('con-delete-container');
-            
+
             modal.classList.add('opacity-0');
             container.classList.remove('scale-100');
             container.classList.add('scale-95');
-            
+
             setTimeout(() => {
                 modal.classList.add('hidden');
                 this.deleteTargetId = null;
@@ -368,7 +368,7 @@
 
         executeDelete: async function() {
             if(!this.deleteTargetId) return;
-            
+
             const btn = document.getElementById('con-confirm-delete-btn');
             const originalText = btn.innerText;
             btn.innerText = 'Traitement...';

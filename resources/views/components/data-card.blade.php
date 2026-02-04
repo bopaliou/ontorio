@@ -5,12 +5,12 @@
     @if($status)
         <div class="absolute top-0 left-0 w-1.5 h-full bg-{{ $statusColor }}-500"></div>
     @endif
-    
+
     <div class="flex justify-between items-start pl-3">
         <div class="flex-1 pr-4">
              <!-- Titre principal (ex: Nom du bien, Locataire) -->
             <h3 class="text-base font-bold text-gray-900 line-clamp-1 mb-1">{{ $title }}</h3>
-            
+
             <!-- Badge Statut Mobile -->
             @if($status)
                 <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-{{ $statusColor }}-50 text-{{ $statusColor }}-700 mb-2">

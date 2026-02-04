@@ -1,5 +1,5 @@
 <div class="h-full flex flex-col gap-8" id="proprietaires-section-container">
-    
+
     @php
         $agence = $data['proprietaires_list']->first();
     @endphp
@@ -23,18 +23,18 @@
         <!-- Main Identity Card -->
         <div class="bg-white rounded-3xl shadow-sm border border-gray-100 ontario-card-lift overflow-hidden">
             <div class="p-8 lg:p-12 grid grid-cols-1 lg:grid-cols-12 gap-12">
-                
+
                 <!-- Col 1: Logo & Identity (4 cols) -->
                 <div class="lg:col-span-4 flex flex-col items-center lg:items-start text-center lg:text-left border-b lg:border-b-0 lg:border-r border-gray-100 pb-10 lg:pb-0 lg:pr-10">
                     <div class="w-40 h-40 bg-white rounded-3xl flex items-center justify-center p-6 mb-8 border border-gray-100 shadow-sm relative group">
                         <img src="{{ asset('images/ontorio-logo.png') }}" alt="Ontario Logo" class="w-full h-full object-contain filter group-hover:scale-105 transition duration-500">
                     </div>
-                    
+
                     <h3 class="text-2xl font-bold text-gray-900 leading-tight">{{ $agence->nom }}</h3>
                     @if($agence->prenom)
                     <span class="inline-block mt-2 px-3 py-1 bg-gray-50 border border-gray-100 rounded-full text-xs font-bold text-gray-500 uppercase tracking-widest">{{ $agence->prenom }}</span>
                     @endif
-                    
+
                     <div class="mt-6 flex items-start gap-3 text-left">
                         <svg class="w-5 h-5 text-gray-300 mt-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                         <p class="text-sm text-gray-500 leading-relaxed font-medium">
@@ -80,7 +80,7 @@
                              <span class="text-sm font-medium text-gray-500">Biens</span>
                         </div>
                     </div>
-                    
+
                     <div class="w-full h-px bg-gray-200 dashed"></div>
 
                     <div>
@@ -99,7 +99,7 @@
                     </div>
                 </div>
             </div>
-            
+
         </div>
 
         <!-- SECTION: BILAN FINANCIER GLOBAL -->
@@ -180,7 +180,7 @@
         <div class="fixed inset-0 z-10 w-screen overflow-y-auto" onclick="if(event.target === this) propSection.closeModal()">
             <div class="flex min-h-full items-end justify-center p-0 text-center sm:items-center sm:p-0" onclick="if(event.target === this) propSection.closeModal()">
                 <div id="prop-modal-container" class="relative transform overflow-hidden bg-white text-left shadow-2xl transition-all w-full h-full sm:h-auto sm:w-full sm:max-w-xl sm:my-8 rounded-none sm:rounded-2xl opacity-0 scale-95 duration-300 border border-gray-100">
-                    
+
                     <!-- Header -->
                     <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-white">
                         <div>
@@ -195,7 +195,7 @@
                     <!-- Form -->
                     <form id="prop-main-form" class="p-6 space-y-4">
                         <input type="hidden" name="id" id="prop-input-id">
-                        
+
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <!-- Nom -->
                             <div class="relative bg-gray-50 rounded-xl border border-gray-200 px-3 py-2 focus-within:ring-2 focus-within:ring-[#cb2d2d]/10 focus-within:border-[#cb2d2d] transition-all">
@@ -251,7 +251,7 @@
             const container = document.getElementById('prop-modal-container');
             const form = document.getElementById('prop-main-form');
             const title = document.getElementById('prop-modal-title');
-            
+
             wrapper.classList.remove('hidden');
             setTimeout(() => {
                 overlay.classList.remove('opacity-0');
@@ -266,7 +266,7 @@
                 title.classList.remove('text-gray-900');
                 title.innerText = 'Modifier Agence';
                 title.classList.add('text-gray-900');
-                
+
                 document.getElementById('prop-input-id').value = prop.id;
                 document.getElementById('prop-input-nom').value = prop.nom;
                 document.getElementById('prop-input-prenom').value = prop.prenom || '';
@@ -282,11 +282,11 @@
             const wrapper = document.getElementById('prop-modal-wrapper');
             const overlay = document.getElementById('prop-modal-overlay');
             const container = document.getElementById('prop-modal-container');
-            
+
             overlay.classList.add('opacity-0');
             container.classList.remove('opacity-100', 'scale-100');
             container.classList.add('opacity-0', 'scale-95');
-            
+
             setTimeout(() => { wrapper.classList.add('hidden'); }, 300);
         }
     };

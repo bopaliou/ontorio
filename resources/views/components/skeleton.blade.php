@@ -7,7 +7,7 @@
 
 @php
     $baseClasses = "animate-pulse bg-gray-200 dark:bg-gray-700 rounded transition-all duration-300";
-    
+
     $variantClasses = [
         'circle' => 'rounded-full',
         'text' => 'rounded h-3',

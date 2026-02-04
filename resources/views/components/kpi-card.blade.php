@@ -1,4 +1,4 @@
-{{-- 
+{{--
     COMPOSANT: KPI Card Uniforme
     Usage: @include('components.kpi-card', [
         'label' => 'Label du KPI',
@@ -12,10 +12,10 @@
 --}}
 
 @props([
-    'label', 
-    'value', 
-    'suffix' => '', 
-    'icon' => 'chart', 
+    'label',
+    'value',
+    'suffix' => '',
+    'icon' => 'chart',
     'color' => 'gray',
     'trend' => null,
     'trendUp' => true,
@@ -73,7 +73,7 @@
                     <span class="text-sm font-bold @if($isGradient) text-blue-200 @else text-gray-400 @endif">{{ $suffix }}</span>
                 @endif
             </div>
-            
+
             @if($trend || $subtext)
             <div class="mt-2 flex items-center gap-1.5">
                 @if($trend)
@@ -92,7 +92,7 @@
             </div>
             @endif
         </div>
-        
+
         <div class="w-12 h-12 {{ $colors['bg'] }} rounded-xl flex items-center justify-center {{ $colors['icon'] }} shrink-0 group-hover:scale-110 transition-transform">
             @switch($icon)
                 @case('building')

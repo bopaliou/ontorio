@@ -30,7 +30,7 @@ class LoyerService
         $erreurs = [];
 
         foreach ($contrats as $contrat) {
-            // Vérifier si le loyer existe déjà
+            // Vérifier si le loyer existe déj�
             $existe = Loyer::where('contrat_id', $contrat->id)
                 ->where('mois', $mois)
                 ->exists();

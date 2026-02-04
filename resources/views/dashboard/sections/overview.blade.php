@@ -3,13 +3,13 @@
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
             <h1 class="text-3xl font-bold text-[#274256] tracking-tight flex items-center gap-3">
-                Vue d'ensemble 
+                Vue d'ensemble
                 <span class="text-2xl animate-bounce">🏠</span>
             </h1>
             <p class="text-gray-500 mt-2 text-lg">Bienvenue, voici ce qui se passe aujourd'hui.</p>
         </div>
         <div class="flex gap-3">
-            <a href="{{ route('rapports.mensuel') }}" target="_blank" 
+            <a href="{{ route('rapports.mensuel') }}" target="_blank"
                class="bg-white border-2 border-[#274256] text-[#274256] px-5 py-2.5 rounded-xl text-sm font-bold hover:bg-[#274256] hover:text-white transition-all flex items-center gap-2 shadow-sm hover:shadow-md">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
@@ -17,7 +17,7 @@
                 Rapport PDF
             </a>
             @if(App\Helpers\PermissionHelper::can('biens.create'))
-            <button onclick="dashboard.show('biens'); setTimeout(() => bienSection.openModal('create'), 100);" 
+            <button onclick="dashboard.show('biens'); setTimeout(() => bienSection.openModal('create'), 100);"
                     class="bg-[#cb2d2d] text-white px-5 py-2.5 rounded-xl text-sm font-semibold shadow-lg shadow-red-900/20 hover:bg-[#a82020] hover:shadow-xl hover:scale-[1.02] transition-all flex items-center gap-2">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
@@ -105,7 +105,7 @@
                     </svg>
                     Derniers Baux
                 </h3>
-                <a href="#" data-show-section="contrats" onclick="dashboard.show('contrats')" 
+                <a href="#" data-show-section="contrats" onclick="dashboard.show('contrats')"
                    class="text-xs text-blue-600 hover:underline font-medium">Voir tout →</a>
             </div>
             <div class="space-y-3 max-h-64 overflow-y-auto">
@@ -133,7 +133,7 @@
                 @endforelse
             </div>
         </div>
-        
+
         {{-- Raccourcis rapides --}}
         <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
             <h3 class="text-lg font-bold text-[#274256] mb-4 flex items-center gap-2">
@@ -143,7 +143,7 @@
                 Accès Rapides
             </h3>
             <div class="grid grid-cols-2 gap-3">
-                <a href="#" data-show-section="biens" onclick="dashboard.show('biens')" 
+                <a href="#" data-show-section="biens" onclick="dashboard.show('biens')"
                    class="flex items-center gap-3 p-4 border border-gray-100 rounded-xl ontario-card-lift group">
                     <div class="w-10 h-10 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

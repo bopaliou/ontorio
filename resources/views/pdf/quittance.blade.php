@@ -5,26 +5,26 @@
     <title>Quittance de Loyer - {{ $loyer->contrat->locataire->nom ?? 'Locataire' }}</title>
     <style>
         @page { margin: 30px; }
-        body { 
-            font-family: 'Helvetica', 'Arial', sans-serif; 
-            font-size: 11px; 
-            color: #333; 
+        body {
+            font-family: 'Helvetica', 'Arial', sans-serif;
+            font-size: 11px;
+            color: #333;
             line-height: 1.3;
         }
-        
+
         /* Brand Colors */
         .text-brand { color: #274256; }
         .bg-brand { background-color: #274256; color: white; }
-        
-        .header { 
-            border-bottom: 2px solid #274256; 
-            padding-bottom: 15px; 
+
+        .header {
+            border-bottom: 2px solid #274256;
+            padding-bottom: 15px;
             margin-bottom: 25px;
         }
-        .logo-text { 
-            font-size: 18px; 
-            font-weight: 900; 
-            color: #274256; 
+        .logo-text {
+            font-size: 18px;
+            font-weight: 900;
+            color: #274256;
             text-transform: uppercase;
         }
         .logo-sub {
@@ -33,7 +33,7 @@
             letter-spacing: 1px;
             text-transform: uppercase;
         }
- 
+
         .doc-title {
             text-align: center;
             font-size: 18px;
@@ -46,7 +46,7 @@
             border-radius: 4px;
             background-color: #f8fafc;
         }
- 
+
         .info-grid {
             width: 100%;
             margin-bottom: 20px;
@@ -66,13 +66,13 @@
             padding-bottom: 3px;
             margin-bottom: 8px;
         }
- 
+
         .main-content {
             margin: 20px 0;
             line-height: 1.5;
             text-align: justify;
         }
- 
+
         .amount-box {
             text-align: center;
             margin: 20px 0;
@@ -91,7 +91,7 @@
             color: #065f46;
             font-style: italic;
         }
- 
+
         .details-table {
             width: 100%;
             border-collapse: collapse;
@@ -109,7 +109,7 @@
             padding: 8px;
             border-bottom: 1px solid #e2e8f0;
         }
- 
+
         .signature {
             border-top: 1px solid #e2e8f0;
             padding-top: 15px;
@@ -126,7 +126,7 @@
             font-size: 9px;
             color: #94a3b8;
         }
- 
+
         .footer {
             position: fixed;
             bottom: -15px;
@@ -190,10 +190,10 @@
 
     <!-- TEXTE PRINCIPAL -->
     <div class="main-content">
-        Je soussigné, <strong>ONTARIO GROUP S.A.</strong>, agissant en qualité de gérant de l'immeuble/bien sis à 
+        Je soussigné, <strong>ONTARIO GROUP S.A.</strong>, agissant en qualité de gérant de l'immeuble/bien sis �
         <strong>{{ $loyer->contrat->bien->nom }}</strong>,
         déclare avoir reçu de Monsieur/Madame <strong>{{ $loyer->contrat->locataire->nom }}</strong>,
-        la somme indiquée ci-dessous, en paiement du loyer et des charges pour la période de : 
+        la somme indiquée ci-dessous, en paiement du loyer et des charges pour la période de :
         <strong>{{ \Carbon\Carbon::parse($loyer->mois)->translatedFormat('F Y') }}</strong>.
     </div>
 
@@ -232,7 +232,7 @@
     </table>
 
     <div style="font-size: 11px; color: #64748b; font-style: italic; margin-bottom: 30px;">
-        Cette quittance annule tous les reçus qui auraient pu être donnés pour acompte versé sur le présent terme. 
+        Cette quittance annule tous les reçus qui auraient pu être donnés pour acompte versé sur le présent terme.
         En cas de congé, elle vaudra pièce justificative pour l'établissement de l'état des lieux de sortie.
     </div>
 
@@ -242,7 +242,7 @@
             Fait à <strong>Dakar</strong>, le <strong>{{ $loyer->date_paiement ? \Carbon\Carbon::parse($loyer->date_paiement)->format('d/m/Y') : date('d/m/Y') }}</strong><br>
             <span style="font-size: 10px; color: #94a3b8;">Référence Paiement : {{ $loyer->paiements->first()->reference ?? 'ESP-' . $loyer->id }}</span>
         </div>
-        
+
         <div class="stamp-box">
             Cachet et Signature
         </div>

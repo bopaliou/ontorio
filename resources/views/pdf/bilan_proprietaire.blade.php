@@ -57,7 +57,7 @@
         <tbody>
             @php $totalRecettes = 0; @endphp
             @foreach($biens as $bien)
-                @php 
+                @php
                     $encaisséBien = $bien->contrats->flatMap->paiements->sum('montant');
                     $totalRecettes += $encaisséBien;
                 @endphp
@@ -129,7 +129,7 @@
     </table>
 
     <div style="margin-top: 30px; font-size: 11px; border: 1px solid #e2e8f0; padding: 15px; border-radius: 10px; color: #475569;">
-        <strong>Note de Gestion :</strong> Ce relevé présente la situation nette de votre compte au {{ date('d/m/Y') }}. 
+        <strong>Note de Gestion :</strong> Ce relevé présente la situation nette de votre compte au {{ date('d/m/Y') }}.
         Le montant "Net à reverser" sera transféré sur votre compte après validation par le département comptable.
     </div>
 

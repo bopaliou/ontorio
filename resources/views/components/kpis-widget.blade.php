@@ -85,26 +85,26 @@ async function loadKPIs() {
     try {
         const response = await fetch('/api/stats/kpis');
         const data = await response.json();
-        
+
         // Formateur
         const fmt = (n) => new Intl.NumberFormat('fr-FR').format(Math.round(n));
-        
+
         // Mise à jour avec animation
         document.getElementById('kpi-factures').innerHTML = fmt(data.loyers_factures) + ' <span class="text-sm font-normal text-gray-400">F</span>';
         document.getElementById('kpi-encaisses').innerHTML = fmt(data.loyers_encaisses) + ' <span class="text-sm font-normal text-gray-400">F</span>';
         document.getElementById('kpi-arrieres').innerHTML = fmt(data.arrieres_total) + ' <span class="text-sm font-normal text-gray-400">F</span>';
         document.getElementById('kpi-solde').innerHTML = fmt(data.solde_net) + ' <span class="text-sm font-normal">F</span>';
-        
+
         document.getElementById('kpi-taux').textContent = data.taux_recouvrement + '% recouvré';
         document.getElementById('kpi-progress').style.width = data.taux_recouvrement + '%';
         document.getElementById('kpi-impayes-count').textContent = data.nb_impayes + ' loyers impayés';
-        
+
         // Colorer le solde
         const soldeEl = document.getElementById('kpi-solde');
         if (data.solde_net < 0) {
             soldeEl.classList.add('text-red-300');
         }
-        
+
     } catch (error) {
         console.error('Erreur chargement KPIs:', error);
     }

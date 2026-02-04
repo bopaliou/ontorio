@@ -23,12 +23,12 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
                     </svg>
                 </div>
-                <input id="email" 
-                       type="email" 
-                       name="email" 
-                       value="{{ old('email') }}" 
-                       required 
-                       autofocus 
+                <input id="email"
+                       type="email"
+                       name="email"
+                       value="{{ old('email') }}"
+                       required
+                       autofocus
                        autocomplete="username"
                        placeholder="votre@email.com"
                        class="input-focus block w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl text-base text-gray-900 placeholder-gray-400 focus:outline-none transition-all duration-200">
@@ -47,10 +47,10 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                     </svg>
                 </div>
-                <input id="password" 
-                       type="password" 
-                       name="password" 
-                       required 
+                <input id="password"
+                       type="password"
+                       name="password"
+                       required
                        autocomplete="current-password"
                        placeholder="••••••••"
                        class="input-focus block w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl text-base text-gray-900 placeholder-gray-400 focus:outline-none transition-all duration-200">
@@ -61,15 +61,15 @@
         <!-- Remember Me & Forgot Password -->
         <div class="flex items-center justify-between mt-5">
             <label for="remember_me" class="inline-flex items-center cursor-pointer">
-                <input id="remember_me" 
-                       type="checkbox" 
+                <input id="remember_me"
+                       type="checkbox"
                        name="remember"
                        class="w-4 h-4 rounded border-gray-300 text-red-600 focus:ring-red-500 transition">
                 <span class="ml-2 text-sm text-gray-600">Se souvenir de moi</span>
             </label>
 
             @if (Route::has('password.request'))
-                <a class="text-sm text-red-600 hover:text-red-700 font-medium transition" 
+                <a class="text-sm text-red-600 hover:text-red-700 font-medium transition"
                    href="{{ route('password.request') }}">
                     Mot de passe oublié ?
                 </a>
@@ -78,7 +78,7 @@
 
         <!-- Submit Button -->
         <div class="mt-8">
-            <button type="submit" 
+            <button type="submit"
                     class="ontario-btn w-full py-3 px-4 rounded-xl text-white font-semibold text-base focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2">
                 <span class="flex items-center justify-center">
                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">

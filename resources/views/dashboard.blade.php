@@ -1,11 +1,11 @@
 <x-app-layout>
     <div class="h-full flex flex-col gap-8">
-        
+
         <!-- Header Section -->
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
                 <h1 class="text-3xl font-bold text-[#274256] tracking-tight">
-                    Vue d'ensemble 🏠
+                    Vue d'ensemble �
                 </h1>
                 <p class="text-gray-500 mt-2 text-lg">
                     Bienvenue {{ Auth::user()->name }}, voici ce qui se passe aujourd'hui.
@@ -35,7 +35,7 @@
                     </div>
                     <h3 class="text-gray-500 text-sm font-medium">Parc Immobilier</h3>
                     <p class="text-3xl font-bold text-[#274256] mt-1">
-                        {{ $data['kpis']['total_logements'] ?? 0 }} 
+                        {{ $data['kpis']['total_logements'] ?? 0 }}
                         <span class="text-base font-normal text-gray-400">unités</span>
                     </p>
                 </div>
@@ -139,7 +139,7 @@
                             Nouveau Contrat
                         </a>
                         @endif
-                        
+
                         @if(App\Helpers\PermissionHelper::can('locataires.create'))
                         <a href="{{ route('locataires.create') }}" class="block w-full text-center py-3 px-4 border border-gray-200 text-gray-700 font-medium rounded-xl hover:bg-gray-50 transition">
                             Ajouter Locataire

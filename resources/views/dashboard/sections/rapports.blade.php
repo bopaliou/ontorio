@@ -1,5 +1,5 @@
 <div class="h-full flex flex-col gap-6" id="rapports-section-container">
-    
+
     <!-- IFRAME MASQUE POUR LES POST (Anti-Reload Pattern) -->
     <iframe name="rapport_post_target" class="hidden"></iframe>
 
@@ -37,7 +37,7 @@
             'color' => 'gradient',
             'subtext' => 'Encaissé'
         ])
-        
+
         @include('components.kpi-card', [
             'label' => 'Impayés Cumulés',
             'value' => number_format($impayes, 0, ',', ' '),
@@ -69,7 +69,7 @@
         <!-- Performance Graph (Simulation CSS) -->
         <div class="lg:col-span-2 bg-white p-8 rounded-3xl border border-gray-100 shadow-sm">
             <h4 class="text-lg font-bold text-[#274256] mb-6">Évolution des Revenus (6 derniers mois)</h4>
-            
+
             <div class="flex items-end justify-between gap-4 h-64 w-full">
                 @php
                     // Données fallback ou réelles si disponibles
@@ -77,10 +77,10 @@
                     // Si vide, on simule des données vides pour l'affichage
                     if(empty($revenusData)) {
                         for($i=5; $i>=0; $i--) {
-                           $revenusData[] = ['mois' => \Carbon\Carbon::now()->subMonths($i)->format('M'), 'montant' => 0]; 
+                           $revenusData[] = ['mois' => \Carbon\Carbon::now()->subMonths($i)->format('M'), 'montant' => 0];
                         }
                     }
-                    
+
                     // Trouver le max pour l'échelle
                     $maxMontant = collect($revenusData)->max('montant');
                     $maxMontant = $maxMontant > 0 ? $maxMontant : 1;
@@ -95,7 +95,7 @@
                         <div class="relative w-full bg-blue-50 rounded-t-xl group-hover:bg-blue-100 transition-all duration-500 flex items-end justify-center overflow-hidden" style="height: 100%;">
                             <div class="w-full bg-[#274256] rounded-t-xl transition-all duration-1000 ease-out group-hover:bg-[#1a2e3d]" style="height: 0%; animation: growBar{{$loop->index}} 1s forwards ease-in-out;"></div>
                             <style> @keyframes growBar{{$loop->index}} { to { height: {{ $height }}%; } } </style>
-                            
+
                             <!-- Tooltip -->
                             <div class="absolute -top-10 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-[11px] font-bold py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
                                 {{ number_format($point['montant'], 0, ',', ' ') }} F
@@ -110,7 +110,7 @@
         <!-- Répartition par Type -->
         <div class="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm">
             <h4 class="text-lg font-bold text-[#274256] mb-6">Parc Immobilier</h4>
-            
+
             @php
                 $repartition = $data['repartition_type'] ?? [];
                 $totalBiensCalc = collect($repartition)->sum('total');
