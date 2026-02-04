@@ -1,0 +1,87 @@
+name: Deploy to Production (Shared Hosting)
+
+on:
+  # push:
+  #   branches: ["main"]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Build & Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # ----------------------------------------------------------------
+      # 1. BUILD PHP (Vendor)
+      # ----------------------------------------------------------------
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.2"
+          extensions: mbstring, intl, gd, xml, dom, curl, zip
+
+      - name: Install Composer Dependencies (Prod)
+        run: composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
+
+      # ----------------------------------------------------------------
+      # 2. BUILD FRONTEND (Vite)
+      # ----------------------------------------------------------------
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install NPM & Build
+        run: |
+          npm ci
+          npm run build
+
+      # ----------------------------------------------------------------
+      # 3. FTP DEPLOY
+      # ----------------------------------------------------------------
+      - name: Deploy to Server via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          server-dir: ${{ secrets.DEPLOY_PATH }} # Ex: /public_html/
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            **/tests/**
+            **/storage/*.key
+            **/storage/logs/**
+            **/storage/framework/cache/**
+            **/storage/framework/sessions/**
+            **/storage/framework/views/**
+            .editorconfig
+            .env
+            .env.example
+            .phpunit.result.cache
+            check_columns.php
+            verify_updates.php
+            error_dump.txt
+            system_test_debug.txt
+            system_test_output.txt
+
+      # ----------------------------------------------------------------
+      # 4. MIGRATE DATABASE & CLEAR CACHE (Via Web Route)
+      # ----------------------------------------------------------------
+      - name: Trigger Remote Migration
+        run: |
+          echo "Triggering migration on ${{ secrets.APP_URL }}..."
+          STATUS_CODE=$(curl -o response.json -w "%{http_code}" -X GET "${{ secrets.APP_URL }}/system/migrate/${{ secrets.DEPLOY_TOKEN }}")
+
+          if [ "$STATUS_CODE" -ne 200 ]; then
+            echo "Migration Failed with status $STATUS_CODE"
+            cat response.json
+            exit 1
+          else
+            echo "Migration Success!"
+            cat response.json
+          fi
