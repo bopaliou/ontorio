@@ -25,7 +25,7 @@ class ContratTest extends TestCase
         ]);
     }
 
-    public function test_admin_can_create_contrat_and_it_updates_bien_status()
+    public function test_admin_can_create_contrat_and_it_updates_bien_status(): void
     {
         $bien = Bien::factory()->create(['statut' => 'libre']);
         $locataire = Locataire::factory()->create();
@@ -52,12 +52,11 @@ class ContratTest extends TestCase
         $this->assertEquals('occupé', $bien->fresh()->statut);
     }
 
-    public function test_cannot_create_contrat_for_occupied_bien()
+    public function test_cannot_create_contrat_for_occupied_bien(): void
     {
         $bien = Bien::factory()->create(['statut' => 'occupé']);
         $locataire = Locataire::factory()->create();
 
-        // Créer un contrat actif existant
         Contrat::factory()->create([
             'bien_id' => $bien->id,
             'statut' => 'actif',
@@ -75,11 +74,10 @@ class ContratTest extends TestCase
             ->assertJson(['success' => false]);
     }
 
-    public function test_updating_rent_propagates_to_unpaid_loyers()
+    public function test_updating_rent_propagates_to_unpaid_loyers(): void
     {
         $contrat = Contrat::factory()->create(['loyer_montant' => 100000]);
 
-        // Créer des loyers (émis, payé)
         $loyerEmis = Loyer::factory()->create([
             'contrat_id' => $contrat->id,
             'montant' => 100000,
@@ -101,14 +99,11 @@ class ContratTest extends TestCase
 
         $response->assertStatus(200);
 
-        // Vérifier que le loyer émis a été mis à jour
         $this->assertEquals(120000, $loyerEmis->fresh()->montant);
-
-        // Vérifier que le loyer payé n'a pas bougé
         $this->assertEquals(100000, $loyerPayé->fresh()->montant);
     }
 
-    public function test_deleting_contrat_frees_up_bien()
+    public function test_deleting_contrat_frees_up_bien(): void
     {
         $bien = Bien::factory()->create(['statut' => 'occupé']);
         $contrat = Contrat::factory()->create([

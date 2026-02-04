@@ -22,7 +22,7 @@ class BienTest extends TestCase
         ]);
     }
 
-    public function test_admin_can_create_bien()
+    public function test_admin_can_create_bien(): void
     {
         $response = $this->actingAs($this->admin)
             ->postJson(route('dashboard.biens.store'), [
@@ -43,7 +43,7 @@ class BienTest extends TestCase
         ]);
     }
 
-    public function test_store_bien_validation_fails()
+    public function test_store_bien_validation_fails(): void
     {
         $response = $this->actingAs($this->admin)
             ->postJson(route('dashboard.biens.store'), [
@@ -55,7 +55,7 @@ class BienTest extends TestCase
             ->assertJsonValidationErrors(['nom', 'loyer_mensuel']);
     }
 
-    public function test_admin_can_update_bien()
+    public function test_admin_can_update_bien(): void
     {
         $this->actingAs($this->admin)->postJson(route('dashboard.biens.store'), [
             'nom' => 'Old Name',
@@ -83,7 +83,7 @@ class BienTest extends TestCase
         ]);
     }
 
-    public function test_admin_can_delete_bien()
+    public function test_admin_can_delete_bien(): void
     {
         $this->actingAs($this->admin)->postJson(route('dashboard.biens.store'), [
             'nom' => 'To Delete',
@@ -102,7 +102,7 @@ class BienTest extends TestCase
         $this->assertDatabaseMissing('biens', ['id' => $bien->id]);
     }
 
-    public function test_unauthorized_user_cannot_manage_biens()
+    public function test_unauthorized_user_cannot_manage_biens(): void
     {
         $user = User::factory()->create(['role' => 'comptable']);
 

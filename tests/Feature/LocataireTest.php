@@ -22,7 +22,7 @@ class LocataireTest extends TestCase
         ]);
     }
 
-    public function test_admin_can_create_locataire()
+    public function test_admin_can_create_locataire(): void
     {
         $response = $this->actingAs($this->admin)
             ->postJson(route('locataires.store'), [
@@ -42,7 +42,7 @@ class LocataireTest extends TestCase
         ]);
     }
 
-    public function test_locataire_validation_fails()
+    public function test_locataire_validation_fails(): void
     {
         $response = $this->actingAs($this->admin)
             ->postJson(route('locataires.store'), [
@@ -55,7 +55,7 @@ class LocataireTest extends TestCase
             ->assertJsonValidationErrors(['nom', 'email']);
     }
 
-    public function test_admin_can_update_locataire()
+    public function test_admin_can_update_locataire(): void
     {
         $locataire = Locataire::factory()->create([
             'nom' => 'Ancien Nom',
@@ -79,7 +79,7 @@ class LocataireTest extends TestCase
         ]);
     }
 
-    public function test_admin_can_delete_locataire_without_active_contracts()
+    public function test_admin_can_delete_locataire_without_active_contracts(): void
     {
         $locataire = Locataire::factory()->create();
 
@@ -92,7 +92,7 @@ class LocataireTest extends TestCase
         $this->assertDatabaseMissing('locataires', ['id' => $locataire->id]);
     }
 
-    public function test_unauthorized_user_cannot_manage_locataires()
+    public function test_unauthorized_user_cannot_manage_locataires(): void
     {
         $comptable = User::factory()->create(['role' => 'comptable']);
 
