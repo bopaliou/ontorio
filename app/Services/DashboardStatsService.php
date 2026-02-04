@@ -4,10 +4,10 @@ namespace App\Services;
 
 use App\Models\Bien;
 use App\Models\Contrat;
-use App\Models\Loyer;
-use App\Models\Paiement;
 use App\Models\Depense;
 use App\Models\Locataire;
+use App\Models\Loyer;
+use App\Models\Paiement;
 use App\Models\Proprietaire;
 use Carbon\Carbon;
 
@@ -20,10 +20,10 @@ class DashboardStatsService
     /**
      * Obtenir les KPIs financiers principaux
      */
-    public function getFinancialKPIs(string $mois = null): array
+    public function getFinancialKPIs(?string $mois = null): array
     {
         $mois = $mois ?? Carbon::now()->format('Y-m');
-        
+
         // Loyers du mois - une seule requête
         $loyersStats = Loyer::where('mois', $mois)
             ->where('statut', '!=', 'annulé')
@@ -58,8 +58,8 @@ class DashboardStatsService
             'paiements_mois' => $paiementsMois,
             'depenses_mois' => $depensesMois,
             'solde_net' => $paiementsMois - $depensesMois,
-            'taux_recouvrement' => $loyersStats->total_facture > 0 
-                ? round(($loyersStats->total_paye / $loyersStats->total_facture) * 100, 1) 
+            'taux_recouvrement' => $loyersStats->total_facture > 0
+                ? round(($loyersStats->total_paye / $loyersStats->total_facture) * 100, 1)
                 : 0,
             'nb_loyers' => $loyersStats->nb_loyers ?? 0,
             'nb_payes' => $loyersStats->nb_payes ?? 0,
@@ -78,7 +78,7 @@ class DashboardStatsService
         $biensOccupes = Contrat::where('statut', 'actif')
             ->distinct('bien_id')
             ->count('bien_id');
-        
+
         $biensVacants = $totalBiens - $biensOccupes;
         $tauxOccupation = $totalBiens > 0 ? round(($biensOccupes / $totalBiens) * 100, 1) : 0;
 
@@ -145,7 +145,7 @@ class DashboardStatsService
                 'type' => 'warning',
                 'icon' => 'exclamation-triangle',
                 'message' => "$loyersRetard loyer(s) en retard de paiement",
-                'action' => 'loyers'
+                'action' => 'loyers',
             ];
         }
 
@@ -159,12 +159,12 @@ class DashboardStatsService
                 'type' => 'info',
                 'icon' => 'calendar',
                 'message' => "$contratsUrgents contrat(s) expire(nt) dans les 30 jours",
-                'action' => 'contrats'
+                'action' => 'contrats',
             ];
         }
 
         // Biens vacants
-        $biensVacants = Bien::whereDoesntHave('contrats', function($q) {
+        $biensVacants = Bien::whereDoesntHave('contrats', function ($q) {
             $q->where('statut', 'actif');
         })->count();
         if ($biensVacants > 0) {
@@ -172,7 +172,7 @@ class DashboardStatsService
                 'type' => 'secondary',
                 'icon' => 'home',
                 'message' => "$biensVacants bien(s) vacant(s) à louer",
-                'action' => 'biens'
+                'action' => 'biens',
             ];
         }
 

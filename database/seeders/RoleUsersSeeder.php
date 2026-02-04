@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\User;
+use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
 class RoleUsersSeeder extends Seeder
@@ -18,7 +18,7 @@ class RoleUsersSeeder extends Seeder
             'admin@ontariogroup.sn',
             'gestionnaire@ontariogroup.sn',
             'comptable@ontariogroup.sn',
-            'direction@ontariogroup.sn'
+            'direction@ontariogroup.sn',
         ])->delete();
 
         // 1. Admin - Accès complet

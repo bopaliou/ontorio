@@ -1,13 +1,13 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\ProprietaireController;
-use App\Http\Controllers\LocataireController;
 use App\Http\Controllers\ContratController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DocumentController;
+use App\Http\Controllers\LocataireController;
 use App\Http\Controllers\LoyerController;
 use App\Http\Controllers\PaiementController;
-use App\Http\Controllers\DocumentController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ProprietaireController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -33,25 +33,25 @@ Route::middleware(['auth', 'role:admin|direction|gestionnaire'])->group(function
     // Propriétaires
     Route::resource('proprietaires', ProprietaireController::class);
     Route::get('/proprietaires/{proprietaire}/bilan', [\App\Http\Controllers\ProprietaireController::class, 'bilanPDF'])->name('proprietaires.bilan');
-    
+
     // Biens (Anciennement Immeubles/Logements)
     Route::post('/dashboard/biens', [DashboardController::class, 'storeBien'])->name('dashboard.biens.store');
     Route::put('/dashboard/biens/{bien}', [DashboardController::class, 'updateBien'])->name('dashboard.biens.update');
     Route::delete('/dashboard/biens/{bien}', [DashboardController::class, 'deleteBien'])->name('dashboard.biens.delete');
     Route::delete('/dashboard/bien-images/{bienImage}', [DashboardController::class, 'deleteBienImage'])->name('dashboard.bien-images.delete');
-    
+
     // Locataires
     Route::resource('locataires', LocataireController::class);
-    
+
     // Documents pour Locataires
     Route::post('/locataires/{locataire}/documents', [DocumentController::class, 'storeForLocataire'])->name('locataires.documents.store');
     Route::get('/locataires/{locataire}/documents', [DocumentController::class, 'getForLocataire'])->name('locataires.documents.index');
     Route::delete('/documents/{document}', [DocumentController::class, 'destroy'])->name('documents.destroy');
-    
+
     // Contrats
     Route::get('contrats/{contrat}/print', [ContratController::class, 'print'])->name('contrats.print');
     Route::resource('contrats', ContratController::class);
-    
+
     // Loyers
     Route::resource('loyers', LoyerController::class);
     Route::post('/loyers/generer-mois', [LoyerController::class, 'genererMois'])->name('loyers.genererMois');
@@ -81,31 +81,41 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
 // Routes accessibles à Direction, Admin et Gestionnaire (Rapports)
 Route::middleware(['auth', 'role:admin|direction|gestionnaire|comptable'])->group(function () {
-    Route::get('/rapports/loyers', function () { return view('rapports.loyers'); })->name('rapports.loyers');
-    Route::get('/rapports/impayees', function () { return view('rapports.impayees'); })->name('rapports.impayees');
-    Route::get('/rapports/commissions', function () { return view('rapports.commissions'); })->name('rapports.commissions');
+    Route::get('/rapports/loyers', function () {
+        return view('rapports.loyers');
+    })->name('rapports.loyers');
+    Route::get('/rapports/impayees', function () {
+        return view('rapports.impayees');
+    })->name('rapports.impayees');
+    Route::get('/rapports/commissions', function () {
+        return view('rapports.commissions');
+    })->name('rapports.commissions');
     Route::get('/rapports/mensuel/{mois?}', [DashboardController::class, 'exporterRapportMensuel'])->name('rapports.mensuel');
 });
 
 // API Routes - Stats et Alertes (pour widgets AJAX)
 Route::middleware(['auth'])->prefix('api')->group(function () {
     Route::get('/stats/kpis', function () {
-        $service = new \App\Services\DashboardStatsService();
+        $service = new \App\Services\DashboardStatsService;
+
         return response()->json($service->getFinancialKPIs());
     })->name('api.stats.kpis');
-    
+
     Route::get('/stats/parc', function () {
-        $service = new \App\Services\DashboardStatsService();
+        $service = new \App\Services\DashboardStatsService;
+
         return response()->json($service->getParcStats());
     })->name('api.stats.parc');
-    
+
     Route::get('/stats/charts', function () {
-        $service = new \App\Services\DashboardStatsService();
+        $service = new \App\Services\DashboardStatsService;
+
         return response()->json($service->getChartData());
     })->name('api.stats.charts');
-    
+
     Route::get('/alerts', function () {
-        $service = new \App\Services\DashboardStatsService();
+        $service = new \App\Services\DashboardStatsService;
+
         return response()->json($service->getAlerts());
     })->name('api.alerts');
 });

@@ -7,22 +7,22 @@ use Illuminate\Database\Eloquent\Model;
 class Bien extends Model
 {
     protected $fillable = [
-        'proprietaire_id', 
-        'nom', 
-        'adresse', 
-        'ville', 
-        'type', 
-        'surface', 
-        'statut', 
-        'loyer_mensuel', 
+        'proprietaire_id',
+        'nom',
+        'adresse',
+        'ville',
+        'type',
+        'surface',
+        'statut',
+        'loyer_mensuel',
         'description',
         'nombre_pieces',
-        'meuble'
+        'meuble',
     ];
 
     protected $casts = [
         'meuble' => 'boolean',
-        'surface' => 'decimal:2'
+        'surface' => 'decimal:2',
     ];
 
     public function proprietaire()
@@ -67,6 +67,7 @@ class Bien extends Model
     public function getImagePrincipaleUrlAttribute()
     {
         $image = $this->imagePrincipale ?? $this->images->first();
-        return $image ? asset('storage/' . $image->chemin) : null;
+
+        return $image ? asset('storage/'.$image->chemin) : null;
     }
 }

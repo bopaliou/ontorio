@@ -24,7 +24,7 @@ return new class extends Migration
                 'renouvellement_bail',      // Lors du renouvellement
                 'accord_parties',           // Accord amiable
                 'revision_marche',          // Alignement sur le marché
-                'autre'
+                'autre',
             ])->default('indexation_annuelle');
             $table->decimal('pourcentage_augmentation', 5, 2)->nullable();
             $table->text('justification')->nullable();

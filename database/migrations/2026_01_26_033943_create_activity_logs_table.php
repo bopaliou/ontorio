@@ -20,7 +20,7 @@ return new class extends Migration
             // Pour lier à un objet (polymorphisme simple)
             $table->string('target_type')->nullable(); // ex: "App\Models\Bien"
             $table->unsignedBigInteger('target_id')->nullable();
-            
+
             $table->timestamps();
         });
     }

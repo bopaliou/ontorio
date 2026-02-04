@@ -2,10 +2,10 @@
 
 namespace App\Services;
 
+use App\Helpers\ActivityLogger;
 use App\Models\Contrat;
 use App\Models\Loyer;
 use App\Models\RevisionLoyer;
-use App\Helpers\ActivityLogger;
 use Carbon\Carbon;
 
 /**
@@ -17,10 +17,10 @@ class LoyerService
     /**
      * Générer les loyers pour un mois donné
      */
-    public function genererLoyersMensuels(string $mois = null): array
+    public function genererLoyersMensuels(?string $mois = null): array
     {
         $mois = $mois ?? Carbon::now()->format('Y-m');
-        
+
         $contrats = Contrat::where('statut', 'actif')
             ->with('bien:id,nom')
             ->get();
@@ -37,6 +37,7 @@ class LoyerService
 
             if ($existe) {
                 $existants++;
+
                 continue;
             }
 
@@ -50,7 +51,7 @@ class LoyerService
                 ]);
                 $generes++;
             } catch (\Exception $e) {
-                $erreurs[] = "Contrat #{$contrat->id}: " . $e->getMessage();
+                $erreurs[] = "Contrat #{$contrat->id}: ".$e->getMessage();
             }
         }
 
@@ -100,8 +101,8 @@ class LoyerService
 
         ActivityLogger::log(
             'Révision Loyer',
-            "Loyer révisé de " . number_format($ancienMontant, 0, ',', ' ') . 
-            " à " . number_format($nouveauMontant, 0, ',', ' ') . " FCFA",
+            'Loyer révisé de '.number_format($ancienMontant, 0, ',', ' ').
+            ' à '.number_format($nouveauMontant, 0, ',', ' ').' FCFA',
             'info',
             $contrat
         );
@@ -123,12 +124,12 @@ class LoyerService
 
         foreach ($loyersEnRetard as $loyer) {
             $penalite = $loyer->calculerPenalite();
-            
+
             if ($penalite > 0) {
-                if (!$dryRun && $loyer->statut !== 'en_retard') {
+                if (! $dryRun && $loyer->statut !== 'en_retard') {
                     $loyer->update(['statut' => 'en_retard']);
                 }
-                
+
                 $resultats[] = [
                     'loyer_id' => $loyer->id,
                     'mois' => $loyer->mois,
@@ -140,11 +141,11 @@ class LoyerService
             }
         }
 
-        if (!$dryRun && count($resultats) > 0) {
+        if (! $dryRun && count($resultats) > 0) {
             ActivityLogger::log(
                 'Application Pénalités',
-                count($resultats) . " pénalités appliquées pour un total de " . 
-                number_format($totalPenalites, 0, ',', ' ') . " FCFA",
+                count($resultats).' pénalités appliquées pour un total de '.
+                number_format($totalPenalites, 0, ',', ' ').' FCFA',
                 'warning'
             );
         }

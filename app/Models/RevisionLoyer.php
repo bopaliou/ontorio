@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class RevisionLoyer extends Model
 {
     protected $table = 'revisions_loyer';
-    
+
     protected $fillable = [
         'contrat_id',
         'ancien_montant',
@@ -16,7 +16,7 @@ class RevisionLoyer extends Model
         'motif',
         'pourcentage_augmentation',
         'justification',
-        'created_by'
+        'created_by',
     ];
 
     protected $casts = [
@@ -47,7 +47,7 @@ class RevisionLoyer extends Model
      */
     public function getMotifLabelAttribute()
     {
-        return match($this->motif) {
+        return match ($this->motif) {
             'indexation_annuelle' => 'Indexation annuelle',
             'travaux_amelioration' => 'Travaux d\'amélioration',
             'renouvellement_bail' => 'Renouvellement du bail',
@@ -65,8 +65,10 @@ class RevisionLoyer extends Model
     {
         if ($this->ancien_montant > 0) {
             $diff = $this->nouveau_montant - $this->ancien_montant;
+
             return round(($diff / $this->ancien_montant) * 100, 2);
         }
+
         return 0;
     }
 
@@ -78,7 +80,7 @@ class RevisionLoyer extends Model
         parent::boot();
 
         static::creating(function ($revision) {
-            if (!$revision->pourcentage_augmentation && $revision->ancien_montant > 0) {
+            if (! $revision->pourcentage_augmentation && $revision->ancien_montant > 0) {
                 $revision->pourcentage_augmentation = $revision->calculerPourcentage();
             }
         });

@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Paiement extends Model
 {
     protected $fillable = ['loyer_id', 'montant', 'mode', 'date_paiement', 'preuve', 'reference'];
+
     protected $casts = ['date_paiement' => 'date'];
 
     public function loyer()

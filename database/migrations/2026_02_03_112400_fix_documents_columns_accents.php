@@ -2,8 +2,8 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
@@ -14,17 +14,17 @@ return new class extends Migration
     {
         // Ajouter les nouvelles colonnes si elles n'existent pas
         Schema::table('documents', function (Blueprint $table) {
-            if (!Schema::hasColumn('documents', 'entite_type')) {
+            if (! Schema::hasColumn('documents', 'entite_type')) {
                 $table->string('entite_type')->after('chemin_fichier');
             }
-            if (!Schema::hasColumn('documents', 'entite_id')) {
+            if (! Schema::hasColumn('documents', 'entite_id')) {
                 $table->unsignedBigInteger('entite_id')->after('entite_type');
             }
         });
 
         // Copier les données des anciennes colonnes (avec accents) vers les nouvelles
         $columns = Schema::getColumnListing('documents');
-        
+
         // Vérifier si les colonnes avec accents existent et copier les données
         if (in_array('entité_type', $columns) && in_array('entite_type', $columns)) {
             DB::statement('UPDATE documents SET entite_type = `entité_type` WHERE entite_type IS NULL OR entite_type = ""');

@@ -33,12 +33,12 @@ class DashboardAccessTest extends TestCase
     public function test_admin_access_dashboard_200()
     {
         $user = User::factory()->create([
-            'role' => 'admin'
+            'role' => 'admin',
         ]);
         $user->assignRole('admin');
 
         $response = $this->actingAs($user)->get('/dashboard');
-        
+
         $response->assertStatus(200);
         $response->assertViewIs('dashboard.index');
         $response->assertViewHas('data');
@@ -47,12 +47,12 @@ class DashboardAccessTest extends TestCase
     public function test_gestionnaire_access_dashboard_200()
     {
         $user = User::factory()->create([
-            'role' => 'gestionnaire'
+            'role' => 'gestionnaire',
         ]);
         $user->assignRole('gestionnaire');
 
         $response = $this->actingAs($user)->get('/dashboard');
-        
+
         $response->assertStatus(200);
     }
 }

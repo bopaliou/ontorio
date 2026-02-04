@@ -2,14 +2,14 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
-use App\Models\User;
-use App\Models\Proprietaire;
 use App\Models\Bien;
-use App\Models\Locataire;
 use App\Models\Contrat;
+use App\Models\Locataire;
 use App\Models\Loyer;
 use App\Models\Paiement;
+use App\Models\Proprietaire;
+use App\Models\User;
+use Illuminate\Database\Seeder;
 
 class MockDataSeeder extends Seeder
 {
@@ -35,9 +35,9 @@ class MockDataSeeder extends Seeder
         $ontario = Proprietaire::firstOrCreate(
             ['email' => 'commercial@ontariogroup.net'],
             [
-                'nom' => 'ONTARIO GROUP', 
+                'nom' => 'ONTARIO GROUP',
                 'telephone' => '+221 33 822 32 67 / 33 842 05 80 / 78 105 35 54',
-                'adresse' => '5 Felix Gaure x Colbert Dakar, Dakar Plateau BP: 06813'
+                'adresse' => '5 Felix Gaure x Colbert Dakar, Dakar Plateau BP: 06813',
             ]
         );
 
@@ -52,7 +52,7 @@ class MockDataSeeder extends Seeder
                     'surface' => 80.0,
                     'statut' => 'occupé',
                     'loyer_mensuel' => 250000,
-                    'proprietaire_id' => $ontario->id
+                    'proprietaire_id' => $ontario->id,
                 ]
             ),
             Bien::firstOrCreate(
@@ -64,7 +64,7 @@ class MockDataSeeder extends Seeder
                     'surface' => 250.0,
                     'statut' => 'libre',
                     'loyer_mensuel' => 650000,
-                    'proprietaire_id' => $ontario->id
+                    'proprietaire_id' => $ontario->id,
                 ]
             ),
             Bien::firstOrCreate(
@@ -76,7 +76,7 @@ class MockDataSeeder extends Seeder
                     'surface' => 45.0,
                     'statut' => 'occupé',
                     'loyer_mensuel' => 180000,
-                    'proprietaire_id' => $ontario->id
+                    'proprietaire_id' => $ontario->id,
                 ]
             ),
         ];
@@ -132,7 +132,7 @@ class MockDataSeeder extends Seeder
             [
                 'date_paiement' => '2026-01-05',
                 'montant' => 250000,
-                'mode' => 'virement'
+                'mode' => 'virement',
             ]
         );
     }

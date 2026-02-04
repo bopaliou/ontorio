@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Locataire;
 use App\Helpers\ActivityLogger;
+use App\Models\Locataire;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -26,7 +26,7 @@ class LocataireController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => $validator->errors()->first(),
-                'errors' => $validator->errors()
+                'errors' => $validator->errors(),
             ], 422);
         }
 
@@ -39,12 +39,12 @@ class LocataireController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Locataire ajouté avec succès !',
-                'data' => $locataire
+                'data' => $locataire,
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Une erreur est survenue. Veuillez réessayer.'
+                'message' => 'Une erreur est survenue. Veuillez réessayer.',
             ], 500);
         }
     }
@@ -56,7 +56,7 @@ class LocataireController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'nom' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:locataires,email,' . $locataire->id,
+            'email' => 'required|string|email|max:255|unique:locataires,email,'.$locataire->id,
             'telephone' => 'required|string|max:50',
             'adresse' => 'nullable|string',
             'cni' => 'nullable|string|max:100',
@@ -66,7 +66,7 @@ class LocataireController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => $validator->errors()->first(),
-                'errors' => $validator->errors()
+                'errors' => $validator->errors(),
             ], 422);
         }
 
@@ -79,12 +79,12 @@ class LocataireController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Locataire mis à jour !',
-                'data' => $locataire
+                'data' => $locataire,
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Une erreur est survenue. Veuillez réessayer.'
+                'message' => 'Une erreur est survenue. Veuillez réessayer.',
             ], 500);
         }
     }
@@ -97,7 +97,7 @@ class LocataireController extends Controller
         try {
             // Vérifier s'il a des contrats actifs
             if ($locataire->contrats()->where('statut', 'actif')->exists()) {
-                return response()->json(['success' => false, 'message' => "Impossible de supprimer ce locataire car il a des contrats actifs."], 403);
+                return response()->json(['success' => false, 'message' => 'Impossible de supprimer ce locataire car il a des contrats actifs.'], 403);
             }
 
             $nom = $locataire->nom;
@@ -108,7 +108,8 @@ class LocataireController extends Controller
             return response()->json(['success' => true, 'message' => 'Locataire supprimé !']);
         } catch (\Exception $e) {
             \Log::error('Erreur suppression locataire', ['id' => $locataire->id, 'error' => $e->getMessage()]);
-            return response()->json(['success' => false, 'message' => "Une erreur est survenue lors de la suppression."], 500);
+
+            return response()->json(['success' => false, 'message' => 'Une erreur est survenue lors de la suppression.'], 500);
         }
     }
 }

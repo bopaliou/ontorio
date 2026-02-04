@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Paiement;
-use App\Models\Loyer;
 use App\Helpers\ActivityLogger;
+use App\Models\Loyer;
+use App\Models\Paiement;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 class PaiementController extends Controller
 {
@@ -21,7 +21,7 @@ class PaiementController extends Controller
             'montant' => 'required|numeric|min:0',
             'date_paiement' => 'required|date',
             'mode' => 'nullable|string',
-            'preuve' => 'nullable|file|mimes:pdf,jpg,jpeg,png,webp,gif|max:5120'
+            'preuve' => 'nullable|file|mimes:pdf,jpg,jpeg,png,webp,gif|max:5120',
         ]);
 
         if ($validator->fails()) {
@@ -30,6 +30,7 @@ class PaiementController extends Controller
                 if (window.parent.loySection && window.parent.loySection.onStoreError) window.parent.loySection.onStoreError('$error');
                 if (window.parent.paiSection && window.parent.paiSection.onStoreError) window.parent.paiSection.onStoreError('$error');
             </script>";
+
             return response($script)->header('Content-Type', 'text/html');
         }
 
@@ -39,7 +40,7 @@ class PaiementController extends Controller
             $preuvePath = null;
             if ($request->hasFile('preuve')) {
                 $file = $request->file('preuve');
-                $filename = 'preuve_' . time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+                $filename = 'preuve_'.time().'_'.uniqid().'.'.$file->getClientOriginalExtension();
                 $preuvePath = $file->storeAs('paiements', $filename, 'public');
             }
 
@@ -49,8 +50,8 @@ class PaiementController extends Controller
                 'montant' => $request->montant,
                 'date_paiement' => $request->date_paiement,
                 'mode' => $request->mode ?? 'espèces',
-                'reference' => 'PAY-' . strtoupper(uniqid()),
-                'preuve' => $preuvePath
+                'reference' => 'PAY-'.strtoupper(uniqid()),
+                'preuve' => $preuvePath,
             ]);
 
             // Mettre à jour le statut du loyer
@@ -62,7 +63,7 @@ class PaiementController extends Controller
                     $loyer->statut = 'payé';
                 } else {
                     // Logique partielle non gérée pour l'instant
-                    $loyer->statut = 'partiel'; 
+                    $loyer->statut = 'partiel';
                 }
                 $loyer->save();
             }
@@ -85,6 +86,7 @@ class PaiementController extends Controller
                 if (window.parent.loySection && window.parent.loySection.onStoreError) window.parent.loySection.onStoreError('Une erreur est survenue.');
                 if (window.parent.paiSection && window.parent.paiSection.onStoreError) window.parent.paiSection.onStoreError('Une erreur est survenue.');
             </script>";
+
             return response($script)->header('Content-Type', 'text/html');
         }
     }
@@ -99,7 +101,7 @@ class PaiementController extends Controller
 
             $loyer = $paiement->loyer;
             $montant = $paiement->montant;
-            
+
             // Supprimer le paiement
             $paiement->delete();
 
@@ -107,13 +109,13 @@ class PaiementController extends Controller
             if ($loyer) {
                 // Somme des paiements restants
                 $sommePaiements = $loyer->paiements()->sum('montant');
-                
+
                 // Si la somme est inférieure au montant du loyer, on repasse en impayé
                 if ($sommePaiements < $loyer->montant) {
                     // Déterminer si 'en_retard' ou 'émis' basé sur la date du jour et le mois du loyer
                     $moisLoyer = \Carbon\Carbon::parse($loyer->mois);
                     $now = \Carbon\Carbon::now();
-                    
+
                     // Si on est après le mois du loyer, c'est un retard
                     if ($now->format('Y-m') > $moisLoyer->format('Y-m')) {
                         $loyer->statut = 'en_retard';
@@ -121,12 +123,12 @@ class PaiementController extends Controller
                         // Si c'est le mois en cours ou futur
                         $loyer->statut = 'émis';
                     }
-                    
+
                     // Si partiel (amélioration future)
-                    if($sommePaiements > 0) {
+                    if ($sommePaiements > 0) {
                         $loyer->statut = 'partiel'; // Assurez-vous que l'enum supporte ça ou restez sur 'émis'/'en_retard'
                     }
-                    
+
                     $loyer->save();
                 }
             }
@@ -137,15 +139,16 @@ class PaiementController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Paiement supprimé et statut du loyer restauré.'
+                'message' => 'Paiement supprimé et statut du loyer restauré.',
             ]);
 
         } catch (\Exception $e) {
             DB::rollBack();
             \Log::error('Erreur suppression paiement', ['id' => $paiement->id, 'error' => $e->getMessage()]);
+
             return response()->json([
                 'success' => false,
-                'message' => 'Une erreur est survenue lors de la suppression.'
+                'message' => 'Une erreur est survenue lors de la suppression.',
             ], 500);
         }
     }

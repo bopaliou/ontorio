@@ -7,22 +7,22 @@ use Illuminate\Database\Eloquent\Model;
 class Contrat extends Model
 {
     protected $fillable = [
-        'bien_id', 
-        'locataire_id', 
-        'date_debut', 
-        'date_fin', 
-        'loyer_montant', 
-        'statut', 
-        'caution', 
-        'frais_dossier', 
-        'type_bail', 
+        'bien_id',
+        'locataire_id',
+        'date_debut',
+        'date_fin',
+        'loyer_montant',
+        'statut',
+        'caution',
+        'frais_dossier',
+        'type_bail',
         'date_signature',
         'renouvellement_auto',
-        'preavis_mois'
+        'preavis_mois',
     ];
-    
+
     protected $casts = [
-        'date_debut' => 'date', 
+        'date_debut' => 'date',
         'date_fin' => 'date',
         'date_signature' => 'date',
         'caution' => 'decimal:2',
@@ -65,7 +65,7 @@ class Contrat extends Model
     public function reviserLoyer(float $nouveauMontant, string $motif = 'indexation_annuelle', ?string $justification = null)
     {
         $ancienMontant = $this->loyer_montant;
-        
+
         // Créer l'historique de révision
         $revision = RevisionLoyer::create([
             'contrat_id' => $this->id,
@@ -76,10 +76,10 @@ class Contrat extends Model
             'justification' => $justification,
             'created_by' => auth()->id(),
         ]);
-        
+
         // Mettre à jour le montant du contrat
         $this->update(['loyer_montant' => $nouveauMontant]);
-        
+
         return $revision;
     }
 
@@ -88,7 +88,10 @@ class Contrat extends Model
      */
     public function getExpireBientotAttribute()
     {
-        if (!$this->date_fin) return false;
+        if (! $this->date_fin) {
+            return false;
+        }
+
         return $this->date_fin->diffInDays(now()) <= 60 && $this->date_fin->isFuture();
     }
 
@@ -97,7 +100,10 @@ class Contrat extends Model
      */
     public function getJoursRestantsAttribute()
     {
-        if (!$this->date_fin) return null;
+        if (! $this->date_fin) {
+            return null;
+        }
+
         return $this->date_fin->isFuture() ? $this->date_fin->diffInDays(now()) : 0;
     }
 }

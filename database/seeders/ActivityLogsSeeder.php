@@ -2,9 +2,9 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\ActivityLog;
 use App\Models\User;
+use Illuminate\Database\Seeder;
 
 class ActivityLogsSeeder extends Seeder
 {
@@ -14,7 +14,7 @@ class ActivityLogsSeeder extends Seeder
     public function run(): void
     {
         $admin = User::where('role', 'admin')->first();
-        
+
         if ($admin) {
             ActivityLog::create([
                 'user_id' => $admin->id,
@@ -22,7 +22,7 @@ class ActivityLogsSeeder extends Seeder
                 'description' => 'Déploiement de la version 1.0',
                 'type' => 'info',
             ]);
-            
+
             ActivityLog::create([
                 'user_id' => $admin->id,
                 'action' => 'Configuration',

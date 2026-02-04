@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
 use App\Helpers\ActivityLogger;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -35,7 +35,7 @@ class UserController extends Controller
                 'password' => Hash::make($request->password),
                 'email_verified_at' => now(),
             ]);
-            
+
             // Sync Spatie Role
             $user->assignRole($request->role);
 
@@ -44,6 +44,7 @@ class UserController extends Controller
             return response()->json(['success' => true, 'message' => 'Utilisateur créé avec succès !']);
         } catch (\Exception $e) {
             \Log::error('Erreur création utilisateur', ['error' => $e->getMessage()]);
+
             return response()->json(['success' => false, 'message' => 'Une erreur est survenue. Veuillez réessayer.'], 500);
         }
     }
@@ -76,7 +77,7 @@ class UserController extends Controller
             }
 
             $user->update($data);
-            
+
             // Sync Spatie Role
             $user->syncRoles([$request->role]);
 
@@ -85,6 +86,7 @@ class UserController extends Controller
             return response()->json(['success' => true, 'message' => 'Utilisateur mis à jour !']);
         } catch (\Exception $e) {
             \Log::error('Erreur modification utilisateur', ['user_id' => $user->id, 'error' => $e->getMessage()]);
+
             return response()->json(['success' => false, 'message' => 'Une erreur est survenue. Veuillez réessayer.'], 500);
         }
     }
@@ -95,18 +97,19 @@ class UserController extends Controller
     public function destroy(User $user)
     {
         if ($user->id === auth()->id()) {
-            return response()->json(['success' => false, 'message' => "Vous ne pouvez pas supprimer votre propre compte."], 403);
+            return response()->json(['success' => false, 'message' => 'Vous ne pouvez pas supprimer votre propre compte.'], 403);
         }
 
         try {
             $nom = $user->name;
             $user->delete();
-            
+
             ActivityLogger::log('Suppression Utilisateur', "Suppression de l'utilisateur {$nom}", 'warning');
-            
+
             return response()->json(['success' => true, 'message' => 'Utilisateur supprimé !']);
         } catch (\Exception $e) {
             \Log::error('Erreur suppression utilisateur', ['user_id' => $user->id, 'error' => $e->getMessage()]);
+
             return response()->json(['success' => false, 'message' => 'Une erreur est survenue. Veuillez réessayer.'], 500);
         }
     }

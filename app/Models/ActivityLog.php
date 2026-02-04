@@ -12,7 +12,7 @@ class ActivityLog extends Model
         'description',
         'type',
         'target_type',
-        'target_id'
+        'target_id',
     ];
 
     public function user()

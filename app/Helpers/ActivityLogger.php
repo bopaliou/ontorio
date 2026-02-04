@@ -10,10 +10,10 @@ class ActivityLogger
     /**
      * Enregistrer une activité
      *
-     * @param string $action (ex: "Création Contrat")
-     * @param string $description (ex: "Contrat #123 créé pour le locataire X")
-     * @param string $type (info, success, warning, danger)
-     * @param Model|null $target (Optionnel : l'objet concerné)
+     * @param  string  $action  (ex: "Création Contrat")
+     * @param  string  $description  (ex: "Contrat #123 créé pour le locataire X")
+     * @param  string  $type  (info, success, warning, danger)
+     * @param  Model|null  $target  (Optionnel : l'objet concerné)
      */
     public static function log($action, $description, $type = 'info', $target = null)
     {

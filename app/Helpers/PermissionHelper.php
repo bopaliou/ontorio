@@ -10,8 +10,8 @@ class PermissionHelper
     public static function can(string $permission): bool
     {
         $user = auth()->user();
-        
-        if (!$user) {
+
+        if (! $user) {
             return false;
         }
 
@@ -34,32 +34,32 @@ class PermissionHelper
                 'biens.view', 'biens.create', 'biens.edit', 'biens.delete',
                 'locataires.view', 'locataires.create', 'locataires.edit', 'locataires.delete',
                 'contrats.view', 'contrats.create', 'contrats.edit', 'contrats.delete',
-                
+
                 // Gestion locative
                 'loyers.view', 'loyers.generate',
-                
+
                 // Rapports opérationnels
                 'rapports.view', 'rapports.export',
 
                 // Dépenses
                 'depenses.view', 'depenses.create', 'depenses.edit', 'depenses.delete',
             ],
-            
+
             'comptable' => [
                 // Finance et comptabilité
                 'loyers.view',
                 'paiements.view', 'paiements.create', 'paiements.edit',
-                
+
                 // Rapports financiers
                 'rapports.view', 'rapports.export',
-                
+
                 // Lecture seule sur le reste (pour contexte)
                 'biens.view',
                 'locataires.view',
                 'contrats.view',
                 'depenses.view',
             ],
-            
+
             'direction' => [
                 // Lecture seule sur tout (vision globale)
                 'biens.view',
@@ -68,7 +68,7 @@ class PermissionHelper
                 'loyers.view',
                 'paiements.view',
                 'depenses.view',
-                
+
                 // Rapports stratégiques complets
                 'rapports.view', 'rapports.export',
             ],
@@ -91,9 +91,9 @@ class PermissionHelper
                 'paiements.view', 'paiements.create', 'paiements.edit',
                 'rapports.view', 'rapports.export',
                 'users.view', 'users.create', 'users.edit', 'users.delete',
-                'logs.view'
-            ], 
-            
+                'logs.view',
+            ],
+
             'gestionnaire' => [
                 'biens.view', 'biens.create', 'biens.edit', 'biens.delete',
                 'locataires.view', 'locataires.create', 'locataires.edit', 'locataires.delete',
@@ -101,14 +101,14 @@ class PermissionHelper
                 'loyers.view', 'loyers.generate',
                 'rapports.view', 'rapports.export',
             ],
-            
+
             'comptable' => [
                 'loyers.view',
                 'paiements.view', 'paiements.create', 'paiements.edit',
                 'rapports.view', 'rapports.export',
                 'biens.view', 'locataires.view', 'contrats.view',
             ],
-            
+
             'direction' => [
                 'biens.view', 'locataires.view', 'contrats.view',
                 'loyers.view', 'paiements.view',

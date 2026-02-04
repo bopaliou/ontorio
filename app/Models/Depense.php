@@ -14,7 +14,7 @@ class Depense extends Model
         'date_depense',
         'categorie',
         'justificatif',
-        'statut'
+        'statut',
     ];
 
     protected $casts = [

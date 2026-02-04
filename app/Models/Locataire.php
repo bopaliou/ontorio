@@ -7,13 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 class Locataire extends Model
 {
     protected $fillable = [
-        'nom', 
-        'email', 
-        'telephone', 
-        'adresse', 
+        'nom',
+        'email',
+        'telephone',
+        'adresse',
         'pieces_identite',
         'profession',
-        'revenus_mensuels'
+        'revenus_mensuels',
     ];
 
     protected $appends = ['cni'];

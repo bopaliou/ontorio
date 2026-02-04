@@ -11,7 +11,7 @@ class BienImage extends Model
         'chemin',
         'nom_original',
         'principale',
-        'ordre'
+        'ordre',
     ];
 
     protected $casts = [
@@ -32,6 +32,6 @@ class BienImage extends Model
      */
     public function getUrlAttribute()
     {
-        return asset('storage/' . $this->chemin);
+        return asset('storage/'.$this->chemin);
     }
 }

@@ -16,6 +16,7 @@ class DocumentController extends Controller
     public function index()
     {
         $documents = Document::with('documentable')->latest()->paginate(20);
+
         return response()->json(['documents' => $documents]);
     }
 
@@ -26,7 +27,7 @@ class DocumentController extends Controller
     {
         $request->validate([
             'document' => 'required|file|mimes:pdf,jpg,jpeg,png,doc,docx|mimetypes:application/pdf,image/jpeg,image/png,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document|max:10240',
-            'type' => 'required|string|in:cni,contrat_signe,attestation,justificatif,autre'
+            'type' => 'required|string|in:cni,contrat_signe,attestation,justificatif,autre',
         ], [
             'document.required' => 'Veuillez sélectionner un fichier',
             'document.mimes' => 'Format non supporté (PDF, JPG, PNG, DOC autorisés)',
@@ -39,13 +40,13 @@ class DocumentController extends Controller
             $file = $request->file('document');
             $originalName = $file->getClientOriginalName();
             $extension = $file->getClientOriginalExtension();
-            
+
             // Générer un nom unique pour le fichier
-            $fileName = Str::slug(pathinfo($originalName, PATHINFO_FILENAME)) . '_' . time() . '.' . $extension;
-            
+            $fileName = Str::slug(pathinfo($originalName, PATHINFO_FILENAME)).'_'.time().'.'.$extension;
+
             // Stocker le fichier dans storage/app/public/documents/locataires/{id}/
             $path = $file->storeAs(
-                'documents/locataires/' . $locataire->id,
+                'documents/locataires/'.$locataire->id,
                 $fileName,
                 'public'
             );
@@ -67,13 +68,14 @@ class DocumentController extends Controller
                     'nom_original' => $document->nom_original,
                     'url' => Storage::url($document->chemin_fichier),
                     'created_at' => $document->created_at->format('d/m/Y H:i'),
-                ]
+                ],
             ]);
         } catch (\Exception $e) {
             \Log::error('Erreur upload document', ['locataire_id' => $locataire->id, 'error' => $e->getMessage()]);
+
             return response()->json([
                 'success' => false,
-                'message' => 'Une erreur est survenue lors de l\'upload. Veuillez réessayer.'
+                'message' => 'Une erreur est survenue lors de l\'upload. Veuillez réessayer.',
             ], 500);
         }
     }
@@ -96,7 +98,7 @@ class DocumentController extends Controller
 
         return response()->json([
             'success' => true,
-            'documents' => $documents
+            'documents' => $documents,
         ]);
     }
 
@@ -129,7 +131,7 @@ class DocumentController extends Controller
                 'nom_original' => $document->nom_original,
                 'url' => Storage::url($document->chemin_fichier),
                 'created_at' => $document->created_at->format('d/m/Y H:i'),
-            ]
+            ],
         ]);
     }
 
@@ -148,13 +150,14 @@ class DocumentController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Document supprimé avec succès'
+                'message' => 'Document supprimé avec succès',
             ]);
         } catch (\Exception $e) {
             \Log::error('Erreur suppression document', ['document_id' => $document->id, 'error' => $e->getMessage()]);
+
             return response()->json([
                 'success' => false,
-                'message' => 'Une erreur est survenue lors de la suppression. Veuillez réessayer.'
+                'message' => 'Une erreur est survenue lors de la suppression. Veuillez réessayer.',
             ], 500);
         }
     }

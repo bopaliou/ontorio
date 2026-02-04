@@ -17,7 +17,7 @@ class Garant extends Model
         'piece_identite',
         'justificatif_revenus',
         'lien_locataire',
-        'notes'
+        'notes',
     ];
 
     protected $casts = [
@@ -37,7 +37,7 @@ class Garant extends Model
      */
     public function getPieceIdentiteUrlAttribute()
     {
-        return $this->piece_identite ? asset('storage/' . $this->piece_identite) : null;
+        return $this->piece_identite ? asset('storage/'.$this->piece_identite) : null;
     }
 
     /**
@@ -45,7 +45,7 @@ class Garant extends Model
      */
     public function getJustificatifRevenusUrlAttribute()
     {
-        return $this->justificatif_revenus ? asset('storage/' . $this->justificatif_revenus) : null;
+        return $this->justificatif_revenus ? asset('storage/'.$this->justificatif_revenus) : null;
     }
 
     /**
@@ -53,7 +53,7 @@ class Garant extends Model
      */
     public function getLienLabelAttribute()
     {
-        return match($this->lien_locataire) {
+        return match ($this->lien_locataire) {
             'parent' => 'Parent/Famille',
             'employeur' => 'Employeur',
             'autre' => 'Autre',

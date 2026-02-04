@@ -2,15 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Contrat;
-use App\Models\Bien;
 use App\Helpers\ActivityLogger;
 use App\Http\Requests\StoreContratRequest;
-use App\Services\LoyerService;
+use App\Models\Bien;
+use App\Models\Contrat;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
-use Barryvdh\DomPDF\Facade\Pdf;
 
 class ContratController extends Controller
 {
@@ -24,9 +23,9 @@ class ContratController extends Controller
         // Vérifier si le bien est déjà occupé
         $bien = Bien::find($request->bien_id);
         if ($bien->statut === 'occupé' && $bien->contrats()->where('statut', 'actif')->exists()) {
-             return response()->json([
+            return response()->json([
                 'success' => false,
-                'message' => 'Ce bien est déjà occupé par un contrat actif.'
+                'message' => 'Ce bien est déjà occupé par un contrat actif.',
             ], 422);
         }
 
@@ -59,18 +58,20 @@ class ContratController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Bail activé avec succès !',
-                'data' => $contrat
+                'data' => $contrat,
             ]);
 
         } catch (\Exception $e) {
             DB::rollBack();
             \Log::error('Erreur activation bail', ['error' => $e->getMessage()]);
+
             return response()->json([
                 'success' => false,
-                'message' => 'Une erreur technique est survenue.'
+                'message' => 'Une erreur technique est survenue.',
             ], 500);
         }
     }
+
     /**
      * Update the specified contract.
      */
@@ -89,7 +90,7 @@ class ContratController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => $validator->errors()->first(),
-                'errors' => $validator->errors()
+                'errors' => $validator->errors(),
             ], 422);
         }
 
@@ -111,7 +112,7 @@ class ContratController extends Controller
                 \App\Models\Loyer::where('contrat_id', $contrat->id)
                     ->whereIn('statut', ['émis', 'en_retard'])
                     ->update(['montant' => $request->loyer_montant]);
-                
+
                 ActivityLogger::log('Modification Bail', "Mise à jour conditions bail #{$contrat->id} et loyers impayés", 'info', $contrat);
             } else {
                 ActivityLogger::log('Modification Bail', "Mise à jour conditions bail #{$contrat->id}", 'info', $contrat);
@@ -122,15 +123,16 @@ class ContratController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Contrat mis à jour avec succès.',
-                'data' => $contrat
+                'data' => $contrat,
             ]);
 
         } catch (\Exception $e) {
             DB::rollBack();
             \Log::error('Erreur mise à jour bail', ['id' => $contrat->id, 'error' => $e->getMessage()]);
+
             return response()->json([
                 'success' => false,
-                'message' => 'Une erreur technique est survenue.'
+                'message' => 'Une erreur technique est survenue.',
             ], 500);
         }
     }
@@ -147,13 +149,13 @@ class ContratController extends Controller
             DB::beginTransaction();
 
             $bienId = $contrat->bien_id;
-            
+
             // Supprimer le contrat
             $contrat->delete();
 
             // Vérifier s'il reste d'autres contrats actifs pour ce bien
             $hasActive = Contrat::where('bien_id', $bienId)->where('statut', 'actif')->exists();
-            if (!$hasActive) {
+            if (! $hasActive) {
                 // Libérer le bien
                 Bien::where('id', $bienId)->update(['statut' => 'libre']);
             }
@@ -167,6 +169,7 @@ class ContratController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             \Log::error('Erreur suppression bail', ['id' => $contrat->id, 'error' => $e->getMessage()]);
+
             return response()->json(['success' => false, 'message' => 'Une erreur est survenue lors de la suppression.'], 500);
         }
     }
@@ -177,6 +180,7 @@ class ContratController extends Controller
     public function print(Contrat $contrat)
     {
         $pdf = Pdf::loadView('pdf.contrat_location', compact('contrat'));
+
         return $pdf->stream("Contrat_Location_C{$contrat->id}.pdf");
     }
 }

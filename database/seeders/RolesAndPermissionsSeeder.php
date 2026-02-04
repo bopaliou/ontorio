@@ -2,16 +2,16 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
-use Spatie\Permission\Models\Role;
-use Spatie\Permission\Models\Permission;
 use App\Models\User;
+use Illuminate\Database\Seeder;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class RolesAndPermissionsSeeder extends Seeder
 {
     /**
      * Run the database seeds.
-     * 
+     *
      * Rôles pour la gestion immobilière Ontario Group :
      * - admin : Super administrateur, tous les droits
      * - gestionnaire : Gestion du patrimoine (biens, locataires, contrats)
@@ -32,68 +32,68 @@ class RolesAndPermissionsSeeder extends Seeder
 
         $permissions = [
             // Module Biens
-            'biens.view'        => 'Voir les biens immobiliers',
-            'biens.create'      => 'Créer un bien immobilier',
-            'biens.edit'        => 'Modifier un bien immobilier',
-            'biens.delete'      => 'Supprimer un bien immobilier',
-            
+            'biens.view' => 'Voir les biens immobiliers',
+            'biens.create' => 'Créer un bien immobilier',
+            'biens.edit' => 'Modifier un bien immobilier',
+            'biens.delete' => 'Supprimer un bien immobilier',
+
             // Module Locataires
-            'locataires.view'   => 'Voir les locataires',
+            'locataires.view' => 'Voir les locataires',
             'locataires.create' => 'Créer un locataire',
-            'locataires.edit'   => 'Modifier un locataire',
+            'locataires.edit' => 'Modifier un locataire',
             'locataires.delete' => 'Supprimer un locataire',
-            
+
             // Module Contrats
-            'contrats.view'     => 'Voir les contrats',
-            'contrats.create'   => 'Créer un contrat',
-            'contrats.edit'     => 'Modifier un contrat',
-            'contrats.delete'   => 'Supprimer un contrat',
-            'contrats.print'    => 'Imprimer un contrat',
-            
+            'contrats.view' => 'Voir les contrats',
+            'contrats.create' => 'Créer un contrat',
+            'contrats.edit' => 'Modifier un contrat',
+            'contrats.delete' => 'Supprimer un contrat',
+            'contrats.print' => 'Imprimer un contrat',
+
             // Module Loyers
-            'loyers.view'       => 'Voir les loyers',
-            'loyers.generate'   => 'Générer les loyers du mois',
-            'loyers.quittance'  => 'Générer les quittances',
-            
+            'loyers.view' => 'Voir les loyers',
+            'loyers.generate' => 'Générer les loyers du mois',
+            'loyers.quittance' => 'Générer les quittances',
+
             // Module Paiements
-            'paiements.view'    => 'Voir les paiements',
-            'paiements.create'  => 'Enregistrer un paiement',
-            'paiements.edit'    => 'Modifier un paiement',
-            'paiements.delete'  => 'Supprimer un paiement',
-            
+            'paiements.view' => 'Voir les paiements',
+            'paiements.create' => 'Enregistrer un paiement',
+            'paiements.edit' => 'Modifier un paiement',
+            'paiements.delete' => 'Supprimer un paiement',
+
             // Module Dépenses
-            'depenses.view'     => 'Voir les dépenses',
-            'depenses.create'   => 'Créer une dépense',
-            'depenses.edit'     => 'Modifier une dépense',
-            'depenses.delete'   => 'Supprimer une dépense',
-            
+            'depenses.view' => 'Voir les dépenses',
+            'depenses.create' => 'Créer une dépense',
+            'depenses.edit' => 'Modifier une dépense',
+            'depenses.delete' => 'Supprimer une dépense',
+
             // Module Propriétaires
-            'proprietaires.view'   => 'Voir les propriétaires',
+            'proprietaires.view' => 'Voir les propriétaires',
             'proprietaires.create' => 'Créer un propriétaire',
-            'proprietaires.edit'   => 'Modifier un propriétaire',
+            'proprietaires.edit' => 'Modifier un propriétaire',
             'proprietaires.delete' => 'Supprimer un propriétaire',
-            'proprietaires.bilan'  => 'Voir le bilan propriétaire',
-            
+            'proprietaires.bilan' => 'Voir le bilan propriétaire',
+
             // Module Rapports
-            'rapports.view'     => 'Voir les rapports',
-            'rapports.export'   => 'Exporter les rapports',
-            'rapports.mensuel'  => 'Générer rapport mensuel',
-            
+            'rapports.view' => 'Voir les rapports',
+            'rapports.export' => 'Exporter les rapports',
+            'rapports.mensuel' => 'Générer rapport mensuel',
+
             // Module Documents
-            'documents.view'    => 'Voir les documents',
-            'documents.upload'  => 'Téléverser des documents',
-            'documents.delete'  => 'Supprimer des documents',
-            
+            'documents.view' => 'Voir les documents',
+            'documents.upload' => 'Téléverser des documents',
+            'documents.delete' => 'Supprimer des documents',
+
             // Module Utilisateurs
-            'users.view'        => 'Voir les utilisateurs',
-            'users.create'      => 'Créer un utilisateur',
-            'users.edit'        => 'Modifier un utilisateur',
-            'users.delete'      => 'Supprimer un utilisateur',
-            
+            'users.view' => 'Voir les utilisateurs',
+            'users.create' => 'Créer un utilisateur',
+            'users.edit' => 'Modifier un utilisateur',
+            'users.delete' => 'Supprimer un utilisateur',
+
             // Module Paramètres
-            'settings.view'     => 'Voir les paramètres',
-            'settings.edit'     => 'Modifier les paramètres',
-            'roles.manage'      => 'Gérer les rôles et permissions',
+            'settings.view' => 'Voir les paramètres',
+            'settings.edit' => 'Modifier les paramètres',
+            'roles.manage' => 'Gérer les rôles et permissions',
         ];
 
         // Créer toutes les permissions
@@ -171,7 +171,7 @@ class RolesAndPermissionsSeeder extends Seeder
         // AGENT COMMERCIAL - Prospection et acquisition locataires
         $agentRole = Role::create(['name' => 'agent_commercial', 'guard_name' => 'web']);
         $agentRole->givePermissionTo([
-            // Biens : Lecture seule  
+            // Biens : Lecture seule
             'biens.view',
             // Locataires : Créer et modifier (prospection)
             'locataires.view', 'locataires.create', 'locataires.edit',
@@ -212,13 +212,13 @@ class RolesAndPermissionsSeeder extends Seeder
         // ===============================================
         // MIGRATION DES UTILISATEURS EXISTANTS
         // ===============================================
-        
+
         // Assigner les rôles Spatie aux utilisateurs existants basé sur leur champ 'role'
         $users = User::whereNotNull('role')->get();
-        
+
         foreach ($users as $user) {
             $legacyRole = $user->role;
-            
+
             // Mapping des anciens rôles vers les nouveaux
             if (Role::where('name', $legacyRole)->exists()) {
                 $user->assignRole($legacyRole);
@@ -229,8 +229,8 @@ class RolesAndPermissionsSeeder extends Seeder
         }
 
         $this->command->info('✅ Rôles et permissions créés avec succès !');
-        $this->command->info('📊 ' . Permission::count() . ' permissions créées');
-        $this->command->info('👥 ' . Role::count() . ' rôles créés');
-        $this->command->info('🔄 ' . $users->count() . ' utilisateurs migrés');
+        $this->command->info('📊 '.Permission::count().' permissions créées');
+        $this->command->info('👥 '.Role::count().' rôles créés');
+        $this->command->info('🔄 '.$users->count().' utilisateurs migrés');
     }
 }

@@ -2,19 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Helpers\ActivityLogger;
+use App\Models\ActivityLog;
 use App\Models\Bien;
 use App\Models\BienImage;
-use App\Models\Loyer;
-use App\Models\Paiement;
 use App\Models\Contrat;
 use App\Models\Locataire;
+use App\Models\Loyer;
+use App\Models\Paiement;
 use App\Models\Proprietaire;
 use App\Models\User;
-use App\Models\ActivityLog;
-use App\Helpers\ActivityLogger;
-use App\Services\DashboardStatsService;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
@@ -25,12 +24,12 @@ class DashboardController extends Controller
         Carbon::setLocale('fr');
         $user = auth()->user();
         $moisActuel = Carbon::now()->format('Y-m');
-        
+
         // 1. Récupération des stats Ontario Group (Optimisée avec Sous-requêtes)
         // 1. Récupération des stats Ontario Group (Optimisée selon le rôle)
         // Les sous-requêtes financières sont lourdes, on ne les lance que pour Admin/Direction/Gestionnaire
         $proprietaires = collect([]);
-        
+
         if (in_array($user->role, ['admin', 'gestionnaire', 'direction'])) {
             $proprietaires = Proprietaire::withCount(['biens as logements_count'])
                 ->addSelect([
@@ -67,7 +66,7 @@ class DashboardController extends Controller
                         ->whereColumn('biens.proprietaire_id', 'proprietaires.id'),
 
                     'depenses_mois' => \App\Models\Depense::selectRaw('sum(montant)')
-                        ->where('date_depense', 'like', $moisActuel . '%')
+                        ->where('date_depense', 'like', $moisActuel.'%')
                         ->join('biens', 'depenses.bien_id', '=', 'biens.id')
                         ->whereColumn('biens.proprietaire_id', 'proprietaires.id'),
                 ])
@@ -80,29 +79,29 @@ class DashboardController extends Controller
         // Données communes optimisées (Sélection des colonnes nécessaires)
         $commonData = [
             'biens_list' => Bien::with(['contrats:id,bien_id,statut,locataire_id,date_debut', 'contrats.locataire:id,nom,telephone', 'images', 'imagePrincipale'])
-                                ->latest()
-                                ->limit(50)
-                                ->get(),
+                ->latest()
+                ->limit(50)
+                ->get(),
             'depenses_list' => \App\Models\Depense::with('bien')->latest()->get(),
             'categories_depenses' => ['maintenance', 'travaux', 'taxe', 'assurance', 'autre'],
             'locataires_list' => Locataire::with(['contrats:id,locataire_id,bien_id,loyer_montant,statut', 'contrats.bien:id,nom', 'contrats.loyers:id,contrat_id,montant,statut'])
-                                ->withCount('contrats')
-                                ->latest()
-                                ->limit(50)
-                                ->get(),
+                ->withCount('contrats')
+                ->latest()
+                ->limit(50)
+                ->get(),
             'contrats_list' => Contrat::with(['bien:id,nom', 'locataire:id,nom'])
-                                ->latest()
-                                ->limit(50)
-                                ->get(),
+                ->latest()
+                ->limit(50)
+                ->get(),
             'loyers_list' => Loyer::withMontantPaye()
-                                 ->with(['contrat:id,locataire_id,bien_id', 'contrat.locataire:id,nom', 'contrat.bien:id,nom'])
-                                 ->orderBy('id', 'desc')
-                                 ->limit(200)
-                                 ->get(),
+                ->with(['contrat:id,locataire_id,bien_id', 'contrat.locataire:id,nom', 'contrat.bien:id,nom'])
+                ->orderBy('id', 'desc')
+                ->limit(200)
+                ->get(),
             'paiements_list' => Paiement::with(['loyer:id,contrat_id,mois', 'loyer.contrat:id,locataire_id', 'loyer.contrat.locataire:id,nom'])
-                                     ->latest()
-                                     ->limit(50)
-                                     ->get(),
+                ->latest()
+                ->limit(50)
+                ->get(),
             'proprietaires_list' => $proprietaires,
         ];
 
@@ -122,9 +121,9 @@ class DashboardController extends Controller
             default:
                 abort(403, 'Rôle non autorisé');
         }
-        
+
         $data = array_merge($commonData, $roleData);
-        
+
         return view('dashboard.index', compact('data'));
     }
 
@@ -144,21 +143,22 @@ class DashboardController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => $validator->errors()->first(),
-                'errors' => $validator->errors()
+                'errors' => $validator->errors(),
             ], 422);
         }
 
         try {
             $prop = Proprietaire::create($request->only(['nom', 'prenom', 'email', 'telephone', 'adresse']));
+
             return response()->json([
                 'success' => true,
                 'message' => 'Propriétaire créé avec succès !',
-                'data' => $prop
+                'data' => $prop,
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Une erreur est survenue. Veuillez réessayer.'
+                'message' => 'Une erreur est survenue. Veuillez réessayer.',
             ], 500);
         }
     }
@@ -170,7 +170,7 @@ class DashboardController extends Controller
     {
         $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [
             'nom' => 'required|string|max:255',
-            'email' => 'nullable|email|unique:proprietaires,email,' . $proprietaire->id,
+            'email' => 'nullable|email|unique:proprietaires,email,'.$proprietaire->id,
             'telephone' => 'nullable|string|max:50',
             'adresse' => 'nullable|string',
         ]);
@@ -179,21 +179,22 @@ class DashboardController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => $validator->errors()->first(),
-                'errors' => $validator->errors()
+                'errors' => $validator->errors(),
             ], 422);
         }
 
         try {
             $proprietaire->update($request->only(['nom', 'prenom', 'email', 'telephone', 'adresse']));
+
             return response()->json([
                 'success' => true,
                 'message' => 'Propriétaire mis à jour !',
-                'data' => $proprietaire
+                'data' => $proprietaire,
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Une erreur est survenue. Veuillez réessayer.'
+                'message' => 'Une erreur est survenue. Veuillez réessayer.',
             ], 500);
         }
     }
@@ -217,7 +218,7 @@ class DashboardController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => $validator->errors()->first(),
-                'errors' => $validator->errors()
+                'errors' => $validator->errors(),
             ], 422);
         }
 
@@ -227,9 +228,9 @@ class DashboardController extends Controller
                 ['nom' => 'Ontario Group'],
                 [
                     'prenom' => 'S.A.',
-                    'email' => 'contact@ontariogroup.net', 
+                    'email' => 'contact@ontariogroup.net',
                     'telephone' => '33 822 32 67',
-                    'adresse' => '5 Félix Faure x Colbert, Dakar Plateau'
+                    'adresse' => '5 Félix Faure x Colbert, Dakar Plateau',
                 ]
             );
 
@@ -237,11 +238,11 @@ class DashboardController extends Controller
             $data['proprietaire_id'] = $proprietaire->id;
 
             $bien = Bien::create($data);
-            
+
             // Gestion de plusieurs images
             if ($request->hasFile('images')) {
                 foreach ($request->file('images') as $index => $imageFile) {
-                    $path = $imageFile->store('biens/' . $bien->id, 'public');
+                    $path = $imageFile->store('biens/'.$bien->id, 'public');
                     BienImage::create([
                         'bien_id' => $bien->id,
                         'chemin' => $path,
@@ -253,7 +254,7 @@ class DashboardController extends Controller
             } elseif ($request->hasFile('image')) {
                 // Compatibilité avec l'ancien champ unique si nécessaire
                 $imageFile = $request->file('image');
-                $path = $imageFile->store('biens/' . $bien->id, 'public');
+                $path = $imageFile->store('biens/'.$bien->id, 'public');
                 BienImage::create([
                     'bien_id' => $bien->id,
                     'chemin' => $path,
@@ -263,17 +264,17 @@ class DashboardController extends Controller
                 ]);
             }
 
-            ActivityLogger::log('Création Bien', 'Ajout du bien : ' . $bien->nom, 'success', $bien);
-            
+            ActivityLogger::log('Création Bien', 'Ajout du bien : '.$bien->nom, 'success', $bien);
+
             return response()->json([
                 'success' => true,
                 'message' => 'Bien ajouté avec succès !',
-                'data' => $bien
+                'data' => $bien,
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Erreur: ' . $e->getMessage()
+                'message' => 'Erreur: '.$e->getMessage(),
             ], 500);
         }
     }
@@ -297,32 +298,32 @@ class DashboardController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => $validator->errors()->first(),
-                'errors' => $validator->errors()
+                'errors' => $validator->errors(),
             ], 422);
         }
 
         try {
             $oldLoyer = $bien->loyer_mensuel;
             $newLoyer = $request->loyer_mensuel; // Capture explicite de la nouvelle valeur
-            
+
             $bien->update($request->except(['images', 'image']));
-            
+
             // Si le loyer a changé (comparaison robuste)
-            if ((float)$oldLoyer != (float)$newLoyer) {
+            if ((float) $oldLoyer != (float) $newLoyer) {
                 // ... (reste du code de synchro inchangé)
                 $contrats = Contrat::where('bien_id', $bien->id)
-                       ->whereIn('statut', ['actif', 'en_attente'])
-                       ->get();
+                    ->whereIn('statut', ['actif', 'en_attente'])
+                    ->get();
 
                 foreach ($contrats as $c) {
                     $c->update(['loyer_montant' => $newLoyer]);
                     Loyer::where('contrat_id', $c->id)
-                         ->whereIn('statut', ['émis', 'en_retard'])
-                         ->update(['montant' => $newLoyer]);
+                        ->whereIn('statut', ['émis', 'en_retard'])
+                        ->update(['montant' => $newLoyer]);
                 }
-                ActivityLogger::log('Synchro Bien-Global', 'Mise à jour automatique Contrats & Loyers (Tout impayé) : ' . $bien->nom, 'info');
+                ActivityLogger::log('Synchro Bien-Global', 'Mise à jour automatique Contrats & Loyers (Tout impayé) : '.$bien->nom, 'info');
             }
-            
+
             // Si de nouvelles images sont uploadées, on peut soit ajouter, soit remplacer.
             // Vu le design actuel, remplacer semble être l'intention si on uploade à nouveau.
             if ($request->hasFile('images')) {
@@ -335,7 +336,7 @@ class DashboardController extends Controller
                 }
 
                 foreach ($request->file('images') as $index => $imageFile) {
-                    $path = $imageFile->store('biens/' . $bien->id, 'public');
+                    $path = $imageFile->store('biens/'.$bien->id, 'public');
                     BienImage::create([
                         'bien_id' => $bien->id,
                         'chemin' => $path,
@@ -353,7 +354,7 @@ class DashboardController extends Controller
                     $oldImage->delete();
                 }
                 $imageFile = $request->file('image');
-                $path = $imageFile->store('biens/' . $bien->id, 'public');
+                $path = $imageFile->store('biens/'.$bien->id, 'public');
                 BienImage::create([
                     'bien_id' => $bien->id,
                     'chemin' => $path,
@@ -362,18 +363,18 @@ class DashboardController extends Controller
                     'ordre' => 1,
                 ]);
             }
-            
-            ActivityLogger::log('Modification Bien', 'Mise à jour du bien : ' . $bien->nom, 'info', $bien);
+
+            ActivityLogger::log('Modification Bien', 'Mise à jour du bien : '.$bien->nom, 'info', $bien);
 
             return response()->json([
                 'success' => true,
                 'message' => 'Bien mis à jour (et contrats synchronisés) !',
-                'data' => $bien
+                'data' => $bien,
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Erreur: ' . $e->getMessage()
+                'message' => 'Erreur: '.$e->getMessage(),
             ], 500);
         }
     }
@@ -386,15 +387,16 @@ class DashboardController extends Controller
         try {
             $nom = $bien->nom;
             $bien->delete();
-            ActivityLogger::log('Suppression Bien', 'Suppression du bien : ' . $nom, 'warning');
+            ActivityLogger::log('Suppression Bien', 'Suppression du bien : '.$nom, 'warning');
+
             return response()->json([
                 'success' => true,
-                'message' => 'Bien supprimé avec succès !'
+                'message' => 'Bien supprimé avec succès !',
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Impossible de supprimer ce bien car il est lié à des contrats actifs.'
+                'message' => 'Impossible de supprimer ce bien car il est lié à des contrats actifs.',
             ], 422); // Note: 422 ou 403, mais 422 pour "Unprocessable"
         }
     }
@@ -409,7 +411,7 @@ class DashboardController extends Controller
             if (Storage::disk('public')->exists($bienImage->chemin)) {
                 Storage::disk('public')->delete($bienImage->chemin);
             }
-            
+
             // Si c'était l'image principale, définir la prochaine image comme principale
             if ($bienImage->principale) {
                 $nextImage = BienImage::where('bien_id', $bienImage->bien_id)
@@ -420,20 +422,20 @@ class DashboardController extends Controller
                     $nextImage->update(['principale' => true]);
                 }
             }
-            
+
             $bienImage->delete();
-            
+
             return response()->json(['success' => true, 'message' => 'Image supprimée']);
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
         }
     }
-    
+
     private function getAdminData()
     {
         $moisActuel = Carbon::now()->format('Y-m');
         $gestionnaireData = $this->getGestionnaireData();
-        
+
         return array_merge($gestionnaireData, [
             'role' => 'admin',
             'users_list' => User::all(),
@@ -451,7 +453,7 @@ class DashboardController extends Controller
         $loyersPayesMois = Loyer::where('mois', $moisActuel)->where('statut', 'payé')->sum('montant');
         $loyersEnRetard = Loyer::whereIn('statut', ['en_retard', 'émis', 'emis', 'partiellement_payé'])
             ->sum(DB::raw('montant - (SELECT COALESCE(SUM(montant), 0) FROM paiements WHERE paiements.loyer_id = loyers.id)'));
-        
+
         return [
             'role' => 'gestionnaire',
             'kpis' => [
@@ -473,7 +475,7 @@ class DashboardController extends Controller
         $loyersPayes = Loyer::where('mois', $moisActuel)->where('statut', 'payé')->sum('montant');
         $totalImpaye = Loyer::whereIn('statut', ['en_retard', 'émis', 'emis', 'partiellement_payé'])
             ->sum(DB::raw('montant - (SELECT COALESCE(SUM(montant), 0) FROM paiements WHERE paiements.loyer_id = loyers.id)'));
-        
+
         return [
             'role' => 'comptable',
             'kpis' => [
@@ -493,17 +495,17 @@ class DashboardController extends Controller
         $totalBiens = Bien::count();
         $biensOccupesCount = Bien::where('statut', 'occupé')->count();
         $tauxOccupation = $totalBiens > 0 ? round(($biensOccupesCount / $totalBiens) * 100) : 0;
-        
+
         $loyersEmisMois = Loyer::where('mois', $moisActuel)->where('statut', '!=', 'annulé')->sum('montant');
         $loyersPayesMois = Loyer::where('mois', $moisActuel)->where('statut', 'payé')->sum('montant');
         $tauxCollecte = $loyersEmisMois > 0 ? round(($loyersPayesMois / $loyersEmisMois) * 100) : 0;
-        
+
         $impayesTotal = Loyer::whereIn('statut', ['en_retard', 'émis', 'emis', 'partiellement_payé'])
             ->sum(DB::raw('montant - (SELECT COALESCE(SUM(montant), 0) FROM paiements WHERE paiements.loyer_id = loyers.id)'));
         $valeurPortefeuille = Bien::sum('loyer_mensuel');
-        
+
         $commissionMensuelle = round($loyersPayesMois * 0.10);
-        
+
         // Répartition par type de bien
         $repartitionType = DB::table('biens')
             ->select('type', DB::raw('count(*) as total'))
@@ -517,7 +519,7 @@ class DashboardController extends Controller
             $moisRaw = Carbon::now()->subMonths($i)->format('Y-m');
             $revenusPar6Mois[] = [
                 'mois' => $m,
-                'montant' => Loyer::where('mois', $moisRaw)->where('statut', 'payé')->sum('montant')
+                'montant' => Loyer::where('mois', $moisRaw)->where('statut', 'payé')->sum('montant'),
             ];
         }
 
@@ -553,21 +555,21 @@ class DashboardController extends Controller
     public function exporterRapportMensuel($mois = null)
     {
         $mois = $mois ?? request('mois') ?? Carbon::now()->format('Y-m');
-        
+
         // Calcul des KPIs
         $totalBiens = Bien::count();
         $biensOccupes = Bien::where('statut', 'occupé')->count();
         $tauxOccupation = $totalBiens > 0 ? round(($biensOccupes / $totalBiens) * 100) : 0;
-        
+
         $loyersMois = Loyer::where('mois', $mois)->get();
         $loyersEmis = $loyersMois->where('statut', '!=', 'annulé')->sum('montant');
         $loyersPayes = $loyersMois->where('statut', 'payé')->sum('montant');
         $totalImpaye = Loyer::whereIn('statut', ['en_retard', 'émis', 'emis', 'partiellement_payé'])
             ->sum(DB::raw('montant - (SELECT COALESCE(SUM(montant), 0) FROM paiements WHERE paiements.loyer_id = loyers.id)'));
-        
+
         $tauxCollecte = $loyersEmis > 0 ? round(($loyersPayes / $loyersEmis) * 100) : 0;
         $commissionMensuelle = round($loyersPayes * 0.10); // 10% de commission
-        
+
         // Revenus des 6 derniers mois
         $revenusPar6Mois = [];
         for ($i = 5; $i >= 0; $i--) {
@@ -575,10 +577,10 @@ class DashboardController extends Controller
             $mRaw = Carbon::now()->subMonths($i)->format('Y-m');
             $revenusPar6Mois[] = [
                 'mois' => $m,
-                'montant' => Loyer::where('mois', $mRaw)->where('statut', 'payé')->sum('montant')
+                'montant' => Loyer::where('mois', $mRaw)->where('statut', 'payé')->sum('montant'),
             ];
         }
-        
+
         $data = [
             'biens_list' => Bien::latest()->get(),
             'kpis' => [
@@ -593,11 +595,11 @@ class DashboardController extends Controller
             ],
             'revenus_par_mois' => $revenusPar6Mois,
         ];
-        
+
         $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.rapport-mensuel', compact('data', 'mois'));
-        
-        $filename = 'Rapport_Mensuel_' . Carbon::parse($mois)->translatedFormat('F_Y') . '.pdf';
-        
+
+        $filename = 'Rapport_Mensuel_'.Carbon::parse($mois)->translatedFormat('F_Y').'.pdf';
+
         return $pdf->stream($filename);
     }
 }

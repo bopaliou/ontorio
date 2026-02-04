@@ -2,14 +2,14 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
-use App\Models\Proprietaire;
 use App\Models\Bien;
+use App\Models\Proprietaire;
+use Illuminate\Database\Seeder;
 
 /**
  * Seeder basé sur les annonces du site public Ontario Group
  * https://ontariogroup.net/annonces-immobilieres/
- * 
+ *
  * Ces données représentent des biens typiques commercialisés par Ontario Group
  * dans les quartiers prisés de Dakar et ses environs.
  */
@@ -23,7 +23,7 @@ class OntarioPublicSiteSeeder extends Seeder
             [
                 'nom' => 'ONTARIO GROUP',
                 'telephone' => '+221 33 822 32 67 / 33 842 05 80 / 78 105 35 54',
-                'adresse' => '5 Felix Gaure x Colbert Dakar, Dakar Plateau BP: 06813'
+                'adresse' => '5 Felix Gaure x Colbert Dakar, Dakar Plateau BP: 06813',
             ]
         );
 
@@ -90,7 +90,7 @@ class OntarioPublicSiteSeeder extends Seeder
                 'loyer_mensuel' => 1500000,
                 'description' => 'Villa spacieuse avec terrasse et garage double.',
             ],
-            
+
             // === APPARTEMENTS ===
             [
                 'nom' => 'Appartement F4 Plateau',
@@ -152,7 +152,7 @@ class OntarioPublicSiteSeeder extends Seeder
                 'loyer_mensuel' => 220000,
                 'description' => 'Appartement lumineux proche commerces et transports.',
             ],
-            
+
             // === STUDIOS ===
             [
                 'nom' => 'Studio meublé Mamelles',
@@ -178,7 +178,7 @@ class OntarioPublicSiteSeeder extends Seeder
                 'loyer_mensuel' => 120000,
                 'description' => 'Studio idéal pour étudiant ou jeune professionnel.',
             ],
-            
+
             // === BUREAUX ===
             [
                 'nom' => 'Bureau Open Space Point E',
@@ -204,7 +204,7 @@ class OntarioPublicSiteSeeder extends Seeder
                 'loyer_mensuel' => 1200000,
                 'description' => 'Bureau prestige en plein centre des affaires.',
             ],
-            
+
             // === MAGASINS ===
             [
                 'nom' => 'Boutique Zone Industrielle',
@@ -218,7 +218,7 @@ class OntarioPublicSiteSeeder extends Seeder
                 'loyer_mensuel' => 350000,
                 'description' => 'Local commercial avec vitrine et arrière-boutique.',
             ],
-            
+
             // === DIAMNIADIO (Pôle urbain) ===
             [
                 'nom' => 'Villa Diamniadio Lac Rose',
@@ -244,7 +244,7 @@ class OntarioPublicSiteSeeder extends Seeder
                 'loyer_mensuel' => 250000,
                 'description' => 'Appartement moderne dans résidence sécurisée.',
             ],
-            
+
             // === SALY (Zone touristique) ===
             [
                 'nom' => 'Villa Saly Portudal',
@@ -267,6 +267,6 @@ class OntarioPublicSiteSeeder extends Seeder
             );
         }
 
-        $this->command->info('✅ ' . count($biensData) . ' biens du site public Ontario Group ont été créés.');
+        $this->command->info('✅ '.count($biensData).' biens du site public Ontario Group ont été créés.');
     }
 }

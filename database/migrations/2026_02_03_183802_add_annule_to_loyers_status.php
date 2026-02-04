@@ -2,8 +2,8 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
@@ -26,7 +26,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('loyers', function (Blueprint $table) {
-             $table->enum('statut', ['émis', 'partiellement_payé', 'payé', 'en_retard'])->default('émis')->change();
+            $table->enum('statut', ['émis', 'partiellement_payé', 'payé', 'en_retard'])->default('émis')->change();
         });
     }
 };

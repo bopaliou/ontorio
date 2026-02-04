@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::table('documents', function (Blueprint $table) {
             // Ajouter la colonne nom_original
             $table->string('nom_original')->nullable()->after('type');
-            
+
             // Renommer les colonnes avec accents si elles existent
             if (Schema::hasColumn('documents', 'entité_type')) {
                 $table->renameColumn('entité_type', 'entite_type');
@@ -32,7 +32,7 @@ return new class extends Migration
     {
         Schema::table('documents', function (Blueprint $table) {
             $table->dropColumn('nom_original');
-            
+
             if (Schema::hasColumn('documents', 'entite_type')) {
                 $table->renameColumn('entite_type', 'entité_type');
             }

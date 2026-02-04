@@ -12,10 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('biens', function (Blueprint $table) {
-            if (!Schema::hasColumn('biens', 'nombre_pieces')) {
+            if (! Schema::hasColumn('biens', 'nombre_pieces')) {
                 $table->integer('nombre_pieces')->nullable()->after('type');
             }
-            if (!Schema::hasColumn('biens', 'meuble')) {
+            if (! Schema::hasColumn('biens', 'meuble')) {
                 $table->boolean('meuble')->default(false)->after('nombre_pieces');
             }
         });

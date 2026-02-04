@@ -27,7 +27,7 @@ class UpdateProprietaireRequest extends FormRequest
             'email' => [
                 'nullable',
                 'email',
-                Rule::unique('proprietaires')->ignore($this->route('proprietaire'))
+                Rule::unique('proprietaires')->ignore($this->route('proprietaire')),
             ],
             'telephone' => 'nullable|string|max:20',
             'adresse' => 'nullable|string',
