@@ -17,6 +17,7 @@ class BienFactory extends Factory
     public function definition(): array
     {
         return [
+            'proprietaire_id' => \App\Models\Proprietaire::factory(),
             'nom' => $this->faker->word() . ' Residence',
             'adresse' => $this->faker->address(),
             'loyer_mensuel' => $this->faker->numberBetween(50000, 500000),

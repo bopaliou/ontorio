@@ -3,10 +3,13 @@
 namespace App\Models;
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Loyer extends Model
 {
+    use HasFactory;
+
     protected $fillable = ['contrat_id', 'mois', 'montant', 'commission', 'statut', 'note_annulation', 'penalite', 'taux_penalite'];
 
     // IMPORTANT: Retirer les appends coûteux pour éviter N+1 queries
