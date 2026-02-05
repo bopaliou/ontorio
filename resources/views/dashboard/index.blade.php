@@ -162,7 +162,7 @@
         </div>
 
         <!-- SECTION: ADMINISTRATION -->
-        @if(App\Helpers\PermissionHelper::can('users.view'))
+        @if(Auth::user()->role === 'admin')
         <div id="section-utilisateurs" role="tabpanel" aria-labelledby="nav-link-utilisateurs" class="section-pane hidden opacity-0 translate-y-4">
             <div class="section-skeleton">
                 <div class="flex flex-col gap-8">

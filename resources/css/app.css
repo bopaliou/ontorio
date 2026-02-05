@@ -200,33 +200,82 @@
 }
 
 /* Styles du Sidebar moderne */
+/* Styles du Sidebar moderne - Redesign Vertical */
 .sidebar-nav-link {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 0.75rem;
-    padding: 0.75rem 1.25rem;
-    color: rgba(255, 255, 255, 0.8);
-    font-size: 0.95rem;
-    transition: all 0.2s ease;
-    border-left: 3px solid transparent;
-    margin: 0.125rem 0;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 1rem 0.5rem;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    border-left: 0;
+    border-bottom: 3px solid transparent;
+    /* Indicateur en bas maintenant */
+    margin: 0.25rem 0.5rem;
+    border-radius: 0.75rem;
+    text-align: center;
 }
 
 .sidebar-nav-link:hover {
     color: #ffffff;
     background: rgba(255, 255, 255, 0.1);
-    border-left-color: rgba(255, 255, 255, 0.3);
+    border-bottom-color: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
 }
 
 .sidebar-nav-link-active {
     color: #ffffff !important;
-    background: linear-gradient(90deg, rgba(211, 47, 47, 0.3), rgba(211, 47, 47, 0.1)) !important;
-    border-left-color: #D32F2F !important;
+    background: linear-gradient(135deg, rgba(211, 47, 47, 0.4), rgba(211, 47, 47, 0.1)) !important;
+    border-bottom-color: #D32F2F !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-.sidebar-nav-link i {
-    width: 1.5rem;
-    text-align: center;
+.sidebar-nav-link i,
+.sidebar-nav-link svg {
+    width: 2.5rem;
+    /* 40px - Grand icône */
+    height: 2.5rem;
+    margin-bottom: 0.25rem;
+    transition: transform 0.3s ease;
+}
+
+.sidebar-nav-link:hover i,
+.sidebar-nav-link:hover svg {
+    transform: scale(1.1);
+}
+
+.sidebar-section-label {
+    text-align: left;
+    font-size: 1rem;
+    font-weight: 800;
+    color: #cb2d2d;
+    /* Rouge Ontario */
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 1.5rem 0 0.5rem 1rem;
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    width: 100%;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.no-scrollbar {
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
 }
 
 /* ========================================
