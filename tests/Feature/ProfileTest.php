@@ -42,19 +42,16 @@ class ProfileTest extends TestCase
     {
         $user = User::factory()->create(['password' => Hash::make('password')]);
 
-        $response = $this->actingAs($user)->put('/password', [
+        $response = $this->actingAs($user)->from('/profile')->put('/password', [
             'current_password' => 'password',
             'password' => 'Pa$$word123!',
             'password_confirmation' => 'Pa$$word123!',
         ]);
 
-        if (session('errors')) {
-            dump(session('errors')->getBag('updatePassword')->all());
-            dump(session('errors')->all());
-        }
-
-        $response->assertSessionHasNoErrorsIn('updatePassword');
+        $response->assertSessionHasNoErrors();
         $response->assertRedirect('/profile');
+
+        $this->assertTrue(Hash::check('Pa$$word123!', $user->refresh()->password));
 
         $this->assertTrue(Hash::check('Pa$$word123!', $user->refresh()->password));
     }
