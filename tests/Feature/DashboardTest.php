@@ -17,10 +17,10 @@ class DashboardTest extends TestCase
         $response = $this->actingAs($user)->get(route('dashboard'));
 
         $response->assertStatus(200);
-        
+
         // Verify Overview section exists (default view)
         $response->assertSee('id="section-overview"', false);
-        
+
         // Verify common components loaded
         $response->assertSee('OntarioDashboard'); // JS Class
     }

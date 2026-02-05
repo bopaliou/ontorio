@@ -18,13 +18,13 @@ class AdminAccessTest extends TestCase
         // 'gestionnaire' usually has permissions.
         // Let's use a role that is NOT admin and NOT having 'users.view'.
         // Assuming 'comptable' doesn't have 'users.view'.
-        
+
         $user = User::factory()->create(['role' => 'comptable']);
 
         $response = $this->actingAs($user)->get(route('dashboard'));
 
         $response->assertStatus(200);
-        
+
         // Should NOT see Admin section IDs
         $response->assertDontSee('id="section-admin"', false);
         $response->assertDontSee('id="nav-link-utilisateurs"', false);
@@ -38,7 +38,7 @@ class AdminAccessTest extends TestCase
         $response = $this->actingAs($user)->get(route('dashboard'));
 
         $response->assertStatus(200);
-        
+
         // Should SEE Admin section
         $response->assertSee('id="section-admin"', false);
         $response->assertSee('id="nav-link-utilisateurs"', false);

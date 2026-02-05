@@ -20,25 +20,25 @@ class SidebarNavigationTest extends TestCase
         $response->assertStatus(200);
 
         // Verify Dashboard Link
-        $response->assertSee(route('dashboard') . '#overview');
+        $response->assertSee(route('dashboard').'#overview');
 
         // Verify Gestion Links
-        $response->assertSee(route('dashboard') . '#proprietaires');
-        $response->assertSee(route('dashboard') . '#biens');
-        $response->assertSee(route('dashboard') . '#locataires');
-        $response->assertSee(route('dashboard') . '#contrats');
+        $response->assertSee(route('dashboard').'#proprietaires');
+        $response->assertSee(route('dashboard').'#biens');
+        $response->assertSee(route('dashboard').'#locataires');
+        $response->assertSee(route('dashboard').'#contrats');
 
         // Verify Finance Links
-        $response->assertSee(route('dashboard') . '#loyers');
-        $response->assertSee(route('dashboard') . '#paiements');
-        $response->assertSee(route('dashboard') . '#depenses');
+        $response->assertSee(route('dashboard').'#loyers');
+        $response->assertSee(route('dashboard').'#paiements');
+        $response->assertSee(route('dashboard').'#depenses');
 
         // Verify Admin Links
-        $response->assertSee(route('dashboard') . '#utilisateurs');
-        $response->assertSee(route('dashboard') . '#logs');
+        $response->assertSee(route('dashboard').'#utilisateurs');
+        $response->assertSee(route('dashboard').'#logs');
 
         // Verify Config Link
-        $response->assertSee(route('dashboard') . '#parametres');
+        $response->assertSee(route('dashboard').'#parametres');
     }
 
     public function test_sidebar_config_hidden_for_non_admin()
@@ -51,8 +51,8 @@ class SidebarNavigationTest extends TestCase
 
         // Config section should NOT be visible
         $response->assertDontSee('id="section-config"', false);
-        // Note: We might see the word "Config" if it's in a JS script or comment, 
+        // Note: We might see the word "Config" if it's in a JS script or comment,
         // but we shouldn't see the HTML structure for the link if we wrapped it correctly.
-        $response->assertDontSee(route('dashboard') . '#parametres');
+        $response->assertDontSee(route('dashboard').'#parametres');
     }
 }

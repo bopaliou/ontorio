@@ -67,7 +67,7 @@ class ProfileTest extends TestCase
         // 2. Admin -> Should SEE delete
         $admin = User::factory()->create(['role' => 'admin']);
         $responseAdmin = $this->actingAs($admin)->get('/profile');
-        
+
         // Check for the text or ID. The blade has @include('...delete-user-form')
         // We should check for content inside the form, e.g., 'Delete Account' button or header.
         // In delete-user-form.blade.php: <h2>{{ __('Delete Account') }}</h2>
@@ -75,7 +75,7 @@ class ProfileTest extends TestCase
         // Wait, app locale might be fr?
         // Let's check both or verify what view returns.
         // I'll check for 'profile.partials.delete-user-form' hint if possible, or just text.
-        // I'll check for "Delete Account" since I haven't translated the key likely in tests? 
+        // I'll check for "Delete Account" since I haven't translated the key likely in tests?
         // Logic: if tranlsation file exists, it will use it.
         // I translated it in Step 327? No, I translated `edit.blade.php`, `update-profile`, `update-password`.
         // Did I translate `delete-user-form`?
@@ -84,7 +84,7 @@ class ProfileTest extends TestCase
         // And "Translated profile-related pages (Profile Info, Password Update)...".
         // It didn't explicitly say "Translated Delete Account form".
         // So it should be English "Delete Account".
-        
+
         $responseAdmin->assertSee('Delete Account');
     }
 }

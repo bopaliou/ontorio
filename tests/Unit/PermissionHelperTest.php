@@ -12,7 +12,7 @@ class PermissionHelperTest extends TestCase
     {
         $admin = User::factory()->make(['role' => 'admin']);
         $this->actingAs($admin);
-        
+
         $this->assertTrue(PermissionHelper::can('users.view'));
         $this->assertTrue(PermissionHelper::can('random.permission'));
     }
