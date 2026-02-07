@@ -6,38 +6,43 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class StorePaiementRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
     public function authorize(): bool
     {
         return auth()->check();
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     */
     public function rules(): array
     {
         return [
-            'loyer_id' => 'required|exists:loyers,id',
-            'montant' => 'required|numeric|min:0',
-            'date_paiement' => 'required|date',
-            'mode' => 'required|in:espèces,virement,chèque,mobile_money,carte',
-            'reference' => 'nullable|string|max:100',
-            'preuve' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
-            'notes' => 'nullable|string|max:500',
+            'loyer_id'      => 'required|exists:loyers,id',
+            'montant'       => 'required|numeric|min:0.01|max:999999.99',
+            'mode'          => 'required|in:virement,espèces,chèque,carte,mobile_money',
+            'date_paiement' => 'required|date|before_or_equal:today',
+            'preuve'        => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
+            'reference'     => 'nullable|string|max:100',
+            'user_id'       => 'nullable|exists:users,id',
         ];
     }
 
-    /**
-     * Get custom messages for validation errors.
-     */
     public function messages(): array
     {
         return [
-            'loyer_id.required' => 'Veuillez sélectionner un loyer.',
-            'loyer_id.exists' => 'Le loyer sélectionné n\'existe pas.',
+            'loyer_id.required' => 'Le loyer est obligatoire',
+            'loyer_id.exists' => 'Ce loyer n\'existe pas',
+            'montant.required' => 'Le montant est obligatoire',
+            'montant.numeric' => 'Le montant doit être un nombre',
+            'montant.min' => 'Le montant doit être supérieur à 0',
+            'montant.max' => 'Le montant dépasse la limite maximale',
+            'mode.required' => 'Le mode de paiement est obligatoire',
+            'mode.in' => 'Mode de paiement invalide',
+            'date_paiement.required' => 'La date de paiement est obligatoire',
+            'date_paiement.date' => 'La date doit être valide',
+            'date_paiement.before_or_equal' => 'La date ne peut pas être dans le futur',
+            'preuve.mimes' => 'La preuve doit être PDF ou image (jpg, png)',
+            'preuve.max' => 'La preuve ne peut pas dépasser 5 MB',
+        ];
+    }
+}
             'montant.required' => 'Le montant du paiement est obligatoire.',
             'montant.numeric' => 'Le montant doit être un nombre.',
             'montant.min' => 'Le montant ne peut pas être négatif.',

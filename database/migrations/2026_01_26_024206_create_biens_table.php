@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('nom'); // Ex: Appartement 101, Villa Almadies
             $table->string('adresse')->nullable();
             $table->string('ville')->default('Dakar');
-            $table->enum('type', ['appartement', 'villa', 'studio', 'bureau', 'magasin', 'entrepot', 'autre'])->default('appartement');
+            $table->enum('type', ['appartement', 'villa', 'studio', 'bureau', 'magasin', 'entrepot', 'immeuble', 'autre'])->default('appartement');
             $table->decimal('surface', 10, 2)->nullable();
             $table->enum('statut', ['libre', 'occupé', 'en_travaux', 'réservé'])->default('libre');
             $table->decimal('loyer_mensuel', 15, 2);
