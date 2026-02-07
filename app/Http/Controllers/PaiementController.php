@@ -25,13 +25,11 @@ class PaiementController extends Controller
         ]);
 
         if ($validator->fails()) {
-            $error = addslashes($validator->errors()->first());
-            $script = "<script>
-                if (window.parent.loySection && window.parent.loySection.onStoreError) window.parent.loySection.onStoreError('$error');
-                if (window.parent.paiSection && window.parent.paiSection.onStoreError) window.parent.paiSection.onStoreError('$error');
-            </script>";
-
-            return response($script)->header('Content-Type', 'text/html');
+            return response()->json([
+                'success' => false,
+                'message' => $validator->errors()->first(),
+                'errors' => $validator->errors(),
+            ], 422);
         }
 
         try {
@@ -72,22 +70,19 @@ class PaiementController extends Controller
 
             ActivityLogger::log('Encaissement Loyer', "Paiement de {$request->montant} F pour le loyer #{$loyer->id}", 'success');
 
-            $script = "<script>
-                if (window.parent.loySection && window.parent.loySection.onStoreSuccess) window.parent.loySection.onStoreSuccess('Paiement enregistré avec succès !');
-                if (window.parent.paiSection && window.parent.paiSection.onStoreSuccess) window.parent.paiSection.onStoreSuccess('Paiement enregistré avec succès !');
-            </script>";
-
-            return response($script)->header('Content-Type', 'text/html');
+            return response()->json([
+                'success' => true,
+                'message' => 'Paiement enregistré avec succès !',
+                'data' => $paiement,
+            ]);
 
         } catch (\Exception $e) {
             DB::rollBack();
             \Log::error('Erreur enregistrement paiement', ['error' => $e->getMessage()]);
-            $script = "<script>
-                if (window.parent.loySection && window.parent.loySection.onStoreError) window.parent.loySection.onStoreError('Une erreur est survenue.');
-                if (window.parent.paiSection && window.parent.paiSection.onStoreError) window.parent.paiSection.onStoreError('Une erreur est survenue.');
-            </script>";
-
-            return response($script)->header('Content-Type', 'text/html');
+            return response()->json([
+                'success' => false,
+                'message' => 'Une erreur est survenue lors de l\'enregistrement.',
+            ], 500);
         }
     }
 

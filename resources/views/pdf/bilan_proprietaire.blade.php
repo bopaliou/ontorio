@@ -1,141 +1,341 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
     <meta charset="utf-8">
     <title>Bilan Financier - {{ $proprietaire->nom }}</title>
     <style>
-        body { font-family: 'Helvetica', sans-serif; color: #333; line-height: 1.5; padding: 20px; }
-        .header { border-bottom: 2px solid #cb2d2d; padding-bottom: 20px; margin-bottom: 30px; }
-        .logo { float: left; width: 150px; }
-        .company-info { float: right; text-align: right; font-size: 11px; color: #64748b; }
-        .title { clear: both; text-align: center; color: #1A365D; margin-top: 40px; }
-        .section-title { background: #f8fafc; padding: 10px; border-left: 4px solid #cb2d2d; font-weight: bold; margin-top: 30px; font-size: 13px; text-transform: uppercase; }
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 11px; }
-        th { background: #1A365D; color: white; padding: 12px 10px; text-align: left; text-transform: uppercase; letter-spacing: 1px; }
-        td { border-bottom: 1px solid #eee; padding: 10px; }
-        .text-right { text-align: right; }
-        .total-row { background: #f8fafc; font-weight: bold; }
-        .footer { margin-top: 50px; font-size: 9px; text-align: center; color: #94a3b8; border-top: 1px solid #eee; padding-top: 20px; }
-        .profit { color: #16a34a; }
-        .loss { color: #dc2626; }
+        @page { 
+            margin: 0; 
+            size: A4;
+        }
+        body {
+            font-family: 'Helvetica', 'Arial', sans-serif;
+            font-size: 11px;
+            color: #1e293b;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #fff;
+        }
+
+        .page {
+            position: relative;
+            padding: 40px 50px;
+            box-sizing: border-box;
+        }
+
+        /* Branding Colors */
+        .text-primary { color: #cb2d2d; }
+        .text-secondary { color: #1a2e3d; }
+        .bg-secondary { background-color: #1a2e3d; }
+
+        /* Header */
+        .header {
+            border-bottom: 4px solid #cb2d2d;
+            padding-bottom: 25px;
+            margin-bottom: 40px;
+        }
+        .agency-name {
+            font-size: 24px;
+            font-weight: 900;
+            color: #1a2e3d;
+            letter-spacing: -1px;
+            margin: 0;
+        }
+        .header-sub {
+            font-size: 9.5px;
+            color: #64748b;
+            margin-top: 5px;
+        }
+
+        /* Title Area */
+        .doc-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .doc-type {
+            font-size: 10px;
+            font-weight: 900;
+            color: #cb2d2d;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 5px;
+        }
+        .doc-title {
+            font-size: 22px;
+            font-weight: 900;
+            color: #1a2e3d;
+            text-transform: uppercase;
+            letter-spacing: -0.5px;
+        }
+        .doc-date {
+            font-size: 9px;
+            color: #94a3b8;
+            font-weight: 700;
+            margin-top: 5px;
+        }
+
+        /* Profile Card */
+        .profile-section {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 35px;
+        }
+        .profile-label {
+            font-size: 8px;
+            font-weight: 900;
+            color: #cb2d2d;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 8px;
+        }
+        .profile-name {
+            font-size: 16px;
+            font-weight: 900;
+            color: #1a2e3d;
+        }
+        .profile-stat {
+            font-size: 11px;
+            color: #64748b;
+            margin-top: 5px;
+        }
+
+        /* Section Headings */
+        .section-header {
+            font-size: 10px;
+            font-weight: 900;
+            color: #1a2e3d;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 15px;
+            border-left: 5px solid #cb2d2d;
+            padding-left: 15px;
+        }
+
+        /* Tables */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 35px;
+        }
+        .data-table th {
+            background-color: #1a2e3d;
+            color: #fff;
+            text-align: left;
+            padding: 12px 15px;
+            font-size: 9px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .data-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 11px;
+            color: #334155;
+        }
+        .data-table .amount {
+            text-align: right;
+            font-weight: 800;
+            color: #1a2e3d;
+        }
+        .data-table tr.total-row td {
+            background-color: #f8fafc;
+            font-weight: 900;
+            color: #1a2e3d;
+            border-top: 2px solid #e2e8f0;
+        }
+
+        /* Financial Synthesis Box */
+        .synthesis-grid {
+            width: 100%;
+            margin-top: 20px;
+        }
+        .synthesis-box {
+            background-color: #1a2e3d;
+            color: #fff;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 10px 25px rgba(26, 46, 61, 0.2);
+        }
+        .synth-item {
+            margin-bottom: 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 10px;
+        }
+        .synth-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: #94a3b8;
+            text-transform: uppercase;
+        }
+        .synth-val {
+            font-size: 18px;
+            font-weight: 800;
+            float: right;
+            margin-top: -5px;
+        }
+        .net-result {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px dashed rgba(255,255,255,0.2);
+        }
+        .net-label {
+            font-size: 14px;
+            font-weight: 900;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .net-val {
+            font-size: 32px;
+            font-weight: 900;
+            color: #fff;
+            float: right;
+            margin-top: -15px;
+        }
+
+        /* Footer */
+        .footer {
+            position: absolute;
+            bottom: 40px;
+            left: 50px;
+            right: 50px;
+            text-align: center;
+            font-size: 8.5px;
+            color: #94a3b8;
+            border-top: 1px solid #f1f5f9;
+            padding-top: 20px;
+        }
+
+        .clearfix { clear: both; }
     </style>
 </head>
 <body>
-    <div class="header">
-        <div class="logo">
-            <strong style="font-size: 24px; color: #cb2d2d;">ONTARIO</strong><br>
-            <small style="color: #64748b; letter-spacing: 2px;">GROUP</small>
-        </div>
-        <div class="company-info">
-            <strong>Ontario Group SARL</strong><br>
-            Avenue Cheikh Anta Diop, Dakar<br>
-            Tél: +221 33 822 00 00<br>
-            Email: contact@ontariogroup.net
-        </div>
-    </div>
-
-    <div class="title">
-        <h1 style="margin-bottom: 5px;">RELEVÉ DE COMPTE PROPRIÉTAIRE</h1>
-        <p style="font-size: 12px; color: #64748b;">Généré le {{ date('d/m/Y') }} pour la période consolidée</p>
-    </div>
-
-    <div class="section-title">Identité du Propriétaire</div>
-    <div style="margin-top: 10px; font-size: 13px; color: #1e293b;">
-        <strong>Nom :</strong> {{ $proprietaire->nom }} {{ $proprietaire->prenom }}<br>
-        <strong>Patrimoine :</strong> {{ $biens->count() }} Biens sous gestion active
-    </div>
-
-    <div class="section-title">Recettes Locatives (Encaissées)</div>
-    <table>
-        <thead>
-            <tr>
-                <th>Référence Bien</th>
-                <th>Dernier Locataire</th>
-                <th class="text-right">Total Encaissé</th>
-            </tr>
-        </thead>
-        <tbody>
-            @php $totalRecettes = 0; @endphp
-            @foreach($biens as $bien)
-                @php
-                    $encaisséBien = $bien->contrats->flatMap->paiements->sum('montant');
-                    $totalRecettes += $encaisséBien;
-                @endphp
+    <div class="page">
+        <!-- HEADER -->
+        <div class="header">
+            <table width="100%">
                 <tr>
-                    <td style="font-weight: bold;">{{ $bien->nom }}</td>
-                    <td>{{ $bien->contrats->where('statut', 'actif')->first()->locataire->nom ?? 'N/A' }}</td>
-                    <td class="text-right" style="font-weight: bold; color: #16a34a;">{{ number_format($encaisséBien, 0, ',', ' ') }} F</td>
+                    <td width="60%">
+                        <h1 class="agency-name">ONTARIO GROUP S.A.</h1>
+                        <div class="header-sub">
+                            Expertise Immobilière & Gestion de Patrimoine<br>
+                            Dakar Plateau, Sénégal | +221 33 822 32 67
+                        </div>
+                    </td>
+                    <td width="40%" align="right">
+                        <img src="{{ public_path('images/ontorio-logo.png') }}" style="max-height: 70px;">
+                    </td>
                 </tr>
-            @endforeach
-            <tr class="total-row">
-                <td colspan="2">TOTAL DES RECETTES LOCATIVES</td>
-                <td class="text-right" style="font-size: 14px; color: #16a34a;">{{ number_format($totalRecettes, 0, ',', ' ') }} F CFA</td>
-            </tr>
-        </tbody>
-    </table>
+            </table>
+        </div>
 
-    <div class="section-title">État des Dépenses & Maintenance</div>
-    <table>
-        <thead>
-            <tr>
-                <th style="width: 80px;">Date</th>
-                <th>Bien concerné</th>
-                <th>Libellé de la dépense</th>
-                <th class="text-right">Montant</th>
-            </tr>
-        </thead>
-        <tbody>
-            @php $totalDepenses = 0; @endphp
-            @php $hasDepenses = false; @endphp
-            @foreach($biens as $bien)
-                @foreach($bien->depenses as $dep)
-                    @php $totalDepenses += $dep->montant; $hasDepenses = true; @endphp
+        <!-- DOC HEADER -->
+        <div class="doc-header">
+            <div class="doc-type">Rapport Comptable</div>
+            <h2 class="doc-title">Relevé de Compte Propriétaire</h2>
+            <div class="doc-date">GÉNÉRÉ LE {{ date('d/m/Y') }} | PÉRIODE CONSOLIDÉE</div>
+        </div>
+
+        <!-- PROFILE -->
+        <div class="profile-section">
+            <div class="profile-label">Propriétaire du Patrimoine</div>
+            <div class="profile-name">{{ strtoupper($proprietaire->nom) }} {{ strtoupper($proprietaire->prenom) }}</div>
+            <div class="profile-stat">Portefeuille de Gestion : <strong>{{ $biens->count() }} Unités Immobilières</strong></div>
+        </div>
+
+        <!-- REVENUES Table -->
+        <div class="section-header">Recettes Locatives Encaissées</div>
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th width="40%">Désignation du Bien</th>
+                    <th width="35%">Locataire</th>
+                    <th width="25%" style="text-align: right;">Montant Perçu</th>
+                </tr>
+            </thead>
+            <tbody>
+                @php $totalRecettes = 0; @endphp
+                @foreach($biens as $bien)
+                    @php
+                        $encaisséBien = $bien->contrats->flatMap->paiements->sum('montant');
+                        $totalRecettes += $encaisséBien;
+                    @endphp
                     <tr>
-                        <td>{{ $dep->date_depense->format('d/m/Y') }}</td>
-                        <td>{{ $bien->nom }}</td>
-                        <td>{{ $dep->titre }} <small style="color: #64748b;">({{ $dep->categorie }})</small></td>
-                        <td class="text-right" style="font-weight: bold; color: #dc2626;">{{ number_format($dep->montant, 0, ',', ' ') }} F</td>
+                        <td style="font-weight: 800; color: #1a2e3d;">{{ $bien->nom }}</td>
+                        <td>{{ $bien->contrats->where('statut', 'actif')->first()->locataire->nom ?? '---' }}</td>
+                        <td class="amount text-primary">{{ number_format($encaisséBien, 0, ',', ' ') }} F</td>
                     </tr>
                 @endforeach
-            @endforeach
-            @if(!$hasDepenses)
-            <tr>
-                <td colspan="4" style="text-align: center; color: #94a3b8; font-style: italic; padding: 20px;">Aucune dépense enregistrée sur cette période.</td>
-            </tr>
-            @endif
-            <tr class="total-row">
-                <td colspan="3">TOTAL DES CHARGES DÉDUCTIBLES</td>
-                <td class="text-right" style="font-size: 14px; color: #dc2626;">{{ number_format($totalDepenses, 0, ',', ' ') }} F CFA</td>
-            </tr>
-        </tbody>
-    </table>
+                <tr class="total-row">
+                    <td colspan="2">TOTAL DES REVENUS LOCATIFS</td>
+                    <td class="amount text-primary" style="font-size: 14px;">{{ number_format($totalRecettes, 0, ',', ' ') }} F</td>
+                </tr>
+            </tbody>
+        </table>
 
-    <div class="section-title">Synthèse Financière (Bilan Net)</div>
-    <table style="font-size: 14px; margin-top: 10px;">
-        <tr>
-            <td style="border: none;">Recettes Brutes (A)</td>
-            <td class="text-right" style="border: none; font-weight: bold;">{{ number_format($totalRecettes, 0, ',', ' ') }} F</td>
-        </tr>
-        <tr>
-            <td style="border: none;">Total Charges & Dépenses (B)</td>
-            <td class="text-right" style="border: none; font-weight: bold; color: #dc2626;">- {{ number_format($totalDepenses, 0, ',', ' ') }} F</td>
-        </tr>
-        <tr style="background: #1A365D; color: white;">
-            <td style="padding: 15px; font-weight: bold; font-size: 16px;">NET À REVERSER (A - B)</td>
-            <td class="text-right" style="padding: 15px; font-weight: bold; font-size: 20px;">
-                {{ number_format($totalRecettes - $totalDepenses, 0, ',', ' ') }} F CFA
-            </td>
-        </tr>
-    </table>
+        <!-- EXPENSES Table -->
+        <div class="section-header">Charges & Maintenance Déductibles</div>
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th width="15%">Date</th>
+                    <th width="25%">Bien</th>
+                    <th width="40%">Libellé / Description</th>
+                    <th width="20%" style="text-align: right;">Montant</th>
+                </tr>
+            </thead>
+            <tbody>
+                @php $totalDepenses = 0; $hasDepenses = false; @endphp
+                @foreach($biens as $bien)
+                    @foreach($bien->depenses as $dep)
+                        @php $totalDepenses += $dep->montant; $hasDepenses = true; @endphp
+                        <tr>
+                            <td>{{ $dep->date_depense->format('d/m/y') }}</td>
+                            <td>{{ $bien->nom }}</td>
+                            <td>{{ $dep->titre }} <span style="color: #94a3b8; font-size: 9px;">({{ $dep->categorie }})</span></td>
+                            <td class="amount" style="color: #64748b;">{{ number_format($dep->montant, 0, ',', ' ') }} F</td>
+                        </tr>
+                    @endforeach
+                @endforeach
+                @if(!$hasDepenses)
+                    <tr>
+                        <td colspan="4" align="center" style="padding: 25px; color: #94a3b8; font-style: italic;">Aucune charge enregistrée sur la période.</td>
+                    </tr>
+                @endif
+                <tr class="total-row">
+                    <td colspan="3">TOTAL DES DÉPENSES OPÉRATIONNELLES</td>
+                    <td class="amount" style="font-size: 14px; color: #64748b;">{{ number_format($totalDepenses, 0, ',', ' ') }} F</td>
+                </tr>
+            </tbody>
+        </table>
 
-    <div style="margin-top: 30px; font-size: 11px; border: 1px solid #e2e8f0; padding: 15px; border-radius: 10px; color: #475569;">
-        <strong>Note de Gestion :</strong> Ce relevé présente la situation nette de votre compte au {{ date('d/m/Y') }}.
-        Le montant "Net à reverser" sera transféré sur votre compte après validation par le département comptable.
-    </div>
+        <!-- SYNTHESIS -->
+        <div class="synthesis-box">
+            <div class="synth-item">
+                <span class="synth-label">Total Recettes Brutes</span>
+                <span class="synth-val">{{ number_format($totalRecettes, 0, ',', ' ') }} F</span>
+                <div class="clearfix"></div>
+            </div>
+            <div class="synth-item">
+                <span class="synth-label">Total Charges & Dépenses</span>
+                <span class="synth-val">- {{ number_format($totalDepenses, 0, ',', ' ') }} F</span>
+                <div class="clearfix"></div>
+            </div>
+            <div class="net-result">
+                <span class="net-label">Net de Gestion à Reverser</span>
+                <span class="net-val">{{ number_format($totalRecettes - $totalDepenses, 0, ',', ' ') }} F CFA</span>
+                <div class="clearfix"></div>
+            </div>
+        </div>
 
-    <div class="footer">
-        Ontario Group ERP - Module de Gestion de Patrimoine v2.0<br>
-        Ce document est une pièce comptable interne générée automatiquement.
+        <div class="footer">
+            Ontario Group S.A. | Relevé Certifié par le département comptable<br>
+            Document confidentiel destiné exclusivement au propriétaire mentionné ci-dessus.
+        </div>
     </div>
 </body>
 </html>

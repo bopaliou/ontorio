@@ -66,8 +66,10 @@ class LoyerController extends Controller
 
         $msg = "$countCreated quittances générées et $countUpdated mises à jour pour ".Carbon::now()->translatedFormat('F Y');
 
-        return response("<script>window.parent.loySection.onStoreSuccess('$msg');</script>")
-            ->header('Content-Type', 'text/html');
+        return response()->json([
+            'success' => true,
+            'message' => $msg,
+        ]);
     }
 
     public function index()

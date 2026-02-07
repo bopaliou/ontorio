@@ -118,6 +118,9 @@ class DashboardController extends Controller
             case 'direction':
                 $roleData = $this->getDirectionData();
                 break;
+            case 'proprietaire':
+                $roleData = $this->getProprietaireData();
+                break;
             default:
                 abort(403, 'Rôle non autorisé');
         }
@@ -127,309 +130,6 @@ class DashboardController extends Controller
         return view('dashboard.index', compact('data'));
     }
 
-    /**
-     * Store Propriétaire via Iframe target (Single Page Pattern)
-     */
-    public function storeProprietaire(Request $request)
-    {
-        $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [
-            'nom' => 'required|string|max:255',
-            'email' => 'nullable|email|unique:proprietaires,email',
-            'telephone' => 'nullable|string|max:50',
-            'adresse' => 'nullable|string',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => $validator->errors()->first(),
-                'errors' => $validator->errors(),
-            ], 422);
-        }
-
-        try {
-            $prop = Proprietaire::create($request->only(['nom', 'prenom', 'email', 'telephone', 'adresse']));
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Propriétaire créé avec succès !',
-                'data' => $prop,
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Une erreur est survenue. Veuillez réessayer.',
-            ], 500);
-        }
-    }
-
-    /**
-     * Update Propriétaire via Iframe target (Single Page Pattern)
-     */
-    public function updateProprietaire(Request $request, Proprietaire $proprietaire)
-    {
-        $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [
-            'nom' => 'required|string|max:255',
-            'email' => 'nullable|email|unique:proprietaires,email,'.$proprietaire->id,
-            'telephone' => 'nullable|string|max:50',
-            'adresse' => 'nullable|string',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => $validator->errors()->first(),
-                'errors' => $validator->errors(),
-            ], 422);
-        }
-
-        try {
-            $proprietaire->update($request->only(['nom', 'prenom', 'email', 'telephone', 'adresse']));
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Propriétaire mis à jour !',
-                'data' => $proprietaire,
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Une erreur est survenue. Veuillez réessayer.',
-            ], 500);
-        }
-    }
-
-    /**
-     * Store Bien via Iframe target
-     */
-    public function storeBien(Request $request)
-    {
-        $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [
-            'nom' => 'required|string|max:255',
-            'adresse' => 'nullable|string',
-            'loyer_mensuel' => 'required|numeric',
-            'type' => 'required|in:appartement,villa,studio,bureau,magasin,entrepot,autre',
-            'nombre_pieces' => 'nullable|integer',
-            'meuble' => 'nullable|boolean',
-            'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => $validator->errors()->first(),
-                'errors' => $validator->errors(),
-            ], 422);
-        }
-
-        try {
-            // Ontario Group est le seul propriétaire
-            $proprietaire = Proprietaire::firstOrCreate(
-                ['nom' => 'Ontario Group'],
-                [
-                    'prenom' => 'S.A.',
-                    'email' => 'contact@ontariogroup.net',
-                    'telephone' => '33 822 32 67',
-                    'adresse' => '5 Félix Faure x Colbert, Dakar Plateau',
-                ]
-            );
-
-            $data = $request->except(['images', 'image']); // On garde 'image' par sécurité si envoyé par erreur
-            $data['proprietaire_id'] = $proprietaire->id;
-
-            $bien = Bien::create($data);
-
-            // Gestion de plusieurs images
-            if ($request->hasFile('images')) {
-                foreach ($request->file('images') as $index => $imageFile) {
-                    $path = $imageFile->store('biens/'.$bien->id, 'public');
-                    BienImage::create([
-                        'bien_id' => $bien->id,
-                        'chemin' => $path,
-                        'nom_original' => $imageFile->getClientOriginalName(),
-                        'principale' => ($index === 0),
-                        'ordre' => $index + 1,
-                    ]);
-                }
-            } elseif ($request->hasFile('image')) {
-                // Compatibilité avec l'ancien champ unique si nécessaire
-                $imageFile = $request->file('image');
-                $path = $imageFile->store('biens/'.$bien->id, 'public');
-                BienImage::create([
-                    'bien_id' => $bien->id,
-                    'chemin' => $path,
-                    'nom_original' => $imageFile->getClientOriginalName(),
-                    'principale' => true,
-                    'ordre' => 1,
-                ]);
-            }
-
-            ActivityLogger::log('Création Bien', 'Ajout du bien : '.$bien->nom, 'success', $bien);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Bien ajouté avec succès !',
-                'data' => $bien,
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Erreur: '.$e->getMessage(),
-            ], 500);
-        }
-    }
-
-    /**
-     * Update Bien via Iframe target
-     */
-    public function updateBien(Request $request, Bien $bien)
-    {
-        $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [
-            'nom' => 'required|string|max:255',
-            'adresse' => 'nullable|string',
-            'loyer_mensuel' => 'required|numeric',
-            'type' => 'required|in:appartement,villa,studio,bureau,magasin,entrepot,autre',
-            'nombre_pieces' => 'nullable|integer',
-            'meuble' => 'nullable|boolean',
-            'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => $validator->errors()->first(),
-                'errors' => $validator->errors(),
-            ], 422);
-        }
-
-        try {
-            $oldLoyer = $bien->loyer_mensuel;
-            $newLoyer = $request->loyer_mensuel; // Capture explicite de la nouvelle valeur
-
-            $bien->update($request->except(['images', 'image']));
-
-            // Si le loyer a changé (comparaison robuste)
-            if ((float) $oldLoyer != (float) $newLoyer) {
-                // ... (reste du code de synchro inchangé)
-                $contrats = Contrat::where('bien_id', $bien->id)
-                    ->whereIn('statut', ['actif', 'en_attente'])
-                    ->get();
-
-                foreach ($contrats as $c) {
-                    $c->update(['loyer_montant' => $newLoyer]);
-                    Loyer::where('contrat_id', $c->id)
-                        ->whereIn('statut', ['émis', 'en_retard'])
-                        ->update(['montant' => $newLoyer]);
-                }
-                ActivityLogger::log('Synchro Bien-Global', 'Mise à jour automatique Contrats & Loyers (Tout impayé) : '.$bien->nom, 'info');
-            }
-
-            // Si de nouvelles images sont uploadées, on peut soit ajouter, soit remplacer.
-            // Vu le design actuel, remplacer semble être l'intention si on uploade à nouveau.
-            if ($request->hasFile('images')) {
-                // Nettoyer les anciennes images si on veut un remplacement total
-                foreach ($bien->images as $oldImage) {
-                    if (Storage::disk('public')->exists($oldImage->chemin)) {
-                        Storage::disk('public')->delete($oldImage->chemin);
-                    }
-                    $oldImage->delete();
-                }
-
-                foreach ($request->file('images') as $index => $imageFile) {
-                    $path = $imageFile->store('biens/'.$bien->id, 'public');
-                    BienImage::create([
-                        'bien_id' => $bien->id,
-                        'chemin' => $path,
-                        'nom_original' => $imageFile->getClientOriginalName(),
-                        'principale' => ($index === 0),
-                        'ordre' => $index + 1,
-                    ]);
-                }
-            } elseif ($request->hasFile('image')) {
-                // Ancien comportement pour image unique
-                foreach ($bien->images as $oldImage) {
-                    if (Storage::disk('public')->exists($oldImage->chemin)) {
-                        Storage::disk('public')->delete($oldImage->chemin);
-                    }
-                    $oldImage->delete();
-                }
-                $imageFile = $request->file('image');
-                $path = $imageFile->store('biens/'.$bien->id, 'public');
-                BienImage::create([
-                    'bien_id' => $bien->id,
-                    'chemin' => $path,
-                    'nom_original' => $imageFile->getClientOriginalName(),
-                    'principale' => true,
-                    'ordre' => 1,
-                ]);
-            }
-
-            ActivityLogger::log('Modification Bien', 'Mise à jour du bien : '.$bien->nom, 'info', $bien);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Bien mis à jour (et contrats synchronisés) !',
-                'data' => $bien,
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Erreur: '.$e->getMessage(),
-            ], 500);
-        }
-    }
-
-    /**
-     * Delete Bien via Iframe target
-     */
-    public function deleteBien(Bien $bien)
-    {
-        try {
-            $nom = $bien->nom;
-            $bien->delete();
-            ActivityLogger::log('Suppression Bien', 'Suppression du bien : '.$nom, 'warning');
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Bien supprimé avec succès !',
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Impossible de supprimer ce bien car il est lié à des contrats actifs.',
-            ], 422); // Note: 422 ou 403, mais 422 pour "Unprocessable"
-        }
-    }
-
-    /**
-     * Delete Bien Image via AJAX
-     */
-    public function deleteBienImage(BienImage $bienImage)
-    {
-        try {
-            // Supprimer le fichier du storage
-            if (Storage::disk('public')->exists($bienImage->chemin)) {
-                Storage::disk('public')->delete($bienImage->chemin);
-            }
-
-            // Si c'était l'image principale, définir la prochaine image comme principale
-            if ($bienImage->principale) {
-                $nextImage = BienImage::where('bien_id', $bienImage->bien_id)
-                    ->where('id', '!=', $bienImage->id)
-                    ->orderBy('ordre')
-                    ->first();
-                if ($nextImage) {
-                    $nextImage->update(['principale' => true]);
-                }
-            }
-
-            $bienImage->delete();
-
-            return response()->json(['success' => true, 'message' => 'Image supprimée']);
-        } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
-        }
-    }
 
     private function getAdminData()
     {
@@ -486,6 +186,95 @@ class DashboardController extends Controller
             ],
             'loyers_en_attente' => Loyer::with(['contrat.bien', 'contrat.locataire'])->whereIn('statut', ['émis', 'en_retard'])->latest()->limit(10)->get(),
             'derniers_paiements' => Paiement::with(['loyer.contrat.locataire'])->latest('date_paiement')->limit(10)->get(),
+        ];
+    }
+
+    private function getProprietaireData()
+    {
+        $user = auth()->user();
+        // On suppose que l'utilisateur 'proprietaire' a un lien avec un modèle Proprietaire ou un email correspondant
+        // Pour l'instant, on cherche le proprietaire via l'email si ce n'est pas un admin
+        $proprietaireId = null;
+        if ($user->role === 'proprietaire') {
+             // Essayons de trouver le proprietaire lié à ce compte utilisateur
+             // (Hypothèse: un utilisateur proprietaire a son email dans la table proprietaires)
+             $propRecord = Proprietaire::where('email', $user->email)->first();
+             $proprietaireId = $propRecord ? $propRecord->id : null;
+        }
+
+        if (!$proprietaireId) {
+            return [
+                'role' => 'proprietaire',
+                'kpis' => ['revenus' => 0, 'charges' => 0, 'net' => 0],
+                'biens_performance' => [],
+            ];
+        }
+
+        $moisActuel = Carbon::now()->format('Y-m');
+
+        // Revenus encaissés ce mois pour ce propriétaire
+        $revenusMois = Paiement::whereHas('loyer', function($q) use ($moisActuel, $proprietaireId) {
+            $q->where('mois', $moisActuel)
+              ->whereHas('contrat.bien', function($sq) use ($proprietaireId) {
+                  $sq->where('proprietaire_id', $proprietaireId);
+              });
+        })->sum('montant');
+
+        // Charges (Dépenses) pour ce propriétaire
+        $chargesMois = \App\Models\Depense::whereHas('bien', function($q) use ($proprietaireId) {
+            $q->where('proprietaire_id', $proprietaireId);
+        })->where('date_depense', 'like', $moisActuel.'%')->sum('montant');
+
+        // Commissions Agence (estimées à 10%)
+        $commissionsMois = round($revenusMois * 0.10);
+
+        $netMois = $revenusMois - $chargesMois - $commissionsMois;
+
+        // Performance par bien
+        $biensPerformance = Bien::where('proprietaire_id', $proprietaireId)
+            ->withCount(['contrats as is_active' => function($q) {
+                $q->where('statut', 'actif');
+            }])
+            ->addSelect([
+                'revenus_cumules' => Paiement::selectRaw('sum(montant)')
+                    ->join('loyers', 'paiements.loyer_id', '=', 'loyers.id')
+                    ->join('contrats', 'loyers.contrat_id', '=', 'contrats.id')
+                    ->whereColumn('contrats.bien_id', 'biens.id'),
+                'charges_cumulees' => \App\Models\Depense::selectRaw('sum(montant)')
+                    ->whereColumn('depenses.bien_id', 'biens.id')
+            ])
+            ->get();
+
+        // Revenus des 6 derniers mois pour le graphique
+        $revenusPar6Mois = [];
+        for ($i = 5; $i >= 0; $i--) {
+            $m = Carbon::now()->subMonths($i)->translatedFormat('M Y');
+            $moisRaw = Carbon::now()->subMonths($i)->format('Y-m');
+            
+            $rev = Paiement::whereHas('loyer', function($q) use ($moisRaw, $proprietaireId) {
+                $q->where('mois', $moisRaw)
+                  ->whereHas('contrat.bien', function($sq) use ($proprietaireId) {
+                      $sq->where('proprietaire_id', $proprietaireId);
+                  });
+            })->sum('montant');
+
+            $revenusPar6Mois[] = [
+                'mois' => $m,
+                'montant' => $rev,
+            ];
+        }
+
+        return [
+            'role' => 'proprietaire',
+            'kpis' => [
+                'revenu_mensuel' => $revenusMois,
+                'charges_mensuelles' => $chargesMois,
+                'commissions_mensuelles' => $commissionsMois,
+                'net_mensuel' => $netMois,
+                'taux_rentabilite' => 0, // Placeholder
+            ],
+            'biens_list' => $biensPerformance,
+            'revenus_par_mois' => $revenusPar6Mois,
         ];
     }
 

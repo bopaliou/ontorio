@@ -1,92 +1,77 @@
 <x-app-layout>
+    {{-- Header Content --}}
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Profil') }}
-        </h2>
+        <div class="flex items-center justify-between">
+            <div>
+                <h2 class="font-black text-2xl text-gray-900 leading-tight tracking-tight">
+                    {{ __('Mon Espace') }}
+                </h2>
+                <p class="text-sm text-gray-500 font-medium mt-1">Gérez vos informations personnelles et la sécurité de votre compte.</p>
+            </div>
+        </div>
     </x-slot>
 
     <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-10">
+            
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
+                
+                {{-- LEFT COLUMN: IDENTITY (5 cols) --}}
+                <div class="lg:col-span-5 space-y-8">
+                    {{-- Identity Card --}}
+                    <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100 relaitve overflow-hidden">
+                        <section>
+                            <header class="mb-8">
+                                <h2 class="text-lg font-black text-gray-900 uppercase tracking-widest flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-[#cb2d2d]"></span>
+                                    {{ __('Identité') }}
+                                </h2>
+                                <p class="mt-2 text-sm text-gray-500">
+                                    {{ __("Vos informations de profil publiques.") }}
+                                </p>
+                            </header>
 
-            <!-- SKELETON LOADING -->
-            <div id="profile-skeleton" class="space-y-6">
-                <!-- Profile Info Skeleton -->
-                <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                    <div class="max-w-xl animate-pulse space-y-4">
-                        <div class="h-6 bg-gray-200 rounded w-1/3 mb-4"></div> <!-- Title -->
-                        <div class="space-y-2">
-                            <div class="h-4 bg-gray-200 rounded w-1/4"></div> <!-- Label -->
-                            <div class="h-10 bg-gray-200 rounded w-full"></div> <!-- Input -->
-                        </div>
-                        <div class="space-y-2">
-                            <div class="h-4 bg-gray-200 rounded w-1/4"></div> <!-- Label -->
-                            <div class="h-10 bg-gray-200 rounded w-full"></div> <!-- Input -->
-                        </div>
-                        <div class="h-10 bg-gray-200 rounded w-32 mt-4"></div> <!-- Button -->
+                            @include('profile.partials.update-profile-information-form')
+                        </section>
                     </div>
                 </div>
 
-                <!-- Password Skeleton -->
-                <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                    <div class="max-w-xl animate-pulse space-y-4">
-                         <div class="h-6 bg-gray-200 rounded w-1/3 mb-4"></div> <!-- Title -->
-                        <div class="space-y-2">
-                             <div class="h-4 bg-gray-200 rounded w-1/4"></div>
-                             <div class="h-10 bg-gray-200 rounded w-full"></div>
-                        </div>
-                        <div class="space-y-2">
-                             <div class="h-4 bg-gray-200 rounded w-1/4"></div>
-                             <div class="h-10 bg-gray-200 rounded w-full"></div>
-                        </div>
-                        <div class="space-y-2">
-                             <div class="h-4 bg-gray-200 rounded w-1/4"></div>
-                             <div class="h-10 bg-gray-200 rounded w-full"></div>
-                        </div>
-                        <div class="h-10 bg-gray-200 rounded w-32 mt-4"></div>
+                {{-- RIGHT COLUMN: SECURITY (7 cols) --}}
+                <div class="lg:col-span-7 space-y-8">
+                    {{-- Password Card --}}
+                    <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100">
+                        <section>
+                            <header class="mb-8">
+                                <h2 class="text-lg font-black text-gray-900 uppercase tracking-widest flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-[#274256]"></span>
+                                    {{ __('Sécurité') }}
+                                </h2>
+                                <p class="mt-2 text-sm text-gray-500">
+                                    {{ __("Assurez la protection de votre compte avec un mot de passe fort.") }}
+                                </p>
+                            </header>
+
+                            @include('profile.partials.update-password-form')
+                        </section>
                     </div>
-                </div>
-            </div>
 
-            <!-- REAL CONTENT (Hidden initially) -->
-            <div id="profile-content" class="hidden space-y-6">
-            <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                <div class="max-w-xl">
-                    @include('profile.partials.update-profile-information-form')
-                </div>
-            </div>
+                    {{-- Danger Zone --}}
+                    @if(Auth::user()->role === 'admin')
+                    <div class="bg-red-50/50 p-8 rounded-[2.5rem] border border-red-100">
+                        <section>
+                            <header class="mb-6">
+                                <h2 class="text-lg font-black text-[#cb2d2d] uppercase tracking-widest flex items-center gap-2">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                                    {{ __('Zone de Danger') }}
+                                </h2>
+                            </header>
 
-            <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                <div class="max-w-xl">
-                    @include('profile.partials.update-password-form')
+                            @include('profile.partials.delete-user-form')
+                        </section>
+                    </div>
+                    @endif
                 </div>
             </div>
-            {{-- Delete Account --}}
-            @if(Auth::user()->role === 'admin')
-            <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                <div class="max-w-xl">
-                    @include('profile.partials.delete-user-form')
-                </div>
-            </div>
-            @endif
-            </div> <!-- End profile-content -->
-
         </div>
     </div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Simulate a short loading delay for visual consistency with the dashboard
-            setTimeout(() => {
-                const skeleton = document.getElementById('profile-skeleton');
-                const content = document.getElementById('profile-content');
-
-                if (skeleton && content) {
-                    skeleton.classList.add('hidden');
-                    content.classList.remove('hidden');
-                    // Optional: Add a fade-in effect to content
-                    content.classList.add('animate-fade-in-up'); // Assuming you have this or similar
-                }
-            }, 500); // 500ms delay
-        });
-    </script>
 </x-app-layout>

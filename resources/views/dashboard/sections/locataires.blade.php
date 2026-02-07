@@ -237,34 +237,34 @@
                         <input type="hidden" name="id" id="loc-input-id">
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <!-- Nom -->
-                            <div class="relative bg-gray-50 rounded-xl border border-gray-200 px-3 py-2 focus-within:ring-2 focus-within:ring-[#cb2d2d]/10 focus-within:border-[#cb2d2d] transition-all">
-                                <label class="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Nom Complet</label>
-                                <input type="text" name="nom" id="loc-input-nom" required class="block w-full bg-transparent border-none p-0 text-base sm:text-sm font-bold text-gray-900 placeholder-gray-300 focus:ring-0" placeholder="Ex: Moussa Diop">
+                             <!-- Nom -->
+                            <div class="relative">
+                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2 ml-1">Nom Complet</label>
+                                <input type="text" name="nom" id="loc-input-nom" required class="input-focus block w-full bg-gray-50 border-none px-4 py-4 rounded-2xl text-sm font-bold text-gray-900 placeholder-gray-300 focus:ring-4 focus:ring-red-500/5 transition-all" placeholder="Ex: Moussa Diop">
                             </div>
 
                             <!-- CNI -->
-                            <div class="relative bg-gray-50 rounded-xl border border-gray-200 px-3 py-2 focus-within:ring-2 focus-within:ring-[#cb2d2d]/10 focus-within:border-[#cb2d2d] transition-all">
-                                <label class="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Numéro CNI</label>
-                                <input type="text" name="cni" id="loc-input-cni" class="block w-full bg-transparent border-none p-0 text-base sm:text-sm font-bold text-gray-900 placeholder-gray-300 focus:ring-0" placeholder="ID Document">
+                            <div class="relative">
+                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2 ml-1">Numéro CNI</label>
+                                <input type="text" name="cni" id="loc-input-cni" class="input-focus block w-full bg-gray-50 border-none px-4 py-4 rounded-2xl text-sm font-bold text-gray-900 placeholder-gray-300 focus:ring-4 focus:ring-red-500/5 transition-all" placeholder="ID Document">
                             </div>
 
                             <!-- Email -->
-                            <div class="relative bg-gray-50 rounded-xl border border-gray-200 px-3 py-2 focus-within:ring-2 focus-within:ring-[#cb2d2d]/10 focus-within:border-[#cb2d2d] transition-all">
-                                <label class="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Email</label>
-                                <input type="email" name="email" id="loc-input-email" class="block w-full bg-transparent border-none p-0 text-base sm:text-sm font-bold text-gray-900 placeholder-gray-300 focus:ring-0" placeholder="email@exemple.com">
+                            <div class="relative">
+                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2 ml-1">Email</label>
+                                <input type="email" name="email" id="loc-input-email" class="input-focus block w-full bg-gray-50 border-none px-4 py-4 rounded-2xl text-sm font-bold text-gray-900 placeholder-gray-300 focus:ring-4 focus:ring-red-500/5 transition-all" placeholder="email@exemple.com">
                             </div>
 
                             <!-- Tel -->
-                            <div class="relative bg-gray-50 rounded-xl border border-gray-200 px-3 py-2 focus-within:ring-2 focus-within:ring-[#cb2d2d]/10 focus-within:border-[#cb2d2d] transition-all">
-                                <label class="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Téléphone</label>
-                                <input type="text" name="telephone" id="loc-input-tel" class="block w-full bg-transparent border-none p-0 text-base sm:text-sm font-bold text-gray-900 placeholder-gray-300 focus:ring-0" placeholder="77 ...">
+                            <div class="relative">
+                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2 ml-1">Téléphone</label>
+                                <input type="text" name="telephone" id="loc-input-tel" class="input-focus block w-full bg-gray-50 border-none px-4 py-4 rounded-2xl text-sm font-bold text-gray-900 placeholder-gray-300 focus:ring-4 focus:ring-red-500/5 transition-all" placeholder="77 ...">
                             </div>
 
                             <!-- Adresse -->
-                            <div class="col-span-1 md:col-span-2 relative bg-gray-50 rounded-xl border border-gray-200 px-3 py-2 focus-within:ring-2 focus-within:ring-[#cb2d2d]/10 focus-within:border-[#cb2d2d] transition-all">
-                                <label class="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Infos Complémentaires</label>
-                                <textarea name="adresse" id="loc-input-adresse" class="block w-full bg-transparent border-none p-0 text-base sm:text-sm font-bold text-gray-900 placeholder-gray-300 focus:ring-0 resize-none" rows="1" placeholder="Adresse complète..."></textarea>
+                            <div class="col-span-1 md:col-span-2 relative">
+                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2 ml-1">Infos Complémentaires</label>
+                                <textarea name="adresse" id="loc-input-adresse" class="input-focus block w-full bg-gray-50 border-none px-4 py-4 rounded-2xl text-sm font-bold text-gray-900 placeholder-gray-300 focus:ring-4 focus:ring-red-500/5 transition-all resize-none" rows="2" placeholder="Adresse complète..."></textarea>
                             </div>
                         </div>
 
@@ -320,43 +320,44 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <!-- Type de document -->
-                    <div class="relative bg-gray-50 rounded-xl border border-gray-200 px-3 py-2 focus-within:ring-2 focus-within:ring-[#cb2d2d]/10 focus-within:border-[#cb2d2d] transition-all">
-                        <label class="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Type de Document</label>
-                        <select name="type" id="doc-type" required class="block w-full bg-transparent border-none p-0 text-base sm:text-sm font-bold text-gray-900 focus:ring-0 appearance-none cursor-pointer">
-                            <option value="">Sélectionner...</option>
-                            <option value="cni">Carte d'Identité</option>
-                            <option value="contrat_signe">Contrat Signé</option>
-                            <option value="attestation">Attestation</option>
-                            <option value="justificatif">Justificatif</option>
-                            <option value="autre">Autre Document</option>
-                        </select>
-                    </div>
-
-                    <!-- Zone de drop fichier (Compact) -->
-                    <div class="relative bg-gray-50 rounded-xl border border-gray-200 px-3 py-2 focus-within:ring-2 focus-within:ring-[#cb2d2d]/10 focus-within:border-[#cb2d2d] transition-all h-[52px] flex items-center hover:bg-gray-100 cursor-pointer">
-                        <input type="file" name="document" id="doc-file-input" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" required class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
-                        <div id="doc-drop-content" class="flex items-center gap-3 w-full">
-                            <div class="w-8 h-8 bg-white rounded-lg flex items-center justify-center shadow-sm flex-shrink-0">
-                                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
-                            </div>
-                            <div class="overflow-hidden">
-                                <p class="text-[11px] font-black text-gray-500 uppercase tracking-widest leading-none mb-1">Choisir un fichier</p>
-                                <p class="text-xs font-bold text-gray-900 truncate">Parcourir...</p>
+                    <div class="relative">
+                        <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2 ml-1">Type de Document</label>
+                        <div class="relative group">
+                            <select name="type" id="doc-type" required class="input-focus block w-full bg-gray-50 border-none px-4 py-4 rounded-2xl text-sm font-bold text-gray-900 focus:ring-4 focus:ring-red-500/5 transition-all appearance-none cursor-pointer">
+                                <option value="">Sélectionner...</option>
+                                <option value="cni">Carte d'Identité</option>
+                                <option value="contrat_signe">Contrat Signé</option>
+                                <option value="attestation">Attestation</option>
+                                <option value="justificatif">Justificatif</option>
+                                <option value="autre">Autre Document</option>
+                            </select>
+                            <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none text-gray-400">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"/></svg>
                             </div>
                         </div>
+                    </div>
 
-                        <div id="doc-file-preview" class="hidden w-full overflow-hidden">
-                            <div class="flex items-center justify-between gap-3 bg-white rounded-lg px-2 py-1 shadow-sm border border-green-100">
-                                <div class="flex items-center gap-2 overflow-hidden">
-                                     <div class="w-6 h-6 bg-green-500 rounded flex items-center justify-center text-white flex-shrink-0">
-                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                                    </div>
-                                    <p id="doc-file-name" class="text-[11px] font-bold text-gray-900 truncate">fichier.pdf</p>
-                                </div>
-                                <button type="button" onclick="locSection.clearFile(event)" class="text-gray-400 hover:text-red-500 p-1">
-                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-                                </button>
+                    <!-- Zone de drop fichier (Premium) -->
+                    <div class="relative bg-gray-50 rounded-2xl border-2 border-dashed border-gray-100 flex items-center justify-center h-20 hover:border-[#cb2d2d] transition-all cursor-pointer group">
+                        <input type="file" name="document" id="doc-file-input" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" required class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                        
+                        <div id="doc-drop-content" class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-lg bg-white shadow-sm flex items-center justify-center text-[#cb2d2d]">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
                             </div>
+                            <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Ajouter le fichier</span>
+                        </div>
+
+                        <div id="doc-file-preview" class="hidden absolute inset-0 bg-white rounded-2xl px-4 flex items-center justify-between border border-green-100">
+                            <div class="flex items-center gap-3 overflow-hidden">
+                                <div class="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center text-white">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                                </div>
+                                <p id="doc-file-name" class="text-xs font-bold text-gray-900 truncate max-w-[150px]"></p>
+                            </div>
+                            <button type="button" @click="document.getElementById('doc-file-input').value = ''; document.getElementById('doc-drop-content').classList.remove('hidden'); document.getElementById('doc-file-preview').classList.add('hidden');" class="p-2 text-gray-400 hover:text-red-500">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                            </button>
                         </div>
                     </div>
                 </div>

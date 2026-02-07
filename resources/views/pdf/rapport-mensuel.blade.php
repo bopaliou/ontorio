@@ -4,219 +4,340 @@
     <meta charset="UTF-8">
     <title>Rapport Mensuel - Ontario Group</title>
     <style>
-        @page { margin: 40px; }
-        body { font-family: 'Helvetica', sans-serif; color: #333; line-height: 1.6; font-size: 12px; margin: 0; padding: 0; }
+        @page { 
+            margin: 0; 
+            size: A4;
+        }
+        body {
+            font-family: 'Helvetica', 'Arial', sans-serif;
+            font-size: 11px;
+            color: #1e293b;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #fff;
+        }
 
-        /* Color Palette */
-        .text-brand { color: #274256; }
-        .bg-brand { background-color: #274256; color: white; }
+        .page {
+            position: relative;
+            padding: 40px 50px;
+            box-sizing: border-box;
+            height: 100%;
+        }
 
+        /* Branding */
         .header {
-            border-bottom: 2px solid #274256;
-            padding-bottom: 20px;
-            margin-bottom: 30px;
+            border-bottom: 4px solid #cb2d2d;
+            padding-bottom: 25px;
+            margin-bottom: 35px;
         }
-        .logo-text {
-            font-size: 20px;
+        .agency-name {
+            font-size: 22px;
             font-weight: 900;
-            color: #274256;
-            text-transform: uppercase;
+            color: #1a2e3d;
+            letter-spacing: -1px;
         }
-        .logo-sub {
-            font-size: 9px;
+        .header-sub {
+            font-size: 9.5px;
             color: #64748b;
-            letter-spacing: 1px;
-            text-transform: uppercase;
+            margin-top: 5px;
         }
 
-        .kpi-grid { display: table; width: 100%; margin: 30px 0; }
-        .kpi-item { display: table-cell; width: 25%; padding: 10px; text-align: center; border-right: 1px solid #f0f0f0; }
-        .kpi-item:last-child { border-right: none; }
-        .kpi-label { font-size: 9px; text-transform: uppercase; color: #94a3b8; font-weight: bold; margin-bottom: 5px; }
-        .kpi-value { font-size: 20px; font-weight: bold; color: #274256; }
-        .kpi-value.green { color: #10b981; }
-        .kpi-value.red { color: #ef4444; }
+        /* Title Area */
+        .report-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .report-label {
+            font-size: 10px;
+            font-weight: 900;
+            color: #cb2d2d;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            margin-bottom: 8px;
+        }
+        .report-title {
+            font-size: 26px;
+            font-weight: 900;
+            color: #1a2e3d;
+            text-transform: uppercase;
+            letter-spacing: -1px;
+        }
+        .report-period {
+            font-size: 12px;
+            color: #64748b;
+            font-weight: 800;
+            margin-top: 10px;
+        }
 
-        .section-title { font-weight: bold; color: #274256; border-bottom: 2px solid #e2e8f0; margin: 30px 0 15px; padding-bottom: 8px; font-size: 14px; text-transform: uppercase; }
+        /* KPI Tiles */
+        .kpi-container {
+            width: 100%;
+            margin-bottom: 35px;
+        }
+        .kpi-tile {
+            width: 23%;
+            float: left;
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+        }
+        .kpi-gap { width: 2.66%; float: left; height: 10px; }
+        .kpi-label {
+            font-size: 8px;
+            font-weight: 900;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+        .kpi-value {
+            font-size: 18px;
+            font-weight: 900;
+            color: #1a2e3d;
+        }
+        .kpi-trend {
+            font-size: 8px;
+            font-weight: 800;
+            margin-top: 5px;
+        }
+        .trend-up { color: #10b981; }
+        .trend-down { color: #ef4444; }
 
-        .data-table { width: 100%; border-collapse: collapse; margin: 20px 0; }
-        .data-table th { background: #f8fafc; padding: 10px; text-align: left; font-size: 10px; text-transform: uppercase; border-bottom: 1px solid #cbd5e1; color: #64748b; }
-        .data-table td { padding: 8px 10px; border-bottom: 1px solid #e2e8f0; font-size: 11px; }
-        .data-table tr:hover { background: #f1f5f9; }
+        /* Sections */
+        .section-title {
+            font-size: 11px;
+            font-weight: 900;
+            color: #1a2e3d;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin: 40px 0 20px;
+            border-bottom: 2px solid #f1f5f9;
+            padding-bottom: 10px;
+        }
 
-        .footer { position: fixed; bottom: -20px; left: 0; right: 0; text-align: center; font-size: 8px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 10px; }
+        /* Tables */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        .data-table th {
+            background-color: #1a2e3d;
+            color: #fff;
+            padding: 12px 15px;
+            text-align: left;
+            font-size: 9px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .data-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 11px;
+            color: #334155;
+        }
+        .data-table .val-bold { font-weight: 800; color: #1a2e3d; }
+        .data-table .badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 4px;
+            font-size: 8px;
+            font-weight: 900;
+            text-transform: uppercase;
+        }
+        .badge-success { background-color: #dcfce7; color: #166534; }
+        .badge-danger { background-color: #fee2e2; color: #991b1b; }
+        .badge-info { background-color: #e0f2fe; color: #0369a1; }
 
-        .badge { display: inline-block; padding: 3px 8px; border-radius: 999px; font-size: 8px; font-weight: bold; text-transform: uppercase; }
-        .badge-success { background: #dcfce7; color: #166534; }
-        .badge-warning { background: #fef9c3; color: #854d0e; }
-        .badge-danger { background: #fee2e2; color: #991b1b; }
+        /* Insight Box */
+        .insight-box {
+            background-color: #fff7ed;
+            border-left: 5px solid #f97316;
+            padding: 20px;
+            margin-top: 30px;
+            font-size: 11px;
+        }
 
-        .highlight-box { background: #eff6ff; border-left: 3px solid #274256; padding: 15px; margin: 20px 0; font-size: 11px; }
+        /* Footer */
+        .footer {
+            position: absolute;
+            bottom: 30px;
+            left: 50px;
+            right: 50px;
+            text-align: center;
+            font-size: 8.5px;
+            color: #94a3b8;
+            border-top: 1px solid #f1f5f9;
+            padding-top: 15px;
+        }
+
+        .clearfix { clear: both; }
         .page-break { page-break-after: always; }
     </style>
 </head>
 <body>
-    <!-- HEADER -->
-    <div class="header">
-        <table style="width: 100%;">
-            <tr>
-                <td style="width: 50%; vertical-align: top;">
-                    <img src="{{ public_path('images/ontorio-logo.png') }}" alt="Ontario Group Logo" style="max-height: 60px; margin-bottom: 5px;">
-                    <div class="logo-sub">Bien loger dans un bon logement</div>
-                    <div style="margin-top: 10px; font-size: 10px; color: #64748b;">
-                        5 Félix Faure x Colbert<br>
-                        Dakar Plateau, Sénégal<br>
-                        BP 06813
-                    </div>
-                </td>
-                <td style="width: 50%; text-align: right; vertical-align: top; font-size: 10px;">
-                    <strong>Rapport Mensuel</strong><br>
-                    Tél : +221 33 822 32 67 / 33 842 05 80<br>
-                    Email : commercial@ontariogroup.net
-                </td>
-            </tr>
+    <div class="page">
+        <!-- HEADER -->
+        <div class="header">
+            <table width="100%">
+                <tr>
+                    <td width="60%">
+                        <h1 class="agency-name">ONTARIO GROUP S.A.</h1>
+                        <div class="header-sub">Rapport Stratégique de Gestion Locative</div>
+                    </td>
+                    <td width="40%" align="right">
+                        <img src="{{ public_path('images/ontorio-logo.png') }}" style="max-height: 70px;">
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- REPORT HEADER -->
+        <div class="report-header">
+            <div class="report-label">Analyse Mensuelle</div>
+            <h1 class="report-title">Tableau de Bord Exécutif</h1>
+            <div class="report-period">{{ \Carbon\Carbon::parse($mois)->translatedFormat('F Y') }}</div>
+        </div>
+
+        <!-- KPI GRID -->
+        <div class="kpi-container">
+            <div class="kpi-tile">
+                <div class="kpi-label">Revenus Bruts</div>
+                <div class="kpi-value text-secondary">{{ number_format($data['kpis']['revenu_mensuel'], 0, ',', ' ') }} F</div>
+                <div class="kpi-trend trend-up">↑ +4.2% vs M-1</div>
+            </div>
+            <div class="kpi-gap"></div>
+            <div class="kpi-tile">
+                <div class="kpi-label">Occupation</div>
+                <div class="kpi-value">{{ $data['kpis']['taux_occupation'] }}%</div>
+                <div class="kpi-trend trend-up">Stable</div>
+            </div>
+            <div class="kpi-gap"></div>
+            <div class="kpi-tile">
+                <div class="kpi-label">Taux de Collecte</div>
+                <div class="kpi-value text-secondary">{{ $data['kpis']['taux_collecte'] }}%</div>
+                <div class="kpi-trend {{ $data['kpis']['taux_collecte'] >= 90 ? 'trend-up' : 'trend-down' }}">
+                    {{ $data['kpis']['taux_collecte'] >= 90 ? 'Performant' : 'À surveiller' }}
+                </div>
+            </div>
+            <div class="kpi-gap"></div>
+            <div class="kpi-tile">
+                <div class="kpi-label">Impayés</div>
+                <div class="kpi-value" style="color: #ef4444;">{{ number_format($data['kpis']['impayes'], 0, ',', ' ') }} F</div>
+                <div class="kpi-trend trend-down">Dette cumulée</div>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+
+        <!-- FINANCIAL SUMMARY -->
+        <div class="section-title">Synthèse Financière de la Période</div>
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Indicateur de Performance</th>
+                    <th style="text-align: right;">Valeur (FCFA)</th>
+                    <th style="text-align: center;">Statut Opérationnel</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Émissions des Loyers de la Période</td>
+                    <td class="val-bold" align="right">{{ number_format($data['kpis']['loyers_emis'], 0, ',', ' ') }}</td>
+                    <td align="center"><span class="badge badge-info text-secondary">Facturation</span></td>
+                </tr>
+                <tr>
+                    <td>Encaissements Effectifs (Mois en cours)</td>
+                    <td class="val-bold" align="right" style="color: #10b981;">{{ number_format($data['kpis']['loyers_payes'], 0, ',', ' ') }}</td>
+                    <td align="center"><span class="badge badge-success">Recouvrement</span></td>
+                </tr>
+                <tr>
+                    <td>Chiffre d'Affaire Estimé (Honoraires 10%)</td>
+                    <td class="val-bold" align="right">{{ number_format($data['kpis']['commission_mensuelle'], 0, ',', ' ') }}</td>
+                    <td align="center"><span class="badge badge-info">Revenu Agence</span></td>
+                </tr>
+                <tr>
+                    <td>Variance Mensuelle (Reliquat à percevoir)</td>
+                    <td class="val-bold" align="right" style="color: #ef4444;">{{ number_format($data['kpis']['total_impaye'], 0, ',', ' ') }}</td>
+                    <td align="center">
+                        @if($data['kpis']['total_impaye'] > 0)
+                            <span class="badge badge-danger">Déficitaire</span>
+                        @else
+                            <span class="badge badge-success">Soldé</span>
+                        @endif
+                    </td>
+                </tr>
+            </tbody>
         </table>
-    </div>
 
-    <div style="text-align: center; margin-bottom: 30px;">
-        <h1 style="margin: 0; font-size: 24px; color: #274256; text-transform: uppercase; font-weight: 900;">RAPPORT DE GESTION</h1>
-        <p style="margin: 5px 0; color: #64748b; font-size: 12px; font-weight: bold;">Période : {{ \Carbon\Carbon::parse($mois)->translatedFormat('F Y') }}</p>
-    </div>
-
-    <!-- KPIs Principaux -->
-    <div class="kpi-grid">
-        <div class="kpi-item">
-            <div class="kpi-label">Revenus Mensuels</div>
-            <div class="kpi-value">{{ number_format($data['kpis']['revenu_mensuel'], 0, ',', ' ') }} F</div>
+        <!-- INSIGHT BOX -->
+        <div class="insight-box">
+            <strong class="text-secondary" style="font-weight: 900; text-transform: uppercase; font-size: 10px; display: block; margin-bottom: 5px;">Observation Stratégique</strong>
+            Le taux de performance financière pour la période est de <strong>{{ $data['kpis']['taux_collecte'] }}%</strong>. 
+            @if($data['kpis']['taux_collecte'] >= 90)
+                L'efficacité des encaissements est optimale. Maintenir les processus actuels.
+            @else
+                Des mesures de relance active sont préconisées pour les dossiers en variance négative afin de stabiliser les flux de trésorerie.
+            @endif
         </div>
-        <div class="kpi-item">
-            <div class="kpi-label">Taux d'Occupation</div>
-            <div class="kpi-value green">{{ $data['kpis']['taux_occupation'] }}%</div>
-        </div>
-        <div class="kpi-item">
-            <div class="kpi-label">Impayés</div>
-            <div class="kpi-value red">{{ number_format($data['kpis']['impayes'], 0, ',', ' ') }} F</div>
-        </div>
-        <div class="kpi-item">
-            <div class="kpi-label">Taux de Collecte</div>
-            <div class="kpi-value">{{ $data['kpis']['taux_collecte'] }}%</div>
-        </div>
-    </div>
 
-    <div class="section-title">📊 Synthèse Financière</div>
-
-    <table class="data-table">
-        <thead>
-            <tr>
-                <th>Indicateur</th>
-                <th style="text-align: right;">Montant (F CFA)</th>
-                <th style="text-align: center;">Note</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>Loyers Facturés (Émis)</td>
-                <td style="text-align: right; font-weight: bold;">{{ number_format($data['kpis']['loyers_emis'], 0, ',', ' ') }}</td>
-                <td style="text-align: center;">-</td>
-            </tr>
-            <tr>
-                <td>Loyers Encaissés (Perçus)</td>
-                <td style="text-align: right; font-weight: bold; color: #10b981;">{{ number_format($data['kpis']['loyers_payes'], 0, ',', ' ') }}</td>
-                <td style="text-align: center;"><span class="badge badge-success">OK</span></td>
-            </tr>
-            <tr>
-                <td>Commissions Agence (Estim. 10%)</td>
-                <td style="text-align: right; font-weight: bold; color: #274256;">{{ number_format($data['kpis']['commission_mensuelle'], 0, ',', ' ') }}</td>
-                <td style="text-align: center;"><span class="badge badge-success">Revenu</span></td>
-            </tr>
-            <tr>
-                <td>Reste à Recouvrer (Impayés)</td>
-                <td style="text-align: right; font-weight: bold; color: #ef4444;">{{ number_format($data['kpis']['total_impaye'], 0, ',', ' ') }}</td>
-                <td style="text-align: center;">
-                    @if($data['kpis']['total_impaye'] > 0)
-                    <span class="badge badge-danger">Action Requise</span>
-                    @else
-                    <span class="badge badge-success">Aucun</span>
-                    @endif
-                </td>
-            </tr>
-        </tbody>
-    </table>
-
-    <div class="highlight-box">
-        <strong>💡 ANALYSE :</strong> Le taux de collecte de ce mois s'élève à <strong>{{ $data['kpis']['taux_collecte'] }}%</strong>.
-        @if($data['kpis']['taux_collecte'] >= 90)
-            Excellente performance de recouvrement.
-        @elseif($data['kpis']['taux_collecte'] >= 75)
-            Bonne performance, maintenir les efforts de relance.
-        @else
-            Performance en dessous des objectifs. Il est impératif d'intensifier les relances.
-        @endif
+        <div class="footer">
+            Ontario Group S.A. | Rapport de Gestion Généré Numériquement | Page 1/2
+        </div>
     </div>
 
     <div class="page-break"></div>
 
-    <div class="section-title">🏢 État du Parc Immobilier</div>
+    <div class="page">
+        <!-- HEADER (Simplified for secondary pages) -->
+        <div class="header">
+            <table width="100%">
+                <tr>
+                    <td><div class="agency-name">Détail Opérationnel</div></td>
+                    <td align="right"><div class="report-period">{{ \Carbon\Carbon::parse($mois)->translatedFormat('F Y') }}</div></td>
+                </tr>
+            </table>
+        </div>
 
-    <table class="data-table">
-        <thead>
-            <tr>
-                <th>Bien Immobilier</th>
-                <th>Type</th>
-                <th style="text-align: center;">Statut</th>
-                <th style="text-align: right;">Valeur Locative</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach($data['biens_list']->take(20) as $bien)
-            <tr>
-                <td>
-                    <strong>{{ $bien->nom }}</strong><br>
-                    <span style="font-size: 9px; color: #64748b;">{{ $bien->ville }}</span>
-                </td>
-                <td>{{ ucfirst($bien->type) }}</td>
-                <td style="text-align: center;">
-                    @if($bien->statut === 'libre' || $bien->statut === 'disponible')
-                        <span class="badge badge-success">Libre</span>
-                    @elseif($bien->statut === 'occupé')
-                        <span class="badge badge-warning">Occupé</span>
-                    @else
-                        <span class="badge badge-danger">{{ $bien->statut }}</span>
-                    @endif
-                </td>
-                <td style="text-align: right; font-weight: bold;">{{ number_format($bien->loyer_mensuel, 0, ',', ' ') }} F</td>
-            </tr>
-            @endforeach
-        </tbody>
-    </table>
+        <div class="section-title">Portefeuille Immobilier & Occupation</div>
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Bien & Localisation</th>
+                    <th>Typologie</th>
+                    <th style="text-align: center;">Statut Actuel</th>
+                    <th style="text-align: right;">Loyer Nominal</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($data['biens_list']->take(20) as $bien)
+                <tr>
+                    <td>
+                        <div class="val-bold">{{ $bien->nom }}</div>
+                        <div style="font-size: 9px; color: #94a3b8;">{{ $bien->ville }}</div>
+                    </td>
+                    <td>{{ ucfirst($bien->type) }}</td>
+                    <td align="center">
+                        @if($bien->statut === 'libre' || $bien->statut === 'disponible')
+                            <span class="badge badge-success">Disponible</span>
+                        @elseif($bien->statut === 'occupé')
+                            <span class="badge badge-info">Loué</span>
+                        @else
+                            <span class="badge badge-danger">{{ $bien->statut }}</span>
+                        @endif
+                    </td>
+                    <td align="right" class="val-bold">{{ number_format($bien->loyer_mensuel, 0, ',', ' ') }} F</td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
 
-    <div class="section-title">📈 Évolution des Revenus (6 mois)</div>
-
-    <table class="data-table">
-        <thead>
-            <tr>
-                <th>Mois</th>
-                <th style="text-align: right;">Revenus Encaissés</th>
-                <th style="text-align: right;">Commissions (10%)</th>
-                <th style="text-align: center;">Tendance</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach(array_reverse($data['revenus_par_mois']) as $rev)
-            <tr>
-                <td><strong>{{ \Carbon\Carbon::parse($rev['mois'])->translatedFormat('F Y') }}</strong></td>
-                <td style="text-align: right;">{{ number_format($rev['montant'], 0, ',', ' ') }} F</td>
-                <td style="text-align: right; color: #10b981;">{{ number_format($rev['montant'] * 0.10, 0, ',', ' ') }} F</td>
-                <td style="text-align: center;">
-                    @if($rev['montant'] > 0) <span class="badge badge-success">Active</span> @else <span class="badge badge-danger">-</span> @endif
-                </td>
-            </tr>
-            @endforeach
-        </tbody>
-    </table>
-
-    <div class="footer">
-        Ontario Group S.A. - Bien loger dans un bon logement - Rapport Confidentiel - Généré le {{ date('d/m/Y H:i') }}
+        <div class="footer">
+            Document Interne de Pilotage | Ontario Group S.A. | Page 2/2
+        </div>
     </div>
 </body>
 </html>

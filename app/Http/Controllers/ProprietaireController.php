@@ -4,55 +4,80 @@ namespace App\Http\Controllers;
 
 use App\Models\Proprietaire;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class ProprietaireController extends Controller
 {
     /**
-     * Store a newly created proprietaire via Dashboard
+     * Store Propriétaire via Iframe target (Single Page Pattern)
      */
     public function store(Request $request)
     {
-        $validated = $request->validate([
+        $validator = Validator::make($request->all(), [
             'nom' => 'required|string|max:255',
-            'prenom' => 'nullable|string|max:255',
-            'email' => 'nullable|email|max:255',
-            'telephone' => 'nullable|string|max:20',
+            'email' => 'nullable|email|unique:proprietaires,email',
+            'telephone' => 'nullable|string|max:50',
             'adresse' => 'nullable|string',
-            'type_mandat' => 'nullable|in:gestion,location,vente',
-            'taux_commission' => 'nullable|numeric|min:0|max:100',
         ]);
 
-        $proprietaire = Proprietaire::create($validated);
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => $validator->errors()->first(),
+                'errors' => $validator->errors(),
+            ], 422);
+        }
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Propriétaire ajouté avec succès',
-            'data' => $proprietaire,
-        ]);
+        try {
+            $prop = Proprietaire::create($request->only(['nom', 'prenom', 'email', 'telephone', 'adresse']));
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Propriétaire créé avec succès !',
+                'data' => $prop,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Une erreur est survenue. Veuillez réessayer.',
+            ], 500);
+        }
     }
 
     /**
-     * Update proprietaire via Dashboard
+     * Update Propriétaire via Iframe target (Single Page Pattern)
      */
     public function update(Request $request, Proprietaire $proprietaire)
     {
-        $validated = $request->validate([
+        $validator = Validator::make($request->all(), [
             'nom' => 'required|string|max:255',
-            'prenom' => 'nullable|string|max:255',
-            'email' => 'nullable|email|max:255',
-            'telephone' => 'nullable|string|max:20',
+            'email' => 'nullable|email|unique:proprietaires,email,'.$proprietaire->id,
+            'telephone' => 'nullable|string|max:50',
             'adresse' => 'nullable|string',
-            'type_mandat' => 'nullable|in:gestion,location,vente',
-            'taux_commission' => 'nullable|numeric|min:0|max:100',
         ]);
 
-        $proprietaire->update($validated);
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => $validator->errors()->first(),
+                'errors' => $validator->errors(),
+            ], 422);
+        }
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Propriétaire mis à jour avec succès',
-            'data' => $proprietaire,
-        ]);
+        try {
+            $proprietaire->update($request->only(['nom', 'prenom', 'email', 'telephone', 'adresse']));
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Propriétaire mis à jour !',
+                'data' => $proprietaire,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Une erreur est survenue. Veuillez réessayer.',
+            ], 500);
+        }
     }
 
     /**
@@ -60,12 +85,19 @@ class ProprietaireController extends Controller
      */
     public function destroy(Proprietaire $proprietaire)
     {
-        $proprietaire->delete();
+        try {
+            $proprietaire->delete();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Propriétaire supprimé avec succès',
-        ]);
+            return response()->json([
+                'success' => true,
+                'message' => 'Propriétaire supprimé avec succès',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Impossible de supprimer ce propriétaire car il est lié à des biens.',
+            ], 422);
+        }
     }
 
     public function bilanPDF(Proprietaire $proprietaire)

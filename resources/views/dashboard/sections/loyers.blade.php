@@ -8,7 +8,7 @@
             'subtitle' => 'Pointage des quittances et gestion des impayés.',
             'icon' => 'money',
             'actions' => App\Helpers\PermissionHelper::can('loyers.generate')
-                ? '<form id="loy-gen-form" method="POST" action="' . route('loyers.genererMois') . '" target="loy_post_target" class="inline">
+                ? '<form id="loy-gen-form" method="POST" action="' . route('loyers.genererMois') . '" class="inline">
                     <input type="hidden" name="_token" value="' . csrf_token() . '">
                     <button type="submit" id="loy-gen-btn" class="bg-white border-2 border-gray-100 text-[#274256] px-5 py-2.5 rounded-xl text-sm font-black shadow-sm hover:bg-gray-50 transition flex items-center gap-2">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
@@ -191,7 +191,7 @@
                 </button>
             </div>
 
-            <form id="loy-payment-form" action="{{ route('paiements.store') }}" method="POST" target="loy_post_target" class="p-6 space-y-4" enctype="multipart/form-data">
+            <form id="loy-payment-form" action="{{ route('paiements.store') }}" method="POST" class="p-6 space-y-4" enctype="multipart/form-data">
                 @csrf
                 <input type="hidden" name="loyer_id" id="loy-payment-loyer-id">
 
@@ -214,16 +214,15 @@
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="relative bg-gray-50 rounded-xl border border-gray-200 px-3 py-2 focus-within:ring-2 focus-within:ring-green-500/10 focus-within:border-green-600 transition-all">
-                        <label class="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Montant Encaissé</label>
+                    <div class="relative bg-gray-50 rounded-2xl border-2 border-gray-100 px-4 py-3 focus-within:ring-4 focus-within:ring-green-500/5 focus-within:border-green-600 transition-all duration-300">
+                        <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[2px] mb-1">Montant Encaissé</label>
                         <input type="number" name="montant" id="loy-payment-montant-input" required class="block w-full bg-transparent border-none p-0 text-sm font-bold text-gray-900 focus:ring-0 text-right font-mono" placeholder="0">
                     </div>
-                    <div class="relative bg-gray-50 rounded-xl border border-gray-200 px-3 py-2 focus-within:ring-2 focus-within:ring-green-500/10 focus-within:border-green-600 transition-all">
-                        <label class="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Date Paiement</label>
+                    <div class="relative bg-gray-50 rounded-2xl border-2 border-gray-100 px-4 py-3 focus-within:ring-4 focus-within:ring-green-500/5 focus-within:border-green-600 transition-all duration-300">
+                        <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[2px] mb-1">Date Paiement</label>
                         <input type="date" name="date_paiement" value="{{ date('Y-m-d') }}" required class="block w-full bg-transparent border-none p-0 text-sm font-bold text-gray-900 focus:ring-0">
                     </div>
                 </div>
-
                 <div>
                     <label class="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Mode de règlement</label>
                     <div class="grid grid-cols-3 gap-3">
@@ -251,12 +250,7 @@
                     </div>
                 </div>
 
-                <!-- Preuve de Paiement (Upload) -->
-                <div class="relative bg-gray-50 rounded-xl border border-gray-200 px-3 py-2 focus-within:ring-2 focus-within:ring-blue-500/10 focus-within:border-blue-600 transition-all">
-                     <label class="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Justificatif (PDF/Image)</label>
-                     <input type="file" name="preuve" class="block w-full text-[11px] text-gray-500 file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-[11px] file:font-black file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer">
-                </div>
-
+                \u003c!-- Preuve de Paiement (Upload) --\u003e\n                \u003cdiv class=\"relative bg-gray-50 rounded-2xl border-2 border-gray-100 px-4 py-3 focus-within:ring-4 focus-within:ring-blue-500/5 focus-within:border-blue-600 transition-all duration-300\"\u003e\n                     \u003clabel class=\"block text-[10px] font-black text-gray-400 uppercase tracking-[2px] mb-1\"\u003eJustificatif (PDF/Image)\u003c/label\u003e\n                     \u003cinput type=\"file\" name=\"preuve\" class=\"block w-full text-[11px] text-gray-500 file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-[11px] file:font-black file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer\"\u003e\n                \u003c/div\u003e\n
                 <!-- Footer Actions -->
                 <div class="pt-4 flex items-center justify-end gap-3 border-t border-gray-100">
                     <button type="button" onclick="loySection.closePaymentModal()" class="px-4 py-2 text-gray-500 font-bold hover:bg-gray-50 rounded-xl transition text-[11px] uppercase tracking-widest">Annuler</button>
@@ -290,17 +284,7 @@
                     <input type="number" name="montant" id="loy-edit-montant" required class="block w-full bg-transparent border-none p-0 text-sm font-bold text-gray-900 focus:ring-0">
                 </div>
 
-                <div class="relative bg-gray-50 rounded-xl border border-gray-200 px-3 py-2 focus-within:ring-2 focus-within:ring-blue-500/10 focus-within:border-blue-600 transition-all">
-                    <label class="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Statut Actuel</label>
-                    <select name="statut" id="loy-edit-statut" class="block w-full bg-transparent border-none p-0 text-sm font-bold text-gray-900 focus:ring-0 appearance-none cursor-pointer uppercase" onchange="loySection.toggleEditFields(this.value)">
-                        <option value="émis">📅 Émis (Impayé)</option>
-                        <option value="payé">✅ Payé</option>
-                        <option value="en_retard">⚠️ En Retard</option>
-                        <option value="annulé">❌ Annulé</option>
-                        <option value="partiellement_payé">⏳ Partiel</option>
-                    </select>
-                </div>
-
+                \u003cdiv class=\"relative bg-gray-50 rounded-2xl border-2 border-gray-100 px-4 py-3 focus-within:ring-4 focus-within:ring-blue-500/5 focus-within:border-blue-600 transition-all duration-300\"\u003e\n                    \u003clabel class=\"block text-[10px] font-black text-gray-400 uppercase tracking-[2px] mb-1\"\u003eStatut Actuel\u003c/label\u003e\n                    \u003cselect name=\"statut\" id=\"loy-edit-statut\" class=\"block w-full bg-transparent border-none p-0 text-sm font-bold text-gray-900 focus:ring-0 appearance-none cursor-pointer uppercase\" onchange=\"loySection.toggleEditFields(this.value)\"\u003e\n                        \u003coption value=\"\u00e9mis\"\u003e\u231a \u00c9mis (Impay\u00e9)\u003c/option\u003e\n                        \u003coption value=\"pay\u00e9\"\u003e\u2705 Pay\u00e9\u003c/option\u003e\n                        \u003coption value=\"en_retard\"\u003e\u26a0\ufe0f En Retard\u003c/option\u003e\n                        \u003coption value=\"annul\u00e9\"\u003e\u274c Annul\u00e9\u003c/option\u003e\n                        \u003coption value=\"partiellement_pay\u00e9\"\u003e\u23f3 Partiel\u003c/option\u003e\n                    \u003c/select\u003e\n                \u003c/div\u003e\n
                 <div id="loy-edit-note-group" class="hidden relative bg-red-50/50 rounded-xl border border-red-100 px-3 py-2 focus-within:ring-2 focus-within:ring-red-500/10 focus-within:border-red-600 transition-all">
                     <label class="block text-[11px] font-black text-red-400 uppercase tracking-widest mb-0.5">Motif d'annulation</label>
                     <textarea name="note_annulation" id="loy-edit-note" rows="2" class="block w-full bg-transparent border-none p-0 text-xs font-bold text-gray-900 focus:ring-0 resize-none" placeholder="Pourquoi annuler ce loyer ?"></textarea>
@@ -320,8 +304,7 @@
         </div>
     </div>
 
-    <!-- IFRAME MASQUE POUR LES POST (Anti-Reload Pattern) -->
-    <iframe name="loy_post_target" class="hidden"></iframe>
+    <!-- Refresh iframe remains for background updates -->
     <iframe id="loy_refresh_iframe" class="hidden"></iframe>
 </div>
 
@@ -380,16 +363,7 @@
             showToast(msg, 'error');
             const btn = document.getElementById('loy-payment-submit');
             if(btn) {
-                btn.innerHTML = 'Confirmer Encaissement';
-                btn.classList.replace('bg-green-700', 'bg-green-600');
-                btn.disabled = false;
-            }
-
-            const genBtn = document.getElementById('loy-gen-btn');
-            const genText = document.getElementById('loy-gen-text');
-            if(genBtn && genText) {
-                 genText.innerHTML = 'Générer Mois Actuel';
-                 genBtn.disabled = false;
+                // Button reset is handled by finally or error catch in the new listener
             }
         },
 
@@ -500,18 +474,89 @@
         }
     });
 
-    document.getElementById('loy-payment-form')?.addEventListener('submit', function() {
+    // Nouveau listener de paiement AJAX
+    document.getElementById('loy-payment-form')?.addEventListener('submit', async function(e) {
+        e.preventDefault();
         const btn = document.getElementById('loy-payment-submit');
-        btn.innerHTML = 'Traitement...';
+        const originalText = btn.innerHTML;
+        
+        btn.innerHTML = '<svg class="animate-spin h-3 w-3 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Envoi...';
         btn.disabled = true;
+
+        const formData = new FormData(this);
+        const url = this.getAttribute('action');
+
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Accept': 'application/json'
+                },
+                body: formData
+            });
+
+            const data = await response.json();
+
+            if(response.ok) {
+                btn.innerHTML = '✅ Succès';
+                showToast(data.message || 'Paiement enregistré', 'success');
+                setTimeout(() => {
+                    loySection.closePaymentModal();
+                    loySection.triggerRefresh();
+                }, 800);
+            } else {
+                btn.innerHTML = '❌ Erreur';
+                showToast(data.message || 'Erreur lors du paiement', 'error');
+                setTimeout(() => { btn.innerHTML = originalText; btn.disabled = false; }, 3000);
+            }
+        } catch(e) {
+            console.error(e);
+            showToast('Erreur serveur', 'error');
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+        }
     });
 
-    document.getElementById('loy-gen-form')?.addEventListener('submit', function() {
+    // Nouveau listener de génération AJAX
+    document.getElementById('loy-gen-form')?.addEventListener('submit', async function(e) {
+        e.preventDefault();
         const btn = document.getElementById('loy-gen-btn');
         const txt = document.getElementById('loy-gen-text');
-        if(btn && txt) {
-            txt.innerHTML = 'Génération...';
-            btn.disabled = true;
+        const originalText = txt.innerHTML;
+
+        txt.innerHTML = 'Génération...';
+        btn.disabled = true;
+
+        try {
+            const response = await fetch(this.getAttribute('action'), {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Accept': 'application/json'
+                }
+            });
+
+            const data = await response.json();
+
+            if(response.ok) {
+                txt.innerHTML = '✅ Fait';
+                showToast('Loyers générés / mis à jour', 'success');
+                setTimeout(() => {
+                    loySection.triggerRefresh();
+                    txt.innerHTML = 'Générer / Mettre à jour';
+                    btn.disabled = false;
+                }, 1500);
+            } else {
+                showToast(data.message || 'Erreur génération', 'error');
+                txt.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        } catch(e) {
+            console.error(e);
+            showToast('Erreur serveur', 'error');
+            txt.innerHTML = originalText;
+            btn.disabled = false;
         }
     });
 </script>

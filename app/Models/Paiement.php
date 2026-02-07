@@ -9,7 +9,7 @@ class Paiement extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['loyer_id', 'montant', 'mode', 'date_paiement', 'preuve', 'reference'];
+    protected $fillable = ['loyer_id', 'montant', 'mode', 'date_paiement', 'preuve', 'reference', 'user_id'];
 
     protected $casts = ['date_paiement' => 'date'];
 

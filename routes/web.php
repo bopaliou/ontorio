@@ -8,6 +8,9 @@ use App\Http\Controllers\LoyerController;
 use App\Http\Controllers\PaiementController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProprietaireController;
+use App\Http\Controllers\BienController;
+use App\Http\Controllers\RevisionLoyerController;
+use App\Http\Controllers\RapportController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -17,9 +20,9 @@ Route::get('/', function () {
 // Dashboard - accessible to all authenticated users
 Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])->name('dashboard');
-Route::post('/dashboard/proprietaires', [DashboardController::class, 'storeProprietaire'])
+Route::post('/dashboard/proprietaires', [ProprietaireController::class, 'store'])
     ->middleware(['auth', 'role:admin|gestionnaire'])->name('dashboard.proprietaires.store');
-Route::put('/dashboard/proprietaires/{proprietaire}', [DashboardController::class, 'updateProprietaire'])
+Route::put('/dashboard/proprietaires/{proprietaire}', [ProprietaireController::class, 'update'])
     ->middleware(['auth', 'role:admin|gestionnaire'])->name('dashboard.proprietaires.update');
 
 Route::middleware('auth')->group(function () {
@@ -35,10 +38,10 @@ Route::middleware(['auth', 'role:admin|direction|gestionnaire'])->group(function
     Route::get('/proprietaires/{proprietaire}/bilan', [\App\Http\Controllers\ProprietaireController::class, 'bilanPDF'])->name('proprietaires.bilan');
 
     // Biens (Anciennement Immeubles/Logements)
-    Route::post('/dashboard/biens', [DashboardController::class, 'storeBien'])->name('dashboard.biens.store');
-    Route::put('/dashboard/biens/{bien}', [DashboardController::class, 'updateBien'])->name('dashboard.biens.update');
-    Route::delete('/dashboard/biens/{bien}', [DashboardController::class, 'deleteBien'])->name('dashboard.biens.delete');
-    Route::delete('/dashboard/bien-images/{bienImage}', [DashboardController::class, 'deleteBienImage'])->name('dashboard.bien-images.delete');
+    Route::post('/dashboard/biens', [BienController::class, 'store'])->name('dashboard.biens.store');
+    Route::put('/dashboard/biens/{bien}', [BienController::class, 'update'])->name('dashboard.biens.update');
+    Route::delete('/dashboard/biens/{bien}', [BienController::class, 'destroy'])->name('dashboard.biens.delete');
+    Route::delete('/dashboard/bien-images/{bienImage}', [BienController::class, 'deleteImage'])->name('dashboard.bien-images.delete');
 
     // Locataires
     Route::resource('locataires', LocataireController::class);
@@ -56,6 +59,15 @@ Route::middleware(['auth', 'role:admin|direction|gestionnaire'])->group(function
     Route::resource('loyers', LoyerController::class);
     Route::post('/loyers/generer-mois', [LoyerController::class, 'genererMois'])->name('loyers.genererMois');
     Route::get('/loyers/{loyer}/quittance', [LoyerController::class, 'exporterPDF'])->name('loyers.quittance');
+    
+    // Révisions de loyer
+    Route::resource('revisions', RevisionLoyerController::class)->only(['index', 'store']);
+
+    // Rapports
+    Route::get('/rapports/loyers', [RapportController::class, 'loyers'])->name('rapports.loyers');
+    Route::get('/rapports/impayees', [RapportController::class, 'impayees'])->name('rapports.impayees');
+    Route::get('/rapports/commissions', [RapportController::class, 'commissions'])->name('rapports.commissions');
+    Route::get('/rapports/mensuel/{mois?}', [DashboardController::class, 'exporterRapportMensuel'])->name('rapports.mensuel');
 
     // Dépenses
     Route::resource('depenses', \App\Http\Controllers\DepenseController::class)->only(['store', 'update', 'destroy']);
@@ -79,18 +91,10 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::post('/settings/roles/{role}/permissions', [\App\Http\Controllers\RoleController::class, 'updatePermissions'])->name('settings.roles.permissions');
 });
 
-// Routes accessibles à Direction, Admin et Gestionnaire (Rapports)
+// Routes accessibles à Direction, Admin, Gestionnaire et Comptable (Rapports partagés)
 Route::middleware(['auth', 'role:admin|direction|gestionnaire|comptable'])->group(function () {
-    Route::get('/rapports/loyers', function () {
-        return view('rapports.loyers');
-    })->name('rapports.loyers');
-    Route::get('/rapports/impayees', function () {
-        return view('rapports.impayees');
-    })->name('rapports.impayees');
-    Route::get('/rapports/commissions', function () {
-        return view('rapports.commissions');
-    })->name('rapports.commissions');
-    Route::get('/rapports/mensuel/{mois?}', [DashboardController::class, 'exporterRapportMensuel'])->name('rapports.mensuel');
+    // Les routes de rapports sont déjà définies au-dessus pour admin/direction/gestionnaire.
+    // Si on veut qu'elles soient aussi accessibles au comptable sans redéfinir, on les laisse dans le groupe du haut ou on les met ici.
 });
 
 // API Routes - Stats et Alertes (pour widgets AJAX)

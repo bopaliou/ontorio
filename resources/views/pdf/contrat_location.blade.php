@@ -4,303 +4,355 @@
     <meta charset="utf-8">
     <title>Contrat de Bail - {{ $contrat->locataire->nom }}</title>
     <style>
-        @page { margin: 40px; }
+        @page { 
+            margin: 0; 
+            size: A4;
+        }
         body {
             font-family: 'Helvetica', 'Arial', sans-serif;
             font-size: 11px;
-            color: #333;
-            line-height: 1.4;
+            color: #1e293b;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #fff;
         }
 
-        /* Color Palette */
-        .text-brand { color: #274256; }
-        .bg-brand { background-color: #274256; color: white; }
-        .border-brand { border-color: #274256; }
-        .bg-gray { background-color: #f3f4f6; }
+        .page {
+            position: relative;
+            padding: 50px 60px;
+            box-sizing: border-box;
+        }
 
-        /* Helpers */
-        .text-center { text-align: center; }
-        .text-right { text-align: right; }
-        .text-bold { font-weight: bold; }
-        .uppercase { text-transform: uppercase; }
-        .w-full { width: 100%; }
-        .w-half { width: 48%; display: inline-block; vertical-align: top; }
-        .mb-2 { margin-bottom: 8px; }
-        .mb-4 { margin-bottom: 16px; }
-        .mb-6 { margin-bottom: 24px; }
+        /* Essential Colors */
+        .text-primary { color: #cb2d2d; }
+        .text-secondary { color: #1a2e3d; }
+        .font-black { font-weight: 900; }
+        .font-bold { font-weight: 700; }
 
-        /* Layout Elements */
+        /* Header */
         .header {
-            border-bottom: 2px solid #274256;
-            padding-bottom: 20px;
-            margin-bottom: 30px;
+            border-bottom: 4px solid #cb2d2d;
+            padding-bottom: 25px;
+            margin-bottom: 40px;
         }
-        .logo-text {
-            font-size: 24px;
-            font-weight: 900;
-            color: #274256;
-            letter-spacing: -1px;
-        }
-        .logo-sub {
-            font-size: 10px;
-            color: #666;
-            letter-spacing: 2px;
-            text-transform: uppercase;
+        .agency-info {
+            font-size: 9.5px;
+            color: #64748b;
+            line-height: 1.5;
+            margin-top: 10px;
         }
 
-        .document-title {
+        /* Document Header */
+        .doc-header {
             text-align: center;
-            font-size: 18px;
-            font-weight: bold;
+            margin-bottom: 45px;
+        }
+        .doc-type {
+            font-size: 10px;
+            font-weight: 900;
+            color: #cb2d2d;
             text-transform: uppercase;
-            background-color: #274256;
-            color: white;
-            padding: 8px;
-            margin-bottom: 20px;
-            border-radius: 4px;
+            letter-spacing: 5px;
+            margin-bottom: 8px;
+        }
+        .doc-title {
+            font-size: 26px;
+            font-weight: 900;
+            color: #1a2e3d;
+            text-transform: uppercase;
+            letter-spacing: -1px;
+            line-height: 1;
+        }
+        .doc-ref {
+            font-size: 9px;
+            color: #94a3b8;
+            font-weight: 700;
+            margin-top: 10px;
+            text-transform: uppercase;
         }
 
+        /* Sections */
+        .section {
+            margin-bottom: 35px;
+        }
+        .section-header {
+            background-color: #1a2e3d;
+            color: #fff;
+            padding: 8px 20px;
+            font-size: 10px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+
+        /* Boxes & Grids */
+        .party-grid {
+            width: 100%;
+            margin-bottom: 35px;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
         .party-box {
+            width: 48%;
             background-color: #f8fafc;
             border: 1px solid #e2e8f0;
-            padding: 15px;
-            margin-bottom: 20px;
-            border-radius: 6px;
+            border-radius: 12px;
+            padding: 20px;
+            vertical-align: top;
         }
-        .party-title {
-            font-size: 10px;
-            font-weight: bold;
+        .party-label {
+            font-size: 8px;
+            font-weight: 900;
+            color: #cb2d2d;
             text-transform: uppercase;
-            color: #64748b;
-            margin-bottom: 5px;
+            letter-spacing: 1.5px;
+            margin-bottom: 12px;
             border-bottom: 1px solid #e2e8f0;
-            padding-bottom: 5px;
+            padding-bottom: 6px;
+        }
+        .party-name {
+            font-size: 13px;
+            font-weight: 800; 
+            color: #1a2e3d;
+            margin-bottom: 8px;
+        }
+        .party-details {
+            font-size: 10px;
+            color: #64748b;
+            line-height: 1.6;
         }
 
-        table.data-table {
+        /* Tables */
+        .data-table {
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 20px;
         }
-        table.data-table th {
-            text-align: left;
-            padding: 8px;
-            background-color: #f1f5f9;
-            font-size: 10px;
-            font-weight: bold;
-            text-transform: uppercase;
-            color: #475569;
-            border-bottom: 1px solid #cbd5e1;
+        .data-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 11px;
         }
-        table.data-table td {
-            padding: 8px;
-            border-bottom: 1px solid #e2e8f0;
+        .data-table .label {
+            width: 30%;
+            font-weight: 800;
+            color: #64748b;
+            text-transform: uppercase;
+            font-size: 9px;
+            letter-spacing: 0.5px;
+            background-color: #f8fafc;
+        }
+        .data-table .value {
+            font-weight: 700;
+            color: #1a2e3d;
         }
 
+        /* Terms & Clauses */
         .clauses {
             text-align: justify;
+            font-size: 10.5px;
+            color: #475569;
         }
-        .clause-item {
-            margin-bottom: 12px;
+        .clause {
+            margin-bottom: 18px;
         }
         .clause-title {
-            font-weight: bold;
-            color: #274256;
-            text-decoration: underline;
-            margin-bottom: 4px;
+            font-weight: 900;
+            color: #1a2e3d;
+            text-transform: uppercase;
+            font-size: 11px;
+            margin-bottom: 6px;
             display: block;
         }
 
-        .signatures {
-            margin-top: 40px;
+        /* Signatures */
+        .signature-section {
+            margin-top: 50px;
             page-break-inside: avoid;
         }
-        .sig-box {
+        .signature-row {
+            width: 100%;
+            margin-top: 30px;
+        }
+        .signature-box {
             width: 45%;
-            float: left;
-            border: 1px solid #cbd5e1;
+            height: 140px;
+            border: 1px dashed #cbd5e1;
             background-color: #f8fafc;
-            height: 120px;
+            border-radius: 8px;
             padding: 15px;
+            position: relative;
         }
-        .sig-box-right {
-            float: right;
-        }
-
-        .footer {
-            position: fixed;
-            bottom: -20px;
+        .sign-hint {
+            position: absolute;
+            top: 15px;
             left: 0;
             right: 0;
             text-align: center;
-            font-size: 8px;
+            font-size: 7.5px;
+            font-weight: 900;
             color: #94a3b8;
-            border-top: 1px solid #e2e8f0;
-            padding-top: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .sign-name {
+            position: absolute;
+            bottom: 20px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 11px;
+            font-weight: 900;
+            color: #1a2e3d;
         }
 
-        .page-break { page-break-after: always; }
+        /* Footer */
+        .footer {
+            position: absolute;
+            bottom: 30px;
+            left: 60px;
+            right: 60px;
+            text-align: center;
+            font-size: 8px;
+            color: #94a3b8;
+            border-top: 1px solid #f1f5f9;
+            padding-top: 15px;
+        }
+
+        .clear { clear: both; }
     </style>
 </head>
 <body>
-    <!-- HEADER -->
-    <div class="header">
-        <table style="width: 100%;">
+    <div class="page">
+        <!-- HEADER -->
+        <div class="header">
+            <table width="100%">
+                <tr>
+                    <td width="30%">
+                        <img src="{{ public_path('images/ontorio-logo.png') }}" style="max-height: 85px;">
+                    </td>
+                    <td width="70%" align="right">
+                        <div class="font-black text-secondary" style="font-size: 18px; letter-spacing: -0.5px;">ONTARIO GROUP S.A.</div>
+                        <div class="agency-info">
+                            Gestion Immobilière & Patrimoniale<br>
+                            5 Félix Faure x Colbert, Dakar Plateau<br>
+                            Sénégal | Tél : +221 33 822 32 67<br>
+                            Email : commercial@ontariogroup.net
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- DOCUMENT TITLE -->
+        <div class="doc-header">
+            <div class="doc-type">Contrat Officiel</div>
+            <h1 class="doc-title">Bail à Usage d'Habitation</h1>
+            <div class="doc-ref">RÉF : #{{ str_pad($contrat->id, 5, '0', STR_PAD_LEFT) }} | DATE : {{ now()->format('d/m/Y') }}</div>
+        </div>
+
+        <!-- PARTIES -->
+        <table class="party-grid">
             <tr>
-                <td style="width: 60%;">
-                    <img src="{{ public_path('images/ontorio-logo.png') }}" alt="Ontario Group Logo" style="max-height: 70px; margin-bottom: 10px;">
-                    <div class="logo-sub">Bien loger dans un bon logement</div>
+                <td class="party-box">
+                    <div class="party-label">Le Bailleur</div>
+                    <div class="party-name">ONTARIO GROUP S.A.</div>
+                    <div class="party-details">
+                        Représenté par son département de gestion locative.<br>
+                        Dakar Plateau, Sénégal.
+                    </div>
                 </td>
-                <td style="width: 40%; text-align: right; font-size: 10px; color: #64748b;">
-                    <strong>Agence Principale</strong><br>
-                    5 Félix Faure x Colbert<br>
-                    Dakar Plateau, Sénégal<br>
-                    Tél: +221 33 822 32 67 / 33 842 05 80<br>
-                    Email: commercial@ontariogroup.net
+                <td width="4%"></td>
+                <td class="party-box">
+                    <div class="party-label">Le Preneur</div>
+                    <div class="party-name">{{ strtoupper($contrat->locataire->nom) }}</div>
+                    <div class="party-details">
+                        <strong>Tél :</strong> {{ $contrat->locataire->telephone ?? 'Non renseigné' }}<br>
+                        <strong>Email :</strong> {{ $contrat->locataire->email ?? 'Non renseigné' }}<br>
+                        <strong>CNI/Passeport :</strong> {{ $contrat->locataire->cni ?? 'Non renseigné' }}
+                    </div>
                 </td>
             </tr>
         </table>
-    </div>
 
-    <!-- DOCUMENT TITLE -->
-    <div class="document-title">
-        CONTRAT DE BAIL À USAGE D'HABITATION
-    </div>
+        <!-- ARTICLE 1: OBJET -->
+        <div class="section">
+            <div class="section-header">Article 1 : Désignation des Lieux Loués</div>
+            <table class="data-table">
+                <tr>
+                    <td class="label">Dénomination</td>
+                    <td class="value">{{ $contrat->bien->nom }}</td>
+                </tr>
+                <tr>
+                    <td class="label">Type de Bien</td>
+                    <td class="value">{{ ucfirst($contrat->bien->type) }} ({{ $contrat->bien->surface ?? '--' }} m²)</td>
+                </tr>
+                <tr>
+                    <td class="label">Localisation</td>
+                    <td class="value">{{ $contrat->bien->adresse ?? 'Dakar, Sénégal' }}</td>
+                </tr>
+            </table>
+        </div>
 
-    <!-- PARTIES -->
-    <div style="margin-bottom: 30px;">
-        <div class="w-half party-box">
-            <div class="party-title">Le Bailleur (Propriétaire)</div>
-            <p>
-                <strong>ONTARIO GROUP S.A.</strong><br>
-                Agissant pour le compte du propriétaire.<br>
-                Siège Social : 5 Félix Faure x Colbert, Dakar<br>
-                commercial@ontariogroup.net
+        <!-- ARTICLE 2: FINANCES -->
+        <div class="section">
+            <div class="section-header">Article 2 : Conditions Financières</div>
+            <table class="data-table">
+                <tr>
+                    <td class="label">Loyer Principal HT</td>
+                    <td class="value" style="font-size: 14px; color: #cb2d2d;">{{ number_format($contrat->loyer_montant, 0, ',', ' ') }} FCFA</td>
+                </tr>
+                <tr>
+                    <td class="label">Échéance de Paiement</td>
+                    <td class="value">Le {{ $contrat->jour_paiement ?? '05' }} de chaque mois d'avance</td>
+                </tr>
+                <tr>
+                    <td class="label">Duree du Bail</td>
+                    <td class="value">Début le {{ \Carbon\Carbon::parse($contrat->date_debut)->translatedFormat('d F Y') }}</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- CLAUSES -->
+        <div class="section">
+            <div class="section-header">Article 3 : Dispositions Générales</div>
+            <div class="clauses">
+                <div class="clause">
+                    <span class="clause-title">3.1 Obligations du Preneur</span>
+                    Le Preneur s'engage à maintenir les lieux en bon état d'entretien et de propreté. Il est tenu d'effectuer à sa charge toutes les réparations locatives d'entretien courant. Toute transformation doit faire l'objet d'un accord écrit du Bailleur.
+                </div>
+                <div class="clause">
+                    <span class="clause-title">3.2 Clause Résolutoire</span>
+                    À défaut de paiement d'un seul terme de loyer à son échéance exacte, et un mois après une sommation de payer restée infructueuse, le présent contrat sera résilié de plein droit, sans formalité judiciaire.
+                </div>
+            </div>
+        </div>
+
+        <!-- SIGNATURES -->
+        <div class="signature-section">
+            <p style="font-size: 10px; color: #64748b; text-align: center; margin-bottom: 25px;">
+                Fait à <strong>Dakar</strong>, le <strong>{{ now()->format('d/m/Y') }}</strong>, en deux exemplaires originaux.
             </p>
-        </div>
-        <div class="w-half party-box" style="float: right;">
-            <div class="party-title">Le Preneur (Locataire)</div>
-            <p>
-                <strong>M./Mme {{ strtoupper($contrat->locataire->nom) }}</strong><br>
-                Téléphone : {{ $contrat->locataire->telephone ?? 'Non renseigné' }}<br>
-                Email : {{ $contrat->locataire->email ?? 'Non renseigné' }}<br>
-                CNI / Passeport : {{ $contrat->locataire->cni ?? 'Non renseigné' }}
-            </p>
-        </div>
-        <div style="clear: both;"></div>
-    </div>
-
-    <!-- BIEN LOUE -->
-    <div class="mb-6">
-        <h3 class="text-brand uppercase" style="border-bottom: 1px solid #e2e8f0; padding-bottom: 5px;">1. Désignation des Lieux Loués</h3>
-        <table class="data-table">
-            <tr>
-                <th width="20%">Bien Immobilier</th>
-                <td class="text-bold">{{ $contrat->bien->nom }}</td>
-            </tr>
-            <tr>
-                <th>Type de bien</th>
-                <td>{{ ucfirst($contrat->bien->type) }}</td>
-                <th>Surface aprox.</th>
-                <td>{{ $contrat->bien->surface ? $contrat->bien->surface . ' m²' : 'Non précisée' }}</td>
-            </tr>
-            <tr>
-                <th>Adresse</th>
-                <td colspan="3">{{ $contrat->bien->adresse ?? $contrat->bien->ville }}</td>
-            </tr>
-            <tr>
-                <th>Consistance</th>
-                <td colspan="3">{{ $contrat->bien->description ?? 'Conforme à l\'état des lieux d\'entrée.' }}</td>
-            </tr>
-        </table>
-    </div>
-
-    <!-- CONDITIONS FINANCIERES -->
-    <div class="mb-6">
-        <h3 class="text-brand uppercase" style="border-bottom: 1px solid #e2e8f0; padding-bottom: 5px;">2. Conditions Financières</h3>
-        <table class="data-table">
-            <tr>
-                <th width="40%">Loyer Mensuel Principal</th>
-                <td class="text-right text-bold" style="font-size: 14px;">{{ number_format($contrat->loyer_montant, 0, ',', ' ') }} F CFA</td>
-            </tr>
-            <tr>
-                <th>Date de paiement</th>
-                <td class="text-right">Le {{ $contrat->jour_paiement ?? '05' }} de chaque mois au plus tard</td>
-            </tr>
-            <tr>
-                <th style="background-color: #fff7ed; color: #9a3412;">TOTAL À PAYER MENSUELLEMENT</th>
-                <td class="text-right text-bold" style="background-color: #fff7ed; color: #9a3412; font-size: 14px;">{{ number_format($contrat->loyer_montant, 0, ',', ' ') }} F CFA</td>
-            </tr>
-        </table>
-    </div>
-
-    <!-- DUREE -->
-    <div class="mb-6">
-        <h3 class="text-brand uppercase" style="border-bottom: 1px solid #e2e8f0; padding-bottom: 5px;">3. Durée du Contrat</h3>
-        <p>
-            Le présent bail est consenti pour une durée déterminée ou indéterminée commençant le
-            <strong>{{ \Carbon\Carbon::parse($contrat->date_debut)->translatedFormat('d F Y') }}</strong>
-            @if($contrat->date_fin)
-             et se terminant le <strong>{{ \Carbon\Carbon::parse($contrat->date_fin)->translatedFormat('d F Y') }}</strong>
-            @endif.
-        </p>
-    </div>
-
-    <!-- CLAUSES JURIDIQUES -->
-    <div class="clauses">
-        <h3 class="text-brand uppercase" style="border-bottom: 1px solid #e2e8f0; padding-bottom: 5px;">4. Clauses et Conditions Générales</h3>
-
-        <div class="clause-item">
-            <span class="clause-title">4.1 - PAIEMENT DU LOYER</span>
-            Le loyer est payable d'avance au domicile du Bailleur ou de son représentant. Tout retard de paiement pourra entraîner l'application de pénalités de retard et la résiliation du bail.
+            <table width="100%">
+                <tr>
+                    <td class="signature-box">
+                        <div class="sign-hint">Cachet et Signature du Bailleur (Ontario)</div>
+                    </td>
+                    <td width="10%"></td>
+                    <td class="signature-box">
+                        <div class="sign-hint">Signature du Preneur (Précédée de "Lu et Approuvé")</div>
+                        <div class="sign-name">{{ strtoupper($contrat->locataire->nom) }}</div>
+                    </td>
+                </tr>
+            </table>
         </div>
 
-        <div class="clause-item">
-            <span class="clause-title">4.2 - USAGE DES LIEUX</span>
-            Les locaux sont loués à usage exclusif d'habitation (ou professionnel selon le cas). Le Preneur s'interdit tout changement de destination sans l'accord écrit du Bailleur. Il devra jouir des lieux "en bon père de famille".
+        <div class="footer">
+            Ontario Group S.A. - Document contractuel généré numériquement - Page 1/1
         </div>
-
-        <div class="clause-item">
-            <span class="clause-title">4.3 - ENTRETIEN ET RÉPARATIONS</span>
-            Le Preneur prendra les lieux dans l'état où ils se trouvent lors de l'entrée en jouissance. Il sera tenu d'effectuer les réparations locatives et d'entretien courant. Les grosses réparations (Art. 606 du Code Civil) restent à la charge du Bailleur.
-        </div>
-
-        <div class="clause-item">
-            <span class="clause-title">4.4 - CESSION ET SOUS-LOCATION</span>
-            Toute sous-location ou cession de bail est rigoureusement interdite sauf accord écrit et préalable du Bailleur.
-        </div>
-
-        <div class="clause-item">
-            <span class="clause-title">4.5 - DÉPÔT DE GARANTIE (CAUTION)</span>
-            Si une caution a été versée, elle sera restituée au Preneur en fin de bail, déduction faite des sommes dues au Bailleur et des frais de remise en état éventuels constatés lors de l'état des lieux de sortie.
-        </div>
-
-        <div class="clause-item">
-            <span class="clause-title">4.6 - RÉSILIATION</span>
-            Le présent contrat pourra être résilié par l'une ou l'autre des parties moyennant un préavis (congé) de 2 mois (ou selon législation en vigueur), notifié par lettre recommandée ou par acte d'huissier. En cas de défaut de paiement, la clause résolutoire s'appliquera de plein droit.
-        </div>
-    </div>
-
-    <!-- SIGNATURES -->
-    <div class="signatures">
-        <p style="margin-bottom: 15px;">Fait à <strong>Dakar</strong>, le <strong>{{ now()->format('d/m/Y') }}</strong>, en deux exemplaires originaux.</p>
-
-        <div class="sig-box">
-            <div class="party-title text-center">Le Bailleur (Ontario Group)</div>
-            <div style="font-size: 9px; text-align: center; margin-bottom: 40px; color: #94a3b8;">(Lu et approuvé, cachet et signature)</div>
-        </div>
-
-        <div class="sig-box sig-box-right">
-            <div class="party-title text-center">Le Preneur</div>
-            <div style="font-size: 9px; text-align: center; margin-bottom: 40px; color: #94a3b8;">(Lu et approuvé, signature précédée de la mention manuscrite)</div>
-            <div class="text-center text-bold">{{ strtoupper($contrat->locataire->nom) }}</div>
-        </div>
-        <div style="clear: both;"></div>
-    </div>
-
-    <!-- FOOTER -->
-    <div class="footer">
-        Page 1/1 - Contrat Réf: #{{ str_pad($contrat->id, 5, '0', STR_PAD_LEFT) }} - Généré par Ontario Group App le {{ now()->format('d/m/Y H:i:s') }}
     </div>
 </body>
 </html>

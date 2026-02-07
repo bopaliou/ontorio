@@ -5,135 +5,144 @@ namespace Database\Seeders;
 use App\Models\Bien;
 use App\Models\Contrat;
 use App\Models\Locataire;
+use App\Models\Depense;
 use App\Models\Loyer;
 use App\Models\Paiement;
 use App\Models\Proprietaire;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 
 class MockDataSeeder extends Seeder
 {
     public function run(): void
     {
-        // Utilisateurs (Gérés par RoleUsersSeeder)
-        /*
-        User::firstOrCreate(
-            ['email' => 'admin@ontariogroup.net'],
-            ['name' => 'Admin Ontario', 'role' => 'admin', 'password' => bcrypt('password')]
-        );
-        User::firstOrCreate(
-            ['email' => 'gestionnaire@ontariogroup.net'],
-            ['name' => 'Gestionnaire Ontario', 'role' => 'gestionnaire', 'password' => bcrypt('password')]
-        );
-        User::firstOrCreate(
-            ['email' => 'comptable@ontariogroup.net'],
-            ['name' => 'Comptable Ontario', 'role' => 'comptable', 'password' => bcrypt('password')]
-        );
-        */
+        $faker = \Faker\Factory::create('fr_FR');
 
-        // LE BAILLEUR UNIQUE
-        $ontario = Proprietaire::firstOrCreate(
+        // 1. UTILISATEURS (5 de chaque rôle important)
+        $roles = ['gestionnaire', 'comptable', 'direction'];
+        foreach ($roles as $role) {
+            for ($i = 0; $i < 5; $i++) {
+                User::firstOrCreate(
+                    ['email' => strtolower($role) . ($i + 1) . '@ontariogroup.net'],
+                    [
+                        'name' => ucfirst($role) . ' ' . $faker->firstName,
+                        'role' => $role,
+                        'password' => bcrypt('password'),
+                    ]
+                );
+            }
+        }
+
+        // 2. PROPRIÉTAIRES (5 Minimum + Ontario Group)
+        $proprietaires = [];
+        // Garder Ontario Group comme principal
+        $proprietaires[] = Proprietaire::firstOrCreate(
             ['email' => 'commercial@ontariogroup.net'],
             [
                 'nom' => 'ONTARIO GROUP',
-                'telephone' => '+221 33 822 32 67 / 33 842 05 80 / 78 105 35 54',
-                'adresse' => '5 Felix Gaure x Colbert Dakar, Dakar Plateau BP: 06813',
+                'telephone' => '+221 33 822 32 67',
+                'adresse' => '5 Felix Faure x Colbert, Dakar',
             ]
         );
 
-        // LES BIENS
-        $biens = [
-            Bien::firstOrCreate(
-                ['nom' => 'Appartement Yoff A1'],
-                [
-                    'adresse' => 'Rue des Almadies',
-                    'ville' => 'Dakar',
-                    'type' => 'appartement',
-                    'surface' => 80.0,
-                    'statut' => 'occupé',
-                    'loyer_mensuel' => 250000,
-                    'proprietaire_id' => $ontario->id,
-                ]
-            ),
-            Bien::firstOrCreate(
-                ['nom' => 'Villa Liberté 6'],
-                [
-                    'adresse' => 'Cité Keur Gorgui',
-                    'ville' => 'Dakar',
-                    'type' => 'villa',
-                    'surface' => 250.0,
-                    'statut' => 'libre',
-                    'loyer_mensuel' => 650000,
-                    'proprietaire_id' => $ontario->id,
-                ]
-            ),
-            Bien::firstOrCreate(
-                ['nom' => 'Studio Plateau'],
-                [
-                    'adresse' => 'Avenue Pompidou',
-                    'ville' => 'Dakar',
-                    'type' => 'studio',
-                    'surface' => 45.0,
-                    'statut' => 'occupé',
-                    'loyer_mensuel' => 180000,
-                    'proprietaire_id' => $ontario->id,
-                ]
-            ),
-        ];
+        for ($i = 0; $i < 5; $i++) {
+            $proprietaires[] = Proprietaire::create([
+                'nom' => $faker->company,
+                'email' => $faker->unique()->companyEmail,
+                'telephone' => $faker->phoneNumber,
+                'adresse' => $faker->address,
+            ]);
+        }
 
-        // Locataires
-        $locataires = [
-            Locataire::firstOrCreate(
-                ['email' => 'fatou.sarr@gmail.com'],
-                ['nom' => 'Fatou Sarr', 'telephone' => '76 112 23 34']
-            ),
-            Locataire::firstOrCreate(
-                ['email' => 'cheikh.ba@gmail.com'],
-                ['nom' => 'Cheikh Ba', 'telephone' => '70 987 76 55']
-            ),
-        ];
+        // 3. LOCATAIRES (5 Minimum)
+        $locataires = [];
+        for ($i = 0; $i < 5; $i++) {
+            $locataires[] = Locataire::firstOrCreate(
+                ['email' => $faker->unique()->email],
+                [
+                    'nom' => $faker->name,
+                    'telephone' => $faker->phoneNumber,
+                    'pieces_identite' => $faker->numerify('##############'),
+                ]
+            );
+        }
 
-        // Contrats
-        $contrat1 = Contrat::firstOrCreate(
-            ['bien_id' => $biens[0]->id, 'locataire_id' => $locataires[0]->id],
-            [
-                'date_debut' => '2025-01-01',
-                'date_fin' => '2025-12-31',
-                'loyer_montant' => 250000,
+        // 4. BIENS (5 Minimum)
+        $biens = [];
+        $types = ['appartement', 'villa', 'studio', 'bureau', 'magasin', 'entrepot'];
+
+        // Distribuer les biens entre les propriétaires
+        for ($i = 0; $i < 5; $i++) {
+            $proprio = $proprietaires[$i % count($proprietaires)]; // Rotate owners
+            $biens[] = Bien::create([
+                'nom' => $types[array_rand($types)] . ' ' . $faker->citySuffix,
+                'adresse' => $faker->streetAddress,
+                'ville' => 'Dakar',
+                'type' => $types[array_rand($types)],
+                'surface' => $faker->numberBetween(25, 300),
+                'statut' => 'libre', // Sera mis à jour par le contrat
+                'loyer_mensuel' => $faker->numberBetween(100000, 1500000),
+                'proprietaire_id' => $proprio->id,
+            ]);
+        }
+
+        // 5. CONTRATS (5 Minimum)
+        $contrats = [];
+        for ($i = 0; $i < 5; $i++) {
+            // Ensure we have enough biens and locataires, otherwise fallback or create new
+            $bien = $biens[$i] ?? $biens[0];
+            $locataire = $locataires[$i] ?? $locataires[0];
+
+            $contrats[] = Contrat::create([
+                'bien_id' => $bien->id,
+                'locataire_id' => $locataire->id,
+                'date_debut' => $faker->dateTimeBetween('-2 years', '-1 year')->format('Y-m-d'),
+                'date_fin' => $faker->dateTimeBetween('now', '+1 year')->format('Y-m-d'),
+                'loyer_montant' => $bien->loyer_mensuel,
                 'statut' => 'actif',
-            ]
-        );
+            ]);
 
-        $contrat2 = Contrat::firstOrCreate(
-            ['bien_id' => $biens[2]->id, 'locataire_id' => $locataires[1]->id],
-            [
-                'date_debut' => '2025-03-01',
-                'date_fin' => '2026-02-28',
-                'loyer_montant' => 180000,
-                'statut' => 'actif',
-            ]
-        );
+            // Mettre à jour le statut du bien
+            $bien->update(['statut' => 'occupé']);
+        }
 
-        $moisJanvier = '2026-01';
+        // 6. LOYERS & PAIEMENTS (Pour chaque contrat, générer historique récent)
+        foreach ($contrats as $contrat) {
+            // Générer loyer pour le mois en cours
+            $mois = date('Y-m');
 
-        // Loyers
-        $loyer1 = Loyer::firstOrCreate(
-            ['contrat_id' => $contrat1->id, 'mois' => $moisJanvier],
-            ['montant' => 250000, 'statut' => 'payé']
-        );
-        $loyer2 = Loyer::firstOrCreate(
-            ['contrat_id' => $contrat2->id, 'mois' => $moisJanvier],
-            ['montant' => 180000, 'statut' => 'en_retard']
-        );
+            $loyer = Loyer::firstOrCreate(
+                ['contrat_id' => $contrat->id, 'mois' => $mois],
+                [
+                    'montant' => $contrat->loyer_montant,
+                    'statut' => $faker->randomElement(['payé', 'payé', 'payé', 'en_retard', 'partiellement_payé']),
+                ]
+            );
 
-        // Paiements
-        Paiement::firstOrCreate(
-            ['loyer_id' => $loyer1->id],
-            [
-                'date_paiement' => '2026-01-05',
-                'montant' => 250000,
-                'mode' => 'virement',
-            ]
-        );
+            // Si payé ou partiel, créer un paiement
+            if (in_array($loyer->statut, ['payé', 'partiellement_payé'])) {
+                Paiement::create([
+                    'loyer_id' => $loyer->id,
+                    'date_paiement' => Carbon::parse($mois . '-01')->addDays(rand(0, 25)),
+                    'montant' => $loyer->statut === 'payé' ? $loyer->montant : ($loyer->montant / 2),
+                    'mode' => $faker->randomElement(['espèces', 'virement', 'chèque', 'mobile_money']),
+                    'reference' => strtoupper($faker->bothify('REF-####-??')),
+                    'user_id' => User::first()->id ?? 1,
+                ]);
+            }
+        }
+
+        // 7. DÉPENSES (Générer quelques dépenses pour le mois actuel)
+        for ($i = 0; $i < 3; $i++) {
+            Depense::create([
+                'bien_id' => $biens[array_rand($biens)]->id,
+                'titre' => $faker->randomElement(['Réparation fuite', 'Entretien climatisation', 'Électricité parties communes', 'Peinture couloir']),
+                'montant' => $faker->numberBetween(5000, 50000),
+                'date_depense' => Carbon::now()->subDays(rand(1, 20)),
+                'categorie' => $faker->randomElement(['maintenance', 'travaux', 'taxe', 'assurance', 'autre']),
+                'statut' => 'payé',
+            ]);
+        }
     }
 }

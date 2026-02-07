@@ -36,7 +36,7 @@ class DashboardStatsService
             ')
             ->first();
 
-        // Paiements du mois
+        // Paiements du mois (Tous les paiements encaissés ce mois, peu importe l'échéance du loyer)
         $paiementsMois = Paiement::whereMonth('date_paiement', Carbon::parse($mois)->month)
             ->whereYear('date_paiement', Carbon::parse($mois)->year)
             ->sum('montant');
@@ -46,25 +46,70 @@ class DashboardStatsService
             ->whereYear('date_depense', Carbon::parse($mois)->year)
             ->sum('montant');
 
-        // Arriérés totaux (loyers impayés hors mois actuel)
-        $arrieres = Loyer::where('mois', '<', $mois)
-            ->whereIn('statut', ['émis', 'en_retard'])
+        // Arriérés totaux (Tous les loyers impayés ou en retard, incluant le mois actuel)
+        $arrieres = Loyer::whereIn('statut', ['émis', 'en_retard', 'partiellement_payé'])
             ->where('statut', '!=', 'annulé')
-            ->sum('montant');
+            ->selectRaw('SUM(montant) - SUM((SELECT COALESCE(SUM(montant), 0) FROM paiements WHERE paiements.loyer_id = loyers.id)) as solde_du')
+            ->first()
+            ->solde_du ?? 0;
+
+        // 4. Gross Potential Rent (Loyer Potentiel Total si 100% loué et payé)
+        $grossPotentialRent = Bien::sum('loyer_mensuel'); // Somme de tous les loyers théoriques
+
+        // 5. Taux de Recouvrement Financier (Encaissé / Facturé Réel)
+        $tauxRecouvrement = $loyersStats->total_facture > 0
+            ? ($paiementsMois / $loyersStats->total_facture) * 100
+            : 0;
+
+        // 6. Taux d'Occupation Financier (Facturé / Potentiel)
+        $tauxOccupationFinancier = $grossPotentialRent > 0
+            ? ($loyersStats->total_facture / $grossPotentialRent) * 100
+            : 0;
+
+        // 7. Arrears Aging (Ventilation des arriérés)
+        $loyersImpayes = Loyer::whereIn('statut', ['émis', 'en_retard', 'partiellement_payé'])
+            ->where('statut', '!=', 'annulé')
+            ->withSum('paiements', 'montant')
+            ->get();
+        
+        $aging = [
+            '0-30' => 0,
+            '31-60' => 0,
+            '61-90' => 0,
+            '90+' => 0,
+        ];
+
+        foreach ($loyersImpayes as $loyer) {
+            $reste = $loyer->montant - ($loyer->paiements_sum_montant ?? 0);
+            if ($reste <= 0.5) continue; // Ignorer les micro-différences
+
+            // Calcul de l'âge de la dette par rapport au 1er du mois du loyer
+            // Ex: Loyer Janvier (01-01), Nous sommes le 06-02 = 36 jours
+            $dateLoyer = Carbon::parse($loyer->mois . '-01');
+            $ageJours = $dateLoyer->diffInDays(Carbon::now());
+
+            if ($ageJours <= 30) $aging['0-30'] += $reste;
+            elseif ($ageJours <= 60) $aging['31-60'] += $reste;
+            elseif ($ageJours <= 90) $aging['61-90'] += $reste;
+            else $aging['90+'] += $reste;
+        }
 
         return [
             'loyers_factures' => $loyersStats->total_facture ?? 0,
-            'loyers_encaisses' => $loyersStats->total_paye ?? 0,
+            'loyers_encaisses' => $paiementsMois, // Total réel encaissé
             'paiements_mois' => $paiementsMois,
             'depenses_mois' => $depensesMois,
-            'solde_net' => $paiementsMois - $depensesMois,
-            'taux_recouvrement' => $loyersStats->total_facture > 0
-                ? round(($loyersStats->total_paye / $loyersStats->total_facture) * 100, 1)
-                : 0,
+            'solde_net' => $paiementsMois - $depensesMois, // NOI
+            'taux_recouvrement' => round($tauxRecouvrement, 1),
             'nb_loyers' => $loyersStats->nb_loyers ?? 0,
             'nb_payes' => $loyersStats->nb_payes ?? 0,
             'nb_impayes' => $loyersStats->nb_impayes ?? 0,
             'arrieres_total' => $arrieres,
+            'kpis_modern' => [
+                'gross_potential_rent' => $grossPotentialRent,
+                'financial_occupancy_rate' => round($tauxOccupationFinancier, 1),
+                'arrears_aging' => $aging,
+            ]
         ];
     }
 
@@ -88,11 +133,21 @@ class DashboardStatsService
             ->whereBetween('date_fin', [now(), now()->addDays(60)])
             ->count();
 
+        // Taux d'Occupation Financier (Facturé / Potentiel)
+        $grossPotentialRent = Bien::sum('loyer_mensuel'); // Potentiel total
+        
+        // On prend les loyers FACTURÉS du mois en cours pour comparer au potentiel
+        $mois = Carbon::now()->format('Y-m');
+        $totalFacture = Loyer::where('mois', $mois)->where('statut', '!=', 'annulé')->sum('montant');
+
+        $tauxFinancier = $grossPotentialRent > 0 ? round(($totalFacture / $grossPotentialRent) * 100, 1) : 0;
+
         return [
             'total_biens' => $totalBiens,
             'biens_occupes' => $biensOccupes,
             'biens_vacants' => $biensVacants,
             'taux_occupation' => $tauxOccupation,
+            'taux_occupation_financier' => $tauxFinancier,
             'contrats_expirants' => $contratsExpirants,
             'total_locataires' => Locataire::count(),
             'total_proprietaires' => Proprietaire::count(),

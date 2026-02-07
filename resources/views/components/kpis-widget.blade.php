@@ -1,80 +1,104 @@
-{{-- Widget KPIs dynamiques avec refresh AJAX --}}
-<div id="kpis-widget" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 animate-stagger">
+{{-- Widget KPIs dynamiques avec refresh AJAX (Refactorisé Modern Widget Style) --}}
+<div id="kpis-widget" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 animate-stagger">
+    
     {{-- KPI 1: Loyers Facturés --}}
-    <div class="kpi-card bg-white p-5 rounded-2xl shadow-sm border border-gray-200 ontario-card-lift group cursor-pointer"
+    <div class="relative overflow-hidden rounded-3xl p-6 transition-all duration-300 group hover:-translate-y-1 hover:shadow-xl bg-white border border-blue-100 shadow-sm cursor-pointer"
          data-show-section="loyers" onclick="dashboard.show('loyers')">
-        <div class="flex items-start justify-between">
+        {{-- Watermark --}}
+        <div class="absolute -bottom-6 -right-6 opacity-[0.08] transform rotate-[-15deg] group-hover:scale-110 group-hover:rotate-0 transition-all duration-500">
+            <svg class="w-32 h-32 text-blue-600" fill="currentColor" viewBox="0 0 24 24"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+        </div>
+        
+        <div class="relative z-10 flex flex-col h-full justify-between">
+            <h3 class="text-[11px] font-bold uppercase tracking-[0.2em] text-gray-400">Loyers Facturés</h3>
             <div>
-                <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Loyers Facturés</p>
-                <p id="kpi-factures" class="text-2xl font-bold text-[#274256] mt-2">
-                    <span class="animate-pulse bg-gray-200 rounded w-24 h-8 inline-block"></span>
-                </p>
-                <p class="text-xs text-gray-400 mt-1">Ce mois</p>
-            </div>
-            <div class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center group-hover:scale-110 transition-transform">
-                <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z"/>
-                </svg>
+                <div class="flex items-baseline gap-1">
+                    <p id="kpi-factures" class="text-4xl font-black tracking-tighter text-gray-900 tabular-nums">
+                        <span class="animate-pulse bg-gray-100 rounded w-24 h-8 inline-block"></span>
+                    </p>
+                </div>
+                <p class="mt-1 text-xs font-medium text-blue-600">Ce mois</p>
             </div>
         </div>
     </div>
 
     {{-- KPI 2: Encaissé --}}
-    <div class="kpi-card bg-white p-5 rounded-2xl shadow-sm border border-gray-200 border-l-4 border-l-green-500 ontario-card-lift group cursor-pointer"
+    <div class="relative overflow-hidden rounded-3xl p-6 transition-all duration-300 group hover:-translate-y-1 hover:shadow-xl bg-white border border-emerald-100 shadow-sm cursor-pointer"
          data-show-section="paiements" onclick="dashboard.show('paiements')">
-        <div class="flex items-start justify-between">
-            <div>
-                <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Montant Encaissé</p>
-                <p id="kpi-encaisses" class="text-2xl font-bold text-green-600 mt-2">
-                    <span class="animate-pulse bg-gray-200 rounded w-24 h-8 inline-block"></span>
-                </p>
-                <p id="kpi-taux" class="text-xs text-green-600 mt-1 font-medium">--% recouvré</p>
-            </div>
-            <div class="w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center group-hover:scale-110 transition-transform">
-                <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                </svg>
-            </div>
+        {{-- Watermark --}}
+        <div class="absolute -bottom-6 -right-6 opacity-[0.08] transform rotate-[-15deg] group-hover:scale-110 group-hover:rotate-0 transition-all duration-500">
+            <svg class="w-32 h-32 text-emerald-600" fill="currentColor" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
         </div>
-        <div class="mt-3 w-full bg-gray-100 rounded-full h-1.5">
-            <div id="kpi-progress" class="bg-green-500 h-1.5 rounded-full transition-all duration-500" style="width: 0%"></div>
+
+        <div class="relative z-10 flex flex-col h-full justify-between">
+            <div class="flex items-start justify-between">
+                <h3 class="text-[11px] font-bold uppercase tracking-[0.2em] text-gray-400">Montant Encaissé</h3>
+                <span id="kpi-taux" class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-600 border border-emerald-100">
+                    --%
+                </span>
+            </div>
+            
+            <div>
+                <div class="flex items-baseline gap-1">
+                     <p id="kpi-encaisses" class="text-4xl font-black tracking-tighter text-emerald-600 tabular-nums">
+                        <span class="animate-pulse bg-emerald-50 rounded w-24 h-8 inline-block"></span>
+                    </p>
+                </div>
+                {{-- Progress Bar --}}
+                <div class="mt-3 w-full bg-gray-100 rounded-full h-1.5 overflow-hidden">
+                    <div id="kpi-progress" class="bg-emerald-500 h-1.5 rounded-full transition-all duration-1000 ease-out" style="width: 0%"></div>
+                </div>
+            </div>
         </div>
     </div>
 
     {{-- KPI 3: Impayés --}}
-    <div class="kpi-card bg-white p-5 rounded-2xl shadow-sm border border-gray-200 border-l-4 border-l-red-500 ontario-card-lift group cursor-pointer"
+    <div class="relative overflow-hidden rounded-3xl p-6 transition-all duration-300 group hover:-translate-y-1 hover:shadow-xl bg-white border border-red-100 shadow-sm cursor-pointer"
          data-show-section="loyers" onclick="dashboard.show('loyers')">
-        <div class="flex items-start justify-between">
-            <div>
-                <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Arriérés Total</p>
-                <p id="kpi-arrieres" class="text-2xl font-bold text-red-600 mt-2">
-                    <span class="animate-pulse bg-gray-200 rounded w-24 h-8 inline-block"></span>
-                </p>
-                <p id="kpi-impayes-count" class="text-xs text-red-500 mt-1 font-medium">-- loyers impayés</p>
+        {{-- Watermark --}}
+        <div class="absolute -bottom-6 -right-6 opacity-[0.08] transform rotate-[-15deg] group-hover:scale-110 group-hover:rotate-0 transition-all duration-500">
+             <svg class="w-32 h-32 text-[#cb2d2d]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+        </div>
+
+        <div class="relative z-10 flex flex-col h-full justify-between">
+            <div class="flex items-start justify-between">
+                 <h3 class="text-[11px] font-bold uppercase tracking-[0.2em] text-gray-400">Arriérés Total</h3>
+                 <span id="kpi-impayes-count" class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold bg-red-50 text-[#cb2d2d] border border-red-100">
+                    -- retards
+                </span>
             </div>
-            <div class="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center group-hover:scale-110 transition-transform">
-                <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                </svg>
+           
+            <div>
+                <div class="flex items-baseline gap-1">
+                    <p id="kpi-arrieres" class="text-4xl font-black tracking-tighter text-[#cb2d2d] tabular-nums">
+                        <span class="animate-pulse bg-red-50 rounded w-24 h-8 inline-block"></span>
+                    </p>
+                </div>
+                {{-- Aging Mini Breakdown --}}
+                <div id="kpi-aging" class="mt-2 flex gap-2 text-[10px] text-gray-400 font-mono hidden">
+                    <!-- JS will populate -->
+                </div>
             </div>
         </div>
     </div>
 
     {{-- KPI 4: Solde Net --}}
-    <div class="kpi-card bg-gradient-to-br from-[#274256] to-[#1a2e3d] p-5 rounded-2xl shadow-lg text-white group hover:shadow-xl transition-all duration-300 cursor-pointer"
+    <div class="relative overflow-hidden rounded-3xl p-6 transition-all duration-300 group hover:-translate-y-1 hover:shadow-xl bg-gradient-to-br from-[#274256] to-[#1a2e3d] text-white shadow-lg shadow-blue-900/20 cursor-pointer"
          data-show-section="depenses" onclick="dashboard.show('depenses')">
-        <div class="flex items-start justify-between">
+        {{-- Watermark --}}
+        <div class="absolute -bottom-6 -right-6 opacity-[0.08] transform rotate-[-15deg] group-hover:scale-110 group-hover:rotate-0 transition-all duration-500">
+             <svg class="w-32 h-32 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        </div>
+
+        <div class="relative z-10 flex flex-col h-full justify-between">
+             <h3 class="text-[11px] font-bold uppercase tracking-[0.2em] text-blue-200">Solde Net</h3>
             <div>
-                <p class="text-xs font-semibold text-gray-300 uppercase tracking-wider">Solde Net</p>
-                <p id="kpi-solde" class="text-2xl font-bold mt-2">
-                    <span class="animate-pulse bg-white/20 rounded w-24 h-8 inline-block"></span>
-                </p>
-                <p class="text-xs text-gray-300 mt-1">Encaissements - Dépenses</p>
-            </div>
-            <div class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center group-hover:scale-110 transition-transform">
-                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
-                </svg>
+                <div class="flex items-baseline gap-1">
+                     <p id="kpi-solde" class="text-4xl font-black tracking-tighter text-white tabular-nums">
+                        <span class="animate-pulse bg-white/10 rounded w-24 h-8 inline-block"></span>
+                    </p>
+                </div>
+                <p class="mt-1 text-xs font-medium text-blue-300">Encaissements - Dépenses</p>
             </div>
         </div>
     </div>
@@ -90,19 +114,49 @@ async function loadKPIs() {
         const fmt = (n) => new Intl.NumberFormat('fr-FR').format(Math.round(n));
 
         // Mise à jour avec animation
-        document.getElementById('kpi-factures').innerHTML = fmt(data.loyers_factures) + ' <span class="text-sm font-normal text-gray-400">F</span>';
-        document.getElementById('kpi-encaisses').innerHTML = fmt(data.loyers_encaisses) + ' <span class="text-sm font-normal text-gray-400">F</span>';
-        document.getElementById('kpi-arrieres').innerHTML = fmt(data.arrieres_total) + ' <span class="text-sm font-normal text-gray-400">F</span>';
-        document.getElementById('kpi-solde').innerHTML = fmt(data.solde_net) + ' <span class="text-sm font-normal">F</span>';
+        const updateVal = (id, val, suffix = 'F') => {
+             const el = document.getElementById(id);
+             if(el) el.innerHTML = `${val} <span class="text-lg font-bold opacity-60">${suffix}</span>`;
+        };
 
-        document.getElementById('kpi-taux').textContent = data.taux_recouvrement + '% recouvré';
-        document.getElementById('kpi-progress').style.width = data.taux_recouvrement + '%';
-        document.getElementById('kpi-impayes-count').textContent = data.nb_impayes + ' loyers impayés';
+        updateVal('kpi-factures', fmt(data.loyers_factures));
+        updateVal('kpi-encaisses', fmt(data.loyers_encaisses));
+        updateVal('kpi-arrieres', fmt(data.arrieres_total));
+        updateVal('kpi-depenses', fmt(data.depenses_mois));
+        updateVal('kpi-solde', fmt(data.solde_net));
 
-        // Colorer le solde
+        const tauxEl = document.getElementById('kpi-taux');
+        if(tauxEl) tauxEl.textContent = data.taux_recouvrement + '% recouvré';
+
+        const progEl = document.getElementById('kpi-progress');
+        if(progEl) progEl.style.width = data.taux_recouvrement + '%';
+
+        const impayesEl = document.getElementById('kpi-impayes-count');
+        if(impayesEl) impayesEl.textContent = data.nb_impayes + ' retards';
+
+        // Colorer le solde si négatif
         const soldeEl = document.getElementById('kpi-solde');
-        if (data.solde_net < 0) {
-            soldeEl.classList.add('text-red-300');
+        if (data.solde_net < 0 && soldeEl) {
+            soldeEl.classList.remove('text-white');
+            soldeEl.classList.add('text-red-400');
+        }
+
+        // Aging Logic
+        if (data.kpis_modern && data.kpis_modern.arrears_aging) {
+            const agingEl = document.getElementById('kpi-aging');
+            const ag = data.kpis_modern.arrears_aging;
+            
+            // Format short: "30j: 100k | 60j: 50k"
+            let html = '';
+            // Only show significant buckets
+            if(ag['0-30'] > 0) html += `<span class="text-red-300">30j:${fmt(ag['0-30']/1000)}k</span>`;
+            if(ag['31-60'] > 0) html += `<span class="text-red-400 font-bold ml-1">60j:${fmt(ag['31-60']/1000)}k</span>`;
+            if(ag['90+'] > 0) html += `<span class="text-red-600 font-black ml-1">90j+:${fmt(ag['90+']/1000)}k</span>`;
+            
+            if (html && agingEl) {
+                agingEl.innerHTML = html;
+                agingEl.classList.remove('hidden');
+            }
         }
 
     } catch (error) {

@@ -18,6 +18,7 @@
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 
         <!-- Scripts -->
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="font-sans antialiased bg-gray-50">
@@ -34,7 +35,7 @@
             @include('layouts.sidebar')
 
             <!-- Main Content Area -->
-            <div class="flex-1 flex flex-col lg:pl-64 transition-all duration-300">
+            <div class="flex-1 flex flex-col lg:pl-72 transition-all duration-300">
                 <!-- Topbar -->
                 @include('layouts.topbar')
 
@@ -124,19 +125,14 @@
             };
 
             window.previewDoc = function(doc) {
-                const url = doc.url.toLowerCase();
-                const ext = doc.nom_original ? doc.nom_original.split('.').pop().toLowerCase() : url.split('.').pop().split('?')[0];
-
-                // Seulement les PDFs générés dynamiquement (routes Laravel) s'ouvrent dans un nouvel onglet
-                // car les iframes ont parfois des problèmes avec les PDFs en streaming
-                const isDynamicPDF = url.includes('/loyers/') || url.includes('/contrats/') || url.includes('/rapports/') || url.includes('/quittance') || url.includes('/print') || url.includes('/bilan');
-
-                if (isDynamicPDF) {
-                    window.open(doc.url, '_blank');
+                if (!doc || !doc.url) {
+                    showToast('Document invalide', 'error');
                     return;
                 }
 
-                // Pour tous les autres fichiers (images, PDFs statiques), utiliser la modale d'aperçu
+                const url = doc.url.toLowerCase();
+                const ext = doc.nom_original ? doc.nom_original.split('.').pop().toLowerCase() : url.split('.').pop().split('?')[0];
+
                 const modal = document.getElementById('global-doc-preview-modal');
                 const container = document.getElementById('global-doc-preview-container');
                 const imgCont = document.getElementById('global-preview-img-cont');
@@ -157,10 +153,14 @@
                 img.src = '';
                 frame.src = '';
 
-                if(['jpg', 'jpeg', 'png', 'webp', 'gif'].includes(ext)) {
+                // Detect if it's an image or PDF
+                const isImg = ['jpg', 'jpeg', 'png', 'webp', 'gif'].includes(ext);
+                const isPdf = ext === 'pdf' || url.includes('/quittance') || url.includes('/loyer') || url.includes('/contrat');
+
+                if (isImg) {
                     imgCont.classList.remove('hidden');
                     img.src = doc.url;
-                } else if(ext === 'pdf') {
+                } else if (isPdf) {
                     frameCont.classList.remove('hidden');
                     frame.src = doc.url;
                 } else {

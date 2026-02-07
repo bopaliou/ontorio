@@ -24,6 +24,8 @@
                         @include('dashboard.roles.comptable', ['data' => $data])
                     @elseif($data['role'] === 'direction')
                         @include('dashboard.roles.direction', ['data' => $data])
+                    @elseif($data['role'] === 'proprietaire')
+                        @include('dashboard.roles.proprietaire', ['data' => $data])
                     @else
                         {{-- Par défaut on utilise la section Overview générique ou Gestionnaire --}}
                         @include('dashboard.sections.overview', ['data' => $data])
@@ -161,6 +163,23 @@
             </div>
         </div>
 
+        <!-- SECTION: RELANCES (Communication) -->
+        <div id="section-relances" role="tabpanel" aria-labelledby="nav-link-relances" class="section-pane hidden opacity-0 translate-y-4">
+            <div class="section-skeleton h-full">
+                <div class="flex flex-col gap-8">
+                    <x-skeleton variant="rect" height="h-20" width="w-full" />
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <x-skeleton variant="rect" height="h-32" />
+                        <x-skeleton variant="rect" height="h-32" />
+                        <x-skeleton variant="rect" height="h-32" />
+                    </div>
+                </div>
+            </div>
+            <div class="section-content hidden">
+                @include('dashboard.sections.relances')
+            </div>
+        </div>
+
         <!-- SECTION: ADMINISTRATION -->
         @if(Auth::user()->role === 'admin')
         <div id="section-utilisateurs" role="tabpanel" aria-labelledby="nav-link-utilisateurs" class="section-pane hidden opacity-0 translate-y-4">
@@ -235,11 +254,13 @@
                 // Singleton access
                 window.dashboard = this;
 
-                // Intercepter les clics sur les liens de navigation
-                document.querySelectorAll('[data-show-section]').forEach(link => {
+                // Intercepter les clics sur les liens de navigation (Dashboard & Sidebar)
+                document.querySelectorAll('[data-show-section], [data-target]').forEach(link => {
                     link.addEventListener('click', (e) => {
+                        const sectionId = link.getAttribute('data-show-section') || link.getAttribute('data-target');
+                        if (!sectionId) return;
+                        
                         e.preventDefault();
-                        const sectionId = link.getAttribute('data-show-section');
                         this.show(sectionId);
 
                         // Fermer la sidebar sur mobile si elle est ouverte
@@ -349,21 +370,21 @@
             }
 
             updateSidebarUI(sectionId) {
-                document.querySelectorAll('.sidebar-nav-link').forEach(link => {
-                    const isTarget = link.getAttribute('data-show-section') === sectionId;
+                document.querySelectorAll('.sidebar-link').forEach(link => {
+                    const isTarget = link.getAttribute('data-target') === sectionId || link.getAttribute('data-show-section') === sectionId;
                     link.setAttribute('aria-selected', isTarget ? 'true' : 'false');
 
                     if (isTarget) {
-                        link.classList.remove('text-gray-400', 'hover:text-white', 'hover:bg-[#1e3342]');
-                        link.classList.add('bg-[#cb2d2d]', 'text-white', 'shadow-md');
+                        link.classList.remove('text-gray-400', 'hover:text-white', 'hover:bg-white/5');
+                        link.classList.add('text-white', 'bg-gradient-to-r', 'from-[#cb2d2d]/20', 'to-transparent', 'border-[#cb2d2d]');
                         // Icône couleur
                         const svg = link.querySelector('svg');
-                        if (svg) svg.classList.replace('text-gray-500', 'text-white');
+                        if (svg) svg.classList.remove('opacity-70');
                     } else {
-                        link.classList.remove('bg-[#cb2d2d]', 'text-white', 'shadow-md');
-                        link.classList.add('text-gray-400', 'hover:text-white', 'hover:bg-[#1e3342]');
+                        link.classList.add('text-gray-400', 'hover:text-white', 'hover:bg-white/5');
+                        link.classList.remove('text-white', 'bg-gradient-to-r', 'from-[#cb2d2d]/20', 'to-transparent', 'border-[#cb2d2d]');
                         const svg = link.querySelector('svg');
-                        if (svg) svg.classList.replace('text-white', 'text-gray-500');
+                        if (svg) svg.classList.add('opacity-70');
                     }
                 });
             }

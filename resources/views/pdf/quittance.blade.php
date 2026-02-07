@@ -4,254 +4,415 @@
     <meta charset="utf-8">
     <title>Quittance de Loyer - {{ $loyer->contrat->locataire->nom ?? 'Locataire' }}</title>
     <style>
-        @page { margin: 30px; }
+        @page { 
+            margin: 0; 
+            size: A4;
+        }
         body {
             font-family: 'Helvetica', 'Arial', sans-serif;
             font-size: 11px;
-            color: #333;
-            line-height: 1.3;
+            color: #1e293b;
+            line-height: 1.6;
+            background-color: #fff;
+            margin: 0;
+            padding: 0;
         }
 
-        /* Brand Colors */
-        .text-brand { color: #274256; }
-        .bg-brand { background-color: #274256; color: white; }
-
-        .header {
-            border-bottom: 2px solid #274256;
-            padding-bottom: 15px;
-            margin-bottom: 25px;
+        .page {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            padding: 40px 50px;
+            box-sizing: border-box;
         }
-        .logo-text {
-            font-size: 18px;
+
+        /* Essential Colors */
+        .text-primary { color: #cb2d2d; }
+        .text-secondary { color: #1a2e3d; }
+        .bg-secondary { background-color: #1a2e3d; }
+
+        /* Decorative Watermark */
+        .watermark {
+            position: absolute;
+            top: 55%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-35deg);
+            font-size: 100px;
             font-weight: 900;
-            color: #274256;
+            color: rgba(203, 45, 45, 0.03);
+            white-space: nowrap;
+            z-index: -1;
             text-transform: uppercase;
+            letter-spacing: 15px;
         }
-        .logo-sub {
-            font-size: 8px;
+
+        /* Header */
+        .header {
+            width: 100%;
+            margin-bottom: 35px;
+        }
+        .header-content {
+            border-bottom: 3px solid #cb2d2d;
+            padding-bottom: 25px;
+        }
+        .agency-name {
+            font-size: 24px;
+            font-weight: 900;
+            color: #1a2e3d;
+            letter-spacing: -1px;
+            margin: 0;
+        }
+        .agency-info {
+            font-size: 9.5px;
             color: #64748b;
+            line-height: 1.5;
+            margin-top: 8px;
+        }
+
+        /* Document Title Badge */
+        .doc-title-section {
+            text-align: right;
+            margin-top: -85px;
+        }
+        .doc-title {
+            display: inline-block;
+            background-color: #1a2e3d;
+            color: #fff;
+            padding: 10px 30px;
+            border-radius: 4px;
+            font-size: 15px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            box-shadow: 0 4px 6px rgba(26, 46, 61, 0.1);
+        }
+        .doc-ref {
+            display: block;
+            font-size: 9px;
+            color: #94a3b8;
+            margin-top: 10px;
+            font-weight: 800;
             letter-spacing: 1px;
             text-transform: uppercase;
         }
 
-        .doc-title {
-            text-align: center;
-            font-size: 18px;
-            font-weight: bold;
-            text-transform: uppercase;
-            color: #274256;
-            margin-bottom: 5px;
-            border: 1px solid #274256;
-            padding: 8px;
-            border-radius: 4px;
-            background-color: #f8fafc;
-        }
-
+        /* Info Grid - Main Content */
         .info-grid {
             width: 100%;
+            margin: 30px 0;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+        .info-card {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            padding: 20px;
+            border-radius: 12px;
             margin-bottom: 20px;
         }
-        .info-box {
-            background-color: #f1f5f9;
-            padding: 12px;
-            border-radius: 6px;
-            height: 85px;
+        .info-col {
+            width: 48%;
+            vertical-align: top;
         }
-        .box-title {
-            font-size: 9px;
-            font-weight: bold;
-            color: #64748b;
-            text-transform: uppercase;
-            border-bottom: 1px solid #cbd5e1;
-            padding-bottom: 3px;
-            margin-bottom: 8px;
-        }
+        .spacer-col { width: 4%; }
 
-        .main-content {
-            margin: 20px 0;
-            line-height: 1.5;
-            text-align: justify;
-        }
-
-        .amount-box {
-            text-align: center;
-            margin: 20px 0;
-            padding: 15px;
-            background-color: #ecfdf5;
-            border: 1px dashed #059669;
-            border-radius: 8px;
-        }
-        .amount-value {
-            font-size: 20px;
+        .card-label {
+            font-size: 8.5px;
             font-weight: 900;
-            color: #047857;
+            color: #cb2d2d;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 5px;
         }
-        .amount-text {
-            font-size: 11px;
-            color: #065f46;
+        .card-value { 
+            font-size: 12px; 
+            font-weight: 800; 
+            color: #1a2e3d; 
+            margin-top: 5px;
+        }
+        .card-subtext { 
+            font-size: 10px; 
+            color: #64748b; 
+            margin-top: 5px;
+            line-height: 1.4;
+        }
+
+        /* Narrative Statement */
+        .narration {
+            background-color: #fff;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-left: 5px solid #cb2d2d;
+            font-size: 11.5px;
+            color: #334155;
+            background: linear-gradient(to right, #fef2f2, #ffffff);
             font-style: italic;
         }
 
-        .details-table {
+        /* Table */
+        .receipt-table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 25px;
+            margin-top: 10px;
         }
-        .details-table th {
+        .receipt-table th {
+            background-color: #1a2e3d;
+            color: #fff;
             text-align: left;
-            padding: 8px;
-            background-color: #274256;
-            color: white;
+            padding: 12px 20px;
             font-size: 9px;
+            font-weight: 900;
             text-transform: uppercase;
+            letter-spacing: 1px;
         }
-        .details-table td {
-            padding: 8px;
-            border-bottom: 1px solid #e2e8f0;
+        .receipt-table th.right { text-align: right; }
+        
+        .receipt-table td {
+            padding: 18px 20px;
+            border-bottom: 1px solid #f1f5f9;
+            vertical-align: middle;
         }
+        .receipt-table .desc { color: #1a2e3d; font-weight: 700; font-size: 11px; }
+        .receipt-table .sub-desc { color: #94a3b8; font-size: 9px; font-weight: normal; margin-top: 3px; }
+        .receipt-table .amount { text-align: right; font-weight: 900; color: #1a2e3d; font-size: 12px; }
 
-        .signature {
-            border-top: 1px solid #e2e8f0;
-            padding-top: 15px;
-            margin-top: 30px;
+        /* Totals Block */
+        .totals-section {
+            width: 100%;
+            margin-top: 25px;
         }
-        .stamp-box {
+        .totals-box {
             float: right;
-            width: 180px;
-            height: 80px;
-            border: 1px solid #cbd5e1;
-            background-color: #f8fafc;
-            text-align: center;
-            padding-top: 60px;
-            font-size: 9px;
-            color: #94a3b8;
+            width: 250px;
+            padding: 0;
+        }
+        .total-row {
+            padding: 10px 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        .total-label { font-size: 10px; font-weight: 700; color: #94a3b8; text-transform: uppercase; }
+        .total-val { font-size: 13px; font-weight: 800; color: #1a2e3d; text-align: right; float: right; }
+        
+        .final-total {
+            background-color: #cb2d2d;
+            color: #fff;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-top: 10px;
+            box-shadow: 0 4px 12px rgba(203, 45, 45, 0.2);
+        }
+        .final-label { font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; }
+        .final-val { font-size: 20px; font-weight: 900; text-align: right; float: right; line-height: 1; }
+
+        /* Stamp */
+        .paid-stamp {
+            position: absolute;
+            bottom: 220px;
+            right: 280px;
+            width: 130px;
+            height: 130px;
+            border: 6px solid #10b981;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transform: rotate(-20deg);
+            opacity: 0.12;
+            z-index: 10;
+        }
+        .stamp-text {
+            font-size: 30px;
+            font-weight: 900;
+            color: #10b981;
+            text-transform: uppercase;
+            letter-spacing: 4px;
         }
 
+        /* Footer & Signatures */
         .footer {
-            position: fixed;
-            bottom: -15px;
+            position: absolute;
+            bottom: 50px;
+            left: 50px;
+            right: 50px;
+        }
+        .signature-area {
+            width: 100%;
+            margin-bottom: 40px;
+        }
+        .sign-box {
+            border: 1px dashed #cbd5e1;
+            background-color: #f8fafc;
+            border-radius: 8px;
+            height: 110px;
+            position: relative;
+        }
+        .sign-label {
+            position: absolute;
+            top: 15px;
             left: 0;
             right: 0;
             text-align: center;
             font-size: 8px;
+            font-weight: 900;
             color: #94a3b8;
-            border-top: 1px solid #e2e8f0;
-            padding-top: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
+        .bottom-legal {
+            text-align: center;
+            font-size: 8.5px;
+            color: #94a3b8;
+            border-top: 1px solid #f1f5f9;
+            padding-top: 20px;
+            line-height: 1.6;
+        }
+
+        .clearfix { clear: both; }
     </style>
 </head>
 <body>
-    <!-- HEADER -->
-    <div class="header">
-        <table style="width: 100%;">
+    <div class="page">
+        <div class="watermark">ONTARIO GROUP</div>
+
+        <!-- HEADER -->
+        <div class="header">
+            <div class="header-content">
+                <table width="100%">
+                    <tr>
+                        <td width="50%" valign="bottom">
+                            <h1 class="agency-name">ONTARIO GROUP S.A.</h1>
+                            <div class="agency-info">
+                                <strong>Pionnier de la Gestion Immobilière au Sénégal</strong><br>
+                                Siége Social : 5 Félix Faure x Colbert, Dakar Plateau<br>
+                                NINEA : 006421045 2G3 | RCCM : SN.DKR.2017.B.15234<br>
+                                <strong>Assistance :</strong> +221 33 822 32 67 | commercial@ontariogroup.net
+                            </div>
+                        </td>
+                        <td width="50%" align="right" valign="top">
+                            <img src="{{ public_path('images/ontorio-logo.png') }}" style="max-height: 75px;">
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            
+            <div class="doc-title-section">
+                <div class="doc-title">Quittance de Loyer</div>
+                <div class="doc-ref">N° Q{{ date('Y') }}-{{ str_pad($loyer->id, 4, '0', STR_PAD_LEFT) }} | ÉTABLI LE {{ date('d/m/Y') }}</div>
+            </div>
+        </div>
+
+        <!-- INFO GRID -->
+        <table class="info-grid">
             <tr>
-                <td style="width: 50%; vertical-align: top;">
-                    <img src="{{ public_path('images/ontorio-logo.png') }}" alt="Ontario Group Logo" style="max-height: 60px; margin-bottom: 5px;">
-                    <div class="logo-sub">Bien loger dans un bon logement</div>
-                    <div style="margin-top: 10px; font-size: 10px; color: #64748b;">
-                        5 Félix Faure x Colbert<br>
-                        Dakar Plateau, Sénégal<br>
-                        BP 06813
+                <td class="info-col">
+                    <div class="info-card">
+                        <div class="card-label">Identité du Locataire</div>
+                        <div class="card-value">{{ strtoupper($loyer->contrat->locataire->nom) }}</div>
+                        <div class="card-subtext">
+                            <strong>Référence Dossier :</strong> LOC-{{ str_pad($loyer->contrat->locataire->id, 3, '0', STR_PAD_LEFT) }}<br>
+                            <strong>Tél :</strong> {{ $loyer->contrat->locataire->telephone ?? 'N/A' }}
+                        </div>
                     </div>
                 </td>
-                <td style="width: 50%; text-align: right; vertical-align: top; font-size: 10px;">
-                    <strong>Contact Agence</strong><br>
-                    Tél : +221 33 822 32 67 / 33 842 05 80<br>
-                    Mobile : 78 105 35 54<br>
-                    Email : commercial@ontariogroup.net
+                <td class="spacer-col"></td>
+                <td class="info-col">
+                    <div class="info-card">
+                        <div class="card-label">Désignation du Bien</div>
+                        <div class="card-value">{{ $loyer->contrat->bien->nom }}</div>
+                        <div class="card-subtext">
+                            <strong>Type :</strong> {{ ucfirst($loyer->contrat->bien->type) }}<br>
+                            <strong>Adresse :</strong> {{ $loyer->contrat->bien->adresse ?? 'Dakar, Sénégal' }}
+                        </div>
+                    </div>
                 </td>
             </tr>
         </table>
-    </div>
 
-    <div class="doc-title">QUITTANCE DE LOYER</div>
-
-    <!-- INFOS -->
-    <table class="info-grid" cellpadding="0" cellspacing="10">
-        <tr>
-            <td width="50%">
-                <div class="info-box">
-                    <div class="box-title">Bailleur / Propriétaire</div>
-                    <strong>ONTARIO GROUP S.A.</strong><br>
-                    Pour le compte du propriétaire.<br>
-                    <i>Gestion Immobilière & Patrimoine</i>
-                </div>
-            </td>
-            <td width="50%">
-                <div class="info-box">
-                    <div class="box-title">Locataire</div>
-                    <strong>{{ strtoupper($loyer->contrat->locataire->nom) }}</strong><br>
-                    {{ $loyer->contrat->bien->adresse ?? $loyer->contrat->bien->ville }}<br>
-                    Contrat #C-{{ $loyer->contrat->id }}
-                </div>
-            </td>
-        </tr>
-    </table>
-
-    <!-- TEXTE PRINCIPAL -->
-    <div class="main-content">
-        Je soussigné, <strong>ONTARIO GROUP S.A.</strong>, agissant en qualité de gérant de l'immeuble/bien sis �
-        <strong>{{ $loyer->contrat->bien->nom }}</strong>,
-        déclare avoir reçu de Monsieur/Madame <strong>{{ $loyer->contrat->locataire->nom }}</strong>,
-        la somme indiquée ci-dessous, en paiement du loyer et des charges pour la période de :
-        <strong>{{ \Carbon\Carbon::parse($loyer->mois)->translatedFormat('F Y') }}</strong>.
-    </div>
-
-    <!-- MONTANT -->
-    <div class="amount-box">
-        <div class="amount-value">{{ number_format($loyer->montant, 0, ',', ' ') }} F CFA</div>
-        <div class="amount-text">Détail : Loyer {{ number_format($loyer->montant, 0, ',', ' ') }} F</div>
-    </div>
-
-    <!-- TABLEAU DETAIL -->
-    <table class="details-table">
-        <thead>
-            <tr>
-                <th width="50%">Désignation</th>
-                <th width="25%">Période</th>
-                <th width="25%" style="text-align: right;">Montant Payé</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>
-                    <strong>Loyer d'habitation</strong><br>
-                    <span style="font-size: 10px; color: #64748b;">{{ $loyer->contrat->bien->nom }} - {{ ucfirst($loyer->contrat->bien->type) }}</span>
-                </td>
-                <td>{{ \Carbon\Carbon::parse($loyer->mois)->translatedFormat('F Y') }}</td>
-                <td style="text-align: right; font-weight: bold;">{{ number_format($loyer->montant, 0, ',', ' ') }} F</td>
-            </tr>
-            <!-- Ligne vide pour aérer si besoin ou charges -->
-        </tbody>
-        <tfoot>
-            <tr>
-                <td colspan="2" style="border-bottom: none; text-align: right; padding-top: 15px; font-weight: bold;">TOTAL PERÇU</td>
-                <td style="border-bottom: none; text-align: right; padding-top: 15px; font-weight: bold; background-color: #f8fafc;">{{ number_format($loyer->montant, 0, ',', ' ') }} F</td>
-            </tr>
-        </tfoot>
-    </table>
-
-    <div style="font-size: 11px; color: #64748b; font-style: italic; margin-bottom: 30px;">
-        Cette quittance annule tous les reçus qui auraient pu être donnés pour acompte versé sur le présent terme.
-        En cas de congé, elle vaudra pièce justificative pour l'établissement de l'état des lieux de sortie.
-    </div>
-
-    <!-- SIGNATURE -->
-    <div class="signature">
-        <div style="float: left; margin-top: 20px;">
-            Fait à <strong>Dakar</strong>, le <strong>{{ $loyer->date_paiement ? \Carbon\Carbon::parse($loyer->date_paiement)->format('d/m/Y') : date('d/m/Y') }}</strong><br>
-            <span style="font-size: 10px; color: #94a3b8;">Référence Paiement : {{ $loyer->paiements->first()->reference ?? 'ESP-' . $loyer->id }}</span>
+        <!-- STATEMENT -->
+        <div class="narration">
+            Nous, <strong>ONTARIO GROUP S.A.</strong>, certifions avoir reçu de M./Mme/Mlle <strong>{{ $loyer->contrat->locataire->nom }}</strong>,
+            la somme de <strong>{{ number_format($loyer->montant + ($loyer->penalite ?? 0), 0, ',', ' ') }} FCFA</strong>
+            en règlement libératoire du loyer pour le mois de <strong>{{ \Carbon\Carbon::parse($loyer->mois)->translatedFormat('F Y') }}</strong>.
         </div>
 
-        <div class="stamp-box">
-            Cachet et Signature
-        </div>
-        <div style="clear: both;"></div>
-    </div>
+        <!-- LINE ITEMS -->
+        <table class="receipt-table">
+            <thead>
+                <tr>
+                    <th width="70%">Description des Terminologies du Loyer</th>
+                    <th width="30%" class="right">Montant (FCFA)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <div class="desc">Loyer Principal</div>
+                        <div class="sub-desc">Appel de loyer standard pour la période {{ \Carbon\Carbon::parse($loyer->mois)->translatedFormat('F Y') }}</div>
+                    </td>
+                    <td class="amount">{{ number_format($loyer->montant, 0, ',', ' ') }}</td>
+                </tr>
+                @if($loyer->penalite > 0)
+                <tr>
+                    <td>
+                        <div class="desc" style="color: #cb2d2d;">Pénalités de Retard</div>
+                        <div class="sub-desc">Frais administratifs suite au retard de régularisation</div>
+                    </td>
+                    <td class="amount" style="color: #cb2d2d;">{{ number_format($loyer->penalite, 0, ',', ' ') }}</td>
+                </tr>
+                @endif
+            </tbody>
+        </table>
 
-    <!-- FOOTER -->
-    <div class="footer">
-        Quittance #Q-{{ $loyer->id }}-{{ date('Y') }} | Généré le {{ date('d/m/Y H:i') }} | Page 1/1
+        <!-- TOTALS AREA -->
+        <div class="totals-section">
+            <div class="totals-box">
+                <div class="total-row">
+                    <span class="total-label">Sous-total HT</span>
+                    <span class="total-val">{{ number_format($loyer->montant + ($loyer->penalite ?? 0), 0, ',', ' ') }}</span>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="final-total">
+                    <span class="final-label">Net Perçu</span>
+                    <span class="final-val">{{ number_format($loyer->montant + ($loyer->penalite ?? 0), 0, ',', ' ') }} F</span>
+                    <div class="clearfix"></div>
+                </div>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+
+        @if($loyer->reste_a_payer == 0)
+        <div class="paid-stamp">
+            <div class="stamp-text">PAYÉ</div>
+        </div>
+        @endif
+
+        <!-- SIGNATURES & FOOTER -->
+        <div class="footer">
+            <table width="100%" class="signature-area">
+                <tr>
+                    <td width="65%" style="font-size: 9px; color: #64748b; padding-right: 50px;">
+                        <div style="font-weight: 900; color: #1a2e3d; text-transform: uppercase; margin-bottom: 8px; letter-spacing: 0.5px;">Informations de Paiement</div>
+                        <strong>Mode de versement :</strong> {{ $loyer->mode_paiement ?? 'Espèces / Chèque / Virement' }}<br>
+                        <strong>Date d'encaissement :</strong> {{ $loyer->date_paiement ? \Carbon\Carbon::parse($loyer->date_paiement)->format('d/m/Y') : date('d/m/Y') }}<br>
+                        <br>
+                        <em>La présente quittance libère le locataire pour le mois indiqué. Elle n'emporte pas présomption de paiement des termes antérieurs non encore soldés.</em>
+                    </td>
+                    <td width="35%">
+                        <div class="sign-box">
+                            <div class="sign-label">Cachet de l'Agence & Signature</div>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+
+            <div class="bottom-legal">
+                <strong>ONTARIO GROUP S.A.</strong> - Société Anonyme au capital de 10.000.000 FCFA<br>
+                Une plateforme éditée par le département digital de Ontario Group.<br>
+                L'authenticité de ce document peut être vérifiée sur notre portail client : https://ontariogroup.net
+            </div>
+        </div>
     </div>
 </body>
 </html>

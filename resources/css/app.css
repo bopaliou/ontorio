@@ -328,20 +328,14 @@
 }
 
 /* Inputs généraux - MODE ULTRA COMPACT */
-input[type="text"],
-input[type="email"],
-input[type="password"],
-input[type="number"],
-input[type="tel"],
-input[type="date"],
-input[type="url"],
+input:not(.pl-16):not(.pl-14),
 select,
 textarea {
-    padding: 0.5rem 0.75rem !important;
+    padding: 0.5rem 0.75rem;
     /* Très compact: 8px 12px */
     font-size: 0.875rem !important;
     /* 14px */
-    font-weight: 500 !important;
+    font-weight: 500;
     border-radius: 0.5rem !important;
     border: 2px solid var(--gray-200) !important;
     background-color: var(--gray-50) !important;
@@ -349,6 +343,12 @@ textarea {
     height: auto !important;
     min-height: 38px !important;
     /* Force une hauteur minimale raisonnable */
+}
+
+/* Helper for inputs with icons - Fixes overlap */
+.input-with-icon-left {
+    padding-left: 4.5rem !important;
+    /* Fixed padding to clear icon */
 }
 
 input:hover,

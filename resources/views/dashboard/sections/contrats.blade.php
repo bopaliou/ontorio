@@ -165,8 +165,8 @@
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <!-- Bien -->
-                            <div class="col-span-1 md:col-span-2 relative bg-gray-50 rounded-xl border border-gray-200 px-3 py-2 focus-within:ring-2 focus-within:ring-[#cb2d2d]/10 focus-within:border-[#cb2d2d] transition-all">
-                                <label class="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Bien Immobilier (Libre)</label>
+                            <div class="col-span-1 md:col-span-2 relative bg-gray-50 rounded-2xl border-2 border-gray-100 px-4 py-3 focus-within:ring-4 focus-within:ring-[#cb2d2d]/5 focus-within:border-[#cb2d2d] transition-all duration-300">
+                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[2px] mb-1">Bien Immobilier (Libre)</label>
                                 <select name="bien_id" id="con-input-bien" class="block w-full bg-transparent border-none p-0 text-base sm:text-sm font-bold text-gray-900 focus:ring-0 appearance-none cursor-pointer">
                                     <option value="">Sélectionner un bien...</option>
                                     @foreach($data['biens_list']->whereIn('statut', ['libre', 'disponible']) as $bien)
@@ -176,8 +176,8 @@
                             </div>
 
                             <!-- Locataire -->
-                            <div class="col-span-1 md:col-span-2 relative bg-gray-50 rounded-xl border border-gray-200 px-3 py-2 focus-within:ring-2 focus-within:ring-[#cb2d2d]/10 focus-within:border-[#cb2d2d] transition-all">
-                                <label class="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Locataire</label>
+                            <div class="col-span-1 md:col-span-2 relative bg-gray-50 rounded-2xl border-2 border-gray-100 px-4 py-3 focus-within:ring-4 focus-within:ring-[#cb2d2d]/5 focus-within:border-[#cb2d2d] transition-all duration-300">
+                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[2px] mb-1">Locataire</label>
                                 <select name="locataire_id" id="con-input-locataire" class="block w-full bg-transparent border-none p-0 text-base sm:text-sm font-bold text-gray-900 focus:ring-0 appearance-none cursor-pointer">
                                     <option value="">Choisir un locataire...</option>
                                     @foreach($data['locataires_list'] as $loc)
@@ -187,26 +187,26 @@
                             </div>
 
                             <!-- Loyer -->
-                            <div class="relative bg-gray-50 rounded-xl border border-gray-200 px-3 py-2 focus-within:ring-2 focus-within:ring-[#cb2d2d]/10 focus-within:border-[#cb2d2d] transition-all">
-                                <label class="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Loyer Mensuel</label>
-                                <input type="number" name="loyer_montant" id="con-input-loyer" required class="block w-full bg-transparent border-none p-0 text-base sm:text-sm font-bold text-gray-900 placeholder-gray-300 focus:ring-0 text-right" placeholder="0">
+                            <div class="relative bg-gray-50 rounded-2xl border-2 border-gray-100 px-4 py-3 focus-within:ring-4 focus-within:ring-[#cb2d2d]/5 focus-within:border-[#cb2d2d] transition-all duration-300">
+                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[2px] mb-1">Loyer Mensuel (F)</label>
+                                <input type="number" name="loyer_montant" id="con-input-loyer" required class="block w-full bg-transparent border-none p-0 text-base sm:text-sm font-bold text-gray-900 focus:ring-0 text-right font-mono" placeholder="0">
                             </div>
 
                             <!-- Date Début -->
-                            <div class="relative bg-gray-50 rounded-xl border border-gray-200 px-3 py-2 focus-within:ring-2 focus-within:ring-[#cb2d2d]/10 focus-within:border-[#cb2d2d] transition-all">
-                                <label class="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Date d'entrée</label>
+                            <div class="relative bg-gray-50 rounded-2xl border-2 border-gray-100 px-4 py-3 focus-within:ring-4 focus-within:ring-[#cb2d2d]/5 focus-within:border-[#cb2d2d] transition-all duration-300">
+                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[2px] mb-1">Date d'entrée</label>
                                 <input type="date" name="date_debut" id="con-input-date" required value="{{ date('Y-m-d') }}" class="block w-full bg-transparent border-none p-0 text-base sm:text-sm font-bold text-gray-900 focus:ring-0">
                             </div>
 
                             <!-- Date Fin -->
-                            <div class="relative bg-gray-50 rounded-xl border border-gray-200 px-3 py-2 focus-within:ring-2 focus-within:ring-[#cb2d2d]/10 focus-within:border-[#cb2d2d] transition-all">
-                                <label class="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Date de Fin (Facultatif)</label>
+                            <div class="relative bg-gray-50 rounded-2xl border-2 border-gray-100 px-4 py-3 focus-within:ring-4 focus-within:ring-[#cb2d2d]/5 focus-within:border-[#cb2d2d] transition-all duration-300">
+                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[2px] mb-1">Date de Fin</label>
                                 <input type="date" name="date_fin" id="con-input-date-fin" class="block w-full bg-transparent border-none p-0 text-base sm:text-sm font-bold text-gray-900 focus:ring-0">
                             </div>
 
                             <!-- Type de Bail -->
-                            <div class="relative bg-gray-50 rounded-xl border border-gray-200 px-3 py-2 focus-within:ring-2 focus-within:ring-[#cb2d2d]/10 focus-within:border-[#cb2d2d] transition-all">
-                                <label class="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Type de Bail</label>
+                            <div class="relative bg-gray-50 rounded-2xl border-2 border-gray-100 px-4 py-3 focus-within:ring-4 focus-within:ring-[#cb2d2d]/5 focus-within:border-[#cb2d2d] transition-all duration-300">
+                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[2px] mb-1">Type de Bail</label>
                                 <select name="type_bail" id="con-input-type-bail" class="block w-full bg-transparent border-none p-0 text-base sm:text-sm font-bold text-gray-900 focus:ring-0 appearance-none cursor-pointer">
                                     <option value="habitation">Habitation</option>
                                     <option value="commercial">Commercial</option>
@@ -214,22 +214,16 @@
                                 </select>
                             </div>
 
-                            <!-- Date de Signature -->
-                            <div class="relative bg-gray-50 rounded-xl border border-gray-200 px-3 py-2 focus-within:ring-2 focus-within:ring-[#cb2d2d]/10 focus-within:border-[#cb2d2d] transition-all">
-                                <label class="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Date de Signature</label>
-                                <input type="date" name="date_signature" id="con-input-signature" class="block w-full bg-transparent border-none p-0 text-base sm:text-sm font-bold text-gray-900 focus:ring-0">
-                            </div>
-
                             <!-- Caution -->
-                            <div class="relative bg-gray-50 rounded-xl border border-gray-200 px-3 py-2 focus-within:ring-2 focus-within:ring-[#cb2d2d]/10 focus-within:border-[#cb2d2d] transition-all">
-                                <label class="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Caution (Garantie)</label>
-                                <input type="number" name="caution" id="con-input-caution" class="block w-full bg-transparent border-none p-0 text-base sm:text-sm font-bold text-gray-900 placeholder-gray-300 focus:ring-0 text-right" placeholder="0">
+                            <div class="relative bg-gray-50 rounded-2xl border-2 border-gray-100 px-4 py-3 focus-within:ring-4 focus-within:ring-[#cb2d2d]/5 focus-within:border-[#cb2d2d] transition-all duration-300">
+                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[2px] mb-1">Caution (F)</label>
+                                <input type="number" name="caution" id="con-input-caution" class="block w-full bg-transparent border-none p-0 text-base sm:text-sm font-bold text-gray-900 focus:ring-0 text-right font-mono" placeholder="0">
                             </div>
 
                             <!-- Frais de Dossier -->
-                            <div class="relative bg-gray-50 rounded-xl border border-gray-200 px-3 py-2 focus-within:ring-2 focus-within:ring-[#cb2d2d]/10 focus-within:border-[#cb2d2d] transition-all">
-                                <label class="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Frais de Dossier</label>
-                                <input type="number" name="frais_dossier" id="con-input-frais" class="block w-full bg-transparent border-none p-0 text-base sm:text-sm font-bold text-gray-900 placeholder-gray-300 focus:ring-0 text-right" placeholder="0">
+                            <div class="relative bg-gray-50 rounded-2xl border-2 border-gray-100 px-4 py-3 focus-within:ring-4 focus-within:ring-[#cb2d2d]/5 focus-within:border-[#cb2d2d] transition-all duration-300">
+                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[2px] mb-1">Frais Dossier (F)</label>
+                                <input type="number" name="frais_dossier" id="con-input-frais" class="block w-full bg-transparent border-none p-0 text-base sm:text-sm font-bold text-gray-900 focus:ring-0 text-right font-mono" placeholder="0">
                             </div>
                         </div>
 

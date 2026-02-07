@@ -168,23 +168,25 @@
 
                         <div class="space-y-4">
                             <div>
-                                <label class="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-1.5">Bien Concerné</label>
-                                <select name="bien_id" id="dep-input-bien" required class="block w-full bg-gray-50 border-gray-200 rounded-xl text-base sm:text-sm font-bold text-gray-900 focus:ring-[#cb2d2d] focus:border-[#cb2d2d] py-2.5">
-                                    <option value="">Sélectionner un bien...</option>
-                                    @foreach($data['biens_list'] as $bien)
-                                        <option value="{{ $bien->id }}">{{ $bien->nom }}</option>
-                                    @endforeach
-                                </select>
+                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[2px] mb-1.5 ml-1">Bien Concerné</label>
+                                <div class="relative bg-gray-50 rounded-2xl border-2 border-gray-100 px-4 py-3 focus-within:ring-4 focus-within:ring-[#cb2d2d]/5 focus-within:border-[#cb2d2d] transition-all duration-300">
+                                    <select name="bien_id" id="dep-input-bien" required class="block w-full bg-transparent border-none p-0 text-base sm:text-sm font-bold text-gray-900 focus:ring-0 appearance-none cursor-pointer">
+                                        <option value="">Sélectionner un bien...</option>
+                                        @foreach($data['biens_list'] as $bien)
+                                            <option value="{{ $bien->id }}">{{ $bien->nom }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
                             </div>
 
                             <div class="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label class="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-1.5">Titre / Objet</label>
-                                    <input type="text" name="titre" id="dep-input-titre" required class="block w-full bg-gray-50 border-gray-200 rounded-xl text-base sm:text-sm font-bold text-gray-900 focus:ring-[#cb2d2d] focus:border-[#cb2d2d] py-2.5" placeholder="Ex: Réparation Plomberie">
+                                <div class="relative bg-gray-50 rounded-2xl border-2 border-gray-100 px-4 py-3 focus-within:ring-4 focus-within:ring-[#cb2d2d]/5 focus-within:border-[#cb2d2d] transition-all duration-300">
+                                    <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[2px] mb-1">Titre / Objet</label>
+                                    <input type="text" name="titre" id="dep-input-titre" required class="block w-full bg-transparent border-none p-0 text-base sm:text-sm font-bold text-gray-900 focus:ring-0" placeholder="Ex: Réparation Plomberie">
                                 </div>
-                                <div>
-                                    <label class="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-1.5">Catégorie</label>
-                                    <select name="categorie" id="dep-input-cat" required class="block w-full bg-gray-50 border-gray-200 rounded-xl text-base sm:text-sm font-bold text-gray-900 focus:ring-[#cb2d2d] focus:border-[#cb2d2d] py-2.5">
+                                <div class="relative bg-gray-50 rounded-2xl border-2 border-gray-100 px-4 py-3 focus-within:ring-4 focus-within:ring-[#cb2d2d]/5 focus-within:border-[#cb2d2d] transition-all duration-300">
+                                    <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[2px] mb-1">Catégorie</label>
+                                    <select name="categorie" id="dep-input-cat" required class="block w-full bg-transparent border-none p-0 text-base sm:text-sm font-bold text-gray-900 focus:ring-0 appearance-none cursor-pointer">
                                         <option value="maintenance">Maintenance</option>
                                         <option value="travaux">Travaux</option>
                                         <option value="taxe">Taxe</option>
@@ -195,21 +197,20 @@
                             </div>
 
                             <div class="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label class="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-1.5">Montant (F CFA)</label>
-                                    <input type="number" name="montant" id="dep-input-montant" required class="block w-full bg-gray-50 border-gray-200 rounded-xl text-base sm:text-sm font-bold text-gray-900 focus:ring-[#cb2d2d] focus:border-[#cb2d2d] py-2.5 text-right" placeholder="0">
+                                <div class="relative bg-gray-50 rounded-2xl border-2 border-gray-100 px-4 py-3 focus-within:ring-4 focus-within:ring-[#cb2d2d]/5 focus-within:border-[#cb2d2d] transition-all duration-300">
+                                    <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[2px] mb-1">Montant (F CFA)</label>
+                                    <input type="number" name="montant" id="dep-input-montant" required class="block w-full bg-transparent border-none p-0 text-base sm:text-sm font-bold text-gray-900 focus:ring-0 text-right font-mono" placeholder="0">
                                 </div>
-                                <div>
-                                    <label class="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-1.5">Date</label>
-                                    <input type="date" name="date_depense" id="dep-input-date" required value="{{ date('Y-m-d') }}" class="block w-full bg-gray-50 border-gray-200 rounded-xl text-base sm:text-sm font-bold text-gray-900 focus:ring-[#cb2d2d] focus:border-[#cb2d2d] py-2.5">
+                                <div class="relative bg-gray-50 rounded-2xl border-2 border-gray-100 px-4 py-3 focus-within:ring-4 focus-within:ring-[#cb2d2d]/5 focus-within:border-[#cb2d2d] transition-all duration-300">
+                                    <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[2px] mb-1">Date</label>
+                                    <input type="date" name="date_depense" id="dep-input-date" required value="{{ date('Y-m-d') }}" class="block w-full bg-transparent border-none p-0 text-base sm:text-sm font-bold text-gray-900 focus:ring-0">
                                 </div>
                             </div>
 
-                            <div>
-                                <label class="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-1.5">Description (Optionnel)</label>
-                                <textarea name="description" id="dep-input-desc" rows="2" class="block w-full bg-gray-50 border-gray-200 rounded-xl text-base sm:text-sm font-bold text-gray-900 focus:ring-[#cb2d2d] focus:border-[#cb2d2d]"></textarea>
+                            <div class="relative bg-gray-50 rounded-2xl border-2 border-gray-100 px-4 py-3 focus-within:ring-4 focus-within:ring-[#cb2d2d]/5 focus-within:border-[#cb2d2d] transition-all duration-300">
+                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[2px] mb-1">Description (Optionnel)</label>
+                                <textarea name="description" id="dep-input-desc" rows="2" class="block w-full bg-transparent border-none p-0 text-base sm:text-sm font-bold text-gray-900 focus:ring-0"></textarea>
                             </div>
-
                             <div class="relative bg-gray-50 rounded-xl border border-gray-200 px-3 py-3 border-dashed text-center">
                                 <input type="file" name="justificatif" id="dep-input-file" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" accept="image/*,application/pdf">
                                 <div class="flex items-center justify-center gap-2 mb-1">
