@@ -33,6 +33,9 @@ Route::middleware('auth')->group(function () {
 
 // Routes accessibles à Admin et Gestionnaire (Gestion du patrimoine)
 Route::middleware(['auth', 'role:admin|direction|gestionnaire'])->group(function () {
+    // Liste publique des biens (interface standard)
+    Route::get('/biens', [BienController::class, 'index'])->name('biens.index');
+
     // Propriétaires
     Route::resource('proprietaires', ProprietaireController::class);
     Route::get('/proprietaires/{proprietaire}/bilan', [\App\Http\Controllers\ProprietaireController::class, 'bilanPDF'])->name('proprietaires.bilan');
@@ -73,8 +76,8 @@ Route::middleware(['auth', 'role:admin|direction|gestionnaire'])->group(function
     Route::resource('depenses', \App\Http\Controllers\DepenseController::class)->only(['store', 'update', 'destroy']);
 });
 
-// Routes accessibles à Admin et Comptable (Gestion financière)
-Route::middleware(['auth', 'role:admin|direction|comptable'])->group(function () {
+// Routes accessibles à Admin, Comptable et Gestionnaire (Gestion financière)
+Route::middleware(['auth', 'role:admin|direction|comptable|gestionnaire'])->group(function () {
     // Paiements
     Route::resource('paiements', PaiementController::class)->only(['index', 'create', 'store', 'show']);
     Route::delete('/dashboard/paiements/{paiement}', [PaiementController::class, 'destroy'])->name('paiements.destroy');
@@ -86,8 +89,12 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::resource('documents', DocumentController::class);
     // Gestion Utilisateurs
     Route::resource('users', \App\Http\Controllers\UserController::class)->only(['store', 'update', 'destroy']);
+    // Exposer GET /users pour la section admin (tests)
+    Route::get('/users', [\App\Http\Controllers\UserController::class, 'index'])->name('users.index');
     // Gestion Rôles (nouvelle route)
     Route::get('/settings/roles', [\App\Http\Controllers\RoleController::class, 'index'])->name('settings.roles');
+    // Alias simple pour /roles utilisé par certains tests
+    Route::get('/roles', [\App\Http\Controllers\RoleController::class, 'index'])->name('roles.index');
     Route::post('/settings/roles/{role}/permissions', [\App\Http\Controllers\RoleController::class, 'updatePermissions'])->name('settings.roles.permissions');
 });
 

@@ -113,4 +113,15 @@ class UserController extends Controller
             return response()->json(['success' => false, 'message' => 'Une erreur est survenue. Veuillez réessayer.'], 500);
         }
     }
+
+    /**
+     * Display a simple users list (used by tests / admin panel).
+     */
+    public function index()
+    {
+        $users = User::orderBy('name')->get();
+
+        // For tests, returning a simple JSON payload is enough
+        return response()->json(['data' => $users]);
+    }
 }

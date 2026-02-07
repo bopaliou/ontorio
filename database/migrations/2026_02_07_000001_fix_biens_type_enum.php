@@ -17,6 +17,11 @@ return new class extends Migration
     public function up(): void
     {
         // Utiliser du SQL brut pour modifier l'ENUM (Laravel Blueprint ne supporte pas bien les ENUM)
+        // SQLite (tests) ne supporte pas MODIFY - sauter la modification en mémoire
+        if (DB::getDriverName() === 'sqlite') {
+            return;
+        }
+
         DB::statement("ALTER TABLE biens MODIFY COLUMN type ENUM('appartement', 'villa', 'studio', 'bureau', 'magasin', 'entrepot', 'immeuble', 'autre') DEFAULT 'appartement'");
     }
 
@@ -26,6 +31,10 @@ return new class extends Migration
     public function down(): void
     {
         // Revenir à l'ENUM original (sans 'immeuble')
+        if (DB::getDriverName() === 'sqlite') {
+            return;
+        }
+
         DB::statement("ALTER TABLE biens MODIFY COLUMN type ENUM('appartement', 'villa', 'studio', 'bureau', 'magasin', 'entrepot', 'autre') DEFAULT 'appartement'");
     }
 };

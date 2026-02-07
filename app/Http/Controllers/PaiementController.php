@@ -12,6 +12,24 @@ use Illuminate\Support\Facades\Validator;
 class PaiementController extends Controller
 {
     /**
+     * Display a listing of payments.
+     */
+    public function index(Request $request)
+    {
+        $paiements = Paiement::with('loyer')->get();
+
+        return response()->json(['data' => $paiements], 200);
+    }
+
+    /**
+     * Display the specified payment.
+     */
+    public function show(Paiement $paiement)
+    {
+        return response()->json(['data' => $paiement], 200);
+    }
+
+    /**
      * Store a newly created payment in storage.
      */
     public function store(Request $request)
@@ -20,7 +38,8 @@ class PaiementController extends Controller
             'loyer_id' => 'required|exists:loyers,id',
             'montant' => 'required|numeric|min:0',
             'date_paiement' => 'required|date',
-            'mode' => 'nullable|string',
+            // Accepted payment modes
+            'mode' => 'nullable|in:espèces,virement,chèque,mobile_money',
             'preuve' => 'nullable|file|mimes:pdf,jpg,jpeg,png,webp,gif|max:5120',
         ]);
 
@@ -74,7 +93,7 @@ class PaiementController extends Controller
                 'success' => true,
                 'message' => 'Paiement enregistré avec succès !',
                 'data' => $paiement,
-            ]);
+            ], 201);
 
         } catch (\Exception $e) {
             DB::rollBack();

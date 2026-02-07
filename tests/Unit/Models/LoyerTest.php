@@ -10,6 +10,8 @@ use Tests\TestCase;
 
 class LoyerTest extends TestCase
 {
+    use \Illuminate\Foundation\Testing\RefreshDatabase;
+    
     /**
      * Test: Calcul montant payé avec eager loading
      */
@@ -69,13 +71,13 @@ class LoyerTest extends TestCase
             'statut' => 'partiellement_payé',
         ]);
 
-        // Ajouter un paiement de 50k
+        // Ajouter un paiement de 50k (pas besoin d'user pour ce test)
         Paiement::create([
             'loyer_id' => $loyer->id,
             'montant' => 50000,
             'date_paiement' => now()->toDateString(),
             'mode' => 'virement',
-            'user_id' => 1,
+            'user_id' => null,
         ]);
 
         // Recharger avec eager loading

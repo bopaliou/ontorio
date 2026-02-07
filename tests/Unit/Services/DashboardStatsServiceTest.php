@@ -14,6 +14,8 @@ use Tests\TestCase;
 
 class DashboardStatsServiceTest extends TestCase
 {
+    use \Illuminate\Foundation\Testing\RefreshDatabase;
+    
     private DashboardStatsService $service;
 
     protected function setUp(): void
@@ -80,12 +82,13 @@ class DashboardStatsServiceTest extends TestCase
         ]);
 
         // Paiement de 50k (50% du loyer)
+        // Paiement sans user (utile pour calcul des KPI)
         Paiement::create([
             'loyer_id' => $loyer->id,
             'montant' => 50000,
             'date_paiement' => now()->toDateString(),
             'mode' => 'virement',
-            'user_id' => 1,
+            'user_id' => null,
         ]);
 
         $kpis = $this->service->getFinancialKPIs('2026-02');

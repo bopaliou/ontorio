@@ -17,4 +17,21 @@ class Paiement extends Model
     {
         return $this->belongsTo(Loyer::class);
     }
+
+    protected static function booted()
+    {
+        static::created(function (self $paiement) {
+            $loyer = $paiement->loyer;
+
+            if (! $loyer) {
+                return;
+            }
+
+            $totalPaid = (int) $loyer->paiements()->sum('montant');
+
+            if ($totalPaid >= (int) $loyer->montant) {
+                $loyer->update(['statut' => 'payé']);
+            }
+        });
+    }
 }

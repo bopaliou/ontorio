@@ -13,6 +13,8 @@ use Tests\TestCase;
 
 class PaiementControllerTest extends TestCase
 {
+    use \Illuminate\Foundation\Testing\RefreshDatabase;
+    
     protected User $user;
     protected Contrat $contrat;
     protected Loyer $loyer;
@@ -126,5 +128,6 @@ class PaiementControllerTest extends TestCase
         // Le loyer devrait passer à 'payé'
         $this->loyer->refresh();
         // Note: vérifier que le controller met bien à jour le statut
+        $this->assertSame('payé', $this->loyer->statut);
     }
 }

@@ -75,7 +75,10 @@ class Loyer extends Model
         $now = Carbon::now();
 
         if ($now->gt($echeance)) {
-            return $now->diffInDays($echeance);
+            // Retourner la différence positive entre échéance et maintenant
+            $days = $echeance->diffInDays($now);
+
+            return (int) max(0, $days);
         }
 
         return 0;

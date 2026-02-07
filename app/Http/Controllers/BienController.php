@@ -7,7 +7,7 @@ use App\Models\BienImage;
 use App\Models\Proprietaire;
 use App\Models\Contrat;
 use App\Models\Loyer;
-use App\Services\ActivityLogger;
+use App\Helpers\ActivityLogger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
