@@ -72,32 +72,36 @@ class DashboardController extends Controller
             $proprietaires = Proprietaire::withCount(['biens as logements_count'])->limit(50)->get();
         }
 
-        // Données communes optimisées (Sélection des colonnes nécessaires)
+        // Données communes optimisées (Pagination systématique et Eager Loading)
         $commonData = [
-            'biens_list' => Bien::with(['contrats:id,bien_id,statut,locataire_id,date_debut', 'contrats.locataire:id,nom,telephone', 'images', 'imagePrincipale'])
+            'biens_list' => Bien::with(['contrats.locataire', 'images', 'imagePrincipale', 'proprietaire'])
                 ->latest()
-                ->limit(50)
-                ->get(),
-            'depenses_list' => \App\Models\Depense::with('bien')->latest()->get(),
+                ->paginate(25, ['*'], 'page_biens'),
+                
+            'depenses_list' => \App\Models\Depense::with('bien.proprietaire')
+                ->latest()
+                ->paginate(25, ['*'], 'page_depenses'),
+                
             'categories_depenses' => ['maintenance', 'travaux', 'taxe', 'assurance', 'autre'],
-            'locataires_list' => Locataire::with(['contrats:id,locataire_id,bien_id,loyer_montant,statut', 'contrats.bien:id,nom', 'contrats.loyers:id,contrat_id,montant,statut'])
+            
+            'locataires_list' => Locataire::with(['contrats.bien', 'contrats.loyers'])
                 ->withCount('contrats')
                 ->latest()
-                ->limit(50)
-                ->get(),
-            'contrats_list' => Contrat::with(['bien:id,nom', 'locataire:id,nom'])
+                ->paginate(25, ['*'], 'page_locataires'),
+                
+            'contrats_list' => Contrat::with(['bien:id,nom,adresse', 'locataire:id,nom,telephone', 'loyers'])
                 ->latest()
-                ->limit(50)
-                ->get(),
+                ->paginate(25, ['*'], 'page_contrats'),
+                
             'loyers_list' => Loyer::withMontantPaye()
-                ->with(['contrat:id,locataire_id,bien_id', 'contrat.locataire:id,nom', 'contrat.bien:id,nom'])
+                ->with(['contrat.locataire', 'contrat.bien', 'paiements'])
                 ->orderBy('id', 'desc')
-                ->limit(200)
-                ->get(),
-            'paiements_list' => Paiement::with(['loyer:id,contrat_id,mois', 'loyer.contrat:id,locataire_id', 'loyer.contrat.locataire:id,nom'])
+                ->paginate(50, ['*'], 'page_loyers'),
+                
+            'paiements_list' => Paiement::with(['loyer.contrat.locataire', 'loyer.contrat.bien'])
                 ->latest()
-                ->limit(50)
-                ->get(),
+                ->paginate(50, ['*'], 'page_paiements'),
+                
             'proprietaires_list' => $proprietaires,
         ];
 

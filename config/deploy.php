@@ -11,6 +11,6 @@ return [
     |
     */
 
-    'token' => env('DEPLOY_TOKEN'),
+    'token' => env('DEPLOY_SECRET'),
 
 ];

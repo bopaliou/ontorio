@@ -12,13 +12,17 @@ class SystemController extends Controller
      * Run migrations via web request (Protected by Token)
      * Usage: /system/migrate/YOUR_SECRET_TOKEN
      */
-    public function migrate($token)
+    public function migrate(Request $request)
     {
-        // 1. Verify Token
+        // 1. Verify Token (timing-safe comparison)
+        $token = $request->input('token');
         $deployToken = config('deploy.token');
 
-        if (! $deployToken || $token !== $deployToken) {
-            Log::warning("Tentative d'accès non autorisé à la route de migration.", ['ip' => request()->ip()]);
+        if (! $deployToken || ! hash_equals($deployToken, (string) $token)) {
+            Log::warning("Tentative d'accès non autorisé à la route de migration.", [
+                'ip' => $request->ip(),
+                'user_id' => auth()->id()
+            ]);
             abort(403, 'Accès refusé.');
         }
 

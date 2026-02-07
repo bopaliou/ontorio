@@ -3,12 +3,20 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\ActivityLogger;
+use App\Http\Responses\ApiResponse;
 use App\Models\Locataire;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class LocataireController extends Controller
 {
+    protected $locataireService;
+
+    public function __construct(\App\Services\LocataireService $locataireService)
+    {
+        $this->locataireService = $locataireService;
+    }
+
     /**
      * Store a newly created locataire in storage.
      */
@@ -23,29 +31,17 @@ class LocataireController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => $validator->errors()->first(),
-                'errors' => $validator->errors(),
-            ], 422);
+            return ApiResponse::error($validator->errors()->first(), 422, $validator->errors());
         }
 
         try {
             $data = $request->only(['nom', 'email', 'telephone', 'adresse']);
             $data['pieces_identite'] = $request->cni;
-            $locataire = Locataire::create($data);
-            ActivityLogger::log('Création Locataire', "Ajout du locataire {$locataire->nom}", 'success', $locataire);
+            $locataire = $this->locataireService->createLocataire($data);
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Locataire ajouté avec succès !',
-                'data' => $locataire,
-            ]);
+            return ApiResponse::created($locataire, 'Locataire ajouté avec succès !');
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Une erreur est survenue. Veuillez réessayer.',
-            ], 500);
+            return ApiResponse::error('Une erreur est survenue. Veuillez réessayer.', 500);
         }
     }
 
@@ -63,29 +59,17 @@ class LocataireController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => $validator->errors()->first(),
-                'errors' => $validator->errors(),
-            ], 422);
+            return ApiResponse::error($validator->errors()->first(), 422, $validator->errors());
         }
 
         try {
             $data = $request->only(['nom', 'email', 'telephone', 'adresse']);
             $data['pieces_identite'] = $request->cni;
-            $locataire->update($data);
-            ActivityLogger::log('Modification Locataire', "Mise à jour du locataire {$locataire->nom}", 'info', $locataire);
+            $locataire = $this->locataireService->updateLocataire($locataire, $data);
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Locataire mis à jour !',
-                'data' => $locataire,
-            ]);
+            return ApiResponse::success($locataire, 'Locataire mis à jour !');
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Une erreur est survenue. Veuillez réessayer.',
-            ], 500);
+            return ApiResponse::error('Une erreur est survenue. Veuillez réessayer.', 500);
         }
     }
 
@@ -95,21 +79,18 @@ class LocataireController extends Controller
     public function destroy(Locataire $locataire)
     {
         try {
-            // Vérifier s'il a des contrats actifs
-            if ($locataire->contrats()->where('statut', 'actif')->exists()) {
-                return response()->json(['success' => false, 'message' => 'Impossible de supprimer ce locataire car il a des contrats actifs.'], 403);
+            // Task 3.2: Vérifier s'il a des contrats actifs
+            if ($locataire->contrats()->whereIn('statut', ['actif', 'en_attente'])->exists()) {
+                return ApiResponse::conflict('Impossible de supprimer ce locataire car il possède des contrats actifs ou en attente.');
             }
 
-            $nom = $locataire->nom;
-            $locataire->delete();
+            $this->locataireService->deleteLocataire($locataire);
 
-            ActivityLogger::log('Suppression Locataire', "Suppression du locataire {$nom}", 'warning');
-
-            return response()->json(['success' => true, 'message' => 'Locataire supprimé !']);
+            return ApiResponse::success(null, 'Locataire supprimé !');
         } catch (\Exception $e) {
             \Log::error('Erreur suppression locataire', ['id' => $locataire->id, 'error' => $e->getMessage()]);
 
-            return response()->json(['success' => false, 'message' => 'Une erreur est survenue lors de la suppression.'], 500);
+            return ApiResponse::error('Une erreur est survenue lors de la suppression.', 500);
         }
     }
 }

@@ -4,108 +4,59 @@ namespace App\Http\Controllers;
 
 use App\Helpers\ActivityLogger;
 use App\Http\Requests\StoreContratRequest;
+use App\Http\Responses\ApiResponse;
 use App\Models\Bien;
 use App\Models\Contrat;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
-
 class ContratController extends Controller
 {
+    protected $contratService;
+
+    public function __construct(\App\Services\ContratService $contratService)
+    {
+        $this->contratService = $contratService;
+    }
+
     /**
      * Store a newly created contrat in storage.
      */
     public function store(StoreContratRequest $request)
     {
-        // Validation déjà faite par StoreContratRequest
-
         // Vérifier si le bien est déjà occupé
-        $bien = Bien::find($request->bien_id);
+        $bien = \App\Models\Bien::find($request->bien_id);
         if ($bien->statut === 'occupé' && $bien->contrats()->where('statut', 'actif')->exists()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Ce bien est déjà occupé par un contrat actif.',
-            ], 422);
+            return ApiResponse::error('Ce bien est déjà occupé par un contrat actif.', 422);
         }
 
         try {
-            DB::beginTransaction();
+            $data = $request->validated();
+            $data['statut'] = 'actif';
+            $contrat = $this->contratService->createContract($data);
 
-            // 1. Créer le contrat
-            $contrat = Contrat::create([
-                'bien_id' => $request->bien_id,
-                'locataire_id' => $request->locataire_id,
-                'date_debut' => $request->date_debut,
-                'date_fin' => $request->date_fin,
-                'loyer_montant' => $request->loyer_montant,
-                'caution' => $request->caution,
-                'frais_dossier' => $request->frais_dossier,
-                'type_bail' => $request->type_bail ?? 'habitation',
-                'date_signature' => $request->date_signature,
-                'renouvellement_auto' => $request->renouvellement_auto ?? false,
-                'preavis_mois' => $request->preavis_mois ?? 3,
-                'statut' => 'actif',
-            ]);
-
-            // 2. Mettre à jour le statut du bien
+            // Mettre à jour le statut du bien
             $bien->update(['statut' => 'occupé']);
 
-            DB::commit();
-
-            ActivityLogger::log('Création Bail', "Nouveau bail pour le bien {$bien->nom}", 'success', $contrat);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Bail activé avec succès !',
-                'data' => $contrat,
-            ]);
-
+            return ApiResponse::created($contrat, 'Bail activé avec succès !');
         } catch (\Exception $e) {
-            DB::rollBack();
             \Log::error('Erreur activation bail', ['error' => $e->getMessage()]);
 
-            return response()->json([
-                'success' => false,
-                'message' => 'Une erreur technique est survenue.',
-            ], 500);
+            return ApiResponse::error('Une erreur technique est survenue.', 500);
         }
     }
 
     /**
      * Update the specified contract.
      */
-    public function update(Request $request, Contrat $contrat)
+    public function update(\App\Http\Requests\StoreContratRequest $request, Contrat $contrat)
     {
-        $validator = Validator::make($request->all(), [
-            'loyer_montant' => 'required|numeric|min:0',
-            'date_debut' => 'required|date',
-            'caution' => 'nullable|numeric|min:0',
-            'frais_dossier' => 'nullable|numeric|min:0',
-            'type_bail' => 'required|string|in:habitation,commercial,professionnel',
-            'date_signature' => 'nullable|date',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => $validator->errors()->first(),
-                'errors' => $validator->errors(),
-            ], 422);
-        }
-
         try {
             DB::beginTransaction();
 
             $oldMontant = $contrat->loyer_montant;
-            $contrat->update([
-                'loyer_montant' => $request->loyer_montant,
-                'date_debut' => $request->date_debut,
-                'caution' => $request->caution,
-                'frais_dossier' => $request->frais_dossier,
-                'type_bail' => $request->type_bail,
-                'date_signature' => $request->date_signature,
-            ]);
+            $contrat = $this->contratService->updateContract($contrat, $request->validated());
 
             // Propagation aux loyers impayés (tous)
             if ($oldMontant != $request->loyer_montant) {
@@ -113,64 +64,51 @@ class ContratController extends Controller
                     ->whereIn('statut', ['émis', 'en_retard'])
                     ->update(['montant' => $request->loyer_montant]);
 
-                ActivityLogger::log('Modification Bail', "Mise à jour conditions bail #{$contrat->id} et loyers impayés", 'info', $contrat);
-            } else {
-                ActivityLogger::log('Modification Bail', "Mise à jour conditions bail #{$contrat->id}", 'info', $contrat);
+                ActivityLogger::log('Modification Bail', "Mise à jour des loyers impayés pour bail #{$contrat->id}", 'info', $contrat);
             }
 
             DB::commit();
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Contrat mis à jour avec succès.',
-                'data' => $contrat,
-            ]);
-
+            return ApiResponse::success($contrat, 'Contrat mis à jour avec succès.');
         } catch (\Exception $e) {
             DB::rollBack();
             \Log::error('Erreur mise à jour bail', ['id' => $contrat->id, 'error' => $e->getMessage()]);
 
-            return response()->json([
-                'success' => false,
-                'message' => 'Une erreur technique est survenue.',
-            ], 500);
+            return ApiResponse::error('Une erreur technique est survenue.', 500);
         }
     }
 
     /**
      * Terminate/Archive a contract (Soft Delete logic or Status Update)
-     * Using destroy for definitive removal or closure depending on business rule.
-     * Here allow delete if no payment attached, or close if active.
-     * For simplicity, let's allow DELETE to remove errors, and maybe a custom route for ending.
      */
     public function destroy(Contrat $contrat)
     {
         try {
+            // Task 3.2: Vérifier si des loyers impayés existent
+            $hasUnpaid = $contrat->loyers()->whereIn('statut', ['émis', 'en_retard', 'partiellement_payé'])->exists();
+            if ($hasUnpaid) {
+                return ApiResponse::conflict('Impossible de supprimer ce contrat car il possède des loyers impayés ou partiellement payés.');
+            }
+
             DB::beginTransaction();
 
             $bienId = $contrat->bien_id;
-
-            // Supprimer le contrat
-            $contrat->delete();
+            $this->contratService->deleteContract($contrat);
 
             // Vérifier s'il reste d'autres contrats actifs pour ce bien
             $hasActive = Contrat::where('bien_id', $bienId)->where('statut', 'actif')->exists();
             if (! $hasActive) {
-                // Libérer le bien
-                Bien::where('id', $bienId)->update(['statut' => 'libre']);
+                \App\Models\Bien::where('id', $bienId)->update(['statut' => 'libre']);
             }
 
             DB::commit();
 
-            ActivityLogger::log('Suppression Bail', "Suppression du bail #{$contrat->id}", 'warning');
-
-            return response()->json(['success' => true, 'message' => 'Contrat supprimé et bien libéré.']);
-
+            return ApiResponse::success(null, 'Contrat supprimé et bien libéré.');
         } catch (\Exception $e) {
             DB::rollBack();
             \Log::error('Erreur suppression bail', ['id' => $contrat->id, 'error' => $e->getMessage()]);
 
-            return response()->json(['success' => false, 'message' => 'Une erreur est survenue lors de la suppression.'], 500);
+            return ApiResponse::error('Une erreur est survenue lors de la suppression.', 500);
         }
     }
 

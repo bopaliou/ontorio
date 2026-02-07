@@ -2,16 +2,18 @@
 
 namespace App\Http\Requests;
 
+use App\Traits\HandlesApiValidation;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreBienRequest extends FormRequest
 {
+    use HandlesApiValidation;
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return auth()->check();
+        return true;
     }
 
     /**
@@ -20,44 +22,31 @@ class StoreBienRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'proprietaire_id' => 'required|exists:proprietaires,id',
             'nom' => 'required|string|max:255',
-            'adresse' => 'nullable|string|max:500',
-            'ville' => 'nullable|string|max:100',
+            'adresse' => 'required|string|max:255',
+            'ville' => 'required|string|max:100',
+            'type' => 'required|in:studio,appartement,maison,villa,immeuble,commercial,autre',
+            'surface' => 'required|numeric|min:1',
             'loyer_mensuel' => 'required|numeric|min:0',
-            'type' => 'required|in:appartement,villa,studio,bureau,magasin,entrepot,autre',
-            'surface' => 'nullable|numeric|min:0',
+            'description' => 'nullable|string',
             'nombre_pieces' => 'nullable|integer|min:0',
             'meuble' => 'nullable|boolean',
-            'description' => 'nullable|string|max:2000',
-            'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
+            'images.*' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
         ];
     }
 
     /**
-     * Get custom messages for validation errors.
+     * Get custom messages for validator errors.
      */
     public function messages(): array
     {
         return [
-            'nom.required' => 'Le nom du bien est obligatoire.',
-            'loyer_mensuel.required' => 'Le montant du loyer est obligatoire.',
-            'loyer_mensuel.numeric' => 'Le loyer doit être un nombre.',
-            'type.required' => 'Le type de bien est obligatoire.',
-            'type.in' => 'Type de bien invalide.',
-            'images.*.image' => 'Le fichier doit être une image.',
-            'images.*.max' => 'L\'image ne doit pas dépasser 5 Mo.',
-        ];
-    }
-
-    /**
-     * Get custom attributes for validator errors.
-     */
-    public function attributes(): array
-    {
-        return [
-            'nom' => 'nom du bien',
-            'loyer_mensuel' => 'loyer mensuel',
-            'nombre_pieces' => 'nombre de pièces',
+            'type.in' => 'Le type de bien sélectionné est invalide.',
+            'surface.min' => 'La surface doit être au moins de 1 m².',
+            'loyer_mensuel.min' => 'Le loyer ne peut pas être négatif.',
+            'images.*.image' => 'Les fichiers doivent être des images.',
+            'images.*.max' => 'Chaque image ne doit pas dépasser 5 Mo.',
         ];
     }
 }

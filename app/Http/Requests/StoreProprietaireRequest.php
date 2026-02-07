@@ -2,10 +2,12 @@
 
 namespace App\Http\Requests;
 
+use App\Traits\HandlesApiValidation;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreProprietaireRequest extends FormRequest
 {
+    use HandlesApiValidation;
     /**
      * Determine if the user is authorized to make this request.
      */

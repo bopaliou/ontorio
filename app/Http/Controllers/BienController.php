@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\ActivityLogger;
+use App\Http\Responses\ApiResponse;
 use App\Models\Bien;
 use App\Models\BienImage;
 use App\Models\Contrat;
@@ -11,9 +12,15 @@ use App\Models\Proprietaire;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
-
 class BienController extends Controller
 {
+    protected $bienService;
+
+    public function __construct(\App\Services\BienService $bienService)
+    {
+        $this->bienService = $bienService;
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -29,29 +36,11 @@ class BienController extends Controller
     /**
      * Store Bien via Iframe target
      */
-    public function store(Request $request)
+    public function store(\App\Http\Requests\StoreBienRequest $request)
     {
-        $validator = Validator::make($request->all(), [
-            'nom' => 'required|string|max:255',
-            'adresse' => 'nullable|string',
-            'loyer_mensuel' => 'required|numeric',
-            'type' => 'required|in:appartement,villa,studio,bureau,magasin,entrepot,autre',
-            'nombre_pieces' => 'nullable|integer',
-            'meuble' => 'nullable|boolean',
-            'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => $validator->errors()->first(),
-                'errors' => $validator->errors(),
-            ], 422);
-        }
-
         try {
             // Ontario Group est le seul propriétaire par défaut si non spécifié
-            $proprietaire = Proprietaire::firstOrCreate(
+            $proprietaire = \App\Models\Proprietaire::firstOrCreate(
                 ['nom' => 'Ontario Group'],
                 [
                     'prenom' => 'S.A.',
@@ -64,12 +53,12 @@ class BienController extends Controller
             $data = $request->except(['images', 'image']);
             $data['proprietaire_id'] = $request->proprietaire_id ?? $proprietaire->id;
 
-            $bien = Bien::create($data);
+            $bien = $this->bienService->createBien($data);
 
             if ($request->hasFile('images')) {
                 foreach ($request->file('images') as $index => $imageFile) {
                     $path = $imageFile->store('biens/'.$bien->id, 'public');
-                    BienImage::create([
+                    \App\Models\BienImage::create([
                         'bien_id' => $bien->id,
                         'chemin' => $path,
                         'nom_original' => $imageFile->getClientOriginalName(),
@@ -79,58 +68,33 @@ class BienController extends Controller
                 }
             }
 
-            ActivityLogger::log('Création Bien', 'Ajout du bien : '.$bien->nom, 'success', $bien);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Bien ajouté avec succès !',
-                'data' => $bien,
-            ]);
+            return ApiResponse::created($bien, 'Bien ajouté avec succès !');
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Erreur: '.$e->getMessage(),
-            ], 500);
+            \Log::error('Erreur création bien', ['error' => $e->getMessage()]);
+
+            return ApiResponse::error('Une erreur technique est survenue lors de la création.', 500);
         }
     }
 
     /**
      * Update Bien via Iframe target
      */
-    public function update(Request $request, Bien $bien)
+    public function update(\App\Http\Requests\StoreBienRequest $request, Bien $bien)
     {
-        $validator = Validator::make($request->all(), [
-            'nom' => 'required|string|max:255',
-            'adresse' => 'nullable|string',
-            'loyer_mensuel' => 'required|numeric',
-            'type' => 'required|in:appartement,villa,studio,bureau,magasin,entrepot,autre',
-            'nombre_pieces' => 'nullable|integer',
-            'meuble' => 'nullable|boolean',
-            'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => $validator->errors()->first(),
-                'errors' => $validator->errors(),
-            ], 422);
-        }
-
         try {
             $oldLoyer = $bien->loyer_mensuel;
             $newLoyer = $request->loyer_mensuel;
 
-            $bien->update($request->except(['images', 'image']));
+            $bien = $this->bienService->updateBien($bien, $request->except(['images', 'image']));
 
             if ((float) $oldLoyer != (float) $newLoyer) {
-                $contrats = Contrat::where('bien_id', $bien->id)
+                $contrats = \App\Models\Contrat::where('bien_id', $bien->id)
                     ->whereIn('statut', ['actif', 'en_attente'])
                     ->get();
 
                 foreach ($contrats as $c) {
                     $c->update(['loyer_montant' => $newLoyer]);
-                    Loyer::where('contrat_id', $c->id)
+                    \App\Models\Loyer::where('contrat_id', $c->id)
                         ->whereIn('statut', ['émis', 'en_retard'])
                         ->update(['montant' => $newLoyer]);
                 }
@@ -140,7 +104,7 @@ class BienController extends Controller
             if ($request->hasFile('images')) {
                 foreach ($request->file('images') as $index => $imageFile) {
                     $path = $imageFile->store('biens/'.$bien->id, 'public');
-                    BienImage::create([
+                    \App\Models\BienImage::create([
                         'bien_id' => $bien->id,
                         'chemin' => $path,
                         'nom_original' => $imageFile->getClientOriginalName(),
@@ -150,18 +114,11 @@ class BienController extends Controller
                 }
             }
 
-            ActivityLogger::log('Modification Bien', 'Mise à jour du bien : '.$bien->nom, 'info', $bien);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Bien mis à jour !',
-                'data' => $bien,
-            ]);
+            return ApiResponse::success($bien, 'Bien mis à jour !');
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Erreur: '.$e->getMessage(),
-            ], 500);
+            \Log::error('Erreur modification bien', ['id' => $bien->id, 'error' => $e->getMessage()]);
+
+            return ApiResponse::error('Une erreur technique est survenue lors de la modification.', 500);
         }
     }
 
@@ -171,19 +128,18 @@ class BienController extends Controller
     public function destroy(Bien $bien)
     {
         try {
-            $nom = $bien->nom;
-            $bien->delete();
-            ActivityLogger::log('Suppression Bien', 'Suppression du bien : '.$nom, 'warning');
+            // Task 3.2: Vérifier s'il a des contrats actifs
+            if ($bien->contrats()->whereIn('statut', ['actif', 'en_attente'])->exists()) {
+                return ApiResponse::conflict('Impossible de supprimer ce bien car il est lié à des contrats actifs ou en attente.');
+            }
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Bien supprimé avec succès !',
-            ]);
+            $this->bienService->deleteBien($bien);
+
+            return ApiResponse::success(null, 'Bien supprimé avec succès !');
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Impossible de supprimer ce bien car il est lié à des contrats actifs.',
-            ], 422);
+            \Log::error('Erreur suppression bien', ['id' => $bien->id, 'error' => $e->getMessage()]);
+
+            return ApiResponse::error('Une erreur technique est survenue lors de la suppression.', 500);
         }
     }
 
@@ -209,9 +165,9 @@ class BienController extends Controller
 
             $bienImage->delete();
 
-            return response()->json(['success' => true, 'message' => 'Image supprimée']);
+            return ApiResponse::success(null, 'Image supprimée');
         } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+            return ApiResponse::error($e->getMessage(), 500);
         }
     }
 }

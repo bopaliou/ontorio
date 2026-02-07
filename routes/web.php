@@ -32,7 +32,7 @@ Route::middleware('auth')->group(function () {
 });
 
 // Routes accessibles à Admin et Gestionnaire (Gestion du patrimoine)
-Route::middleware(['auth', 'role:admin|direction|gestionnaire'])->group(function () {
+Route::middleware(['auth', 'role:admin|direction|gestionnaire', 'throttle:global-mutations'])->group(function () {
     // Liste publique des biens (interface standard)
     Route::get('/biens', [BienController::class, 'index'])->name('biens.index');
 
@@ -77,14 +77,14 @@ Route::middleware(['auth', 'role:admin|direction|gestionnaire'])->group(function
 });
 
 // Routes accessibles à Admin, Comptable et Gestionnaire (Gestion financière)
-Route::middleware(['auth', 'role:admin|direction|comptable|gestionnaire'])->group(function () {
+Route::middleware(['auth', 'role:admin|direction|comptable|gestionnaire', 'throttle:global-mutations'])->group(function () {
     // Paiements
     Route::resource('paiements', PaiementController::class)->only(['index', 'create', 'store', 'show']);
     Route::delete('/dashboard/paiements/{paiement}', [PaiementController::class, 'destroy'])->name('paiements.destroy');
 });
 
 // Routes accessibles à Admin seulement (Administration système)
-Route::middleware(['auth', 'role:admin'])->group(function () {
+Route::middleware(['auth', 'role:admin', 'throttle:global-mutations'])->group(function () {
     // Documents
     Route::resource('documents', DocumentController::class);
     // Gestion Utilisateurs
@@ -96,6 +96,11 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     // Alias simple pour /roles utilisé par certains tests
     Route::get('/roles', [\App\Http\Controllers\RoleController::class, 'index'])->name('roles.index');
     Route::post('/settings/roles/{role}/permissions', [\App\Http\Controllers\RoleController::class, 'updatePermissions'])->name('settings.roles.permissions');
+
+    // Route Système pour Déploiement Mutualisé (Protégée par Token)
+    Route::post('/system/migrate', [\App\Http\Controllers\SystemController::class, 'migrate'])
+        ->middleware('throttle:strict-migration')
+        ->name('system.migrate');
 });
 
 // Routes accessibles à Direction, Admin, Gestionnaire et Comptable (Rapports partagés)
@@ -105,7 +110,7 @@ Route::middleware(['auth', 'role:admin|direction|gestionnaire|comptable'])->grou
 });
 
 // API Routes - Stats et Alertes (pour widgets AJAX)
-Route::middleware(['auth'])->prefix('api')->group(function () {
+Route::middleware(['auth', 'role:admin|direction|gestionnaire', 'throttle:moderate-stats'])->prefix('api')->group(function () {
     Route::get('/stats/kpis', function () {
         $service = new \App\Services\DashboardStatsService;
 
@@ -131,8 +136,5 @@ Route::middleware(['auth'])->prefix('api')->group(function () {
     })->name('api.alerts');
 });
 
-// Route Système pour Déploiement Mutualisé (Protégée par Token)
-Route::get('/system/migrate/{token}', [\App\Http\Controllers\SystemController::class, 'migrate'])
-    ->name('system.migrate');
 
 require __DIR__.'/auth.php';

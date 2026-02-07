@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\ActivityLogger;
+use App\Http\Responses\ApiResponse;
 use App\Models\Depense;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -10,6 +11,13 @@ use Illuminate\Support\Facades\Validator;
 
 class DepenseController extends Controller
 {
+    protected $depenseService;
+
+    public function __construct(\App\Services\DepenseService $depenseService)
+    {
+        $this->depenseService = $depenseService;
+    }
+
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -23,35 +31,20 @@ class DepenseController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => $validator->errors()->first(),
-            ], 422);
+            return ApiResponse::error($validator->errors()->first(), 422, $validator->errors());
         }
 
         try {
-            $data = $request->except('justificatif');
+            $depense = $this->depenseService->createDepense(
+                $request->except('justificatif'),
+                $request->file('justificatif')
+            );
 
-            if ($request->hasFile('justificatif')) {
-                $data['justificatif'] = $request->file('justificatif')->store('depenses', 'public');
-            }
-
-            $depense = Depense::create($data);
-
-            ActivityLogger::log('Création Dépense', "Ajout d'une dépense de {$depense->montant} F pour {$depense->bien->nom}", 'success', $depense);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Dépense enregistrée avec succès !',
-                'data' => $depense,
-            ]);
+            return ApiResponse::created($depense, 'Dépense enregistrée avec succès !');
         } catch (\Exception $e) {
             \Log::error('Erreur création dépense', ['error' => $e->getMessage()]);
 
-            return response()->json([
-                'success' => false,
-                'message' => 'Une erreur est survenue lors de l\'enregistrement.',
-            ], 500);
+            return ApiResponse::error('Une erreur est survenue lors de l\'enregistrement.', 500);
         }
     }
 
@@ -67,56 +60,34 @@ class DepenseController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => $validator->errors()->first(),
-            ], 422);
+            return ApiResponse::error($validator->errors()->first(), 422, $validator->errors());
         }
 
         try {
-            $data = $request->except('justificatif');
+            $depense = $this->depenseService->updateDepense(
+                $depense,
+                $request->except('justificatif'),
+                $request->file('justificatif')
+            );
 
-            if ($request->hasFile('justificatif')) {
-                // Supprimer l'ancien justificatif
-                if ($depense->justificatif && Storage::disk('public')->exists($depense->justificatif)) {
-                    Storage::disk('public')->delete($depense->justificatif);
-                }
-                $data['justificatif'] = $request->file('justificatif')->store('depenses', 'public');
-            }
-
-            $depense->update($data);
-
-            ActivityLogger::log('Modification Dépense', "Mise à jour de la dépense #{$depense->id}", 'info', $depense);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Dépense mise à jour !',
-                'data' => $depense,
-            ]);
+            return ApiResponse::success($depense, 'Dépense mise à jour !');
         } catch (\Exception $e) {
             \Log::error('Erreur mise à jour dépense', ['id' => $depense->id, 'error' => $e->getMessage()]);
 
-            return response()->json([
-                'success' => false,
-                'message' => 'Une erreur est survenue lors de la mise à jour.',
-            ], 500);
+            return ApiResponse::error('Une erreur est survenue lors de la mise à jour.', 500);
         }
     }
 
     public function destroy(Depense $depense)
     {
         try {
-            if ($depense->justificatif && Storage::disk('public')->exists($depense->justificatif)) {
-                Storage::disk('public')->delete($depense->justificatif);
-            }
-            $depense->delete();
-            ActivityLogger::log('Suppression Dépense', "Suppression de la dépense #{$depense->id}", 'warning');
+            $this->depenseService->deleteDepense($depense);
 
-            return response()->json(['success' => true, 'message' => 'Dépense supprimée']);
+            return ApiResponse::success(null, 'Dépense supprimée');
         } catch (\Exception $e) {
             \Log::error('Erreur suppression dépense', ['id' => $depense->id, 'error' => $e->getMessage()]);
 
-            return response()->json(['success' => false, 'message' => 'Une erreur est survenue lors de la suppression.'], 500);
+            return ApiResponse::error('Une erreur est survenue lors de la suppression.', 500);
         }
     }
 }

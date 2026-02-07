@@ -40,20 +40,7 @@ return new class extends Migration
     {
         // Vérifier que bien_id existe dans contrats
         if (Schema::hasTable('contrats')) {
-            $columns = DB::select('PRAGMA table_info(contrats)');
-            // Pour MySQL:
-            // $columns = DB::select("DESCRIBE contrats");
-
-            $hasWellId = false;
-            // Checker si bien_id existe (simplement via une tentative de query)
-            try {
-                DB::select('SELECT bien_id FROM contrats LIMIT 1');
-                $hasBienId = true;
-            } catch (\Exception $e) {
-                $hasBienId = false;
-            }
-
-            if (! $hasBienId) {
+            if (! Schema::hasColumn('contrats', 'bien_id')) {
                 throw new \Exception('La table contrats doit avoir une colonne bien_id pointant vers biens');
             }
         }

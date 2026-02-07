@@ -2,12 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Responses\ApiResponse;
 use App\Models\Proprietaire;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class ProprietaireController extends Controller
 {
+    protected $proprietaireService;
+
+    public function __construct(\App\Services\ProprietaireService $proprietaireService)
+    {
+        $this->proprietaireService = $proprietaireService;
+    }
+
     /**
      * Store Propriétaire via Iframe target (Single Page Pattern)
      */
@@ -21,26 +29,15 @@ class ProprietaireController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => $validator->errors()->first(),
-                'errors' => $validator->errors(),
-            ], 422);
+            return ApiResponse::error($validator->errors()->first(), 422, $validator->errors());
         }
 
         try {
-            $prop = Proprietaire::create($request->only(['nom', 'prenom', 'email', 'telephone', 'adresse']));
+            $prop = $this->proprietaireService->createProprietaire($request->only(['nom', 'prenom', 'email', 'telephone', 'adresse']));
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Propriétaire créé avec succès !',
-                'data' => $prop,
-            ]);
+            return ApiResponse::created($prop, 'Propriétaire créé avec succès !');
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Une erreur est survenue. Veuillez réessayer.',
-            ], 500);
+            return ApiResponse::error('Une erreur est survenue. Veuillez réessayer.', 500);
         }
     }
 
@@ -57,26 +54,15 @@ class ProprietaireController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => $validator->errors()->first(),
-                'errors' => $validator->errors(),
-            ], 422);
+            return ApiResponse::error($validator->errors()->first(), 422, $validator->errors());
         }
 
         try {
-            $proprietaire->update($request->only(['nom', 'prenom', 'email', 'telephone', 'adresse']));
+            $prop = $this->proprietaireService->updateProprietaire($proprietaire, $request->only(['nom', 'prenom', 'email', 'telephone', 'adresse']));
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Propriétaire mis à jour !',
-                'data' => $proprietaire,
-            ]);
+            return ApiResponse::success($prop, 'Propriétaire mis à jour !');
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Une erreur est survenue. Veuillez réessayer.',
-            ], 500);
+            return ApiResponse::error('Une erreur est survenue. Veuillez réessayer.', 500);
         }
     }
 
@@ -86,17 +72,11 @@ class ProprietaireController extends Controller
     public function destroy(Proprietaire $proprietaire)
     {
         try {
-            $proprietaire->delete();
+            $this->proprietaireService->deleteProprietaire($proprietaire);
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Propriétaire supprimé avec succès',
-            ]);
+            return ApiResponse::success(null, 'Propriétaire supprimé avec succès');
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Impossible de supprimer ce propriétaire car il est lié à des biens.',
-            ], 422);
+            return ApiResponse::error('Impossible de supprimer ce propriétaire car il est lié à des biens.', 422);
         }
     }
 
