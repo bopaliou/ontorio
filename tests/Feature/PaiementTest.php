@@ -33,16 +33,16 @@ class PaiementTest extends TestCase
         ]);
 
         $response = $this->actingAs($this->admin)
-            ->post(route('paiements.store'), [
+            ->postJson(route('paiements.store'), [
                 'loyer_id' => $loyer->id,
                 'montant' => 100000,
                 'date_paiement' => now()->format('Y-m-d'),
                 'mode' => 'espèces',
             ]);
 
-        // Note: Controller returns a script tag for iframe response
-        $response->assertStatus(200)
-            ->assertSee('Paiement enregistré avec succès');
+        // Controller returns JSON 201 Created
+        $response->assertStatus(201)
+            ->assertJson(['success' => true]);
 
         $this->assertDatabaseHas('paiements', [
             'loyer_id' => $loyer->id,
@@ -60,14 +60,14 @@ class PaiementTest extends TestCase
         ]);
 
         $response = $this->actingAs($this->admin)
-            ->post(route('paiements.store'), [
+            ->postJson(route('paiements.store'), [
                 'loyer_id' => $loyer->id,
                 'montant' => 40000,
                 'date_paiement' => now()->format('Y-m-d'),
                 'mode' => 'mobile_money',
             ]);
 
-        $response->assertStatus(200);
+        $response->assertStatus(201);
         $this->assertEquals('partiellement_payé', $loyer->fresh()->statut);
     }
 
@@ -78,14 +78,14 @@ class PaiementTest extends TestCase
         $file = UploadedFile::fake()->image('preuve.jpg');
 
         $response = $this->actingAs($this->admin)
-            ->post(route('paiements.store'), [
+            ->postJson(route('paiements.store'), [
                 'loyer_id' => $loyer->id,
                 'montant' => $loyer->montant,
                 'date_paiement' => now()->format('Y-m-d'),
                 'preuve' => $file,
             ]);
 
-        $response->assertStatus(200);
+        $response->assertStatus(201);
 
         $paiement = Paiement::first();
         $this->assertNotNull($paiement->preuve);
