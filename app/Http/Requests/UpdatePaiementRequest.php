@@ -14,11 +14,11 @@ class UpdatePaiementRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'montant'       => 'sometimes|numeric|min:0.01|max:999999.99',
-            'mode'          => 'sometimes|in:virement,espèces,chèque,carte,mobile_money',
+            'montant' => 'sometimes|numeric|min:0.01|max:999999.99',
+            'mode' => 'sometimes|in:virement,espèces,chèque,carte,mobile_money',
             'date_paiement' => 'sometimes|date|before_or_equal:today',
-            'preuve'        => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
-            'reference'     => 'nullable|string|max:100',
+            'preuve' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
+            'reference' => 'nullable|string|max:100',
         ];
     }
 

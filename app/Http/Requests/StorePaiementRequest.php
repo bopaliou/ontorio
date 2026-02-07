@@ -14,13 +14,13 @@ class StorePaiementRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'loyer_id'      => 'required|exists:loyers,id',
-            'montant'       => 'required|numeric|min:0.01|max:999999.99',
-            'mode'          => 'required|in:virement,espèces,chèque,carte,mobile_money',
+            'loyer_id' => 'required|exists:loyers,id',
+            'montant' => 'required|numeric|min:0.01|max:999999.99',
+            'mode' => 'required|in:virement,espèces,chèque,carte,mobile_money',
             'date_paiement' => 'required|date|before_or_equal:today',
-            'preuve'        => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
-            'reference'     => 'nullable|string|max:100',
-            'user_id'       => 'nullable|exists:users,id',
+            'preuve' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
+            'reference' => 'nullable|string|max:100',
+            'user_id' => 'nullable|exists:users,id',
         ];
     }
 
@@ -40,29 +40,6 @@ class StorePaiementRequest extends FormRequest
             'date_paiement.before_or_equal' => 'La date ne peut pas être dans le futur',
             'preuve.mimes' => 'La preuve doit être PDF ou image (jpg, png)',
             'preuve.max' => 'La preuve ne peut pas dépasser 5 MB',
-        ];
-    }
-}
-            'montant.required' => 'Le montant du paiement est obligatoire.',
-            'montant.numeric' => 'Le montant doit être un nombre.',
-            'montant.min' => 'Le montant ne peut pas être négatif.',
-            'date_paiement.required' => 'La date de paiement est obligatoire.',
-            'mode.required' => 'Le mode de paiement est obligatoire.',
-            'mode.in' => 'Mode de paiement invalide.',
-            'preuve.mimes' => 'Le justificatif doit être un PDF ou une image.',
-            'preuve.max' => 'Le justificatif ne doit pas dépasser 5 Mo.',
-        ];
-    }
-
-    /**
-     * Get custom attributes for validator errors.
-     */
-    public function attributes(): array
-    {
-        return [
-            'loyer_id' => 'loyer',
-            'date_paiement' => 'date de paiement',
-            'preuve' => 'justificatif de paiement',
         ];
     }
 }

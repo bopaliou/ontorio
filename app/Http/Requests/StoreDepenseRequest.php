@@ -14,14 +14,14 @@ class StoreDepenseRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'bien_id'       => 'required|exists:biens,id',
-            'titre'         => 'required|string|max:255',
-            'description'   => 'nullable|string|max:2000',
-            'montant'       => 'required|numeric|min:0.01|max:999999.99',
-            'date_depense'  => 'required|date|before_or_equal:today',
-            'categorie'     => 'required|in:maintenance,travaux,taxe,assurance,autre',
-            'justificatif'  => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:10240',
-            'statut'        => 'required|in:draft,payé,en_attente,rejeté',
+            'bien_id' => 'required|exists:biens,id',
+            'titre' => 'required|string|max:255',
+            'description' => 'nullable|string|max:2000',
+            'montant' => 'required|numeric|min:0.01|max:999999.99',
+            'date_depense' => 'required|date|before_or_equal:today',
+            'categorie' => 'required|in:maintenance,travaux,taxe,assurance,autre',
+            'justificatif' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:10240',
+            'statut' => 'required|in:draft,payé,en_attente,rejeté',
         ];
     }
 

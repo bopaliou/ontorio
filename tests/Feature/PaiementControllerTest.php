@@ -2,21 +2,23 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
-use App\Models\Loyer;
-use App\Models\Contrat;
-use App\Models\Paiement;
 use App\Models\Bien;
-use App\Models\Proprietaire;
+use App\Models\Contrat;
 use App\Models\Locataire;
+use App\Models\Loyer;
+use App\Models\Paiement;
+use App\Models\Proprietaire;
+use App\Models\User;
 use Tests\TestCase;
 
 class PaiementControllerTest extends TestCase
 {
     use \Illuminate\Foundation\Testing\RefreshDatabase;
-    
+
     protected User $user;
+
     protected Contrat $contrat;
+
     protected Loyer $loyer;
 
     protected function setUp(): void
@@ -25,12 +27,12 @@ class PaiementControllerTest extends TestCase
 
         // Créer user authentifié
         $this->user = User::factory()->create(['role' => 'gestionnaire']);
-        
+
         // Créer structure: Proprietaire -> Bien -> Contrat -> Loyer
         $proprio = Proprietaire::factory()->create();
         $bien = Bien::factory()->create(['proprietaire_id' => $proprio->id]);
         $locataire = Locataire::factory()->create();
-        
+
         $this->contrat = Contrat::factory()->create([
             'bien_id' => $bien->id,
             'locataire_id' => $locataire->id,

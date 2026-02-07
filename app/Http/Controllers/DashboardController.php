@@ -2,10 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Helpers\ActivityLogger;
 use App\Models\ActivityLog;
 use App\Models\Bien;
-use App\Models\BienImage;
 use App\Models\Contrat;
 use App\Models\Locataire;
 use App\Models\Loyer;
@@ -13,9 +11,7 @@ use App\Models\Paiement;
 use App\Models\Proprietaire;
 use App\Models\User;
 use Carbon\Carbon;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 
 class DashboardController extends Controller
 {
@@ -130,7 +126,6 @@ class DashboardController extends Controller
         return view('dashboard.index', compact('data'));
     }
 
-
     private function getAdminData()
     {
         $moisActuel = Carbon::now()->format('Y-m');
@@ -196,13 +191,13 @@ class DashboardController extends Controller
         // Pour l'instant, on cherche le proprietaire via l'email si ce n'est pas un admin
         $proprietaireId = null;
         if ($user->role === 'proprietaire') {
-             // Essayons de trouver le proprietaire lié à ce compte utilisateur
-             // (Hypothèse: un utilisateur proprietaire a son email dans la table proprietaires)
-             $propRecord = Proprietaire::where('email', $user->email)->first();
-             $proprietaireId = $propRecord ? $propRecord->id : null;
+            // Essayons de trouver le proprietaire lié à ce compte utilisateur
+            // (Hypothèse: un utilisateur proprietaire a son email dans la table proprietaires)
+            $propRecord = Proprietaire::where('email', $user->email)->first();
+            $proprietaireId = $propRecord ? $propRecord->id : null;
         }
 
-        if (!$proprietaireId) {
+        if (! $proprietaireId) {
             return [
                 'role' => 'proprietaire',
                 'kpis' => ['revenus' => 0, 'charges' => 0, 'net' => 0],
@@ -213,15 +208,15 @@ class DashboardController extends Controller
         $moisActuel = Carbon::now()->format('Y-m');
 
         // Revenus encaissés ce mois pour ce propriétaire
-        $revenusMois = Paiement::whereHas('loyer', function($q) use ($moisActuel, $proprietaireId) {
+        $revenusMois = Paiement::whereHas('loyer', function ($q) use ($moisActuel, $proprietaireId) {
             $q->where('mois', $moisActuel)
-              ->whereHas('contrat.bien', function($sq) use ($proprietaireId) {
-                  $sq->where('proprietaire_id', $proprietaireId);
-              });
+                ->whereHas('contrat.bien', function ($sq) use ($proprietaireId) {
+                    $sq->where('proprietaire_id', $proprietaireId);
+                });
         })->sum('montant');
 
         // Charges (Dépenses) pour ce propriétaire
-        $chargesMois = \App\Models\Depense::whereHas('bien', function($q) use ($proprietaireId) {
+        $chargesMois = \App\Models\Depense::whereHas('bien', function ($q) use ($proprietaireId) {
             $q->where('proprietaire_id', $proprietaireId);
         })->where('date_depense', 'like', $moisActuel.'%')->sum('montant');
 
@@ -232,7 +227,7 @@ class DashboardController extends Controller
 
         // Performance par bien
         $biensPerformance = Bien::where('proprietaire_id', $proprietaireId)
-            ->withCount(['contrats as is_active' => function($q) {
+            ->withCount(['contrats as is_active' => function ($q) {
                 $q->where('statut', 'actif');
             }])
             ->addSelect([
@@ -241,7 +236,7 @@ class DashboardController extends Controller
                     ->join('contrats', 'loyers.contrat_id', '=', 'contrats.id')
                     ->whereColumn('contrats.bien_id', 'biens.id'),
                 'charges_cumulees' => \App\Models\Depense::selectRaw('sum(montant)')
-                    ->whereColumn('depenses.bien_id', 'biens.id')
+                    ->whereColumn('depenses.bien_id', 'biens.id'),
             ])
             ->get();
 
@@ -250,12 +245,12 @@ class DashboardController extends Controller
         for ($i = 5; $i >= 0; $i--) {
             $m = Carbon::now()->subMonths($i)->translatedFormat('M Y');
             $moisRaw = Carbon::now()->subMonths($i)->format('Y-m');
-            
-            $rev = Paiement::whereHas('loyer', function($q) use ($moisRaw, $proprietaireId) {
+
+            $rev = Paiement::whereHas('loyer', function ($q) use ($moisRaw, $proprietaireId) {
                 $q->where('mois', $moisRaw)
-                  ->whereHas('contrat.bien', function($sq) use ($proprietaireId) {
-                      $sq->where('proprietaire_id', $proprietaireId);
-                  });
+                    ->whereHas('contrat.bien', function ($sq) use ($proprietaireId) {
+                        $sq->where('proprietaire_id', $proprietaireId);
+                    });
             })->sum('montant');
 
             $revenusPar6Mois[] = [

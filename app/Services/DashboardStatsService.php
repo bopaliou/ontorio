@@ -71,7 +71,7 @@ class DashboardStatsService
             ->where('statut', '!=', 'annulé')
             ->withSum('paiements', 'montant')
             ->get();
-        
+
         $aging = [
             '0-30' => 0,
             '31-60' => 0,
@@ -81,17 +81,24 @@ class DashboardStatsService
 
         foreach ($loyersImpayes as $loyer) {
             $reste = $loyer->montant - ($loyer->paiements_sum_montant ?? 0);
-            if ($reste <= 0.5) continue; // Ignorer les micro-différences
+            if ($reste <= 0.5) {
+                continue;
+            } // Ignorer les micro-différences
 
             // Calcul de l'âge de la dette par rapport au 1er du mois du loyer
             // Ex: Loyer Janvier (01-01), Nous sommes le 06-02 = 36 jours
-            $dateLoyer = Carbon::parse($loyer->mois . '-01');
+            $dateLoyer = Carbon::parse($loyer->mois.'-01');
             $ageJours = $dateLoyer->diffInDays(Carbon::now());
 
-            if ($ageJours <= 30) $aging['0-30'] += $reste;
-            elseif ($ageJours <= 60) $aging['31-60'] += $reste;
-            elseif ($ageJours <= 90) $aging['61-90'] += $reste;
-            else $aging['90+'] += $reste;
+            if ($ageJours <= 30) {
+                $aging['0-30'] += $reste;
+            } elseif ($ageJours <= 60) {
+                $aging['31-60'] += $reste;
+            } elseif ($ageJours <= 90) {
+                $aging['61-90'] += $reste;
+            } else {
+                $aging['90+'] += $reste;
+            }
         }
 
         return [
@@ -109,7 +116,7 @@ class DashboardStatsService
                 'gross_potential_rent' => $grossPotentialRent,
                 'financial_occupancy_rate' => round($tauxOccupationFinancier, 1),
                 'arrears_aging' => $aging,
-            ]
+            ],
         ];
     }
 
@@ -135,7 +142,7 @@ class DashboardStatsService
 
         // Taux d'Occupation Financier (Facturé / Potentiel)
         $grossPotentialRent = Bien::sum('loyer_mensuel'); // Potentiel total
-        
+
         // On prend les loyers FACTURÉS du mois en cours pour comparer au potentiel
         $mois = Carbon::now()->format('Y-m');
         $totalFacture = Loyer::where('mois', $mois)->where('statut', '!=', 'annulé')->sum('montant');

@@ -4,8 +4,8 @@ namespace Database\Seeders;
 
 use App\Models\Bien;
 use App\Models\Contrat;
-use App\Models\Locataire;
 use App\Models\Depense;
+use App\Models\Locataire;
 use App\Models\Loyer;
 use App\Models\Paiement;
 use App\Models\Proprietaire;
@@ -24,9 +24,9 @@ class MockDataSeeder extends Seeder
         foreach ($roles as $role) {
             for ($i = 0; $i < 5; $i++) {
                 User::firstOrCreate(
-                    ['email' => strtolower($role) . ($i + 1) . '@ontariogroup.net'],
+                    ['email' => strtolower($role).($i + 1).'@ontariogroup.net'],
                     [
-                        'name' => ucfirst($role) . ' ' . $faker->firstName,
+                        'name' => ucfirst($role).' '.$faker->firstName,
                         'role' => $role,
                         'password' => bcrypt('password'),
                     ]
@@ -76,7 +76,7 @@ class MockDataSeeder extends Seeder
         for ($i = 0; $i < 5; $i++) {
             $proprio = $proprietaires[$i % count($proprietaires)]; // Rotate owners
             $biens[] = Bien::create([
-                'nom' => $types[array_rand($types)] . ' ' . $faker->citySuffix,
+                'nom' => $types[array_rand($types)].' '.$faker->citySuffix,
                 'adresse' => $faker->streetAddress,
                 'ville' => 'Dakar',
                 'type' => $types[array_rand($types)],
@@ -124,7 +124,7 @@ class MockDataSeeder extends Seeder
             if (in_array($loyer->statut, ['payé', 'partiellement_payé'])) {
                 Paiement::create([
                     'loyer_id' => $loyer->id,
-                    'date_paiement' => Carbon::parse($mois . '-01')->addDays(rand(0, 25)),
+                    'date_paiement' => Carbon::parse($mois.'-01')->addDays(rand(0, 25)),
                     'montant' => $loyer->statut === 'payé' ? $loyer->montant : ($loyer->montant / 2),
                     'mode' => $faker->randomElement(['espèces', 'virement', 'chèque', 'mobile_money']),
                     'reference' => strtoupper($faker->bothify('REF-####-??')),

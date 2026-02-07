@@ -2,12 +2,12 @@
 
 namespace Tests\Unit\Services;
 
-use App\Models\Loyer;
-use App\Models\Contrat;
 use App\Models\Bien;
-use App\Models\Proprietaire;
+use App\Models\Contrat;
 use App\Models\Locataire;
+use App\Models\Loyer;
 use App\Models\Paiement;
+use App\Models\Proprietaire;
 use App\Services\DashboardStatsService;
 use Carbon\Carbon;
 use Tests\TestCase;
@@ -15,13 +15,13 @@ use Tests\TestCase;
 class DashboardStatsServiceTest extends TestCase
 {
     use \Illuminate\Foundation\Testing\RefreshDatabase;
-    
+
     private DashboardStatsService $service;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->service = new DashboardStatsService();
+        $this->service = new DashboardStatsService;
         Carbon::setTestNow('2026-02-15');
     }
 
@@ -34,7 +34,7 @@ class DashboardStatsServiceTest extends TestCase
         $proprio = Proprietaire::factory()->create();
         $bien = Bien::factory()->create(['proprietaire_id' => $proprio->id, 'loyer_mensuel' => 100000]);
         $locataire = Locataire::factory()->create();
-        
+
         $contrat = Contrat::factory()->create([
             'bien_id' => $bien->id,
             'locataire_id' => $locataire->id,
@@ -66,7 +66,7 @@ class DashboardStatsServiceTest extends TestCase
         $proprio = Proprietaire::factory()->create();
         $bien = Bien::factory()->create(['proprietaire_id' => $proprio->id]);
         $locataire = Locataire::factory()->create();
-        
+
         $contrat = Contrat::factory()->create([
             'bien_id' => $bien->id,
             'locataire_id' => $locataire->id,
@@ -105,7 +105,7 @@ class DashboardStatsServiceTest extends TestCase
         $proprio = Proprietaire::factory()->create();
         $bien = Bien::factory()->create(['proprietaire_id' => $proprio->id]);
         $locataire = Locataire::factory()->create();
-        
+
         $contrat = Contrat::factory()->create([
             'bien_id' => $bien->id,
             'locataire_id' => $locataire->id,
@@ -132,11 +132,11 @@ class DashboardStatsServiceTest extends TestCase
     public function test_parc_stats_occupancy_rate()
     {
         $proprio = Proprietaire::factory()->create();
-        
+
         // 2 biens
         $bien1 = Bien::factory()->create(['proprietaire_id' => $proprio->id]);
         $bien2 = Bien::factory()->create(['proprietaire_id' => $proprio->id]);
-        
+
         $locataire = Locataire::factory()->create();
 
         // 1 contrat actif = 1 bien occupé

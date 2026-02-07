@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\ActivityLogger;
 use App\Models\Bien;
 use App\Models\BienImage;
-use App\Models\Proprietaire;
 use App\Models\Contrat;
 use App\Models\Loyer;
-use App\Helpers\ActivityLogger;
+use App\Models\Proprietaire;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 
 class BienController extends Controller
 {
@@ -22,7 +22,7 @@ class BienController extends Controller
         $biens = Bien::with(['contrats.locataire', 'proprietaire', 'imagePrincipale'])
             ->latest()
             ->paginate(15);
-            
+
         return view('biens.index', compact('biens'));
     }
 

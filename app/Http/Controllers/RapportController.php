@@ -3,10 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Loyer;
-use App\Models\Paiement;
 use App\Services\DashboardStatsService;
-use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 
 class RapportController extends Controller
 {
@@ -22,7 +21,7 @@ class RapportController extends Controller
         $mois = $request->get('mois', Carbon::now()->format('Y-m'));
         $data = $this->statsService->getFinancialKPIs();
         $chartData = $this->statsService->getChartData();
-        
+
         $loyers = Loyer::with(['contrat.locataire', 'contrat.bien'])
             ->where('mois', $mois)
             ->get();
@@ -33,7 +32,7 @@ class RapportController extends Controller
     public function impayees(Request $request)
     {
         $data = $this->statsService->getFinancialKPIs();
-        
+
         $impayees = Loyer::with(['contrat.locataire', 'contrat.bien'])
             ->whereIn('statut', ['en_retard', 'partiel'])
             ->orderBy('date_echeance')
@@ -47,7 +46,7 @@ class RapportController extends Controller
         // TODO: Implement commission logic
         // For now, simple mockup of data
         $data = $this->statsService->getFinancialKPIs();
-        
+
         return view('rapports.commissions', compact('data'));
     }
 }

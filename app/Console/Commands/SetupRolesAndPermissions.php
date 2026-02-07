@@ -3,14 +3,14 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
-use App\Models\User;
+use Spatie\Permission\Models\Role;
 
 class SetupRolesAndPermissions extends Command
 {
     protected $signature = 'app:setup-roles-permissions 
                             {--force : Force la recréation même si déjà existantes}';
+
     protected $description = 'Initialiser les rôles et permissions du système';
 
     public function handle()
@@ -21,8 +21,9 @@ class SetupRolesAndPermissions extends Command
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
         // Vérifier si data existe déjà
-        if (!$this->option('force') && Role::count() > 0) {
+        if (! $this->option('force') && Role::count() > 0) {
             $this->warn('⚠️  Les rôles existent déjà. Utiliser --force pour les recréer');
+
             return;
         }
 
@@ -106,7 +107,7 @@ class SetupRolesAndPermissions extends Command
         foreach ($permissions as $name => $description) {
             Permission::firstOrCreate(['name' => $name, 'description' => $description]);
         }
-        $this->line("✅ {$permissions|count()} permissions créées");
+        $this->line('✅ '.count($permissions).' permissions créées');
 
         // ===============================================
         // DÉFINITION DES RÔLES
@@ -158,7 +159,7 @@ class SetupRolesAndPermissions extends Command
                 ['description' => $roleData['description']]
             );
             $role->syncPermissions($roleData['permissions']);
-            $this->line("✅ Rôle '{$roleName}' créé avec " . count($roleData['permissions']) . " permissions");
+            $this->line("✅ Rôle '{$roleName}' créé avec ".count($roleData['permissions']).' permissions');
         }
 
         $this->info('✨ Rôles et permissions initialisés avec succès !');

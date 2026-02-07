@@ -14,13 +14,13 @@ class StoreLocataireRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'nom'               => 'required|string|max:255',
-            'email'             => 'required|email|unique:locataires,email',
-            'telephone'         => 'required|string|max:20',
-            'adresse'           => 'nullable|string|max:500',
-            'pieces_identite'   => 'required|string|max:50',
-            'profession'        => 'nullable|string|max:100',
-            'revenus_mensuels'  => 'nullable|numeric|min:0|max:999999.99',
+            'nom' => 'required|string|max:255',
+            'email' => 'required|email|unique:locataires,email',
+            'telephone' => 'required|string|max:20',
+            'adresse' => 'nullable|string|max:500',
+            'pieces_identite' => 'required|string|max:50',
+            'profession' => 'nullable|string|max:100',
+            'revenus_mensuels' => 'nullable|numeric|min:0|max:999999.99',
         ];
     }
 

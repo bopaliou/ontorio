@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BienController;
 use App\Http\Controllers\ContratController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DocumentController;
@@ -8,9 +9,8 @@ use App\Http\Controllers\LoyerController;
 use App\Http\Controllers\PaiementController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProprietaireController;
-use App\Http\Controllers\BienController;
-use App\Http\Controllers\RevisionLoyerController;
 use App\Http\Controllers\RapportController;
+use App\Http\Controllers\RevisionLoyerController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -62,7 +62,7 @@ Route::middleware(['auth', 'role:admin|direction|gestionnaire'])->group(function
     Route::resource('loyers', LoyerController::class);
     Route::post('/loyers/generer-mois', [LoyerController::class, 'genererMois'])->name('loyers.genererMois');
     Route::get('/loyers/{loyer}/quittance', [LoyerController::class, 'exporterPDF'])->name('loyers.quittance');
-    
+
     // Révisions de loyer
     Route::resource('revisions', RevisionLoyerController::class)->only(['index', 'store']);
 

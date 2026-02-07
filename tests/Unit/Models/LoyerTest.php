@@ -3,7 +3,6 @@
 namespace Tests\Unit\Models;
 
 use App\Models\Loyer;
-use App\Models\Contrat;
 use App\Models\Paiement;
 use Carbon\Carbon;
 use Tests\TestCase;
@@ -11,7 +10,7 @@ use Tests\TestCase;
 class LoyerTest extends TestCase
 {
     use \Illuminate\Foundation\Testing\RefreshDatabase;
-    
+
     /**
      * Test: Calcul montant payé avec eager loading
      */

@@ -98,6 +98,7 @@ class PaiementController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             \Log::error('Erreur enregistrement paiement', ['error' => $e->getMessage()]);
+
             return response()->json([
                 'success' => false,
                 'message' => 'Une erreur est survenue lors de l\'enregistrement.',

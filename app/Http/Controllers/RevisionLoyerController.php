@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\RevisionLoyer;
 use App\Models\Contrat;
 use App\Models\Loyer;
+use App\Models\RevisionLoyer;
 use App\Services\ActivityLogger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -35,7 +35,7 @@ class RevisionLoyerController extends Controller
 
         try {
             $contrat = Contrat::findOrFail($request->contrat_id);
-            
+
             // Calcul du pourcentage
             $pourcentage = (($request->nouveau_montant - $request->ancien_montant) / $request->ancien_montant) * 100;
 
@@ -80,7 +80,7 @@ class RevisionLoyerController extends Controller
     public function index(Request $request)
     {
         $query = RevisionLoyer::with('creator');
-        
+
         if ($request->has('contrat_id')) {
             $query->where('contrat_id', $request->contrat_id);
         }
