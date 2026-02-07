@@ -85,8 +85,8 @@ class LoyerTest extends TestCase
 
         // Reste = (100k + 5k) - 50k = 55k
         $expected = 55000;
-        // Note: cette assertion dépend de l'implémentation exacte
-        // $this->assertEquals($expected, $loyer->reste_a_payer);
+        // Vérifier le calcul du reste à payer (arrondi/conversion en entier)
+        $this->assertEquals($expected, (int) round($loyer->reste_a_payer));
     }
 
     /**
