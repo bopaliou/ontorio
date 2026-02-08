@@ -38,6 +38,13 @@ class AppServiceProvider extends ServiceProvider
             return \Illuminate\Cache\RateLimiting\Limit::perMinute(50)->by($request->user()?->id ?: $request->ip());
         });
 
+        // Dashboard Cache Invalidation (Task 2.2)
+        \App\Models\Bien::observe(\App\Observers\DashboardStatsObserver::class);
+        \App\Models\Contrat::observe(\App\Observers\DashboardStatsObserver::class);
+        \App\Models\Depense::observe(\App\Observers\DashboardStatsObserver::class);
+        \App\Models\Loyer::observe(\App\Observers\DashboardStatsObserver::class);
+        \App\Models\Paiement::observe(\App\Observers\DashboardStatsObserver::class);
+
         // Slow Query Logging (Task 2.4)
         if (config('app.debug')) {
             \Illuminate\Support\Facades\DB::listen(function ($query) {

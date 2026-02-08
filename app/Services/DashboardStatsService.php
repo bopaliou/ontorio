@@ -18,15 +18,15 @@ use Carbon\Carbon;
 class DashboardStatsService
 {
     /**
-     * Obtenir les KPIs financiers principaux
+     * Obtenir les KPIs financiers principaux pour un mois donné
      */
     public function getFinancialKPIs(?string $mois = null): array
     {
         $mois = $mois ?? Carbon::now()->format('Y-m');
-        $cacheKey = "financial_kpis_{$mois}";
+        $cacheKey = "dashboard_financial_kpis_{$mois}";
 
-        return \Illuminate\Support\Facades\Cache::remember($cacheKey, now()->addMinutes(10), function () use ($mois) {
-            // Loyers du mois - une seule requête
+        return \Illuminate\Support\Facades\Cache::remember($cacheKey, now()->addHours(1), function () use ($mois) {
+            // Loyers du mois
             $loyersStats = Loyer::where('mois', $mois)
                 ->where('statut', '!=', 'annulé')
                 ->selectRaw('
@@ -38,87 +38,38 @@ class DashboardStatsService
                 ')
                 ->first();
 
-            // Paiements du mois (Tous les paiements encaissés ce mois, peu importe l'échéance du loyer)
-            $paiementsMois = Paiement::whereMonth('date_paiement', Carbon::parse($mois)->month)
-                ->whereYear('date_paiement', Carbon::parse($mois)->year)
+            $dateObj = Carbon::parse($mois);
+            $paiementsMois = Paiement::whereMonth('date_paiement', $dateObj->month)
+                ->whereYear('date_paiement', $dateObj->year)
                 ->sum('montant');
 
-            // Dépenses du mois
-            $depensesMois = Depense::whereMonth('date_depense', Carbon::parse($mois)->month)
-                ->whereYear('date_depense', Carbon::parse($mois)->year)
+            $depensesMois = Depense::whereMonth('date_depense', $dateObj->month)
+                ->whereYear('date_depense', $dateObj->year)
                 ->sum('montant');
 
-            // Arriérés totaux (Tous les loyers impayés ou en retard, incluant le mois actuel)
             $arrieres = Loyer::whereIn('statut', ['émis', 'en_retard', 'partiellement_payé'])
                 ->where('statut', '!=', 'annulé')
                 ->selectRaw('SUM(montant) - SUM((SELECT COALESCE(SUM(montant), 0) FROM paiements WHERE paiements.loyer_id = loyers.id)) as solde_du')
                 ->first()
                 ->solde_du ?? 0;
 
-            // 4. Gross Potential Rent (Loyer Potentiel Total si 100% loué et payé)
-            $grossPotentialRent = Bien::sum('loyer_mensuel'); // Somme de tous les loyers théoriques
-
-            // 5. Taux de Recouvrement Financier (Encaissé / Facturé Réel)
-            $tauxRecouvrement = $loyersStats->total_facture > 0
-                ? ($paiementsMois / $loyersStats->total_facture) * 100
-                : 0;
-
-            // 6. Taux d'Occupation Financier (Facturé / Potentiel)
-            $tauxOccupationFinancier = $grossPotentialRent > 0
-                ? ($loyersStats->total_facture / $grossPotentialRent) * 100
-                : 0;
-
-            // 7. Arrears Aging (Ventilation des arriérés)
-            $loyersImpayes = Loyer::whereIn('statut', ['émis', 'en_retard', 'partiellement_payé'])
-                ->where('statut', '!=', 'annulé')
-                ->withSum('paiements', 'montant')
-                ->get();
-
-            $aging = [
-                '0-30' => 0,
-                '31-60' => 0,
-                '61-90' => 0,
-                '90+' => 0,
-            ];
-
-            foreach ($loyersImpayes as $loyer) {
-                $reste = $loyer->montant - ($loyer->paiements_sum_montant ?? 0);
-                if ($reste <= 0.5) {
-                    continue;
-                } // Ignorer les micro-différences
-
-                // Calcul de l'âge de la dette par rapport au 1er du mois du loyer
-                // Ex: Loyer Janvier (01-01), Nous sommes le 06-02 = 36 jours
-                $dateLoyer = Carbon::parse($loyer->mois.'-01');
-                $ageJours = $dateLoyer->diffInDays(Carbon::now());
-
-                if ($ageJours <= 30) {
-                    $aging['0-30'] += $reste;
-                } elseif ($ageJours <= 60) {
-                    $aging['31-60'] += $reste;
-                } elseif ($ageJours <= 90) {
-                    $aging['61-90'] += $reste;
-                } else {
-                    $aging['90+'] += $reste;
-                }
-            }
+            $grossPotentialRent = Bien::sum('loyer_mensuel');
+            $tauxRecouvrement = $loyersStats->total_facture > 0 ? ($paiementsMois / $loyersStats->total_facture) * 100 : 0;
+            $tauxOccupationFinancier = $grossPotentialRent > 0 ? ($loyersStats->total_facture / $grossPotentialRent) * 100 : 0;
 
             return [
-                'loyers_factures' => $loyersStats->total_facture ?? 0,
-                'loyers_encaisses' => $paiementsMois, // Total réel encaissé
-                'paiements_mois' => $paiementsMois,
-                'depenses_mois' => $depensesMois,
-                'solde_net' => $paiementsMois - $depensesMois, // NOI
+                'loyers_factures' => (float) ($loyersStats->total_facture ?? 0),
+                'loyers_encaisses' => (float) $paiementsMois,
+                'depenses_mois' => (float) $depensesMois,
+                'solde_net' => (float) ($paiementsMois - $depensesMois),
                 'taux_recouvrement' => round($tauxRecouvrement, 1),
                 'nb_loyers' => $loyersStats->nb_loyers ?? 0,
                 'nb_payes' => $loyersStats->nb_payes ?? 0,
                 'nb_impayes' => $loyersStats->nb_impayes ?? 0,
-                'arrieres_total' => $arrieres,
-                'kpis_modern' => [
-                    'gross_potential_rent' => $grossPotentialRent,
-                    'financial_occupancy_rate' => round($tauxOccupationFinancier, 1),
-                    'arrears_aging' => $aging,
-                ],
+                'arrieres_total' => (float) $arrieres,
+                'gross_potential_rent' => (float) $grossPotentialRent,
+                'financial_occupancy_rate' => round($tauxOccupationFinancier, 1),
+                'arrears_aging' => $this->calculateArrearsAging(),
             ];
         });
     }
@@ -128,72 +79,101 @@ class DashboardStatsService
      */
     public function getParcStats(): array
     {
-        // Comptages optimisés
-        $totalBiens = Bien::count();
-        $biensOccupes = Contrat::where('statut', 'actif')
-            ->distinct('bien_id')
-            ->count('bien_id');
+        return \Illuminate\Support\Facades\Cache::remember('dashboard_parc_stats', now()->addHours(1), function () {
+            $totalBiens = Bien::count();
+            $biensOccupes = Contrat::where('statut', 'actif')->distinct('bien_id')->count('bien_id');
+            $biensVacants = $totalBiens - $biensOccupes;
 
-        $biensVacants = $totalBiens - $biensOccupes;
-        $tauxOccupation = $totalBiens > 0 ? round(($biensOccupes / $totalBiens) * 100, 1) : 0;
-
-        // Contrats expirant bientôt (60 jours)
-        $contratsExpirants = Contrat::where('statut', 'actif')
-            ->whereNotNull('date_fin')
-            ->whereBetween('date_fin', [now(), now()->addDays(60)])
-            ->count();
-
-        // Taux d'Occupation Financier (Facturé / Potentiel)
-        $grossPotentialRent = Bien::sum('loyer_mensuel'); // Potentiel total
-
-        // On prend les loyers FACTURÉS du mois en cours pour comparer au potentiel
-        $mois = Carbon::now()->format('Y-m');
-        $totalFacture = Loyer::where('mois', $mois)->where('statut', '!=', 'annulé')->sum('montant');
-
-        $tauxFinancier = $grossPotentialRent > 0 ? round(($totalFacture / $grossPotentialRent) * 100, 1) : 0;
-
-        return [
-            'total_biens' => $totalBiens,
-            'biens_occupes' => $biensOccupes,
-            'biens_vacants' => $biensVacants,
-            'taux_occupation' => $tauxOccupation,
-            'taux_occupation_financier' => $tauxFinancier,
-            'contrats_expirants' => $contratsExpirants,
-            'total_locataires' => Locataire::count(),
-            'total_proprietaires' => Proprietaire::count(),
-        ];
+            return [
+                'total_biens' => $totalBiens,
+                'biens_occupes' => $biensOccupes,
+                'biens_vacants' => $biensVacants,
+                'taux_occupation' => $totalBiens > 0 ? round(($biensOccupes / $totalBiens) * 100, 1) : 0,
+                'contrats_expirants' => Contrat::where('statut', 'actif')
+                    ->whereNotNull('date_fin')
+                    ->whereBetween('date_fin', [now(), now()->addDays(60)])
+                    ->count(),
+                'total_locataires' => Locataire::count(),
+                'total_proprietaires' => Proprietaire::count(),
+            ];
+        });
     }
 
     /**
-     * Obtenir les données pour les graphiques
+     * Obtenir les statistiques spécifiques pour un propriétaire
+     */
+    public function getProprietaireStats(Proprietaire $proprietaire): array
+    {
+        $cacheKey = "dashboard_proprietaire_stats_{$proprietaire->id}";
+
+        return \Illuminate\Support\Facades\Cache::remember($cacheKey, now()->addHours(1), function () use ($proprietaire) {
+            $moisActuel = Carbon::now()->format('Y-m');
+
+            $revenusMois = Paiement::whereHas('loyer', function ($q) use ($moisActuel, $proprietaire) {
+                $q->where('mois', $moisActuel)
+                    ->whereHas('contrat.bien', function ($sq) use ($proprietaire) {
+                        $sq->where('proprietaire_id', $proprietaire->id);
+                    });
+            })->sum('montant');
+
+            $chargesMois = \App\Models\Depense::whereHas('bien', function ($q) use ($proprietaire) {
+                $q->where('proprietaire_id', $proprietaire->id);
+            })->where('date_depense', 'like', $moisActuel.'%')->sum('montant');
+
+            $commissionMois = round($revenusMois * 0.10);
+
+            $biensPerformance = Bien::where('proprietaire_id', $proprietaire->id)
+                ->withCount(['contrats as is_active' => fn($q) => $q->where('statut', 'actif')])
+                ->addSelect([
+                    'revenus_cumules' => Paiement::selectRaw('sum(montant)')
+                        ->join('loyers', 'paiements.loyer_id', '=', 'loyers.id')
+                        ->join('contrats', 'loyers.contrat_id', '=', 'contrats.id')
+                        ->whereColumn('contrats.bien_id', 'biens.id'),
+                    'charges_cumulees' => Depense::selectRaw('sum(montant)')
+                        ->whereColumn('depenses.bien_id', 'biens.id'),
+                ])
+                ->get();
+
+            return [
+                'revenu_mensuel' => (float) $revenusMois,
+                'charges_mensuelles' => (float) $chargesMois,
+                'commissions_mensuelles' => (float) $commissionMois,
+                'net_mensuel' => (float) ($revenusMois - $chargesMois - $commissionMois),
+                'biens_performance' => $biensPerformance,
+                'chart_data' => $this->getProprietaireChartData($proprietaire),
+            ];
+        });
+    }
+
+    /**
+     * Obtenir les données pour les graphiques globaux
      */
     public function getChartData(int $moisCount = 6): array
     {
-        $labels = [];
-        $encaissements = [];
-        $depenses = [];
+        return \Illuminate\Support\Facades\Cache::remember("dashboard_chart_data_{$moisCount}", now()->addHours(1), function () use ($moisCount) {
+            $labels = [];
+            $encaissements = [];
+            $depenses = [];
 
-        for ($i = $moisCount - 1; $i >= 0; $i--) {
-            $date = Carbon::now()->subMonths($i);
-            $mois = $date->format('Y-m');
-            $labels[] = $date->translatedFormat('M Y');
+            for ($i = $moisCount - 1; $i >= 0; $i--) {
+                $date = Carbon::now()->subMonths($i);
+                $labels[] = $date->translatedFormat('M Y');
 
-            // Encaissements du mois
-            $encaissements[] = Paiement::whereMonth('date_paiement', $date->month)
-                ->whereYear('date_paiement', $date->year)
-                ->sum('montant');
+                $encaissements[] = (float) Paiement::whereMonth('date_paiement', $date->month)
+                    ->whereYear('date_paiement', $date->year)
+                    ->sum('montant');
 
-            // Dépenses du mois
-            $depenses[] = Depense::whereMonth('date_depense', $date->month)
-                ->whereYear('date_depense', $date->year)
-                ->sum('montant');
-        }
+                $depenses[] = (float) Depense::whereMonth('date_depense', $date->month)
+                    ->whereYear('date_depense', $date->year)
+                    ->sum('montant');
+            }
 
-        return [
-            'labels' => $labels,
-            'encaissements' => $encaissements,
-            'depenses' => $depenses,
-        ];
+            return [
+                'labels' => $labels,
+                'encaissements' => $encaissements,
+                'depenses' => $depenses,
+            ];
+        });
     }
 
     /**
@@ -201,46 +181,86 @@ class DashboardStatsService
      */
     public function getAlerts(): array
     {
-        $alerts = [];
+        return \Illuminate\Support\Facades\Cache::remember('dashboard_alerts', now()->addMinutes(30), function () {
+            $alerts = [];
 
-        // Loyers en retard
-        $loyersRetard = Loyer::where('statut', 'en_retard')->count();
-        if ($loyersRetard > 0) {
-            $alerts[] = [
-                'type' => 'warning',
-                'icon' => 'exclamation-triangle',
-                'message' => "$loyersRetard loyer(s) en retard de paiement",
-                'action' => 'loyers',
-            ];
-        }
+            $loyersRetard = Loyer::where('statut', 'en_retard')->count();
+            if ($loyersRetard > 0) {
+                $alerts[] = ['type' => 'warning', 'icon' => 'exclamation-triangle', 'message' => "$loyersRetard loyer(s) en retard", 'action' => 'loyers'];
+            }
 
-        // Contrats expirant dans 30 jours
-        $contratsUrgents = Contrat::where('statut', 'actif')
-            ->whereNotNull('date_fin')
-            ->whereBetween('date_fin', [now(), now()->addDays(30)])
-            ->count();
-        if ($contratsUrgents > 0) {
-            $alerts[] = [
-                'type' => 'info',
-                'icon' => 'calendar',
-                'message' => "$contratsUrgents contrat(s) expire(nt) dans les 30 jours",
-                'action' => 'contrats',
-            ];
-        }
+            $contratsUrgents = Contrat::where('statut', 'actif')->whereNotNull('date_fin')->whereBetween('date_fin', [now(), now()->addDays(30)])->count();
+            if ($contratsUrgents > 0) {
+                $alerts[] = ['type' => 'info', 'icon' => 'calendar', 'message' => "$contratsUrgents contrat(s) expirant bientôt", 'action' => 'contrats'];
+            }
 
-        // Biens vacants
-        $biensVacants = Bien::whereDoesntHave('contrats', function ($q) {
-            $q->where('statut', 'actif');
-        })->count();
-        if ($biensVacants > 0) {
-            $alerts[] = [
-                'type' => 'secondary',
-                'icon' => 'home',
-                'message' => "$biensVacants bien(s) vacant(s) à louer",
-                'action' => 'biens',
-            ];
-        }
+            $biensVacants = Bien::whereDoesntHave('contrats', fn($q) => $q->where('statut', 'actif'))->count();
+            if ($biensVacants > 0) {
+                $alerts[] = ['type' => 'secondary', 'icon' => 'home', 'message' => "$biensVacants bien(s) vacant(s)", 'action' => 'biens'];
+            }
 
-        return $alerts;
+            return $alerts;
+        });
     }
+
+    /**
+     * Nettoyer tout le cache lié au Dashboard
+     */
+    public function clearCache(): void
+    {
+        // En driver 'database', on ne peut pas utiliser de tags, on doit lister ou vider par préfixe si possible.
+        // Ici on va vider les clés principales.
+        \Illuminate\Support\Facades\Cache::forget('dashboard_parc_stats');
+        \Illuminate\Support\Facades\Cache::forget('dashboard_alerts');
+        \Illuminate\Support\Facades\Cache::forget('dashboard_chart_data_6');
+        
+        // On ne peut pas facilement tout oublier sans tags, mais vider les clés globales est un bon début.
+        // Pour les clés par mois ou par proprietaire, elles expireront ou seront écrasées.
+        // Idéalement on viderait tout le cache si c'est acceptable, ou on utiliserait un driver supportant les tags.
+    }
+
+    protected function calculateArrearsAging(): array
+    {
+        $loyersImpayes = Loyer::whereIn('statut', ['émis', 'en_retard', 'partiellement_payé'])
+            ->where('statut', '!=', 'annulé')
+            ->withSum('paiements', 'montant')
+            ->get();
+
+        $aging = ['0-30' => 0, '31-60' => 0, '61-90' => 0, '90+' => 0];
+
+        foreach ($loyersImpayes as $loyer) {
+            $reste = $loyer->montant - ($loyer->paiements_sum_montant ?? 0);
+            if ($reste <= 0.5) continue;
+
+            $dateLoyer = Carbon::parse($loyer->mois.'-01');
+            $ageJours = $dateLoyer->diffInDays(Carbon::now());
+
+            if ($ageJours <= 30) $aging['0-30'] += $reste;
+            elseif ($ageJours <= 60) $aging['31-60'] += $reste;
+            elseif ($ageJours <= 90) $aging['61-90'] += $reste;
+            else $aging['90+'] += $reste;
+        }
+
+        return $aging;
+    }
+
+    protected function getProprietaireChartData(Proprietaire $proprietaire): array
+    {
+        $revenusPar6Mois = [];
+        for ($i = 5; $i >= 0; $i--) {
+            $m = Carbon::now()->subMonths($i)->translatedFormat('M Y');
+            $moisRaw = Carbon::now()->subMonths($i)->format('Y-m');
+
+            $rev = Paiement::whereHas('loyer', function ($q) use ($moisRaw, $proprietaire) {
+                $q->where('mois', $moisRaw)
+                    ->whereHas('contrat.bien', function ($sq) use ($proprietaire) {
+                        $sq->where('proprietaire_id', $proprietaire->id);
+                    });
+            })->sum('montant');
+
+            $revenusPar6Mois[] = ['mois' => $m, 'montant' => (float)$rev];
+        }
+        return $revenusPar6Mois;
+    }
+
 }

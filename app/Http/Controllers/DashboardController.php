@@ -15,115 +15,42 @@ use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
+    protected $statsService;
+
+    public function __construct(\App\Services\DashboardStatsService $statsService)
+    {
+        $this->statsService = $statsService;
+    }
+
     public function index()
     {
         Carbon::setLocale('fr');
         $user = auth()->user();
-        $moisActuel = Carbon::now()->format('Y-m');
-
-        // 1. Récupération des stats Ontario Group (Optimisée avec Sous-requêtes)
-        // 1. Récupération des stats Ontario Group (Optimisée selon le rôle)
-        // Les sous-requêtes financières sont lourdes, on ne les lance que pour Admin/Direction/Gestionnaire
-        $proprietaires = collect([]);
-
-        if (in_array($user->role, ['admin', 'gestionnaire', 'direction'])) {
-            $proprietaires = Proprietaire::withCount(['biens as logements_count'])
-                ->addSelect([
-                    'loyers_factures_mois' => Loyer::selectRaw('sum(montant)')
-                        ->whereColumn('loyers.contrat_id', 'contrats.id')
-                        ->where('loyers.mois', $moisActuel)
-                        ->where('loyers.statut', '!=', 'annulé')
-                        ->join('contrats', 'loyers.contrat_id', '=', 'contrats.id')
-                        ->join('biens', 'contrats.bien_id', '=', 'biens.id')
-                        ->whereColumn('biens.proprietaire_id', 'proprietaires.id'),
-
-                    'loyers_encaisses_mois' => Loyer::selectRaw('sum(montant)')
-                        ->whereColumn('loyers.contrat_id', 'contrats.id')
-                        ->where('loyers.mois', $moisActuel)
-                        ->where('loyers.statut', 'payé')
-                        ->join('contrats', 'loyers.contrat_id', '=', 'contrats.id')
-                        ->join('biens', 'contrats.bien_id', '=', 'biens.id')
-                        ->whereColumn('biens.proprietaire_id', 'proprietaires.id'),
-
-                    'total_impayes' => Loyer::selectRaw('SUM(loyers.montant - COALESCE((SELECT SUM(montant) FROM paiements WHERE paiements.loyer_id = loyers.id), 0))')
-                        ->whereIn('loyers.statut', ['en_retard', 'émis', 'emis', 'partiellement_payé'])
-                        ->join('contrats', 'loyers.contrat_id', '=', 'contrats.id')
-                        ->join('biens', 'contrats.bien_id', '=', 'biens.id')
-                        ->whereColumn('biens.proprietaire_id', 'proprietaires.id'),
-
-                    'total_depenses' => \App\Models\Depense::selectRaw('sum(montant)')
-                        ->join('biens', 'depenses.bien_id', '=', 'biens.id')
-                        ->whereColumn('biens.proprietaire_id', 'proprietaires.id'),
-
-                    'total_encaisse_global' => Paiement::selectRaw('sum(paiements.montant)')
-                        ->join('loyers', 'paiements.loyer_id', '=', 'loyers.id')
-                        ->join('contrats', 'loyers.contrat_id', '=', 'contrats.id')
-                        ->join('biens', 'contrats.bien_id', '=', 'biens.id')
-                        ->whereColumn('biens.proprietaire_id', 'proprietaires.id'),
-
-                    'depenses_mois' => \App\Models\Depense::selectRaw('sum(montant)')
-                        ->where('date_depense', 'like', $moisActuel.'%')
-                        ->join('biens', 'depenses.bien_id', '=', 'biens.id')
-                        ->whereColumn('biens.proprietaire_id', 'proprietaires.id'),
-                ])
-                ->get();
-        } else {
-            // Version légère pour Comptable (juste la liste pour info)
-            $proprietaires = Proprietaire::withCount(['biens as logements_count'])->limit(50)->get();
-        }
-
+        
         // Données communes optimisées (Pagination systématique et Eager Loading)
         $commonData = [
-            'biens_list' => Bien::with(['contrats.locataire', 'images', 'imagePrincipale', 'proprietaire'])
-                ->latest()
-                ->paginate(25, ['*'], 'page_biens'),
-                
-            'depenses_list' => \App\Models\Depense::with('bien.proprietaire')
-                ->latest()
-                ->paginate(25, ['*'], 'page_depenses'),
-                
+            'biens_list' => Bien::with(['contrats.locataire', 'images', 'imagePrincipale', 'proprietaire'])->latest()->paginate(25, ['*'], 'page_biens'),
+            'depenses_list' => \App\Models\Depense::with('bien.proprietaire')->latest()->paginate(25, ['*'], 'page_depenses'),
             'categories_depenses' => ['maintenance', 'travaux', 'taxe', 'assurance', 'autre'],
-            
-            'locataires_list' => Locataire::with(['contrats.bien', 'contrats.loyers'])
-                ->withCount('contrats')
-                ->latest()
-                ->paginate(25, ['*'], 'page_locataires'),
-                
-            'contrats_list' => Contrat::with(['bien:id,nom,adresse', 'locataire:id,nom,telephone', 'loyers'])
-                ->latest()
-                ->paginate(25, ['*'], 'page_contrats'),
-                
-            'loyers_list' => Loyer::withMontantPaye()
-                ->with(['contrat.locataire', 'contrat.bien', 'paiements'])
-                ->orderBy('id', 'desc')
-                ->paginate(50, ['*'], 'page_loyers'),
-                
-            'paiements_list' => Paiement::with(['loyer.contrat.locataire', 'loyer.contrat.bien'])
-                ->latest()
-                ->paginate(50, ['*'], 'page_paiements'),
-                
-            'proprietaires_list' => $proprietaires,
+            'locataires_list' => Locataire::with(['contrats.bien', 'contrats.loyers'])->withCount('contrats')->latest()->paginate(25, ['*'], 'page_locataires'),
+            'contrats_list' => Contrat::with(['bien:id,nom,adresse', 'locataire:id,nom,telephone', 'loyers'])->latest()->paginate(25, ['*'], 'page_contrats'),
+            'loyers_list' => Loyer::withMontantPaye()->with(['contrat.locataire', 'contrat.bien', 'paiements'])->orderBy('id', 'desc')->paginate(50, ['*'], 'page_loyers'),
+            'paiements_list' => Paiement::with(['loyer.contrat.locataire', 'loyer.contrat.bien'])->latest()->paginate(50, ['*'], 'page_paiements'),
+            'proprietaires_list' => in_array($user->role, ['admin', 'gestionnaire', 'direction']) 
+                ? Proprietaire::withCount(['biens as logements_count'])->get() 
+                : collect([]),
+            'alerts' => $this->statsService->getAlerts(),
+            'parc_stats' => $this->statsService->getParcStats(),
         ];
 
-        switch ($user->role) {
-            case 'admin':
-                $roleData = $this->getAdminData();
-                break;
-            case 'gestionnaire':
-                $roleData = $this->getGestionnaireData();
-                break;
-            case 'comptable':
-                $roleData = $this->getComptableData();
-                break;
-            case 'direction':
-                $roleData = $this->getDirectionData();
-                break;
-            case 'proprietaire':
-                $roleData = $this->getProprietaireData();
-                break;
-            default:
-                abort(403, 'Rôle non autorisé');
-        }
+        $roleData = match ($user->role) {
+            'admin' => $this->getAdminData(),
+            'gestionnaire' => $this->getGestionnaireData(),
+            'comptable' => $this->getComptableData(),
+            'direction' => $this->getDirectionData(),
+            'proprietaire' => $this->getProprietaireData(),
+            default => abort(403, 'Rôle non autorisé'),
+        };
 
         $data = array_merge($commonData, $roleData);
 
@@ -132,76 +59,59 @@ class DashboardController extends Controller
 
     private function getAdminData()
     {
-        $moisActuel = Carbon::now()->format('Y-m');
-        $gestionnaireData = $this->getGestionnaireData();
-
-        return array_merge($gestionnaireData, [
+        return [
             'role' => 'admin',
             'users_list' => User::all(),
             'logs_list' => ActivityLog::with('user')->latest()->limit(50)->get(),
-        ]);
+            'financial_stats' => $this->statsService->getFinancialKPIs(),
+            'chart_data' => $this->statsService->getChartData(),
+        ];
     }
 
     private function getGestionnaireData()
     {
-        $totalBiens = Bien::count();
-        $biensLibres = Bien::where('statut', 'libre')->count();
-        $contratsActifs = Contrat::where('statut', 'actif')->count();
-        $moisActuel = Carbon::now()->format('Y-m');
-        $loyersEmisMois = Loyer::where('mois', $moisActuel)->where('statut', '!=', 'annulé')->sum('montant');
-        $loyersPayesMois = Loyer::where('mois', $moisActuel)->where('statut', 'payé')->sum('montant');
-        $loyersEnRetard = Loyer::whereIn('statut', ['en_retard', 'émis', 'emis', 'partiellement_payé'])
-            ->sum(DB::raw('montant - (SELECT COALESCE(SUM(montant), 0) FROM paiements WHERE paiements.loyer_id = loyers.id)'));
+        $financial = $this->statsService->getFinancialKPIs();
+        $parc = $this->statsService->getParcStats();
 
         return [
             'role' => 'gestionnaire',
             'kpis' => [
-                'total_logements' => $totalBiens,
-                'logements_libres' => $biensLibres,
-                'contrats_actifs' => $contratsActifs,
-                'loyers_emis_mois' => $loyersEmisMois,
-                'loyers_payes_mois' => $loyersPayesMois,
-                'total_en_retard' => $loyersEnRetard,
+                'total_logements' => $parc['total_biens'],
+                'logements_libres' => $parc['biens_vacants'],
+                'contrats_actifs' => $parc['biens_occupes'],
+                'loyers_emis_mois' => $financial['loyers_factures'],
+                'loyers_payes_mois' => $financial['loyers_encaisses'],
+                'total_en_retard' => $financial['arrieres_total'],
             ],
             'derniers_contrats' => Contrat::with(['bien', 'locataire'])->where('statut', 'actif')->latest()->limit(5)->get(),
+            'chart_data' => $this->statsService->getChartData(),
         ];
     }
 
     private function getComptableData()
     {
-        $moisActuel = Carbon::now()->format('Y-m');
-        $loyersEmis = Loyer::where('mois', $moisActuel)->where('statut', '!=', 'annulé')->sum('montant');
-        $loyersPayes = Loyer::where('mois', $moisActuel)->where('statut', 'payé')->sum('montant');
-        $totalImpaye = Loyer::whereIn('statut', ['en_retard', 'émis', 'emis', 'partiellement_payé'])
-            ->sum(DB::raw('montant - (SELECT COALESCE(SUM(montant), 0) FROM paiements WHERE paiements.loyer_id = loyers.id)'));
+        $financial = $this->statsService->getFinancialKPIs();
 
         return [
             'role' => 'comptable',
             'kpis' => [
-                'loyers_emis' => $loyersEmis,
-                'loyers_payes' => $loyersPayes,
-                'total_impaye' => $totalImpaye,
-                'taux_recouvrement' => $loyersEmis > 0 ? round(($loyersPayes / $loyersEmis) * 100) : 0,
+                'loyers_emis' => $financial['loyers_factures'],
+                'loyers_payes' => $financial['loyers_encaisses'],
+                'total_impaye' => $financial['arrieres_total'],
+                'taux_recouvrement' => $financial['taux_recouvrement'],
             ],
             'loyers_en_attente' => Loyer::with(['contrat.bien', 'contrat.locataire'])->whereIn('statut', ['émis', 'en_retard'])->latest()->limit(10)->get(),
             'derniers_paiements' => Paiement::with(['loyer.contrat.locataire'])->latest('date_paiement')->limit(10)->get(),
+            'chart_data' => $this->statsService->getChartData(),
         ];
     }
 
     private function getProprietaireData()
     {
         $user = auth()->user();
-        // On suppose que l'utilisateur 'proprietaire' a un lien avec un modèle Proprietaire ou un email correspondant
-        // Pour l'instant, on cherche le proprietaire via l'email si ce n'est pas un admin
-        $proprietaireId = null;
-        if ($user->role === 'proprietaire') {
-            // Essayons de trouver le proprietaire lié à ce compte utilisateur
-            // (Hypothèse: un utilisateur proprietaire a son email dans la table proprietaires)
-            $propRecord = Proprietaire::where('email', $user->email)->first();
-            $proprietaireId = $propRecord ? $propRecord->id : null;
-        }
+        $proprietaire = Proprietaire::where('email', $user->email)->first();
 
-        if (! $proprietaireId) {
+        if (!$proprietaire) {
             return [
                 'role' => 'proprietaire',
                 'kpis' => ['revenus' => 0, 'charges' => 0, 'net' => 0],
@@ -209,124 +119,43 @@ class DashboardController extends Controller
             ];
         }
 
-        $moisActuel = Carbon::now()->format('Y-m');
-
-        // Revenus encaissés ce mois pour ce propriétaire
-        $revenusMois = Paiement::whereHas('loyer', function ($q) use ($moisActuel, $proprietaireId) {
-            $q->where('mois', $moisActuel)
-                ->whereHas('contrat.bien', function ($sq) use ($proprietaireId) {
-                    $sq->where('proprietaire_id', $proprietaireId);
-                });
-        })->sum('montant');
-
-        // Charges (Dépenses) pour ce propriétaire
-        $chargesMois = \App\Models\Depense::whereHas('bien', function ($q) use ($proprietaireId) {
-            $q->where('proprietaire_id', $proprietaireId);
-        })->where('date_depense', 'like', $moisActuel.'%')->sum('montant');
-
-        // Commissions Agence (estimées à 10%)
-        $commissionsMois = round($revenusMois * 0.10);
-
-        $netMois = $revenusMois - $chargesMois - $commissionsMois;
-
-        // Performance par bien
-        $biensPerformance = Bien::where('proprietaire_id', $proprietaireId)
-            ->withCount(['contrats as is_active' => function ($q) {
-                $q->where('statut', 'actif');
-            }])
-            ->addSelect([
-                'revenus_cumules' => Paiement::selectRaw('sum(montant)')
-                    ->join('loyers', 'paiements.loyer_id', '=', 'loyers.id')
-                    ->join('contrats', 'loyers.contrat_id', '=', 'contrats.id')
-                    ->whereColumn('contrats.bien_id', 'biens.id'),
-                'charges_cumulees' => \App\Models\Depense::selectRaw('sum(montant)')
-                    ->whereColumn('depenses.bien_id', 'biens.id'),
-            ])
-            ->get();
-
-        // Revenus des 6 derniers mois pour le graphique
-        $revenusPar6Mois = [];
-        for ($i = 5; $i >= 0; $i--) {
-            $m = Carbon::now()->subMonths($i)->translatedFormat('M Y');
-            $moisRaw = Carbon::now()->subMonths($i)->format('Y-m');
-
-            $rev = Paiement::whereHas('loyer', function ($q) use ($moisRaw, $proprietaireId) {
-                $q->where('mois', $moisRaw)
-                    ->whereHas('contrat.bien', function ($sq) use ($proprietaireId) {
-                        $sq->where('proprietaire_id', $proprietaireId);
-                    });
-            })->sum('montant');
-
-            $revenusPar6Mois[] = [
-                'mois' => $m,
-                'montant' => $rev,
-            ];
-        }
+        $stats = $this->statsService->getProprietaireStats($proprietaire);
 
         return [
             'role' => 'proprietaire',
             'kpis' => [
-                'revenu_mensuel' => $revenusMois,
-                'charges_mensuelles' => $chargesMois,
-                'commissions_mensuelles' => $commissionsMois,
-                'net_mensuel' => $netMois,
-                'taux_rentabilite' => 0, // Placeholder
+                'revenu_mensuel' => $stats['revenu_mensuel'],
+                'charges_mensuelles' => $stats['charges_mensuelles'],
+                'commissions_mensuelles' => $stats['commissions_mensuelles'],
+                'net_mensuel' => $stats['net_mensuel'],
+                'taux_rentabilite' => 0,
             ],
-            'biens_list' => $biensPerformance,
-            'revenus_par_mois' => $revenusPar6Mois,
+            'biens_list' => $stats['biens_performance'],
+            'revenus_par_mois' => $stats['chart_data'],
         ];
     }
 
     private function getDirectionData()
     {
-        $moisActuel = Carbon::now()->format('Y-m');
-        $totalBiens = Bien::count();
-        $biensOccupesCount = Bien::where('statut', 'occupé')->count();
-        $tauxOccupation = $totalBiens > 0 ? round(($biensOccupesCount / $totalBiens) * 100) : 0;
-
-        $loyersEmisMois = Loyer::where('mois', $moisActuel)->where('statut', '!=', 'annulé')->sum('montant');
-        $loyersPayesMois = Loyer::where('mois', $moisActuel)->where('statut', 'payé')->sum('montant');
-        $tauxCollecte = $loyersEmisMois > 0 ? round(($loyersPayesMois / $loyersEmisMois) * 100) : 0;
-
-        $impayesTotal = Loyer::whereIn('statut', ['en_retard', 'émis', 'emis', 'partiellement_payé'])
-            ->sum(DB::raw('montant - (SELECT COALESCE(SUM(montant), 0) FROM paiements WHERE paiements.loyer_id = loyers.id)'));
-        $valeurPortefeuille = Bien::sum('loyer_mensuel');
-
-        $commissionMensuelle = round($loyersPayesMois * 0.10);
-
-        // Répartition par type de bien
-        $repartitionType = DB::table('biens')
-            ->select('type', DB::raw('count(*) as total'))
-            ->groupBy('type')
-            ->get();
-
-        // Revenus des 6 derniers mois pour le graphique
-        $revenusPar6Mois = [];
-        for ($i = 5; $i >= 0; $i--) {
-            $m = Carbon::now()->subMonths($i)->translatedFormat('M Y');
-            $moisRaw = Carbon::now()->subMonths($i)->format('Y-m');
-            $revenusPar6Mois[] = [
-                'mois' => $m,
-                'montant' => Loyer::where('mois', $moisRaw)->where('statut', 'payé')->sum('montant'),
-            ];
-        }
+        $financial = $this->statsService->getFinancialKPIs();
+        $parc = $this->statsService->getParcStats();
 
         return [
             'role' => 'direction',
             'kpis' => [
-                'total_logements' => $totalBiens,
-                'biens_occupes' => $biensOccupesCount,
-                'taux_occupation' => $tauxOccupation,
-                'revenu_mensuel' => $loyersPayesMois,
-                'taux_collecte' => $tauxCollecte,
-                'commission_mensuelle' => $commissionMensuelle,
-                'impayes' => $impayesTotal,
-                'valeur_portefeuille' => $valeurPortefeuille,
-                'loyer_moyen' => $totalBiens > 0 ? round($valeurPortefeuille / $totalBiens) : 0,
-                'projection_annuelle' => $commissionMensuelle * 12,
+                'total_logements' => $parc['total_biens'],
+                'biens_occupes' => $parc['biens_occupes'],
+                'taux_occupation' => $parc['taux_occupation'],
+                'revenu_mensuel' => $financial['loyers_encaisses'],
+                'taux_collecte' => $financial['taux_recouvrement'],
+                'commission_mensuelle' => round($financial['loyers_encaisses'] * 0.10),
+                'impayes' => $financial['arrieres_total'],
+                'valeur_portefeuille' => $financial['gross_potential_rent'],
+                'loyer_moyen' => $parc['total_biens'] > 0 ? round($financial['gross_potential_rent'] / $parc['total_biens']) : 0,
+                'projection_annuelle' => round($financial['loyers_encaisses'] * 0.10) * 12,
             ],
-            'repartition_type' => $repartitionType,
-            'revenus_par_mois' => $revenusPar6Mois,
+            'repartition_type' => DB::table('biens')->select('type', DB::raw('count(*) as total'))->groupBy('type')->get(),
+            'revenus_par_mois' => $this->statsService->getChartData()['encaissements'], // Simplifié ou adapté selon vue
             'derniers_paiements' => Paiement::with(['loyer.contrat.locataire'])->latest()->limit(5)->get(),
             'contrats_expiration' => Contrat::with(['bien', 'locataire'])
                 ->where('statut', 'actif')
@@ -344,44 +173,25 @@ class DashboardController extends Controller
     {
         $mois = $mois ?? request('mois') ?? Carbon::now()->format('Y-m');
 
-        // Calcul des KPIs
-        $totalBiens = Bien::count();
-        $biensOccupes = Bien::where('statut', 'occupé')->count();
-        $tauxOccupation = $totalBiens > 0 ? round(($biensOccupes / $totalBiens) * 100) : 0;
-
-        $loyersMois = Loyer::where('mois', $mois)->get();
-        $loyersEmis = $loyersMois->where('statut', '!=', 'annulé')->sum('montant');
-        $loyersPayes = $loyersMois->where('statut', 'payé')->sum('montant');
-        $totalImpaye = Loyer::whereIn('statut', ['en_retard', 'émis', 'emis', 'partiellement_payé'])
-            ->sum(DB::raw('montant - (SELECT COALESCE(SUM(montant), 0) FROM paiements WHERE paiements.loyer_id = loyers.id)'));
-
-        $tauxCollecte = $loyersEmis > 0 ? round(($loyersPayes / $loyersEmis) * 100) : 0;
-        $commissionMensuelle = round($loyersPayes * 0.10); // 10% de commission
-
-        // Revenus des 6 derniers mois
-        $revenusPar6Mois = [];
-        for ($i = 5; $i >= 0; $i--) {
-            $m = Carbon::now()->subMonths($i)->translatedFormat('M Y');
-            $mRaw = Carbon::now()->subMonths($i)->format('Y-m');
-            $revenusPar6Mois[] = [
-                'mois' => $m,
-                'montant' => Loyer::where('mois', $mRaw)->where('statut', 'payé')->sum('montant'),
-            ];
-        }
+        $financial = $this->statsService->getFinancialKPIs($mois);
+        $parc = $this->statsService->getParcStats();
+        $chart = $this->statsService->getChartData(6);
 
         $data = [
-            'biens_list' => Bien::latest()->get(),
+            'biens_list' => Bien::with('proprietaire')->latest()->get(),
             'kpis' => [
-                'revenu_mensuel' => $loyersPayes,
-                'taux_occupation' => $tauxOccupation,
-                'impayes' => $totalImpaye,
-                'taux_collecte' => $tauxCollecte,
-                'loyers_emis' => $loyersEmis,
-                'loyers_payes' => $loyersPayes,
-                'total_impaye' => $totalImpaye,
-                'commission_mensuelle' => $commissionMensuelle,
+                'revenu_mensuel' => $financial['loyers_encaisses'],
+                'taux_occupation' => $parc['taux_occupation'],
+                'impayes' => $financial['arrieres_total'],
+                'taux_collecte' => $financial['taux_recouvrement'],
+                'loyers_emis' => $financial['loyers_factures'],
+                'loyers_payes' => $financial['loyers_encaisses'],
+                'total_impaye' => $financial['arrieres_total'],
+                'commission_mensuelle' => round($financial['loyers_encaisses'] * 0.10),
             ],
-            'revenus_par_mois' => $revenusPar6Mois,
+            'revenus_par_mois' => array_map(function($label, $val) {
+                return ['mois' => $label, 'montant' => $val];
+            }, $chart['labels'], $chart['encaissements']),
         ];
 
         $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.rapport-mensuel', compact('data', 'mois'));
