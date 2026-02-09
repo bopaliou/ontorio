@@ -2,18 +2,8 @@
 
 namespace App\Http\Requests;
 
-use App\Traits\HandlesApiValidation;
-use Illuminate\Foundation\Http\FormRequest;
-
-class StoreLocataireRequest extends FormRequest
+class StoreLocataireRequest extends AuthenticatedApiFormRequest
 {
-    use HandlesApiValidation;
-
-    public function authorize(): bool
-    {
-        return auth()->check();
-    }
-
     public function rules(): array
     {
         return [

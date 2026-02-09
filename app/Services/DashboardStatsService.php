@@ -39,13 +39,8 @@ class DashboardStatsService
                 ->first();
 
             $dateObj = Carbon::parse($mois);
-            $paiementsMois = Paiement::whereMonth('date_paiement', $dateObj->month)
-                ->whereYear('date_paiement', $dateObj->year)
-                ->sum('montant');
-
-            $depensesMois = Depense::whereMonth('date_depense', $dateObj->month)
-                ->whereYear('date_depense', $dateObj->year)
-                ->sum('montant');
+            $paiementsMois = $this->sumForMonth(Paiement::query(), 'date_paiement', $dateObj);
+            $depensesMois = $this->sumForMonth(Depense::query(), 'date_depense', $dateObj);
 
             $arrieres = Loyer::whereIn('statut', ['émis', 'en_retard', 'partiellement_payé'])
                 ->where('statut', '!=', 'annulé')
@@ -159,13 +154,8 @@ class DashboardStatsService
                 $date = Carbon::now()->subMonths($i);
                 $labels[] = $date->translatedFormat('M Y');
 
-                $encaissements[] = (float) Paiement::whereMonth('date_paiement', $date->month)
-                    ->whereYear('date_paiement', $date->year)
-                    ->sum('montant');
-
-                $depenses[] = (float) Depense::whereMonth('date_depense', $date->month)
-                    ->whereYear('date_depense', $date->year)
-                    ->sum('montant');
+                $encaissements[] = $this->sumForMonth(Paiement::query(), 'date_paiement', $date);
+                $depenses[] = $this->sumForMonth(Depense::query(), 'date_depense', $date);
             }
 
             return [
@@ -217,6 +207,14 @@ class DashboardStatsService
         // On ne peut pas facilement tout oublier sans tags, mais vider les clés globales est un bon début.
         // Pour les clés par mois ou par proprietaire, elles expireront ou seront écrasées.
         // Idéalement on viderait tout le cache si c'est acceptable, ou on utiliserait un driver supportant les tags.
+    }
+
+    private function sumForMonth($query, string $dateColumn, Carbon $date): float
+    {
+        return (float) $query
+            ->whereMonth($dateColumn, $date->month)
+            ->whereYear($dateColumn, $date->year)
+            ->sum('montant');
     }
 
     protected function calculateArrearsAging(): array
