@@ -8,6 +8,7 @@ use Illuminate\Foundation\Http\FormRequest;
 class StoreBienRequest extends FormRequest
 {
     use HandlesApiValidation;
+
     /**
      * Determine if the user is authorized to make this request.
      */

@@ -2,13 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Helpers\ActivityLogger;
 use App\Http\Responses\ApiResponse;
-use App\Models\Loyer;
 use App\Models\Paiement;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Validator;
 
 class PaiementController extends Controller
 {
@@ -55,7 +51,7 @@ class PaiementController extends Controller
 
             \Log::error('Erreur enregistrement paiement', [
                 'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
+                'trace' => $e->getTraceAsString(),
             ]);
 
             return ApiResponse::error('Une erreur est survenue lors de l\'enregistrement.', 500);
@@ -74,7 +70,7 @@ class PaiementController extends Controller
         } catch (\Exception $e) {
             \Log::error('Erreur suppression paiement', [
                 'id' => $paiement->id,
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ]);
 
             return ApiResponse::error('Une erreur est survenue lors de la suppression.', 500);

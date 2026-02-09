@@ -136,8 +136,6 @@ Route::middleware(['auth', 'role:admin|direction|gestionnaire', 'throttle:modera
     })->name('api.alerts');
 });
 
-
-
 Route::get('/test-debug', function () {
     return 'ok';
 });

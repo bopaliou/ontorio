@@ -48,7 +48,7 @@ class SecurityAuditTest extends TestCase
     public function test_api_stats_restricted_to_authorized_roles()
     {
         $authorizedRoles = ['admin', 'direction', 'gestionnaire'];
-        $unauthorizedRoles = ['comptable']; 
+        $unauthorizedRoles = ['comptable'];
 
         foreach ($authorizedRoles as $role) {
             $user = User::factory()->create(['role' => $role]);
@@ -63,7 +63,7 @@ class SecurityAuditTest extends TestCase
 
     /**
      * Test Task 1.3: Rate Limiting
-     * We use a smaller loop and mock the limiter if necessary, 
+     * We use a smaller loop and mock the limiter if necessary,
      * but here we just ensure we hit a throttled route.
      */
     public function test_rate_limiting_on_sensitive_routes()
@@ -76,7 +76,9 @@ class SecurityAuditTest extends TestCase
 
         for ($i = 0; $i < 50; $i++) {
             $response = $this->post('/paiements', []);
-            if ($response->status() === 429) break; // Already hit?
+            if ($response->status() === 429) {
+                break;
+            } // Already hit?
         }
 
         $this->post('/paiements', [])->assertStatus(429);

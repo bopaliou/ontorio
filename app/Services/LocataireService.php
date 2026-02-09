@@ -2,9 +2,9 @@
 
 namespace App\Services;
 
+use App\Helpers\ActivityLogger;
 use App\Models\Locataire;
 use Illuminate\Support\Facades\DB;
-use App\Helpers\ActivityLogger;
 
 class LocataireService
 {

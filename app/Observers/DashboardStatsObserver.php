@@ -2,11 +2,6 @@
 
 namespace App\Observers;
 
-use App\Models\Bien;
-use App\Models\Contrat;
-use App\Models\Depense;
-use App\Models\Loyer;
-use App\Models\Paiement;
 use App\Services\DashboardStatsService;
 
 class DashboardStatsObserver

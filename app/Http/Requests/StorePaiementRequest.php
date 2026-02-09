@@ -9,12 +9,13 @@ use Illuminate\Foundation\Http\FormRequest;
 class StorePaiementRequest extends FormRequest
 {
     use HandlesApiValidation;
+
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        // Permission check is already handled by role middleware in routes, 
+        // Permission check is already handled by role middleware in routes,
         // but we can add more granular check here if needed.
         return true;
     }
@@ -35,7 +36,7 @@ class StorePaiementRequest extends FormRequest
                     if ($loyer) {
                         $due = $loyer->montant + ($loyer->penalite ?? 0) - ($loyer->paiements_sum_montant ?? 0);
                         if ($value > $due + 0.01) { // Allowing tiny rounding difference
-                            $fail("Le montant ($value) excède le reste à payer (" . number_format($due, 0, ',', ' ') . " F).");
+                            $fail("Le montant ($value) excède le reste à payer (".number_format($due, 0, ',', ' ').' F).');
                         }
                     }
                 },

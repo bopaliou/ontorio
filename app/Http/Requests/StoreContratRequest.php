@@ -8,6 +8,7 @@ use Illuminate\Foundation\Http\FormRequest;
 class StoreContratRequest extends FormRequest
 {
     use HandlesApiValidation;
+
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -61,7 +62,7 @@ class StoreContratRequest extends FormRequest
                 if ($bienId) {
                     $isOccupied = \App\Models\Bien::where('id', $bienId)
                         ->where('statut', 'occupé')
-                        ->whereHas('contrats', function($q) {
+                        ->whereHas('contrats', function ($q) {
                             $q->whereIn('statut', ['actif', 'en_attente']);
                         })->exists();
 
@@ -70,7 +71,7 @@ class StoreContratRequest extends FormRequest
                     }
                 }
             } catch (\Throwable $e) {
-                file_put_contents('debug_request.txt', $e->getMessage() . "\n" . $e->getTraceAsString());
+                file_put_contents('debug_request.txt', $e->getMessage()."\n".$e->getTraceAsString());
             }
         });
     }

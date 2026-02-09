@@ -21,7 +21,7 @@ class SystemController extends Controller
         if (! $deployToken || ! hash_equals($deployToken, (string) $token)) {
             Log::warning("Tentative d'accès non autorisé à la route de migration.", [
                 'ip' => $request->ip(),
-                'user_id' => auth()->id()
+                'user_id' => auth()->id(),
             ]);
             abort(403, 'Accès refusé.');
         }
