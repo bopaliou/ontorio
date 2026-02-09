@@ -209,7 +209,6 @@ class DashboardStatsService
         // Idéalement on viderait tout le cache si c'est acceptable, ou on utiliserait un driver supportant les tags.
     }
 
-
     private function sumForMonth($query, string $dateColumn, Carbon $date): float
     {
         return (float) $query
