@@ -2,7 +2,7 @@
 
 > Plateforme de gestion immobilière complète pour agences et gestionnaires de biens.
 
-![Laravel](https://img.shields.io/badge/Laravel-11.x-red?style=flat-square&logo=laravel)
+![Laravel](https://img.shields.io/badge/Laravel-12.x-red?style=flat-square&logo=laravel)
 ![PHP](https://img.shields.io/badge/PHP-8.2+-777BB4?style=flat-square&logo=php)
 ![TailwindCSS](https://img.shields.io/badge/TailwindCSS-3.x-06B6D4?style=flat-square&logo=tailwindcss)
 ![MySQL](https://img.shields.io/badge/MySQL-8.0+-4479A1?style=flat-square&logo=mysql)
@@ -181,7 +181,7 @@ php artisan db:seed --class=OntarioPublicSiteSeeder
 
 ## 📊 Technologies Utilisées
 
-- **Backend**: Laravel 11.x
+- **Backend**: Laravel 12.x
 - **Frontend**: Blade + TailwindCSS 3.x
 - **Base de données**: MySQL 8.0
 - **Authentification**: Laravel Breeze
