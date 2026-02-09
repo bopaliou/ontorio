@@ -2,10 +2,8 @@
 
 namespace App\Http\Requests;
 
-class StoreLocataireRequest extends BaseApiFormRequest
+class StoreLocataireRequest extends AuthenticatedApiFormRequest
 {
-    protected bool $requiresAuthentication = true;
-
     public function rules(): array
     {
         return [
