@@ -2,21 +2,8 @@
 
 namespace App\Http\Requests;
 
-use App\Traits\HandlesApiValidation;
-use Illuminate\Foundation\Http\FormRequest;
-
-class StoreContratRequest extends FormRequest
+class StoreContratRequest extends BaseApiFormRequest
 {
-    use HandlesApiValidation;
-
-    /**
-     * Determine if the user is authorized to make this request.
-     */
-    public function authorize(): bool
-    {
-        return true;
-    }
-
     /**
      * Get the validation rules that apply to the request.
      */
