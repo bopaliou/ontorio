@@ -2,9 +2,9 @@
 
 namespace App\Services;
 
+use App\Helpers\ActivityLogger;
 use App\Models\Locataire;
 use Illuminate\Support\Facades\DB;
-use App\Helpers\ActivityLogger;
 
 class LocataireService
 {
@@ -13,6 +13,7 @@ class LocataireService
         return DB::transaction(function () use ($data) {
             $locataire = Locataire::create($data);
             ActivityLogger::log('Création Locataire', "Ajout du locataire {$locataire->nom}", 'success', $locataire);
+
             return $locataire;
         });
     }
@@ -22,6 +23,7 @@ class LocataireService
         return DB::transaction(function () use ($locataire, $data) {
             $locataire->update($data);
             ActivityLogger::log('Modification Locataire', "Mise à jour du locataire {$locataire->nom}", 'info', $locataire);
+
             return $locataire;
         });
     }

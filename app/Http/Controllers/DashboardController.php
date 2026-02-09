@@ -26,7 +26,7 @@ class DashboardController extends Controller
     {
         Carbon::setLocale('fr');
         $user = auth()->user();
-        
+
         // Données communes optimisées (Pagination systématique et Eager Loading)
         $commonData = [
             'biens_list' => Bien::with(['contrats.locataire', 'images', 'imagePrincipale', 'proprietaire'])->latest()->paginate(25, ['*'], 'page_biens'),
@@ -36,8 +36,8 @@ class DashboardController extends Controller
             'contrats_list' => Contrat::with(['bien:id,nom,adresse', 'locataire:id,nom,telephone', 'loyers'])->latest()->paginate(25, ['*'], 'page_contrats'),
             'loyers_list' => Loyer::withMontantPaye()->with(['contrat.locataire', 'contrat.bien', 'paiements'])->orderBy('id', 'desc')->paginate(50, ['*'], 'page_loyers'),
             'paiements_list' => Paiement::with(['loyer.contrat.locataire', 'loyer.contrat.bien'])->latest()->paginate(50, ['*'], 'page_paiements'),
-            'proprietaires_list' => in_array($user->role, ['admin', 'gestionnaire', 'direction']) 
-                ? Proprietaire::withCount(['biens as logements_count'])->get() 
+            'proprietaires_list' => in_array($user->role, ['admin', 'gestionnaire', 'direction'])
+                ? Proprietaire::withCount(['biens as logements_count'])->get()
                 : collect([]),
             'alerts' => $this->statsService->getAlerts(),
             'parc_stats' => $this->statsService->getParcStats(),
@@ -111,7 +111,7 @@ class DashboardController extends Controller
         $user = auth()->user();
         $proprietaire = Proprietaire::where('email', $user->email)->first();
 
-        if (!$proprietaire) {
+        if (! $proprietaire) {
             return [
                 'role' => 'proprietaire',
                 'kpis' => ['revenus' => 0, 'charges' => 0, 'net' => 0],
@@ -189,7 +189,7 @@ class DashboardController extends Controller
                 'total_impaye' => $financial['arrieres_total'],
                 'commission_mensuelle' => round($financial['loyers_encaisses'] * 0.10),
             ],
-            'revenus_par_mois' => array_map(function($label, $val) {
+            'revenus_par_mois' => array_map(function ($label, $val) {
                 return ['mois' => $label, 'montant' => $val];
             }, $chart['labels'], $chart['encaissements']),
         ];

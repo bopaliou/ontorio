@@ -2,11 +2,11 @@
 
 namespace App\Services;
 
+use App\Helpers\ActivityLogger;
 use App\Models\Loyer;
 use App\Models\Paiement;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-use App\Helpers\ActivityLogger;
 
 class PaymentService
 {
@@ -22,7 +22,7 @@ class PaymentService
             // 2. Vérification métier: déjà payé ?
             $totalPaid = $loyer->paiements()->sum('montant');
             $due = $loyer->montant + ($loyer->penalite ?? 0);
-            
+
             if ($totalPaid >= $due) {
                 throw new \Exception('Ce loyer est déjà entièrement payé.');
             }
@@ -79,7 +79,7 @@ class PaymentService
 
             if ($loyer) {
                 $sommePaiements = $loyer->paiements()->sum('montant');
-                
+
                 if ($sommePaiements < $loyer->montant) {
                     $moisLoyer = \Carbon\Carbon::parse($loyer->mois);
                     $now = \Carbon\Carbon::now();

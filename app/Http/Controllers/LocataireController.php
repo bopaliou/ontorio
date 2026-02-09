@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Helpers\ActivityLogger;
 use App\Http\Responses\ApiResponse;
 use App\Models\Locataire;
 use Illuminate\Http\Request;

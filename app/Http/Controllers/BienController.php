@@ -6,12 +6,8 @@ use App\Helpers\ActivityLogger;
 use App\Http\Responses\ApiResponse;
 use App\Models\Bien;
 use App\Models\BienImage;
-use App\Models\Contrat;
-use App\Models\Loyer;
-use App\Models\Proprietaire;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Validator;
+
 class BienController extends Controller
 {
     protected $bienService;

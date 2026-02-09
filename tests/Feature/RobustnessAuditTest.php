@@ -21,19 +21,19 @@ class RobustnessAuditTest extends TestCase
         $admin = User::factory()->create(['role' => 'admin']);
         $bien = Bien::factory()->create();
         $locataire = Locataire::factory()->create();
-        
+
         // Create an active contract
         Contrat::factory()->create([
             'bien_id' => $bien->id,
             'locataire_id' => $locataire->id,
-            'statut' => 'actif'
+            'statut' => 'actif',
         ]);
 
         $this->actingAs($admin)
             ->deleteJson('/dashboard/biens/'.$bien->id)
             ->assertStatus(409)
             ->assertJsonPath('success', false);
-            
+
         $this->assertDatabaseHas('biens', ['id' => $bien->id]);
     }
 
@@ -62,7 +62,7 @@ class RobustnessAuditTest extends TestCase
         $loyer = \App\Models\Loyer::factory()->create([
             'contrat_id' => $contrat->id,
             'montant' => 100000,
-            'statut' => 'émis'
+            'statut' => 'émis',
         ]);
 
         // Attempting to pay more than due (100k)
@@ -71,7 +71,7 @@ class RobustnessAuditTest extends TestCase
                 'loyer_id' => $loyer->id,
                 'montant' => 150000,
                 'mode' => 'espèces',
-                'date_paiement' => now()->toDateString()
+                'date_paiement' => now()->toDateString(),
             ])
             ->assertStatus(422)
             ->assertJsonFragment(['success' => false])

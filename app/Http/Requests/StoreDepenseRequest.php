@@ -8,6 +8,7 @@ use Illuminate\Foundation\Http\FormRequest;
 class StoreDepenseRequest extends FormRequest
 {
     use HandlesApiValidation;
+
     public function authorize(): bool
     {
         return auth()->check();
