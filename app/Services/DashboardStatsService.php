@@ -17,6 +17,8 @@ use Carbon\Carbon;
  */
 class DashboardStatsService
 {
+    private const STATUS_ANNULE = 'annulé';
+
     /**
      * Obtenir les KPIs financiers principaux pour un mois donné
      */
@@ -28,7 +30,7 @@ class DashboardStatsService
         return \Illuminate\Support\Facades\Cache::remember($cacheKey, now()->addHours(1), function () use ($mois) {
             // Loyers du mois
             $loyersStats = Loyer::where('mois', $mois)
-                ->where('statut', '!=', 'annulé')
+                ->where('statut', '!=', self::STATUS_ANNULE)
                 ->selectRaw('
                     SUM(montant) as total_facture,
                     SUM(CASE WHEN statut = "payé" THEN montant ELSE 0 END) as total_paye,
@@ -39,16 +41,10 @@ class DashboardStatsService
                 ->first();
 
             $dateObj = Carbon::parse($mois);
-            $paiementsMois = Paiement::whereMonth('date_paiement', $dateObj->month)
-                ->whereYear('date_paiement', $dateObj->year)
-                ->sum('montant');
-
-            $depensesMois = Depense::whereMonth('date_depense', $dateObj->month)
-                ->whereYear('date_depense', $dateObj->year)
-                ->sum('montant');
+            ['encaissements' => $paiementsMois, 'depenses' => $depensesMois] = $this->getMonthlyCashflows($dateObj);
 
             $arrieres = Loyer::whereIn('statut', ['émis', 'en_retard', 'partiellement_payé'])
-                ->where('statut', '!=', 'annulé')
+                ->where('statut', '!=', self::STATUS_ANNULE)
                 ->selectRaw('SUM(montant) - SUM((SELECT COALESCE(SUM(montant), 0) FROM paiements WHERE paiements.loyer_id = loyers.id)) as solde_du')
                 ->first()
                 ->solde_du ?? 0;
@@ -159,13 +155,9 @@ class DashboardStatsService
                 $date = Carbon::now()->subMonths($i);
                 $labels[] = $date->translatedFormat('M Y');
 
-                $encaissements[] = (float) Paiement::whereMonth('date_paiement', $date->month)
-                    ->whereYear('date_paiement', $date->year)
-                    ->sum('montant');
-
-                $depenses[] = (float) Depense::whereMonth('date_depense', $date->month)
-                    ->whereYear('date_depense', $date->year)
-                    ->sum('montant');
+                ['encaissements' => $encaissementMois, 'depenses' => $depenseMois] = $this->getMonthlyCashflows($date);
+                $encaissements[] = $encaissementMois;
+                $depenses[] = $depenseMois;
             }
 
             return [
@@ -219,10 +211,26 @@ class DashboardStatsService
         // Idéalement on viderait tout le cache si c'est acceptable, ou on utiliserait un driver supportant les tags.
     }
 
+    private function getMonthlyCashflows(Carbon $date): array
+    {
+        return [
+            'encaissements' => $this->sumForMonth(Paiement::query(), 'date_paiement', $date),
+            'depenses' => $this->sumForMonth(Depense::query(), 'date_depense', $date),
+        ];
+    }
+
+    private function sumForMonth($query, string $dateColumn, Carbon $date): float
+    {
+        return (float) $query
+            ->whereMonth($dateColumn, $date->month)
+            ->whereYear($dateColumn, $date->year)
+            ->sum('montant');
+    }
+
     protected function calculateArrearsAging(): array
     {
         $loyersImpayes = Loyer::whereIn('statut', ['émis', 'en_retard', 'partiellement_payé'])
-            ->where('statut', '!=', 'annulé')
+            ->where('statut', '!=', self::STATUS_ANNULE)
             ->withSum('paiements', 'montant')
             ->get();
 
