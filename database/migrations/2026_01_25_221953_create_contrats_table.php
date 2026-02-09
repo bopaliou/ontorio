@@ -18,7 +18,7 @@ return new class extends Migration
             $table->date('date_debut');
             $table->date('date_fin')->nullable();
             $table->decimal('loyer_montant', 10, 2);
-            $table->enum('statut', ['actif', 'réssilié', 'expiré'])->default('actif');
+            $table->enum('statut', ['actif', 'résilié', 'expiré'])->default('actif');
             $table->timestamps();
         });
     }

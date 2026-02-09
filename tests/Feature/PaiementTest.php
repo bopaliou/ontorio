@@ -82,6 +82,7 @@ class PaiementTest extends TestCase
                 'loyer_id' => $loyer->id,
                 'montant' => $loyer->montant,
                 'date_paiement' => now()->format('Y-m-d'),
+                'mode' => 'virement',
                 'preuve' => $file,
             ]);
 

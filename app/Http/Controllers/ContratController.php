@@ -25,24 +25,26 @@ class ContratController extends Controller
      */
     public function store(StoreContratRequest $request)
     {
+        file_put_contents('debug_controller_entry.txt', "Entered store method\n");
         // Vérifier si le bien est déjà occupé
-        $bien = \App\Models\Bien::find($request->bien_id);
-        if ($bien->statut === 'occupé' && $bien->contrats()->where('statut', 'actif')->exists()) {
-            return ApiResponse::error('Ce bien est déjà occupé par un contrat actif.', 422);
-        }
-
         try {
+            // Vérifier si le bien est déjà occupé
+            $bien = \App\Models\Bien::find($request->bien_id);
+            if ($bien->statut === 'occupé' && $bien->contrats()->where('statut', 'actif')->exists()) {
+                return ApiResponse::error('Ce bien est déjà occupé par un contrat actif.', 422);
+            }
+
             $data = $request->validated();
             $data['statut'] = 'actif';
+            
             $contrat = $this->contratService->createContract($data);
 
             // Mettre à jour le statut du bien
             $bien->update(['statut' => 'occupé']);
 
             return ApiResponse::created($contrat, 'Bail activé avec succès !');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             \Log::error('Erreur activation bail', ['error' => $e->getMessage()]);
-
             return ApiResponse::error('Une erreur technique est survenue.', 500);
         }
     }

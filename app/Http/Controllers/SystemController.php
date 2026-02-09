@@ -36,7 +36,10 @@ class SystemController extends Controller
             Log::info('Migration terminée.', ['output' => $output]);
 
             // 3. Clear Cache too (Good practice after deploy)
-            Artisan::call('optimize:clear');
+            Artisan::call('cache:clear');
+            Artisan::call('view:clear');
+            Artisan::call('config:clear');
+            Artisan::call('route:clear');
             Artisan::call('view:cache'); // Re-cache views
             $output .= "\n".Artisan::output();
 

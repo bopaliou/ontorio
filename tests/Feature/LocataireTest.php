@@ -31,7 +31,7 @@ class LocataireTest extends TestCase
                 'cni' => '1234567890123',
             ]);
 
-        $response->assertStatus(200)
+        $response->assertStatus(201)
             ->assertJson(['success' => true]);
 
         $this->assertDatabaseHas('locataires', [
@@ -87,7 +87,7 @@ class LocataireTest extends TestCase
         $response->assertStatus(200)
             ->assertJson(['success' => true]);
 
-        $this->assertDatabaseMissing('locataires', [
+        $this->assertSoftDeleted('locataires', [
             'id' => $locataire->id,
         ]);
     }

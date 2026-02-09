@@ -56,17 +56,21 @@ class StoreContratRequest extends FormRequest
     public function withValidator($validator)
     {
         $validator->after(function ($validator) {
-            $bienId = $this->input('bien_id');
-            if ($bienId) {
-                $isOccupied = \App\Models\Bien::where('id', $bienId)
-                    ->where('statut', 'occupé')
-                    ->whereHas('contrats', function($q) {
-                        $q->whereIn('statut', ['actif', 'en_attente']);
-                    })->exists();
+            try {
+                $bienId = $this->input('bien_id');
+                if ($bienId) {
+                    $isOccupied = \App\Models\Bien::where('id', $bienId)
+                        ->where('statut', 'occupé')
+                        ->whereHas('contrats', function($q) {
+                            $q->whereIn('statut', ['actif', 'en_attente']);
+                        })->exists();
 
-                if ($isOccupied) {
-                    $validator->errors()->add('bien_id', 'Ce bien est déjà occupé par un contrat actif ou réservé.');
+                    if ($isOccupied) {
+                        $validator->errors()->add('bien_id', 'Ce bien est déjà occupé par un contrat actif ou réservé.');
+                    }
                 }
+            } catch (\Throwable $e) {
+                file_put_contents('debug_request.txt', $e->getMessage() . "\n" . $e->getTraceAsString());
             }
         });
     }

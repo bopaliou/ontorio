@@ -137,4 +137,9 @@ Route::middleware(['auth', 'role:admin|direction|gestionnaire', 'throttle:modera
 });
 
 
+
+Route::get('/test-debug', function () {
+    return 'ok';
+});
+
 require __DIR__.'/auth.php';

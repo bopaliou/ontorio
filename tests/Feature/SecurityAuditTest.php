@@ -28,6 +28,14 @@ class SecurityAuditTest extends TestCase
         $this->actingAs($gestionnaire)->post('/system/migrate', ['token' => $secret])->assertStatus(403);
 
         // 3. Valid secret for Admin
+        \Illuminate\Support\Facades\Artisan::shouldReceive('call')->with('migrate', ['--force' => true])->once();
+        \Illuminate\Support\Facades\Artisan::shouldReceive('output')->andReturn('Migration fake output');
+        \Illuminate\Support\Facades\Artisan::shouldReceive('call')->with('cache:clear')->once();
+        \Illuminate\Support\Facades\Artisan::shouldReceive('call')->with('view:clear')->once();
+        \Illuminate\Support\Facades\Artisan::shouldReceive('call')->with('config:clear')->once();
+        \Illuminate\Support\Facades\Artisan::shouldReceive('call')->with('route:clear')->once();
+        \Illuminate\Support\Facades\Artisan::shouldReceive('call')->with('view:cache')->once();
+
         $this->actingAs($admin)->post('/system/migrate', ['token' => $secret])->assertStatus(200);
 
         // 4. Invalid secret for Admin
@@ -40,7 +48,7 @@ class SecurityAuditTest extends TestCase
     public function test_api_stats_restricted_to_authorized_roles()
     {
         $authorizedRoles = ['admin', 'direction', 'gestionnaire'];
-        $unauthorizedRoles = ['locataire']; 
+        $unauthorizedRoles = ['comptable']; 
 
         foreach ($authorizedRoles as $role) {
             $user = User::factory()->create(['role' => $role]);

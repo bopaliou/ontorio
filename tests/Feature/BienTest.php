@@ -22,17 +22,21 @@ class BienTest extends TestCase
 
     public function test_admin_can_create_bien(): void
     {
+        $proprietaire = \App\Models\Proprietaire::factory()->create();
         $response = $this->actingAs($this->admin)
             ->postJson(route('dashboard.biens.store'), [
                 'nom' => 'Immeuble Test',
                 'adresse' => '123 Rue Test',
+                'ville' => 'Dakar',
+                'proprietaire_id' => $proprietaire->id,
                 'loyer_mensuel' => 150000,
                 'type' => 'appartement',
+                'surface' => 100,
                 'nombre_pieces' => 3,
                 'meuble' => false,
             ]);
 
-        $response->assertStatus(200)
+        $response->assertStatus(201)
             ->assertJson(['success' => true]);
 
         $this->assertDatabaseHas('biens', [
@@ -65,8 +69,11 @@ class BienTest extends TestCase
             ->putJson(route('dashboard.biens.update', $bien), [
                 'nom' => 'New Name',
                 'adresse' => 'New Address',
+                'ville' => 'Dakar',
+                'proprietaire_id' => $bien->proprietaire_id,
                 'loyer_mensuel' => 120000,
                 'type' => 'studio',
+                'surface' => 50,
             ]);
 
         $response->assertStatus(200)
@@ -93,7 +100,7 @@ class BienTest extends TestCase
         $response->assertStatus(200)
             ->assertJson(['success' => true]);
 
-        $this->assertDatabaseMissing('biens', [
+        $this->assertSoftDeleted('biens', [
             'id' => $bien->id,
         ]);
     }

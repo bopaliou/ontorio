@@ -1,0 +1,5 @@
+Inside try
+Calling createContract
+Contract created ID: 1
+Bien updated
+Response created. Status: 201

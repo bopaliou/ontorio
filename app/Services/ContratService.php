@@ -14,11 +14,16 @@ class ContratService
     public function createContract(array $data): Contrat
     {
         return DB::transaction(function () use ($data) {
-            $contrat = Contrat::create($data);
-            
-            ActivityLogger::log('Création Contrat', "Nouveau contrat #{$contrat->id} pour le bien {$contrat->bien->nom}", 'success', $contrat);
-            
-            return $contrat;
+            try {
+                $contrat = Contrat::create($data);
+                
+                ActivityLogger::log('Création Contrat', "Nouveau contrat #{$contrat->id} pour le bien {$contrat->bien->nom}", 'success', $contrat);
+                
+                return $contrat;
+            } catch (\Throwable $e) {
+                // Log the error if needed but let it bubble up or handle it
+                throw $e;
+            }
         });
     }
 

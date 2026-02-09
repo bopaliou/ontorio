@@ -1,0 +1,5 @@
+Step 1: Start auth test
+Step 2: User create success. ID: 1
+Step 3: actingAs success
+Step 4: Request success. Status: 200
+Step 5: Assertion success

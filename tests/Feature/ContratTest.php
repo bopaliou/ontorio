@@ -25,6 +25,7 @@ class ContratTest extends TestCase
 
     public function test_admin_can_create_contrat_and_it_updates_bien_status(): void
     {
+        $this->withoutExceptionHandling();
         $bien = Bien::factory()->create(['statut' => 'libre']);
         $locataire = Locataire::factory()->create();
 
@@ -36,9 +37,12 @@ class ContratTest extends TestCase
                 'loyer_montant' => 200000,
                 'caution' => 200000,
                 'type_bail' => 'habitation',
+                'statut' => 'actif',
             ]);
 
-        $response->assertStatus(200)
+
+
+        $response->assertStatus(201)
             ->assertJson(['success' => true]);
 
         $this->assertDatabaseHas('contrats', [
@@ -66,6 +70,8 @@ class ContratTest extends TestCase
                 'locataire_id' => $locataire->id,
                 'date_debut' => now()->addMonth()->format('Y-m-d'),
                 'loyer_montant' => 200000,
+                'type_bail' => 'habitation',
+                'statut' => 'actif',
             ]);
 
         $response->assertStatus(422)
@@ -90,9 +96,12 @@ class ContratTest extends TestCase
 
         $response = $this->actingAs($this->admin)
             ->putJson(route('contrats.update', $contrat), [
+                'bien_id' => $contrat->bien_id,
+                'locataire_id' => $contrat->locataire_id,
                 'loyer_montant' => 120000,
                 'date_debut' => $contrat->date_debut->format('Y-m-d'),
                 'type_bail' => 'habitation',
+                'statut' => $contrat->statut,
             ]);
 
         $response->assertStatus(200);

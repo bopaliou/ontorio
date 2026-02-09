@@ -1,0 +1,28 @@
+Service: Starting create
+Service: Contract created ID: 1
+Service: Bien nom: aut Residence
+Service: Logged activity
+Service: Starting create
+Service: Contract created ID: 1
+Service: Bien nom: eum Residence
+Service: Logged activity
+Service: Starting create
+Service: Contract created ID: 1
+Service: Bien nom: ut Residence
+Service: Logged activity
+Service: Starting create
+Service: Contract created ID: 1
+Service: Bien nom: magnam Residence
+Service: Logged activity
+Service: Starting create
+Service: Contract created ID: 1
+Service: Bien nom: ad Residence
+Service: Logged activity
+Service: Starting create
+Service: Contract created ID: 1
+Service: Bien nom: harum Residence
+Service: Logged activity
+Service: Starting create
+Service: Contract created ID: 1
+Service: Bien nom: facilis Residence
+Service: Logged activity
