@@ -13,7 +13,7 @@ class StoreDepenseRequest extends AuthenticatedApiFormRequest
             'montant' => 'required|numeric|min:0.01|max:999999.99',
             'date_depense' => 'required|date|before_or_equal:today',
             'categorie' => 'required|in:maintenance,travaux,taxe,assurance,autre',
-            'justificatif' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:10240',
+            'justificatif' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
             'statut' => 'required|in:draft,payé,en_attente,rejeté',
         ];
     }
@@ -29,7 +29,7 @@ class StoreDepenseRequest extends AuthenticatedApiFormRequest
             'date_depense.required' => 'La date de la dépense est obligatoire',
             'categorie.required' => 'La catégorie est obligatoire',
             'justificatif.mimes' => 'Le justificatif doit être PDF ou image',
-            'justificatif.max' => 'Le justificatif ne peut pas dépasser 10 MB',
+            'justificatif.max' => 'Le justificatif ne peut pas dépasser 5 MB',
         ];
     }
 }
