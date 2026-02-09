@@ -267,7 +267,7 @@ class DashboardStatsService
 
             $revenusPar6Mois[] = ['mois' => $m, 'montant' => (float) $rev];
         }
+
         return $revenusPar6Mois;
     }
-
 }

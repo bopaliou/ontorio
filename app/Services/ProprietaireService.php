@@ -13,6 +13,7 @@ class ProprietaireService
         return DB::transaction(function () use ($data) {
             $prop = Proprietaire::create($data);
             ActivityLogger::log('Création Propriétaire', "Ajout du propriétaire {$prop->nom}", 'success', $prop);
+
             return $prop;
         });
     }
@@ -22,6 +23,7 @@ class ProprietaireService
         return DB::transaction(function () use ($proprietaire, $data) {
             $proprietaire->update($data);
             ActivityLogger::log('Modification Propriétaire', "Mise à jour du propriétaire {$proprietaire->nom}", 'info', $proprietaire);
+
             return $proprietaire;
         });
     }

@@ -18,6 +18,7 @@ class DepenseService
 
             $depense = Depense::create($data);
             ActivityLogger::log('Création Dépense', "Ajout d'une dépense de {$depense->montant} F pour {$depense->bien->nom}", 'success', $depense);
+
             return $depense;
         });
     }
@@ -34,6 +35,7 @@ class DepenseService
 
             $depense->update($data);
             ActivityLogger::log('Modification Dépense', "Mise à jour de la dépense #{$depense->id}", 'info', $depense);
+
             return $depense;
         });
     }

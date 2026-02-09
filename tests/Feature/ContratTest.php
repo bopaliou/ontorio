@@ -40,7 +40,6 @@ class ContratTest extends TestCase
                 'statut' => 'actif',
             ]);
 
-
         $response->assertStatus(201)
             ->assertJson(['success' => true]);
 
