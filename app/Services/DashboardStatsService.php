@@ -42,6 +42,8 @@ class DashboardStatsService
 
             $dateObj = Carbon::parse($mois);
             ['encaissements' => $paiementsMois, 'depenses' => $depensesMois] = $this->getMonthlyCashflows($dateObj);
+            $paiementsMois = $this->sumForMonth(Paiement::query(), 'date_paiement', $dateObj);
+            $depensesMois = $this->sumForMonth(Depense::query(), 'date_depense', $dateObj);
 
             $arrieres = Loyer::whereIn('statut', ['émis', 'en_retard', 'partiellement_payé'])
                 ->where('statut', '!=', self::STATUS_ANNULE)
@@ -158,6 +160,8 @@ class DashboardStatsService
                 ['encaissements' => $encaissementMois, 'depenses' => $depenseMois] = $this->getMonthlyCashflows($date);
                 $encaissements[] = $encaissementMois;
                 $depenses[] = $depenseMois;
+                $encaissements[] = $this->sumForMonth(Paiement::query(), 'date_paiement', $date);
+                $depenses[] = $this->sumForMonth(Depense::query(), 'date_depense', $date);
             }
 
             return [

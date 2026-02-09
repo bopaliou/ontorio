@@ -8,6 +8,8 @@ class StoreDepenseRequest extends BaseApiFormRequest
 
     protected ?int $maxContentLengthBytes = 11534336;
 
+class StoreDepenseRequest extends AuthenticatedApiFormRequest
+{
     public function rules(): array
     {
         return [
