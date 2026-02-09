@@ -8,9 +8,8 @@ use App\Http\Responses\ApiResponse;
 use App\Models\Bien;
 use App\Models\Contrat;
 use Barryvdh\DomPDF\Facade\Pdf;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Validator;
+
 class ContratController extends Controller
 {
     protected $contratService;
@@ -36,7 +35,7 @@ class ContratController extends Controller
 
             $data = $request->validated();
             $data['statut'] = 'actif';
-            
+
             $contrat = $this->contratService->createContract($data);
 
             // Mettre à jour le statut du bien
@@ -45,6 +44,7 @@ class ContratController extends Controller
             return ApiResponse::created($contrat, 'Bail activé avec succès !');
         } catch (\Throwable $e) {
             \Log::error('Erreur activation bail', ['error' => $e->getMessage()]);
+
             return ApiResponse::error('Une erreur technique est survenue.', 500);
         }
     }

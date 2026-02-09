@@ -2,9 +2,9 @@
 
 namespace App\Services;
 
+use App\Helpers\ActivityLogger;
 use App\Models\Contrat;
 use Illuminate\Support\Facades\DB;
-use App\Helpers\ActivityLogger;
 
 class ContratService
 {
@@ -16,9 +16,9 @@ class ContratService
         return DB::transaction(function () use ($data) {
             try {
                 $contrat = Contrat::create($data);
-                
+
                 ActivityLogger::log('Création Contrat', "Nouveau contrat #{$contrat->id} pour le bien {$contrat->bien->nom}", 'success', $contrat);
-                
+
                 return $contrat;
             } catch (\Throwable $e) {
                 // Log the error if needed but let it bubble up or handle it
@@ -34,9 +34,9 @@ class ContratService
     {
         return DB::transaction(function () use ($contrat, $data) {
             $contrat->update($data);
-            
+
             ActivityLogger::log('Modification Contrat', "Mise à jour du contrat #{$contrat->id}", 'info', $contrat);
-            
+
             return $contrat;
         });
     }
@@ -47,13 +47,13 @@ class ContratService
     public function deleteContract(Contrat $contrat): void
     {
         DB::transaction(function () use ($contrat) {
-            // Task 3.2: Vérifier si des paiements sont liés ? 
-            // (On part du principe que SoftDeletes gère l'intégrité, 
+            // Task 3.2: Vérifier si des paiements sont liés ?
+            // (On part du principe que SoftDeletes gère l'intégrité,
             // mais on peut ajouter une vérification métier ici si nécessaire)
-            
+
             $id = $contrat->id;
             $contrat->delete();
-            
+
             ActivityLogger::log('Suppression Contrat', "Suppression du contrat #{$id}", 'warning');
         });
     }

@@ -14,17 +14,19 @@
             </x-slot>
         </x-section-header>
 
-        {{-- Logic calculation (Mockup for now as we use $data from stats service) --}}
-        @php
-            $totalEncaisse = $data['loyers_encaisses'];
-            $commissionHonoraires = $totalEncaisse * 0.10;
-        @endphp
+        <form method="GET" class="bg-white border border-slate-200 rounded-2xl p-4 flex flex-wrap items-end gap-3">
+            <div>
+                <label for="mois" class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Mois</label>
+                <input id="mois" name="mois" type="month" value="{{ $mois }}" class="rounded-lg border-slate-300 text-sm" />
+            </div>
+            <button type="submit" class="bg-slate-900 text-white px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider">Filtrer</button>
+        </form>
 
         {{-- KPIs --}}
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <x-kpi-card 
                 label="Base Commissionnable" 
-                :value="number_format($totalEncaisse, 0, ',', ' ')" 
+                :value="number_format($baseCommissionnable, 0, ',', ' ')" 
                 suffix="FCFA"
                 icon="money"
                 color="blue"
@@ -36,17 +38,51 @@
                 suffix="FCFA"
                 icon="calculator"
                 color="green"
-                trend="+10%"
+                trend="+{{ (int) ($tauxCommission * 100) }}%"
                 subtext="Quote-part agence (10%)"
             />
             <x-kpi-card 
                 label="Nombre d'encaissements" 
-                :value="$data['nb_payes'] ?? 0" 
+                :value="$encaissements->count()" 
                 suffix="Paiements"
                 icon="document"
                 color="gray"
                 subtext="Opérations traitées"
             />
+        </div>
+
+
+        <div class="bg-white border border-slate-200 rounded-2xl overflow-hidden">
+            <div class="px-4 py-3 border-b border-slate-200 text-sm font-bold text-slate-700">Détail des encaissements commissionnables</div>
+            <div class="overflow-x-auto">
+                <table class="min-w-full text-sm">
+                    <thead class="bg-slate-50 text-slate-600">
+                        <tr>
+                            <th class="px-4 py-2 text-left">Bien</th>
+                            <th class="px-4 py-2 text-left">Locataire</th>
+                            <th class="px-4 py-2 text-right">Montant loyer</th>
+                            <th class="px-4 py-2 text-right">Montant encaissé</th>
+                            <th class="px-4 py-2 text-right">Commission (10%)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($encaissements as $loyer)
+                            @php($encaisse = min($loyer->montant, (float) ($loyer->paiements_sum_montant ?? 0)))
+                            <tr class="border-t border-slate-100">
+                                <td class="px-4 py-2">{{ $loyer->contrat->bien->nom ?? '—' }}</td>
+                                <td class="px-4 py-2">{{ $loyer->contrat->locataire->nom ?? '—' }}</td>
+                                <td class="px-4 py-2 text-right">{{ number_format($loyer->montant, 0, ',', ' ') }}</td>
+                                <td class="px-4 py-2 text-right">{{ number_format($encaisse, 0, ',', ' ') }}</td>
+                                <td class="px-4 py-2 text-right">{{ number_format($encaisse * $tauxCommission, 0, ',', ' ') }}</td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="5" class="px-4 py-6 text-center text-slate-500">Aucun encaissement commissionnable pour ce mois.</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
         </div>
 
         {{-- Info Banner --}}

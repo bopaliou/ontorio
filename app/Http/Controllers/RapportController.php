@@ -19,7 +19,7 @@ class RapportController extends Controller
     public function loyers(Request $request)
     {
         $mois = $request->get('mois', Carbon::now()->format('Y-m'));
-        $data = $this->statsService->getFinancialKPIs();
+        $data = $this->statsService->getFinancialKPIs($mois);
         $chartData = $this->statsService->getChartData();
 
         $loyers = Loyer::with(['contrat.locataire', 'contrat.bien'])
@@ -31,22 +31,45 @@ class RapportController extends Controller
 
     public function impayees(Request $request)
     {
-        $data = $this->statsService->getFinancialKPIs();
+        $mois = $request->get('mois', Carbon::now()->format('Y-m'));
+        $data = $this->statsService->getFinancialKPIs($mois);
 
         $impayees = Loyer::with(['contrat.locataire', 'contrat.bien'])
-            ->whereIn('statut', ['en_retard', 'partiel'])
+            ->where('mois', $mois)
+            ->whereIn('statut', ['en_retard', 'partiellement_payé', 'émis'])
             ->orderBy('date_echeance')
             ->get();
 
-        return view('rapports.impayees', compact('data', 'impayees'));
+        return view('rapports.impayees', compact('data', 'impayees', 'mois'));
     }
 
     public function commissions(Request $request)
     {
-        // TODO: Implement commission logic
-        // For now, simple mockup of data
-        $data = $this->statsService->getFinancialKPIs();
+        $mois = $request->get('mois', Carbon::now()->format('Y-m'));
+        $tauxCommission = 0.10;
 
-        return view('rapports.commissions', compact('data'));
+        $data = $this->statsService->getFinancialKPIs($mois);
+
+        $encaissements = Loyer::with(['contrat.locataire', 'contrat.bien'])
+            ->withSum('paiements', 'montant')
+            ->where('mois', $mois)
+            ->whereIn('statut', ['payé', 'partiellement_payé'])
+            ->orderByDesc('paiements_sum_montant')
+            ->get();
+
+        $baseCommissionnable = (float) $encaissements->sum(function (Loyer $loyer) {
+            return (float) min($loyer->montant, (float) ($loyer->paiements_sum_montant ?? 0));
+        });
+
+        $commissionHonoraires = round($baseCommissionnable * $tauxCommission, 2);
+
+        return view('rapports.commissions', compact(
+            'data',
+            'mois',
+            'tauxCommission',
+            'encaissements',
+            'baseCommissionnable',
+            'commissionHonoraires'
+        ));
     }
 }

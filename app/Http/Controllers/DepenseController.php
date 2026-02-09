@@ -2,11 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Helpers\ActivityLogger;
 use App\Http\Responses\ApiResponse;
 use App\Models\Depense;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 class DepenseController extends Controller

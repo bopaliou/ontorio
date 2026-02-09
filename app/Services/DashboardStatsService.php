@@ -123,7 +123,7 @@ class DashboardStatsService
             $commissionMois = round($revenusMois * 0.10);
 
             $biensPerformance = Bien::where('proprietaire_id', $proprietaire->id)
-                ->withCount(['contrats as is_active' => fn($q) => $q->where('statut', 'actif')])
+                ->withCount(['contrats as is_active' => fn ($q) => $q->where('statut', 'actif')])
                 ->addSelect([
                     'revenus_cumules' => Paiement::selectRaw('sum(montant)')
                         ->join('loyers', 'paiements.loyer_id', '=', 'loyers.id')
@@ -194,7 +194,7 @@ class DashboardStatsService
                 $alerts[] = ['type' => 'info', 'icon' => 'calendar', 'message' => "$contratsUrgents contrat(s) expirant bientôt", 'action' => 'contrats'];
             }
 
-            $biensVacants = Bien::whereDoesntHave('contrats', fn($q) => $q->where('statut', 'actif'))->count();
+            $biensVacants = Bien::whereDoesntHave('contrats', fn ($q) => $q->where('statut', 'actif'))->count();
             if ($biensVacants > 0) {
                 $alerts[] = ['type' => 'secondary', 'icon' => 'home', 'message' => "$biensVacants bien(s) vacant(s)", 'action' => 'biens'];
             }
@@ -213,7 +213,7 @@ class DashboardStatsService
         \Illuminate\Support\Facades\Cache::forget('dashboard_parc_stats');
         \Illuminate\Support\Facades\Cache::forget('dashboard_alerts');
         \Illuminate\Support\Facades\Cache::forget('dashboard_chart_data_6');
-        
+
         // On ne peut pas facilement tout oublier sans tags, mais vider les clés globales est un bon début.
         // Pour les clés par mois ou par proprietaire, elles expireront ou seront écrasées.
         // Idéalement on viderait tout le cache si c'est acceptable, ou on utiliserait un driver supportant les tags.
@@ -230,15 +230,22 @@ class DashboardStatsService
 
         foreach ($loyersImpayes as $loyer) {
             $reste = $loyer->montant - ($loyer->paiements_sum_montant ?? 0);
-            if ($reste <= 0.5) continue;
+            if ($reste <= 0.5) {
+                continue;
+            }
 
             $dateLoyer = Carbon::parse($loyer->mois.'-01');
             $ageJours = $dateLoyer->diffInDays(Carbon::now());
 
-            if ($ageJours <= 30) $aging['0-30'] += $reste;
-            elseif ($ageJours <= 60) $aging['31-60'] += $reste;
-            elseif ($ageJours <= 90) $aging['61-90'] += $reste;
-            else $aging['90+'] += $reste;
+            if ($ageJours <= 30) {
+                $aging['0-30'] += $reste;
+            } elseif ($ageJours <= 60) {
+                $aging['31-60'] += $reste;
+            } elseif ($ageJours <= 90) {
+                $aging['61-90'] += $reste;
+            } else {
+                $aging['90+'] += $reste;
+            }
         }
 
         return $aging;
@@ -258,9 +265,9 @@ class DashboardStatsService
                     });
             })->sum('montant');
 
-            $revenusPar6Mois[] = ['mois' => $m, 'montant' => (float)$rev];
+            $revenusPar6Mois[] = ['mois' => $m, 'montant' => (float) $rev];
         }
+
         return $revenusPar6Mois;
     }
-
 }
