@@ -10,6 +10,7 @@ use Tests\TestCase;
 class LoyerTest extends TestCase
 {
     private const TEST_DATE = '2026-02-15';
+
     private const TEST_MOIS = '2026-01';
 
     use \Illuminate\Foundation\Testing\RefreshDatabase;

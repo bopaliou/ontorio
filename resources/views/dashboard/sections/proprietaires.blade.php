@@ -151,31 +151,31 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <!-- Nom -->
                             <div class="space-y-1.5">
-                                <label class="block text-[11px] font-bold text-gray-400 uppercase tracking-widest pl-1">Nom de l'Entité</label>
+                                <label class="block text-[11px] font-bold text-gray-400 uppercase tracking-widest pl-1" for="prop-input-nom">Nom de l'Entité</label>
                                 <input type="text" name="nom" id="prop-input-nom" required class="block w-full bg-gray-50 border-gray-200 rounded-xl text-sm font-bold text-gray-900 focus:ring-[#cb2d2d] focus:border-[#cb2d2d] py-3 px-4 transition-shadow" placeholder="Ex: Ontario Group">
                             </div>
 
                             <!-- Suffixe -->
                             <div class="space-y-1.5">
-                                <label class="block text-[11px] font-bold text-gray-400 uppercase tracking-widest pl-1">Forme Juridique</label>
+                                <label class="block text-[11px] font-bold text-gray-400 uppercase tracking-widest pl-1" for="prop-input-prenom">Forme Juridique</label>
                                 <input type="text" name="prenom" id="prop-input-prenom" class="block w-full bg-gray-50 border-gray-200 rounded-xl text-sm font-bold text-gray-900 focus:ring-[#cb2d2d] focus:border-[#cb2d2d] py-3 px-4 transition-shadow" placeholder="S.A.R.L / S.A">
                             </div>
 
                             <!-- Téléphone -->
                             <div class="space-y-1.5">
-                                <label class="block text-[11px] font-bold text-gray-400 uppercase tracking-widest pl-1">Téléphone</label>
+                                <label class="block text-[11px] font-bold text-gray-400 uppercase tracking-widest pl-1" for="prop-input-telephone">Téléphone</label>
                                 <input type="text" name="telephone" id="prop-input-telephone" class="block w-full bg-gray-50 border-gray-200 rounded-xl text-sm font-bold text-gray-900 focus:ring-[#cb2d2d] focus:border-[#cb2d2d] py-3 px-4 transition-shadow" placeholder="Ex: 33 822 ...">
                             </div>
 
                             <!-- Email -->
                             <div class="space-y-1.5">
-                                <label class="block text-[11px] font-bold text-gray-400 uppercase tracking-widest pl-1">Email Officiel</label>
+                                <label class="block text-[11px] font-bold text-gray-400 uppercase tracking-widest pl-1" for="prop-input-email">Email Officiel</label>
                                 <input type="email" name="email" id="prop-input-email" required class="block w-full bg-gray-50 border-gray-200 rounded-xl text-sm font-bold text-gray-900 focus:ring-[#cb2d2d] focus:border-[#cb2d2d] py-3 px-4 transition-shadow" placeholder="contact@ontariogroup.net">
                             </div>
 
                             <!-- Adresse (Full width in grid) -->
                             <div class="md:col-span-2 space-y-1.5">
-                                <label class="block text-[11px] font-bold text-gray-400 uppercase tracking-widest pl-1">Adresse Siège Social</label>
+                                <label class="block text-[11px] font-bold text-gray-400 uppercase tracking-widest pl-1" for="prop-input-adresse">Adresse Siège Social</label>
                                 <textarea name="adresse" id="prop-input-adresse" rows="2" class="block w-full bg-gray-50 border-gray-200 rounded-xl text-sm font-bold text-gray-900 focus:ring-[#cb2d2d] focus:border-[#cb2d2d] py-3 px-4 transition-shadow resize-none" placeholder="Adresse complète..."></textarea>
                             </div>
                         </div>

@@ -235,7 +235,17 @@
                     </div>
                 </div>
 
-                \u003c!-- Grid Montant / Date --\u003e\n                \u003cdiv class=\"grid grid-cols-1 md:grid-cols-2 gap-4\"\u003e\n                    \u003cdiv class=\"relative bg-gray-50 rounded-2xl border-2 border-gray-100 px-4 py-3 focus-within:ring-4 focus-within:ring-[#274256]/5 focus-within:border-[#274256] transition-all duration-300\"\u003e\n                        \u003clabel class=\"block text-[10px] font-black text-gray-400 uppercase tracking-[2px] mb-1\"\u003eMontant Encaiss\u00e9 (F)\u003c/label\u003e\n                        \u003cinput type=\"number\" name=\"montant\" id=\"pai-input-montant\" required class=\"block w-full bg-transparent border-none p-0 text-base sm:text-sm font-bold text-gray-900 focus:ring-0 text-right font-mono\" placeholder=\"0\"\u003e\n                    \u003c/div\u003e\n                    \u003cdiv class=\"relative bg-gray-50 rounded-2xl border-2 border-gray-100 px-4 py-3 focus-within:ring-4 focus-within:ring-[#274256]/5 focus-within:border-[#274256] transition-all duration-300\"\u003e\n                        \u003clabel class=\"block text-[10px] font-black text-gray-400 uppercase tracking-[2px] mb-1\"\u003eDate Paiement\u003c/label\u003e\n                        \u003cinput type=\"date\" name=\"date_paiement\" value=\"{{ date('Y-m-d') }}\" required class=\"block w-full bg-transparent border-none p-0 text-base sm:text-sm font-bold text-gray-900 focus:ring-0\"\u003e\n                    \u003c/div\u003e\n                \u003c/div\u003e\n
+                <!-- Grid Montant / Date -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="relative bg-gray-50 rounded-2xl border-2 border-gray-100 px-4 py-3 focus-within:ring-4 focus-within:ring-[#274256]/5 focus-within:border-[#274256] transition-all duration-300">
+                        <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[2px] mb-1" for="pai-input-montant">Montant Encaissé (F)</label>
+                        <input type="number" name="montant" id="pai-input-montant" required class="block w-full bg-transparent border-none p-0 text-base sm:text-sm font-bold text-gray-900 focus:ring-0 text-right font-mono" placeholder="0">
+                    </div>
+                    <div class="relative bg-gray-50 rounded-2xl border-2 border-gray-100 px-4 py-3 focus-within:ring-4 focus-within:ring-[#274256]/5 focus-within:border-[#274256] transition-all duration-300">
+                        <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[2px] mb-1" for="pai-input-date">Date Paiement</label>
+                        <input type="date" name="date_paiement" id="pai-input-date" value="{{ date('Y-m-d') }}" required class="block w-full bg-transparent border-none p-0 text-base sm:text-sm font-bold text-gray-900 focus:ring-0">
+                    </div>
+                </div>
                 <!-- Mode de Règlement Compact -->
                 <div>
                      <label class="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Mode de Règlement</label>

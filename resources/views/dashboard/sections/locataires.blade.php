@@ -239,31 +239,31 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                              <!-- Nom -->
                             <div class="relative">
-                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2 ml-1">Nom Complet</label>
+                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2 ml-1" for="loc-input-nom">Nom Complet</label>
                                 <input type="text" name="nom" id="loc-input-nom" required class="input-focus block w-full bg-gray-50 border-none px-4 py-4 rounded-2xl text-sm font-bold text-gray-900 placeholder-gray-300 focus:ring-4 focus:ring-red-500/5 transition-all" placeholder="Ex: Moussa Diop">
                             </div>
 
                             <!-- CNI -->
                             <div class="relative">
-                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2 ml-1">Numéro CNI</label>
+                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2 ml-1" for="loc-input-cni">Numéro CNI</label>
                                 <input type="text" name="cni" id="loc-input-cni" class="input-focus block w-full bg-gray-50 border-none px-4 py-4 rounded-2xl text-sm font-bold text-gray-900 placeholder-gray-300 focus:ring-4 focus:ring-red-500/5 transition-all" placeholder="ID Document">
                             </div>
 
                             <!-- Email -->
                             <div class="relative">
-                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2 ml-1">Email</label>
+                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2 ml-1" for="loc-input-email">Email</label>
                                 <input type="email" name="email" id="loc-input-email" class="input-focus block w-full bg-gray-50 border-none px-4 py-4 rounded-2xl text-sm font-bold text-gray-900 placeholder-gray-300 focus:ring-4 focus:ring-red-500/5 transition-all" placeholder="email@exemple.com">
                             </div>
 
                             <!-- Tel -->
                             <div class="relative">
-                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2 ml-1">Téléphone</label>
+                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2 ml-1" for="loc-input-tel">Téléphone</label>
                                 <input type="text" name="telephone" id="loc-input-tel" class="input-focus block w-full bg-gray-50 border-none px-4 py-4 rounded-2xl text-sm font-bold text-gray-900 placeholder-gray-300 focus:ring-4 focus:ring-red-500/5 transition-all" placeholder="77 ...">
                             </div>
 
                             <!-- Adresse -->
                             <div class="col-span-1 md:col-span-2 relative">
-                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2 ml-1">Infos Complémentaires</label>
+                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2 ml-1" for="loc-input-adresse">Infos Complémentaires</label>
                                 <textarea name="adresse" id="loc-input-adresse" class="input-focus block w-full bg-gray-50 border-none px-4 py-4 rounded-2xl text-sm font-bold text-gray-900 placeholder-gray-300 focus:ring-4 focus:ring-red-500/5 transition-all resize-none" rows="2" placeholder="Adresse complète..."></textarea>
                             </div>
                         </div>
@@ -321,7 +321,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <!-- Type de document -->
                     <div class="relative">
-                        <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2 ml-1">Type de Document</label>
+                        <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2 ml-1" for="doc-type">Type de Document</label>
                         <div class="relative group">
                             <select name="type" id="doc-type" required class="input-focus block w-full bg-gray-50 border-none px-4 py-4 rounded-2xl text-sm font-bold text-gray-900 focus:ring-4 focus:ring-red-500/5 transition-all appearance-none cursor-pointer">
                                 <option value="">Sélectionner...</option>
@@ -339,7 +339,7 @@
 
                     <!-- Zone de drop fichier (Premium) -->
                     <div class="relative bg-gray-50 rounded-2xl border-2 border-dashed border-gray-100 flex items-center justify-center h-20 hover:border-[#cb2d2d] transition-all cursor-pointer group">
-                        <input type="file" name="document" id="doc-file-input" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" required class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                        <input type="file" name="document" id="doc-file-input" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" required class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" aria-label="Sélectionner un fichier">
                         
                         <div id="doc-drop-content" class="flex items-center gap-3">
                             <div class="w-8 h-8 rounded-lg bg-white shadow-sm flex items-center justify-center text-[#cb2d2d]">

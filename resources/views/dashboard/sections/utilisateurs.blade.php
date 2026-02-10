@@ -137,19 +137,19 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <!-- Nom -->
                             <div class="space-y-1.5">
-                                <label class="block text-[11px] font-bold text-gray-400 uppercase tracking-widest pl-1">Nom Complet</label>
+                                <label class="block text-[11px] font-bold text-gray-400 uppercase tracking-widest pl-1" for="user-input-name">Nom Complet</label>
                                 <input type="text" name="name" id="user-input-name" required class="block w-full bg-gray-50 border-gray-200 rounded-xl text-sm font-bold text-gray-900 focus:ring-[#cb2d2d] focus:border-[#cb2d2d] py-3 px-4 transition-shadow" placeholder="Ex: Jean Dupont">
                             </div>
 
                             <!-- Email -->
                             <div class="space-y-1.5">
-                                <label class="block text-[11px] font-bold text-gray-400 uppercase tracking-widest pl-1">Email Professionnel</label>
+                                <label class="block text-[11px] font-bold text-gray-400 uppercase tracking-widest pl-1" for="user-input-email">Email Professionnel</label>
                                 <input type="email" name="email" id="user-input-email" required class="block w-full bg-gray-50 border-gray-200 rounded-xl text-sm font-bold text-gray-900 focus:ring-[#cb2d2d] focus:border-[#cb2d2d] py-3 px-4 transition-shadow" placeholder="jean@ontariogroup.net">
                             </div>
 
                             <!-- Role -->
                             <div class="space-y-1.5">
-                                <label class="block text-[11px] font-bold text-gray-400 uppercase tracking-widest pl-1">Rôle / Accès</label>
+                                <label class="block text-[11px] font-bold text-gray-400 uppercase tracking-widest pl-1" for="user-input-role">Rôle / Accès</label>
                                 <div class="relative">
                                     <select name="role" id="user-input-role" class="block w-full bg-gray-50 border-gray-200 rounded-xl text-sm font-bold text-gray-900 focus:ring-[#cb2d2d] focus:border-[#cb2d2d] py-3 px-4 appearance-none cursor-pointer pr-10">
                                         <option value="">-- Sélectionner un rôle --</option>
@@ -165,7 +165,7 @@
 
                             <!-- Password -->
                             <div class="space-y-1.5">
-                                <label class="block text-[11px] font-bold text-gray-400 uppercase tracking-widest pl-1">Mot de passe</label>
+                                <label class="block text-[11px] font-bold text-gray-400 uppercase tracking-widest pl-1" for="user-input-password">Mot de passe</label>
                                 <input type="password" name="password" id="user-input-password" class="block w-full bg-gray-50 border-gray-200 rounded-xl text-sm font-bold text-gray-900 focus:ring-[#cb2d2d] focus:border-[#cb2d2d] py-3 px-4 transition-shadow" placeholder="••••••••">
                             </div>
                         </div>

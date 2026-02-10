@@ -136,6 +136,4 @@ Route::middleware(['auth', 'role:admin|direction|gestionnaire', 'throttle:modera
     })->name('api.alerts');
 });
 
-
-
 require __DIR__.'/auth.php';
