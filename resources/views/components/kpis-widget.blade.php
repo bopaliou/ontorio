@@ -3,6 +3,7 @@
     
     {{-- KPI 1: Loyers Facturés --}}
     <div class="relative overflow-hidden rounded-3xl p-6 transition-all duration-300 group hover:-translate-y-1 hover:shadow-xl bg-white border border-blue-100 shadow-sm cursor-pointer"
+         role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ') dashboard.show('loyers')"
          data-show-section="loyers" onclick="dashboard.show('loyers')">
         {{-- Watermark --}}
         <div class="absolute -bottom-6 -right-6 opacity-[0.08] transform rotate-[-15deg] group-hover:scale-110 group-hover:rotate-0 transition-all duration-500">
@@ -24,6 +25,7 @@
 
     {{-- KPI 2: Encaissé --}}
     <div class="relative overflow-hidden rounded-3xl p-6 transition-all duration-300 group hover:-translate-y-1 hover:shadow-xl bg-white border border-emerald-100 shadow-sm cursor-pointer"
+         role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ') dashboard.show('paiements')"
          data-show-section="paiements" onclick="dashboard.show('paiements')">
         {{-- Watermark --}}
         <div class="absolute -bottom-6 -right-6 opacity-[0.08] transform rotate-[-15deg] group-hover:scale-110 group-hover:rotate-0 transition-all duration-500">
@@ -54,6 +56,7 @@
 
     {{-- KPI 3: Impayés --}}
     <div class="relative overflow-hidden rounded-3xl p-6 transition-all duration-300 group hover:-translate-y-1 hover:shadow-xl bg-white border border-red-100 shadow-sm cursor-pointer"
+         role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ') dashboard.show('loyers')"
          data-show-section="loyers" onclick="dashboard.show('loyers')">
         {{-- Watermark --}}
         <div class="absolute -bottom-6 -right-6 opacity-[0.08] transform rotate-[-15deg] group-hover:scale-110 group-hover:rotate-0 transition-all duration-500">
@@ -84,6 +87,7 @@
 
     {{-- KPI 4: Solde Net --}}
     <div class="relative overflow-hidden rounded-3xl p-6 transition-all duration-300 group hover:-translate-y-1 hover:shadow-xl bg-gradient-to-br from-[#274256] to-[#1a2e3d] text-white shadow-lg shadow-blue-900/20 cursor-pointer"
+         role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ') dashboard.show('depenses')"
          data-show-section="depenses" onclick="dashboard.show('depenses')">
         {{-- Watermark --}}
         <div class="absolute -bottom-6 -right-6 opacity-[0.08] transform rotate-[-15deg] group-hover:scale-110 group-hover:rotate-0 transition-all duration-500">
