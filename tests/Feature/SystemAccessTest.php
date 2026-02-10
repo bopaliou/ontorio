@@ -12,6 +12,7 @@ class SystemAccessTest extends TestCase
     {
         $admin = \App\Models\User::factory()->create(['role' => 'admin']);
         Config::set('deploy.token', 'REAL_SECRET');
+        Config::set('deploy.allow_web_migrate', true);
 
         $response = $this->actingAs($admin)->post('/system/migrate', ['token' => 'WRONG_TOKEN']);
 
@@ -22,6 +23,7 @@ class SystemAccessTest extends TestCase
     {
         $admin = \App\Models\User::factory()->create(['role' => 'admin']);
         Config::set('deploy.token', 'TEST_SECRET_KEY');
+        Config::set('deploy.allow_web_migrate', true);
 
         Artisan::shouldReceive('call')->with('migrate', ['--force' => true])->once();
         Artisan::shouldReceive('output')->andReturn('Migration fake output');

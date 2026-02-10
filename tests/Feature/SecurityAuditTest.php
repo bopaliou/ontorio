@@ -19,6 +19,7 @@ class SecurityAuditTest extends TestCase
         $admin = User::factory()->create(['role' => 'admin']);
         $secret = 'test_secret_123';
         Config::set('deploy.token', $secret);
+        Config::set('deploy.allow_web_migrate', true);
 
         // 1. Forbidden for Guest
         $this->post('/system/migrate', ['token' => $secret])->assertRedirect('/login');
