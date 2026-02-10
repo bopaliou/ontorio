@@ -151,7 +151,7 @@ class Loyer extends Model
     {
         // Ne pas changer le statut si annulé (sauf si on veut permettre la réactivation ?)
         // Pour l'instant, on suppose que si on paie, on veut mettre à jour.
-        
+
         $totalPaid = $this->paiements()->sum('montant');
         $due = $this->montant + ($this->penalite ?? 0);
         $tolerance = 0.5;
@@ -164,11 +164,11 @@ class Loyer extends Model
             $this->statut = LoyerStatus::PARTIELLEMENT_PAYE->value;
         } else {
             // Aucun paiement significatif
-            
-            // Si c'était annulé, on ne touche pas ? 
+
+            // Si c'était annulé, on ne touche pas ?
             // Mais la logique de suppression de paiement réinitialisait à émis/retard.
             // On va suivre la logique : recalculer basé sur la date.
-            
+
             if (now()->gt($this->date_echeance)) {
                 $this->statut = LoyerStatus::EN_RETARD->value;
             } else {
