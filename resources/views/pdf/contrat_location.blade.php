@@ -230,20 +230,22 @@
         <!-- HEADER -->
         <div class="header">
             <table width="100%">
-                <tr>
-                    <td width="30%">
-                        <img src="{{ public_path('images/ontorio-logo.png') }}" style="max-height: 85px;">
-                    </td>
-                    <td width="70%" align="right">
-                        <div class="font-black text-secondary" style="font-size: 18px; letter-spacing: -0.5px;">ONTARIO GROUP S.A.</div>
-                        <div class="agency-info">
-                            Gestion Immobilière & Patrimoniale<br>
-                            5 Félix Faure x Colbert, Dakar Plateau<br>
-                            Sénégal | Tél : +221 33 822 32 67<br>
-                            Email : commercial@ontariogroup.net
-                        </div>
-                    </td>
-                </tr>
+                <thead>
+                    <tr>
+                        <th width="30%" style="text-align: left; font-weight: normal;">
+                            <img src="{{ public_path('images/ontorio-logo.png') }}" style="max-height: 85px;">
+                        </th>
+                        <th width="70%" align="right" style="font-weight: normal;">
+                            <div class="font-black text-secondary" style="font-size: 18px; letter-spacing: -0.5px;">ONTARIO GROUP S.A.</div>
+                            <div class="agency-info">
+                                Gestion Immobilière & Patrimoniale<br>
+                                5 Félix Faure x Colbert, Dakar Plateau<br>
+                                Sénégal | Tél : +221 33 822 32 67<br>
+                                Email : commercial@ontariogroup.net
+                            </div>
+                        </th>
+                    </tr>
+                </thead>
             </table>
         </div>
 
@@ -256,26 +258,28 @@
 
         <!-- PARTIES -->
         <table class="party-grid">
-            <tr>
-                <td class="party-box">
-                    <div class="party-label">Le Bailleur</div>
-                    <div class="party-name">ONTARIO GROUP S.A.</div>
-                    <div class="party-details">
-                        Représenté par son département de gestion locative.<br>
-                        Dakar Plateau, Sénégal.
-                    </div>
-                </td>
-                <td width="4%"></td>
-                <td class="party-box">
-                    <div class="party-label">Le Preneur</div>
-                    <div class="party-name">{{ strtoupper($contrat->locataire->nom) }}</div>
-                    <div class="party-details">
-                        <strong>Tél :</strong> {{ $contrat->locataire->telephone ?? 'Non renseigné' }}<br>
-                        <strong>Email :</strong> {{ $contrat->locataire->email ?? 'Non renseigné' }}<br>
-                        <strong>CNI/Passeport :</strong> {{ $contrat->locataire->cni ?? 'Non renseigné' }}
-                    </div>
-                </td>
-            </tr>
+            <thead>
+                <tr>
+                    <th class="party-box" style="text-align: left; font-weight: normal; vertical-align: top;">
+                        <div class="party-label">Le Bailleur</div>
+                        <div class="party-name">ONTARIO GROUP S.A.</div>
+                        <div class="party-details">
+                            Représenté par son département de gestion locative.<br>
+                            Dakar Plateau, Sénégal.
+                        </div>
+                    </th>
+                    <th width="4%"></th>
+                    <th class="party-box" style="text-align: left; font-weight: normal; vertical-align: top;">
+                        <div class="party-label">Le Preneur</div>
+                        <div class="party-name">{{ strtoupper($contrat->locataire->nom) }}</div>
+                        <div class="party-details">
+                            <strong>Tél :</strong> {{ $contrat->locataire->telephone ?? 'Non renseigné' }}<br>
+                            <strong>Email :</strong> {{ $contrat->locataire->email ?? 'Non renseigné' }}<br>
+                            <strong>CNI/Passeport :</strong> {{ $contrat->locataire->cni ?? 'Non renseigné' }}
+                        </div>
+                    </th>
+                </tr>
+            </thead>
         </table>
 
         <!-- ARTICLE 1: OBJET -->
@@ -337,16 +341,18 @@
                 Fait à <strong>Dakar</strong>, le <strong>{{ now()->format('d/m/Y') }}</strong>, en deux exemplaires originaux.
             </p>
             <table width="100%">
-                <tr>
-                    <td class="signature-box">
-                        <div class="sign-hint">Cachet et Signature du Bailleur (Ontario)</div>
-                    </td>
-                    <td width="10%"></td>
-                    <td class="signature-box">
-                        <div class="sign-hint">Signature du Preneur (Précédée de "Lu et Approuvé")</div>
-                        <div class="sign-name">{{ strtoupper($contrat->locataire->nom) }}</div>
-                    </td>
-                </tr>
+                <thead>
+                    <tr>
+                        <th class="signature-box" style="text-align: left; font-weight: normal; vertical-align: top;">
+                            <div class="sign-hint">Cachet et Signature du Bailleur (Ontario)</div>
+                        </th>
+                        <th width="10%"></th>
+                        <th class="signature-box" style="text-align: left; font-weight: normal; vertical-align: top;">
+                            <div class="sign-hint">Signature du Preneur (Précédée de "Lu et Approuvé")</div>
+                            <div class="sign-name">{{ strtoupper($contrat->locataire->nom) }}</div>
+                        </th>
+                    </tr>
+                </thead>
             </table>
         </div>
 

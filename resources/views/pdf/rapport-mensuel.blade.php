@@ -184,15 +184,17 @@
         <!-- HEADER -->
         <div class="header">
             <table width="100%">
-                <tr>
-                    <td width="60%">
-                        <h1 class="agency-name">ONTARIO GROUP S.A.</h1>
-                        <div class="header-sub">Rapport Stratégique de Gestion Locative</div>
-                    </td>
-                    <td width="40%" align="right">
-                        <img src="{{ public_path('images/ontorio-logo.png') }}" style="max-height: 70px;">
-                    </td>
-                </tr>
+                <thead>
+                    <tr>
+                        <th width="60%" style="text-align: left; font-weight: normal;">
+                            <h1 class="agency-name">ONTARIO GROUP S.A.</h1>
+                            <div class="header-sub">Rapport Stratégique de Gestion Locative</div>
+                        </th>
+                        <th width="40%" align="right" style="font-weight: normal;">
+                            <img src="{{ public_path('images/ontorio-logo.png') }}" style="max-height: 70px;">
+                        </th>
+                    </tr>
+                </thead>
             </table>
         </div>
 
@@ -295,10 +297,12 @@
         <!-- HEADER (Simplified for secondary pages) -->
         <div class="header">
             <table width="100%">
-                <tr>
-                    <td><div class="agency-name">Détail Opérationnel</div></td>
-                    <td align="right"><div class="report-period">{{ \Carbon\Carbon::parse($mois)->translatedFormat('F Y') }}</div></td>
-                </tr>
+                <thead>
+                    <tr>
+                        <th style="text-align: left; font-weight: normal;"><div class="agency-name">Détail Opérationnel</div></th>
+                        <th align="right" style="font-weight: normal;"><div class="report-period">{{ \Carbon\Carbon::parse($mois)->translatedFormat('F Y') }}</div></th>
+                    </tr>
+                </thead>
             </table>
         </div>
 

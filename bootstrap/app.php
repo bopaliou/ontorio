@@ -25,26 +25,28 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        $exceptions->render(function (\Illuminate\Database\Eloquent\ModelNotFoundException $e, $request) {
-            if ($request->is('api/*')) {
+        $isApi = fn ($request) => $request->is('api/*');
+
+        $exceptions->render(function (\Illuminate\Database\Eloquent\ModelNotFoundException $e, $request) use ($isApi) {
+            if ($isApi($request)) {
                 return response()->json(['message' => 'Ressource non trouvée'], 404);
             }
         });
 
-        $exceptions->render(function (\Illuminate\Auth\AuthenticationException $e, $request) {
-            if ($request->is('api/*')) {
+        $exceptions->render(function (\Illuminate\Auth\AuthenticationException $e, $request) use ($isApi) {
+            if ($isApi($request)) {
                 return response()->json(['message' => 'Non authentifié'], 401);
             }
         });
 
-        $exceptions->render(function (\Illuminate\Auth\Access\AuthorizationException $e, $request) {
-            if ($request->is('api/*')) {
+        $exceptions->render(function (\Illuminate\Auth\Access\AuthorizationException $e, $request) use ($isApi) {
+            if ($isApi($request)) {
                 return response()->json(['message' => 'Action non autorisée'], 403);
             }
         });
 
-        $exceptions->render(function (\Illuminate\Validation\ValidationException $e, $request) {
-            if ($request->is('api/*')) {
+        $exceptions->render(function (\Illuminate\Validation\ValidationException $e, $request) use ($isApi) {
+            if ($isApi($request)) {
                 return response()->json([
                     'message' => 'Données invalides',
                     'errors' => $e->errors(),
@@ -52,9 +54,9 @@ return Application::configure(basePath: dirname(__DIR__))
             }
         });
 
-        $exceptions->render(function (\Throwable $e, $request) {
+        $exceptions->render(function (\Throwable $e, $request) use ($isApi) {
             if (! config('app.debug')) {
-                if ($request->is('api/*')) {
+                if ($isApi($request)) {
                     return response()->json(['message' => 'Une erreur interne est survenue'], 500);
                 }
                 // Pour les requêtes Web, Laravel utilisera automatiquement resources/views/errors/500.blade.php

@@ -19,16 +19,22 @@ class CheckPermission
             return redirect()->route('login');
         }
 
-        $isAuthorized =
-            $user->role === 'admin' ||
-            (method_exists($user, 'can') && $user->can($permission)) ||
-            $this->hasLegacyPermission($user, $permission);
-
-        if (! $isAuthorized) {
-            abort(403, 'Accès non autorisé');
+        // Super Admin legacy shortcut
+        if ($user->role === 'admin') {
+            return $next($request);
         }
 
-        return $next($request);
+        // Primary source of truth: Laravel/Spatie permission system
+        if (method_exists($user, 'can') && $user->can($permission)) {
+            return $next($request);
+        }
+
+        // Backward compatibility fallback while migrating legacy role matrix
+        if ($this->hasLegacyPermission($user, $permission)) {
+            return $next($request);
+        }
+
+        abort(403, 'Accès non autorisé');
     }
 
     /**
