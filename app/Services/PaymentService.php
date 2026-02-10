@@ -47,13 +47,7 @@ class PaymentService
             ]);
 
             // 5. Mise à jour du statut du loyer
-            $newTotalPaid = $totalPaid + $data['montant'];
-            if ($newTotalPaid >= $due - 0.01) {
-                $loyer->statut = 'payé';
-            } else {
-                $loyer->statut = 'partiellement_payé';
-            }
-            $loyer->save();
+            $loyer->updateStatus();
 
             ActivityLogger::log('Encaissement Loyer', "Paiement de {$data['montant']} F pour le loyer #{$loyer->id}", 'success');
 
@@ -78,24 +72,7 @@ class PaymentService
             $paiement->delete();
 
             if ($loyer) {
-                $sommePaiements = $loyer->paiements()->sum('montant');
-
-                if ($sommePaiements < $loyer->montant) {
-                    $moisLoyer = \Carbon\Carbon::parse($loyer->mois);
-                    $now = \Carbon\Carbon::now();
-
-                    if ($now->format('Y-m') > $moisLoyer->format('Y-m')) {
-                        $loyer->statut = 'en_retard';
-                    } else {
-                        $loyer->statut = 'émis';
-                    }
-
-                    if ($sommePaiements > 0) {
-                        $loyer->statut = 'partiellement_payé';
-                    }
-
-                    $loyer->save();
-                }
+                $loyer->updateStatus();
             }
 
             ActivityLogger::log('Annulation Encaissement', "Suppression paiement de {$montant} F pour loyer #".($loyer ? $loyer->id : 'unknown'), 'warning');

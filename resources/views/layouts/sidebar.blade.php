@@ -26,7 +26,9 @@
 
         <!-- Section: GESTION -->
         @if(App\Helpers\PermissionHelper::can('biens.view'))
-        <div class="mt-8 mb-2 px-8 flex justify-between items-center group cursor-pointer" onclick="toggleSection('gestion')">
+        <div class="mt-8 mb-2 px-8 flex justify-between items-center group cursor-pointer" 
+             role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ') toggleSection('gestion')"
+             onclick="toggleSection('gestion')">
             <h3 class="text-xs font-bold text-[#cb2d2d] uppercase tracking-[0.15em] transition-colors group-hover:text-white">Gestion</h3>
             <svg id="icon-gestion" class="w-3 h-3 text-gray-500 transform transition-transform duration-300 rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
         </div>
@@ -52,7 +54,9 @@
 
         <!-- Section: FINANCE -->
         @if(App\Helpers\PermissionHelper::can('loyers.view') || App\Helpers\PermissionHelper::can('paiements.view'))
-        <div class="mt-8 mb-2 px-8 flex justify-between items-center group cursor-pointer" onclick="toggleSection('finance')">
+        <div class="mt-8 mb-2 px-8 flex justify-between items-center group cursor-pointer" 
+             role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ') toggleSection('finance')"
+             onclick="toggleSection('finance')">
             <h3 class="text-xs font-bold text-[#cb2d2d] uppercase tracking-[0.15em] transition-colors group-hover:text-white">Finance</h3>
             <svg id="icon-finance" class="w-3 h-3 text-gray-500 transform transition-transform duration-300 rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
         </div>
@@ -85,7 +89,9 @@
         @endif
 
         <!-- Section: RAPPORTS -->
-        <div class="mt-8 mb-2 px-8 flex justify-between items-center group cursor-pointer" onclick="toggleSection('rapports')">
+        <div class="mt-8 mb-2 px-8 flex justify-between items-center group cursor-pointer" 
+             role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ') toggleSection('rapports')"
+             onclick="toggleSection('rapports')">
             <h3 class="text-xs font-bold text-[#cb2d2d] uppercase tracking-[0.15em] transition-colors group-hover:text-white">Rapports</h3>
              <svg id="icon-rapports" class="w-3 h-3 text-gray-500 transform transition-transform duration-300 rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
         </div>
@@ -106,7 +112,9 @@
 
         <!-- Section: ADMIN -->
         @if(Auth::user()->role === 'admin')
-        <div class="mt-8 mb-2 px-8 flex justify-between items-center group cursor-pointer" onclick="toggleSection('admin')">
+        <div class="mt-8 mb-2 px-8 flex justify-between items-center group cursor-pointer" 
+             role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ') toggleSection('admin')"
+             onclick="toggleSection('admin')">
             <h3 class="text-xs font-bold text-[#cb2d2d] uppercase tracking-[0.15em] transition-colors group-hover:text-white">Admin</h3>
              <svg id="icon-admin" class="w-3 h-3 text-gray-500 transform transition-transform duration-300 rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
         </div>

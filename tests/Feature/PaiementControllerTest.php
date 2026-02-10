@@ -13,6 +13,8 @@ use Tests\TestCase;
 
 class PaiementControllerTest extends TestCase
 {
+    private const BASE_URI = '/paiements';
+
     use \Illuminate\Foundation\Testing\RefreshDatabase;
 
     protected User $user;
@@ -50,7 +52,7 @@ class PaiementControllerTest extends TestCase
      */
     public function test_enregistrer_paiement_authentified()
     {
-        $response = $this->actingAs($this->user)->postJson('/paiements', [
+        $response = $this->actingAs($this->user)->postJson(self::BASE_URI, [
             'loyer_id' => $this->loyer->id,
             'montant' => 50000,
             'mode' => 'virement',
@@ -70,7 +72,7 @@ class PaiementControllerTest extends TestCase
      */
     public function test_enregistrer_paiement_unauthentified()
     {
-        $response = $this->postJson('/paiements', [
+        $response = $this->postJson(self::BASE_URI, [
             'loyer_id' => $this->loyer->id,
             'montant' => 50000,
             'mode' => 'virement',
@@ -85,7 +87,7 @@ class PaiementControllerTest extends TestCase
      */
     public function test_paiement_validation_montant_invalide()
     {
-        $response = $this->actingAs($this->user)->postJson('/paiements', [
+        $response = $this->actingAs($this->user)->postJson(self::BASE_URI, [
             'loyer_id' => $this->loyer->id,
             'montant' => -100, // Négatif
             'mode' => 'virement',
@@ -101,7 +103,7 @@ class PaiementControllerTest extends TestCase
      */
     public function test_paiement_validation_mode_invalide()
     {
-        $response = $this->actingAs($this->user)->postJson('/paiements', [
+        $response = $this->actingAs($this->user)->postJson(self::BASE_URI, [
             'loyer_id' => $this->loyer->id,
             'montant' => 50000,
             'mode' => 'bitcoin', // Mode inexistant

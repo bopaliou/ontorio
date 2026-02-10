@@ -218,18 +218,20 @@
         <!-- HEADER -->
         <div class="header">
             <table width="100%">
-                <tr>
-                    <td width="60%">
-                        <h1 class="agency-name">ONTARIO GROUP S.A.</h1>
-                        <div class="header-sub">
-                            Expertise Immobilière & Gestion de Patrimoine<br>
-                            Dakar Plateau, Sénégal | +221 33 822 32 67
-                        </div>
-                    </td>
-                    <td width="40%" align="right">
-                        <img src="{{ public_path('images/ontorio-logo.png') }}" style="max-height: 70px;">
-                    </td>
-                </tr>
+                <thead>
+                    <tr>
+                        <th width="60%" style="text-align: left; font-weight: normal;">
+                            <h1 class="agency-name">ONTARIO GROUP S.A.</h1>
+                            <div class="header-sub">
+                                Expertise Immobilière & Gestion de Patrimoine<br>
+                                Dakar Plateau, Sénégal | +221 33 822 32 67
+                            </div>
+                        </th>
+                        <th width="40%" align="right" style="font-weight: normal;">
+                            <img src="{{ public_path('images/ontorio-logo.png') }}" style="max-height: 70px;">
+                        </th>
+                    </tr>
+                </thead>
             </table>
         </div>
 

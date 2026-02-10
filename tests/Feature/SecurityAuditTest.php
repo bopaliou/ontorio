@@ -9,6 +9,8 @@ use Tests\TestCase;
 
 class SecurityAuditTest extends TestCase
 {
+    private const MIGRATE_URI = '/system/migrate';
+
     use RefreshDatabase;
 
     /**
@@ -19,13 +21,14 @@ class SecurityAuditTest extends TestCase
         $admin = User::factory()->create(['role' => 'admin']);
         $secret = 'test_secret_123';
         Config::set('deploy.token', $secret);
+        Config::set('deploy.allow_web_migrate', true);
 
         // 1. Forbidden for Guest
-        $this->post('/system/migrate', ['token' => $secret])->assertRedirect('/login');
+        $this->post(self::MIGRATE_URI, ['token' => $secret])->assertRedirect('/login');
 
         // 2. Forbidden for Non-admin
         $gestionnaire = User::factory()->create(['role' => 'gestionnaire']);
-        $this->actingAs($gestionnaire)->post('/system/migrate', ['token' => $secret])->assertStatus(403);
+        $this->actingAs($gestionnaire)->post(self::MIGRATE_URI, ['token' => $secret])->assertStatus(403);
 
         // 3. Valid secret for Admin
         \Illuminate\Support\Facades\Artisan::shouldReceive('call')->with('migrate', ['--force' => true])->once();
@@ -36,10 +39,10 @@ class SecurityAuditTest extends TestCase
         \Illuminate\Support\Facades\Artisan::shouldReceive('call')->with('route:clear')->once();
         \Illuminate\Support\Facades\Artisan::shouldReceive('call')->with('view:cache')->once();
 
-        $this->actingAs($admin)->post('/system/migrate', ['token' => $secret])->assertStatus(200);
+        $this->actingAs($admin)->post(self::MIGRATE_URI, ['token' => $secret])->assertStatus(200);
 
         // 4. Invalid secret for Admin
-        $this->actingAs($admin)->post('/system/migrate', ['token' => 'wrong_secret'])->assertStatus(403);
+        $this->actingAs($admin)->post(self::MIGRATE_URI, ['token' => 'wrong_secret'])->assertStatus(403);
     }
 
     /**

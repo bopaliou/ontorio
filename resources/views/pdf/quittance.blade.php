@@ -280,20 +280,22 @@
         <div class="header">
             <div class="header-content">
                 <table width="100%">
-                    <tr>
-                        <td width="50%" valign="bottom">
-                            <h1 class="agency-name">ONTARIO GROUP S.A.</h1>
-                            <div class="agency-info">
-                                <strong>Pionnier de la Gestion Immobilière au Sénégal</strong><br>
-                                Siége Social : 5 Félix Faure x Colbert, Dakar Plateau<br>
-                                NINEA : 006421045 2G3 | RCCM : SN.DKR.2017.B.15234<br>
-                                <strong>Assistance :</strong> +221 33 822 32 67 | commercial@ontariogroup.net
-                            </div>
-                        </td>
-                        <td width="50%" align="right" valign="top">
-                            <img src="{{ public_path('images/ontorio-logo.png') }}" style="max-height: 75px;">
-                        </td>
-                    </tr>
+                    <thead>
+                        <tr>
+                            <th width="50%" valign="bottom" style="text-align: left; font-weight: normal;">
+                                <h1 class="agency-name">ONTARIO GROUP S.A.</h1>
+                                <div class="agency-info">
+                                    <strong>Pionnier de la Gestion Immobilière au Sénégal</strong><br>
+                                    Siége Social : 5 Félix Faure x Colbert, Dakar Plateau<br>
+                                    NINEA : 006421045 2G3 | RCCM : SN.DKR.2017.B.15234<br>
+                                    <strong>Assistance :</strong> +221 33 822 32 67 | commercial@ontariogroup.net
+                                </div>
+                            </th>
+                            <th width="50%" align="right" valign="top" style="font-weight: normal;">
+                                <img src="{{ public_path('images/ontorio-logo.png') }}" style="max-height: 75px;">
+                            </th>
+                        </tr>
+                    </thead>
                 </table>
             </div>
             
@@ -305,29 +307,31 @@
 
         <!-- INFO GRID -->
         <table class="info-grid">
-            <tr>
-                <td class="info-col">
-                    <div class="info-card">
-                        <div class="card-label">Identité du Locataire</div>
-                        <div class="card-value">{{ strtoupper($loyer->contrat->locataire->nom) }}</div>
-                        <div class="card-subtext">
-                            <strong>Référence Dossier :</strong> LOC-{{ str_pad($loyer->contrat->locataire->id, 3, '0', STR_PAD_LEFT) }}<br>
-                            <strong>Tél :</strong> {{ $loyer->contrat->locataire->telephone ?? 'N/A' }}
+            <thead>
+                <tr>
+                    <th class="info-col" style="text-align: left; font-weight: normal; vertical-align: top;">
+                        <div class="info-card">
+                            <div class="card-label">Identité du Locataire</div>
+                            <div class="card-value">{{ strtoupper($loyer->contrat->locataire->nom) }}</div>
+                            <div class="card-subtext">
+                                <strong>Référence Dossier :</strong> LOC-{{ str_pad($loyer->contrat->locataire->id, 3, '0', STR_PAD_LEFT) }}<br>
+                                <strong>Tél :</strong> {{ $loyer->contrat->locataire->telephone ?? 'N/A' }}
+                            </div>
                         </div>
-                    </div>
-                </td>
-                <td class="spacer-col"></td>
-                <td class="info-col">
-                    <div class="info-card">
-                        <div class="card-label">Désignation du Bien</div>
-                        <div class="card-value">{{ $loyer->contrat->bien->nom }}</div>
-                        <div class="card-subtext">
-                            <strong>Type :</strong> {{ ucfirst($loyer->contrat->bien->type) }}<br>
-                            <strong>Adresse :</strong> {{ $loyer->contrat->bien->adresse ?? 'Dakar, Sénégal' }}
+                    </th>
+                    <th class="spacer-col"></th>
+                    <th class="info-col" style="text-align: left; font-weight: normal; vertical-align: top;">
+                        <div class="info-card">
+                            <div class="card-label">Désignation du Bien</div>
+                            <div class="card-value">{{ $loyer->contrat->bien->nom }}</div>
+                            <div class="card-subtext">
+                                <strong>Type :</strong> {{ ucfirst($loyer->contrat->bien->type) }}<br>
+                                <strong>Adresse :</strong> {{ $loyer->contrat->bien->adresse ?? 'Dakar, Sénégal' }}
+                            </div>
                         </div>
-                    </div>
-                </td>
-            </tr>
+                    </th>
+                </tr>
+            </thead>
         </table>
 
         <!-- STATEMENT -->
@@ -391,20 +395,22 @@
         <!-- SIGNATURES & FOOTER -->
         <div class="footer">
             <table width="100%" class="signature-area">
-                <tr>
-                    <td width="65%" style="font-size: 9px; color: #64748b; padding-right: 50px;">
-                        <div style="font-weight: 900; color: #1a2e3d; text-transform: uppercase; margin-bottom: 8px; letter-spacing: 0.5px;">Informations de Paiement</div>
-                        <strong>Mode de versement :</strong> {{ $loyer->mode_paiement ?? 'Espèces / Chèque / Virement' }}<br>
-                        <strong>Date d'encaissement :</strong> {{ $loyer->date_paiement ? \Carbon\Carbon::parse($loyer->date_paiement)->format('d/m/Y') : date('d/m/Y') }}<br>
-                        <br>
-                        <em>La présente quittance libère le locataire pour le mois indiqué. Elle n'emporte pas présomption de paiement des termes antérieurs non encore soldés.</em>
-                    </td>
-                    <td width="35%">
-                        <div class="sign-box">
-                            <div class="sign-label">Cachet de l'Agence & Signature</div>
-                        </div>
-                    </td>
-                </tr>
+                <thead>
+                    <tr>
+                        <th width="65%" style="font-size: 9px; color: #64748b; padding-right: 50px; text-align: left; font-weight: normal; vertical-align: top;">
+                            <div style="font-weight: 900; color: #1a2e3d; text-transform: uppercase; margin-bottom: 8px; letter-spacing: 0.5px;">Informations de Paiement</div>
+                            <strong>Mode de versement :</strong> {{ $loyer->mode_paiement ?? 'Espèces / Chèque / Virement' }}<br>
+                            <strong>Date d'encaissement :</strong> {{ $loyer->date_paiement ? \Carbon\Carbon::parse($loyer->date_paiement)->format('d/m/Y') : date('d/m/Y') }}<br>
+                            <br>
+                            <em>La présente quittance libère le locataire pour le mois indiqué. Elle n'emporte pas présomption de paiement des termes antérieurs non encore soldés.</em>
+                        </th>
+                        <th width="35%" style="font-weight: normal; vertical-align: top;">
+                            <div class="sign-box">
+                                <div class="sign-label">Cachet de l'Agence & Signature</div>
+                            </div>
+                        </th>
+                    </tr>
+                </thead>
             </table>
 
             <div class="bottom-legal">

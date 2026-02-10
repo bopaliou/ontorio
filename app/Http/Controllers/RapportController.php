@@ -37,8 +37,8 @@ class RapportController extends Controller
         $impayees = Loyer::with(['contrat.locataire', 'contrat.bien'])
             ->where('mois', $mois)
             ->whereIn('statut', ['en_retard', 'partiellement_payé', 'émis'])
-            ->orderBy('date_echeance')
-            ->get();
+            ->get()
+            ->sortBy('date_echeance');
 
         return view('rapports.impayees', compact('data', 'impayees', 'mois'));
     }
