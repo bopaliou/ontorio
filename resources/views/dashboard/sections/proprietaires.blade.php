@@ -17,90 +17,128 @@
         ])
 
         @if($agence)
-        <!-- Main Identity Card (Refined Premium Style) -->
-        <div class="bg-white rounded-[2.5rem] shadow-sm border border-gray-100 ontario-card-lift overflow-hidden relative">
-            <div class="absolute top-0 right-0 w-64 h-64 bg-gray-50 rounded-full blur-3xl -mr-32 -mt-32 opacity-50 pointer-events-none"></div>
+        <!-- Main Identity Card (Premium Redesign) -->
+        <div class="relative group mt-4">
+            {{-- Background Aura --}}
+            <div class="absolute -inset-4 bg-gradient-to-r from-red-500/10 via-blue-500/10 to-red-500/10 rounded-[4rem] blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-1000"></div>
 
-            <div class="p-8 lg:p-14 grid grid-cols-1 lg:grid-cols-12 gap-12 relative z-10">
+            <div class="bg-white rounded-[3rem] shadow-2xl shadow-gray-200/50 border border-gray-100 ontario-card-lift overflow-hidden relative z-10">
+                {{-- Top Glass Highlight --}}
+                <div class="absolute top-0 inset-x-0 h-40 bg-gradient-to-b from-gray-50/50 to-transparent pointer-events-none"></div>
+                
+                <div class="p-8 lg:p-16 grid grid-cols-1 lg:grid-cols-12 gap-16 relative z-10">
 
-                <!-- Col 1: Brand & Identity (5 cols) -->
-                <div class="lg:col-span-5 flex flex-col items-center lg:items-start text-center lg:text-left border-b lg:border-b-0 lg:border-r border-gray-100 pb-10 lg:pb-0 lg:pr-12">
-                     {{-- Logo Container with Glow --}}
-                    <div class="relative group">
-                        <div class="absolute inset-0 bg-blue-100 rounded-[2rem] blur-xl opacity-20 group-hover:opacity-40 transition-opacity duration-500"></div>
-                        <div class="w-48 h-48 bg-white rounded-[2rem] flex items-center justify-center p-8 mb-10 border border-gray-100 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.08)] relative z-10 hover:scale-[1.02] transition-transform duration-500">
-                            <img src="{{ asset('images/ontorio-logo.png') }}" alt="Ontario Logo" class="w-full h-full object-contain filter">
-                        </div>
-                    </div>
-
-                    <h3 class="text-4xl font-black text-gray-900 leading-none tracking-tighter">{{ $agence->nom }}</h3>
-                    @if($agence->prenom)
-                    <span class="inline-block mt-3 px-4 py-1.5 bg-gray-50 border border-gray-200 rounded-full text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">{{ $agence->prenom }}</span>
-                    @endif
-
-                    <div class="mt-8 flex items-start gap-4 text-left p-4 bg-gray-50 rounded-2xl border border-gray-100 w-full group hover:border-gray-200 transition-colors">
-                        <div class="w-10 h-10 rounded-xl bg-white flex items-center justify-center shrink-0 shadow-sm text-gray-400 group-hover:text-[#cb2d2d] transition-colors">
-                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-                        </div>
-                        <p class="text-sm text-gray-600 leading-relaxed font-medium pt-1">
-                            {{ $agence->adresse ?? 'Adresse du siège social non renseignée.' }}
-                        </p>
-                    </div>
-                </div>
-
-                <!-- Col 2: Info & Stats (7 cols) -->
-                <div class="lg:col-span-7 flex flex-col justify-center space-y-12">
-
-                    {{-- Contact Grid --}}
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
-                        <div class="flex items-center gap-5 group p-4 rounded-2xl hover:bg-gray-50 transition-colors cursor-default">
-                            <div class="w-14 h-14 rounded-2xl bg-white border border-gray-100 flex items-center justify-center group-hover:border-[#cb2d2d] group-hover:text-[#cb2d2d] transition-all duration-300 shadow-sm text-gray-400">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
-                            </div>
-                            <div>
-                                <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-1">Standard</p>
-                                <p class="text-xl font-bold text-gray-900 font-mono tracking-tight">{{ $agence->telephone ?? '--' }}</p>
+                    <!-- Col 1: Brand Identity -->
+                    <div class="lg:col-span-5 flex flex-col items-center lg:items-start text-center lg:text-left border-b lg:border-b-0 lg:border-r border-gray-100/80 pb-12 lg:pb-0 lg:pr-16">
+                        {{-- Logo Container (Glass Evolution) --}}
+                        <div class="relative mb-12 group/logo">
+                            <div class="absolute inset-0 bg-gradient-to-br from-[#cb2d2d]/20 to-blue-500/20 rounded-[2.5rem] blur-2xl opacity-40 group-hover/logo:opacity-70 transition-opacity duration-700"></div>
+                            <div class="w-56 h-56 bg-white/80 backdrop-blur-md rounded-[2.5rem] flex items-center justify-center p-10 border border-white shadow-[0_20px_50px_-15px_rgba(0,0,0,0.1)] relative z-10 transition-all duration-700 group-hover/logo:scale-[1.03] group-hover/logo:-rotate-1">
+                                <img src="{{ asset('images/ontorio-logo.png') }}" alt="Ontario Logo" class="w-full h-full object-contain">
                             </div>
                         </div>
 
-                        <div class="flex items-center gap-5 group p-4 rounded-2xl hover:bg-gray-50 transition-colors cursor-default">
-                            <div class="w-14 h-14 rounded-2xl bg-white border border-gray-100 flex items-center justify-center group-hover:border-[#cb2d2d] group-hover:text-[#cb2d2d] transition-all duration-300 shadow-sm text-gray-400">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                        <div class="space-y-4">
+                            <h3 class="text-5xl font-black text-gray-900 leading-none tracking-tighter font-poppins">
+                                {{ $agence->nom }}
+                            </h3>
+                            @if($agence->prenom)
+                            <div class="inline-flex items-center px-4 py-1.5 bg-red-50 border border-red-100 rounded-full">
+                                <span class="text-[10px] font-black text-[#cb2d2d] uppercase tracking-[0.2em]">{{ $agence->prenom }}</span>
                             </div>
-                            <div>
-                                <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-1">Email Officiel</p>
-                                <p class="text-xl font-bold text-gray-900 tracking-tight">{{ $agence->email ?? '--' }}</p>
+                            @endif
+                        </div>
+
+                        <div class="mt-12 w-full p-6 bg-gray-50/80 backdrop-blur-sm rounded-2xl border border-gray-100 group/addr hover:bg-white hover:shadow-xl hover:border-red-100 transition-all duration-500">
+                            <div class="flex items-start gap-5">
+                                <div class="w-12 h-12 rounded-xl bg-white flex items-center justify-center shrink-0 shadow-sm text-gray-400 group-hover/addr:text-[#cb2d2d] group-hover/addr:scale-110 transition-all duration-500 border border-gray-50">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                                </div>
+                                <div class="pt-1">
+                                    <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-1">Siège Social</p>
+                                    <p class="text-sm text-gray-600 leading-relaxed font-semibold">
+                                        {{ $agence->adresse ?? 'Adresse non renseignée.' }}
+                                    </p>
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    {{-- Highlight Stat Box --}}
-                    <div class="bg-gradient-to-br from-[#274256] to-[#1a2e3d] rounded-3xl p-10 flex flex-col md:flex-row items-center justify-between gap-8 border border-gray-800 shadow-2xl relative overflow-hidden group">
-                        {{-- Deco --}}
-                        <div class="absolute -right-10 -bottom-10 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl group-hover:bg-blue-500/20 transition-all duration-700"></div>
+                    <!-- Col 2: Info & Digital Presence -->
+                    <div class="lg:col-span-7 flex flex-col justify-center space-y-16">
+                        
+                        {{-- Contact Grid with Vibrant Accents --}}
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-10">
+                            <div class="flex items-center gap-6 group/contact p-2 rounded-3xl transition-all">
+                                <div class="w-16 h-16 rounded-[1.25rem] bg-emerald-50 border border-emerald-100 flex items-center justify-center group-hover/contact:bg-emerald-500 group-hover/contact:text-white group-hover/contact:rotate-6 transition-all duration-500 shadow-sm text-emerald-600">
+                                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+                                </div>
+                                <div>
+                                    <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-1.5">Standard Direct</p>
+                                    <p class="text-2xl font-black text-gray-900 font-mono tracking-tight">{{ $agence->telephone ?? '--' }}</p>
+                                </div>
+                            </div>
 
-                         <div class="text-center md:text-left relative z-10">
-                            <p class="text-[11px] font-bold text-blue-200 uppercase tracking-widest mb-2">Santé Financière (Mois)</p>
-                            <div class="flex items-baseline gap-3 justify-center md:justify-start">
-                                <p class="text-5xl font-black text-white tracking-tighter shadow-black/50 drop-shadow-sm">{{ number_format($agence->loyers_encaisses_mois ?? 0, 0, ',', ' ') }}</p>
-                                <span class="text-lg font-bold text-blue-300">F CFA</span>
+                            <div class="flex items-center gap-6 group/contact p-2 rounded-3xl transition-all">
+                                <div class="w-16 h-16 rounded-[1.25rem] bg-sky-50 border border-sky-100 flex items-center justify-center group-hover/contact:bg-sky-500 group-hover/contact:text-white group-hover/contact:-rotate-6 transition-all duration-500 shadow-sm text-sky-600">
+                                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                                </div>
+                                <div>
+                                    <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-1.5">Email Officiel</p>
+                                    <p class="text-xl font-bold text-gray-900 tracking-tight break-all">{{ $agence->email ?? '--' }}</p>
+                                </div>
                             </div>
                         </div>
 
-                        <div class="w-full md:w-auto h-px md:h-16 bg-white/10 relative z-10"></div>
+                        {{-- Liquid Premium Stat Box --}}
+                        <div class="relative group/liquid overflow-hidden rounded-[2.5rem] border border-white/10 shadow-2xl">
+                            {{-- Base Gradient --}}
+                            <div class="absolute inset-0 bg-gradient-to-br from-[#0f172a] via-[#1e293b] to-[#0f172a]"></div>
+                            
+                            {{-- Liquid Glows --}}
+                            <div class="absolute top-[-50%] left-[-20%] w-[100%] h-[200%] bg-[radial-gradient(circle,rgba(59,130,246,0.15)_0%,transparent_60%)] animate-slow-spin"></div>
+                            <div class="absolute bottom-[-50%] right-[-20%] w-[100%] h-[200%] bg-[radial-gradient(circle,rgba(37,99,235,0.1)_0%,transparent_60%)] animate-slow-spin-reverse"></div>
 
-                        <div class="text-center md:text-right relative z-10">
-                             <div class="inline-flex items-center gap-2 px-4 py-2 bg-green-500/20 border border-green-500/30 rounded-full animate-pulse-subtle">
-                                 <div class="w-2 h-2 rounded-full bg-green-400 shadow-[0_0_10px_rgba(74,222,128,0.5)]"></div>
-                                 <span class="text-[10px] font-black text-green-300 uppercase tracking-widest">Activé & Vérifié</span>
-                             </div>
-                             <p class="text-[10px] text-white/40 mt-2 font-medium">Licence ID: #{{ str_pad($agence->id, 6, '0', STR_PAD_LEFT) }}</p>
+                            {{-- Glass Reflection --}}
+                            <div class="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-transparent pointer-events-none"></div>
+
+                            <div class="relative z-10 p-10 flex flex-col md:flex-row items-center justify-between gap-10">
+                                <div class="text-center md:text-left">
+                                    <div class="flex items-center gap-2 mb-3 justify-center md:justify-start">
+                                        <div class="w-1.5 h-1.5 rounded-full bg-blue-400"></div>
+                                        <p class="text-[10px] font-black text-blue-200 uppercase tracking-[0.2em]">Santé Financière du Mois</p>
+                                    </div>
+                                    <div class="flex items-baseline gap-4 justify-center md:justify-start">
+                                        <span class="text-6xl font-black text-white tracking-tighter drop-shadow-2xl">
+                                            {{ number_format($agence->loyers_encaisses_mois ?? 0, 0, ',', ' ') }}
+                                        </span>
+                                        <span class="text-xl font-bold text-blue-400/80">F CFA</span>
+                                    </div>
+                                </div>
+
+                                <div class="hidden md:block w-px h-20 bg-gradient-to-b from-transparent via-white/10 to-transparent"></div>
+
+                                <div class="flex flex-col items-center md:items-end">
+                                    <div class="inline-flex items-center gap-2.5 px-5 py-2.5 bg-green-500/10 border border-green-500/20 rounded-2xl backdrop-blur-md">
+                                        <div class="relative flex h-2.5 w-2.5">
+                                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                                            <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500 shadow-[0_0_12px_rgba(34,197,94,0.6)]"></span>
+                                        </div>
+                                        <span class="text-[11px] font-black text-green-400 uppercase tracking-widest">Compte Vérifié</span>
+                                    </div>
+                                    <div class="mt-4 flex items-center gap-2">
+                                        <p class="text-[10px] text-white/30 font-medium">LICENCE ID</p>
+                                        <p class="text-[11px] text-white/60 font-mono font-bold">#{{ str_pad($agence->id, 6, '0', STR_PAD_LEFT) }}</p>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    </div>
 
+                    </div>
                 </div>
             </div>
         </div>
+
 
         @else
         <!-- Empty State (Modern) -->
