@@ -12,6 +12,7 @@ use Illuminate\Validation\Rule;
 class UserController extends Controller
 {
     private const ERROR_GENERIC = 'Une erreur est survenue. Veuillez réessayer.';
+
     /**
      * Store a newly created user in storage.
      */

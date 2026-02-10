@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Responses\ApiResponse;
 use App\Models\Paiement;
-use Illuminate\Http\Request;
 
 class PaiementController extends Controller
 {

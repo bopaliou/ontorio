@@ -11,6 +11,7 @@ use Illuminate\Support\Str;
 class DocumentController extends Controller
 {
     private const DATE_FORMAT = 'd/m/Y H:i';
+
     /**
      * Display a listing of the resource.
      */
