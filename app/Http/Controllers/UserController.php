@@ -11,6 +11,7 @@ use Illuminate\Validation\Rule;
 
 class UserController extends Controller
 {
+    private const ERROR_GENERIC = 'Une erreur est survenue. Veuillez réessayer.';
     /**
      * Store a newly created user in storage.
      */
@@ -45,7 +46,7 @@ class UserController extends Controller
         } catch (\Exception $e) {
             \Log::error('Erreur création utilisateur', ['error' => $e->getMessage()]);
 
-            return response()->json(['success' => false, 'message' => 'Une erreur est survenue. Veuillez réessayer.'], 500);
+            return response()->json(['success' => false, 'message' => self::ERROR_GENERIC], 500);
         }
     }
 
@@ -87,7 +88,7 @@ class UserController extends Controller
         } catch (\Exception $e) {
             \Log::error('Erreur modification utilisateur', ['user_id' => $user->id, 'error' => $e->getMessage()]);
 
-            return response()->json(['success' => false, 'message' => 'Une erreur est survenue. Veuillez réessayer.'], 500);
+            return response()->json(['success' => false, 'message' => self::ERROR_GENERIC], 500);
         }
     }
 
@@ -110,7 +111,7 @@ class UserController extends Controller
         } catch (\Exception $e) {
             \Log::error('Erreur suppression utilisateur', ['user_id' => $user->id, 'error' => $e->getMessage()]);
 
-            return response()->json(['success' => false, 'message' => 'Une erreur est survenue. Veuillez réessayer.'], 500);
+            return response()->json(['success' => false, 'message' => self::ERROR_GENERIC], 500);
         }
     }
 

@@ -10,6 +10,7 @@ use Illuminate\Support\Str;
 
 class DocumentController extends Controller
 {
+    private const DATE_FORMAT = 'd/m/Y H:i';
     /**
      * Display a listing of the resource.
      */
@@ -67,7 +68,7 @@ class DocumentController extends Controller
                     'type' => $document->type,
                     'nom_original' => $document->nom_original,
                     'url' => Storage::url($document->chemin_fichier),
-                    'created_at' => $document->created_at->format('d/m/Y H:i'),
+                    'created_at' => $document->created_at->format(self::DATE_FORMAT),
                 ],
             ]);
         } catch (\Exception $e) {
@@ -92,7 +93,7 @@ class DocumentController extends Controller
                 'type_label' => $this->getTypeLabel($doc->type),
                 'nom_original' => $doc->nom_original,
                 'url' => Storage::url($doc->chemin_fichier),
-                'created_at' => $doc->created_at->format('d/m/Y H:i'),
+                'created_at' => $doc->created_at->format(self::DATE_FORMAT),
             ];
         });
 
@@ -130,7 +131,7 @@ class DocumentController extends Controller
                 'type_label' => $this->getTypeLabel($document->type),
                 'nom_original' => $document->nom_original,
                 'url' => Storage::url($document->chemin_fichier),
-                'created_at' => $document->created_at->format('d/m/Y H:i'),
+                'created_at' => $document->created_at->format(self::DATE_FORMAT),
             ],
         ]);
     }

@@ -98,7 +98,7 @@ class BienController extends Controller
             }
 
             if ($request->hasFile('images')) {
-                foreach ($request->file('images') as $index => $imageFile) {
+                foreach ($request->file('images') as $imageFile) {
                     $path = $imageFile->store('biens/'.$bien->id, 'public');
                     \App\Models\BienImage::create([
                         'bien_id' => $bien->id,

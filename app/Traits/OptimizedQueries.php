@@ -16,10 +16,9 @@ trait OptimizedQueries
     /**
      * Eager load une relation avec cache
      *
-     * @param  int  $minutes  Cache duration en minutes
      * @return Builder
      */
-    public function scopeWithCached(Builder $query, string $relation, int $minutes = 60)
+    public function scopeWithCached(Builder $query, string $relation)
     {
         return $query->with($relation);
     }

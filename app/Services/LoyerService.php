@@ -141,7 +141,7 @@ class LoyerService
             }
         }
 
-        if (! $dryRun && count($resultats) > 0) {
+        if (! $dryRun && !empty($resultats)) {
             ActivityLogger::log(
                 'Application Pénalités',
                 count($resultats).' pénalités appliquées pour un total de '.

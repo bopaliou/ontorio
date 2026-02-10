@@ -8,7 +8,7 @@ use Spatie\Permission\Models\Role;
 
 class SetupRolesAndPermissions extends Command
 {
-    protected $signature = 'app:setup-roles-permissions 
+    protected $signature = 'app:setup-roles-permissions
                             {--force : Force la recréation même si déjà existantes}';
 
     protected $description = 'Initialiser les rôles et permissions du système';

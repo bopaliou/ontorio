@@ -106,12 +106,12 @@ class ProprietaireController extends Controller
         return abort(404);
     }
 
-    public function show(Proprietaire $proprietaire)
+    public function show()
     {
         return abort(404);
     }
 
-    public function edit(Proprietaire $proprietaire)
+    public function edit()
     {
         return abort(404);
     }

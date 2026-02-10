@@ -18,7 +18,7 @@ class PaiementController extends Controller
     /**
      * Display a listing of payments.
      */
-    public function index(Request $request)
+    public function index()
     {
         $paiements = Paiement::with('loyer')->get();
 

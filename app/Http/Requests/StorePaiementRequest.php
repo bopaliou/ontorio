@@ -31,7 +31,7 @@ class StorePaiementRequest extends FormRequest
                 'required',
                 'numeric',
                 'min:1',
-                function ($attribute, $value, $fail) {
+                function ($_, $value, $fail) {
                     $loyer = Loyer::withSum('paiements', 'montant')->find($this->loyer_id);
                     if ($loyer) {
                         $due = $loyer->montant + ($loyer->penalite ?? 0) - ($loyer->paiements_sum_montant ?? 0);

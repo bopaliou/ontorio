@@ -55,11 +55,9 @@ return Application::configure(basePath: dirname(__DIR__))
         });
 
         $exceptions->render(function (\Throwable $e, $request) use ($isApi) {
-            if (! config('app.debug')) {
-                if ($isApi($request)) {
-                    return response()->json(['message' => 'Une erreur interne est survenue'], 500);
-                }
-                // Pour les requêtes Web, Laravel utilisera automatiquement resources/views/errors/500.blade.php
+            if (! config('app.debug') && $isApi($request)) {
+                return response()->json(['message' => 'Une erreur interne est survenue'], 500);
             }
+            // Pour les requêtes Web, Laravel utilisera automatiquement resources/views/errors/500.blade.php
         });
     })->create();

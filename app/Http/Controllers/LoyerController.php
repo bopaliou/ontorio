@@ -31,7 +31,7 @@ class LoyerController extends Controller
     /**
      * Générer les loyers pour le mois en cours pour tous les contrats actifs
      */
-    public function genererMois(Request $request)
+    public function genererMois()
     {
         Carbon::setLocale('fr');
         $moisActuel = Carbon::now()->format('Y-m');
@@ -82,17 +82,17 @@ class LoyerController extends Controller
         return abort(404);
     }
 
-    public function store(Request $request)
+    public function store()
     {
         return abort(404);
     }
 
-    public function show(string $id)
+    public function show()
     {
         return abort(404);
     }
 
-    public function edit(string $id)
+    public function edit()
     {
         return abort(404);
     }
@@ -141,7 +141,7 @@ class LoyerController extends Controller
         return response()->json(['message' => 'Loyer mis à jour avec succès', 'loyer' => $loyer]);
     }
 
-    public function destroy(string $id)
+    public function destroy()
     {
         return abort(404);
     }
