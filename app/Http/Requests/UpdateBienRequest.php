@@ -2,10 +2,13 @@
 
 namespace App\Http\Requests;
 
+use App\Http\Requests\Traits\BienValidationRules;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateBienRequest extends FormRequest
 {
+    use BienValidationRules;
+
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -19,18 +22,10 @@ class UpdateBienRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            'nom' => 'required|string|max:255',
+        return array_merge($this->bienRules(), [
             'adresse' => 'nullable|string|max:500',
             'ville' => 'nullable|string|max:100',
-            'loyer_mensuel' => 'required|numeric|min:0',
-            'type' => 'required|in:appartement,villa,studio,bureau,magasin,entrepot,autre',
-            'surface' => 'nullable|numeric|min:0',
-            'nombre_pieces' => 'nullable|integer|min:0',
-            'meuble' => 'nullable|boolean',
-            'description' => 'nullable|string|max:2000',
-            'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
-        ];
+        ]);
     }
 
     /**
@@ -38,14 +33,6 @@ class UpdateBienRequest extends FormRequest
      */
     public function messages(): array
     {
-        return [
-            'nom.required' => 'Le nom du bien est obligatoire.',
-            'loyer_mensuel.required' => 'Le montant du loyer est obligatoire.',
-            'loyer_mensuel.numeric' => 'Le loyer doit être un nombre.',
-            'type.required' => 'Le type de bien est obligatoire.',
-            'type.in' => 'Type de bien invalide.',
-            'images.*.image' => 'Le fichier doit être une image.',
-            'images.*.max' => 'L\'image ne doit pas dépasser 5 Mo.',
-        ];
+        return $this->bienMessages();
     }
 }
