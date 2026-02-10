@@ -13,7 +13,7 @@ class ProfileTest extends TestCase
 
     private const ROUTE_PROFILE = '/profile';
 
-    private const TEST_PASSWORD = 'Pa$$word123!';
+    private const STRONG_CREDENTIAL = 'Pa$$word123!';
 
     public function test_profile_page_is_displayed()
     {
@@ -48,16 +48,16 @@ class ProfileTest extends TestCase
 
         $response = $this->actingAs($user)->from(self::ROUTE_PROFILE)->put('/password', [
             'current_password' => 'password',
-            'password' => self::TEST_PASSWORD,
-            'password_confirmation' => self::TEST_PASSWORD,
+            'password' => self::STRONG_CREDENTIAL,
+            'password_confirmation' => self::STRONG_CREDENTIAL,
         ]);
 
         $response->assertSessionHasNoErrors();
         $response->assertRedirect(self::ROUTE_PROFILE);
 
-        $this->assertTrue(Hash::check(self::TEST_PASSWORD, $user->refresh()->password));
+        $this->assertTrue(Hash::check(self::STRONG_CREDENTIAL, $user->refresh()->password));
 
-        $this->assertTrue(Hash::check(self::TEST_PASSWORD, $user->refresh()->password));
+        $this->assertTrue(Hash::check(self::STRONG_CREDENTIAL, $user->refresh()->password));
     }
 
     public function test_delete_account_section_visibility()
