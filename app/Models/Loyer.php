@@ -77,7 +77,7 @@ class Loyer extends Model
 
         if ($now->gt($echeance)) {
             // Calculer la différence en jours (maintenant - échéance)
-            return (int) $now->diffInDays($echeance);
+            return (int) $now->diffInDays($echeance, absolute: true);
         }
 
         return 0;
