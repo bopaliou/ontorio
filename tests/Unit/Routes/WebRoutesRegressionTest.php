@@ -13,8 +13,9 @@ class WebRoutesRegressionTest extends TestCase
 
         $this->assertNotFalse($contents);
         $this->assertStringNotContainsString('$profilePath', $contents);
-        $this->assertStringContainsString("Route::get('/profile'", $contents);
-        $this->assertStringContainsString("Route::patch('/profile'", $contents);
-        $this->assertStringContainsString("Route::delete('/profile'", $contents);
+        $this->assertStringContainsString('$profileRoute', $contents);
+        $this->assertStringContainsString('Route::get($profileRoute', $contents);
+        $this->assertStringContainsString('Route::patch($profileRoute', $contents);
+        $this->assertStringContainsString('Route::delete($profileRoute', $contents);
     }
 }

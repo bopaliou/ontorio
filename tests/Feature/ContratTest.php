@@ -14,6 +14,8 @@ class ContratTest extends TestCase
 {
     use RefreshDatabase;
 
+    private const STATUT_OCCUPE = 'occupé';
+
     private $admin;
 
     protected function setUp(): void
@@ -49,12 +51,12 @@ class ContratTest extends TestCase
             'statut' => 'actif',
         ]);
 
-        $this->assertEquals('occupé', $bien->fresh()->statut);
+        $this->assertEquals(self::STATUT_OCCUPE, $bien->fresh()->statut);
     }
 
     public function test_cannot_create_contrat_for_occupied_bien(): void
     {
-        $bien = Bien::factory()->create(['statut' => 'occupé']);
+        $bien = Bien::factory()->create(['statut' => self::STATUT_OCCUPE]);
         $locataire = Locataire::factory()->create();
 
         Contrat::factory()->create([
@@ -110,7 +112,7 @@ class ContratTest extends TestCase
 
     public function test_deleting_contrat_frees_up_bien(): void
     {
-        $bien = Bien::factory()->create(['statut' => 'occupé']);
+        $bien = Bien::factory()->create(['statut' => self::STATUT_OCCUPE]);
         $contrat = Contrat::factory()->create([
             'bien_id' => $bien->id,
             'statut' => 'actif',

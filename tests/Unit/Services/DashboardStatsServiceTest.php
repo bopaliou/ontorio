@@ -16,6 +16,8 @@ class DashboardStatsServiceTest extends TestCase
 {
     use \Illuminate\Foundation\Testing\RefreshDatabase;
 
+    private const TEST_MONTH = '2026-02';
+
     private DashboardStatsService $service;
 
     protected function setUp(): void
@@ -45,13 +47,13 @@ class DashboardStatsServiceTest extends TestCase
         // Créer un loyer pour février
         Loyer::create([
             'contrat_id' => $contrat->id,
-            'mois' => '2026-02',
+            'mois' => self::TEST_MONTH,
             'montant' => 100000,
             'statut' => 'émis',
         ]);
 
         // Test
-        $kpis = $this->service->getFinancialKPIs('2026-02');
+        $kpis = $this->service->getFinancialKPIs(self::TEST_MONTH);
 
         $this->assertEquals(100000, $kpis['loyers_factures']);
         $this->assertArrayHasKey('nb_loyers', $kpis);
@@ -76,7 +78,7 @@ class DashboardStatsServiceTest extends TestCase
         // Loyer de 100k facturé
         $loyer = Loyer::create([
             'contrat_id' => $contrat->id,
-            'mois' => '2026-02',
+            'mois' => self::TEST_MONTH,
             'montant' => 100000,
             'statut' => 'payé',
         ]);
@@ -91,7 +93,7 @@ class DashboardStatsServiceTest extends TestCase
             'user_id' => null,
         ]);
 
-        $kpis = $this->service->getFinancialKPIs('2026-02');
+        $kpis = $this->service->getFinancialKPIs(self::TEST_MONTH);
 
         // Taux = (50000 / 100000) * 100 = 50%
         $this->assertEquals(50.0, $kpis['taux_recouvrement']);
@@ -120,7 +122,7 @@ class DashboardStatsServiceTest extends TestCase
             'statut' => 'en_retard',
         ]);
 
-        $kpis = $this->service->getFinancialKPIs('2026-02');
+        $kpis = $this->service->getFinancialKPIs(self::TEST_MONTH);
 
         // Doit inclure le loyer en retard du mois précédent
         $this->assertGreaterThan(0, $kpis['arrieres_total']);

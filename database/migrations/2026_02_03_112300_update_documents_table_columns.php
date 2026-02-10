@@ -6,6 +6,9 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    private const COL_ENTITE_TYPE = 'entité_type';
+
+    private const COL_ENTITE_ID = 'entité_id';
     /**
      * Run the migrations.
      */
@@ -16,11 +19,11 @@ return new class extends Migration
             $table->string('nom_original')->nullable()->after('type');
 
             // Renommer les colonnes avec accents si elles existent
-            if (Schema::hasColumn('documents', 'entité_type')) {
-                $table->renameColumn('entité_type', 'entite_type');
+            if (Schema::hasColumn('documents', self::COL_ENTITE_TYPE)) {
+                $table->renameColumn(self::COL_ENTITE_TYPE, 'entite_type');
             }
-            if (Schema::hasColumn('documents', 'entité_id')) {
-                $table->renameColumn('entité_id', 'entite_id');
+            if (Schema::hasColumn('documents', self::COL_ENTITE_ID)) {
+                $table->renameColumn(self::COL_ENTITE_ID, 'entite_id');
             }
         });
     }
@@ -34,10 +37,10 @@ return new class extends Migration
             $table->dropColumn('nom_original');
 
             if (Schema::hasColumn('documents', 'entite_type')) {
-                $table->renameColumn('entite_type', 'entité_type');
+                $table->renameColumn('entite_type', self::COL_ENTITE_TYPE);
             }
             if (Schema::hasColumn('documents', 'entite_id')) {
-                $table->renameColumn('entite_id', 'entité_id');
+                $table->renameColumn('entite_id', self::COL_ENTITE_ID);
             }
         });
     }

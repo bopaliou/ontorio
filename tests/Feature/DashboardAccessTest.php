@@ -11,6 +11,8 @@ class DashboardAccessTest extends TestCase
 {
     use RefreshDatabase;
 
+    private const ROUTE_DASHBOARD = '/dashboard';
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -26,7 +28,7 @@ class DashboardAccessTest extends TestCase
 
     public function test_guest_redirected_to_login()
     {
-        $response = $this->get('/dashboard');
+        $response = $this->get(self::ROUTE_DASHBOARD);
         $response->assertRedirect(route('login'));
     }
 
@@ -37,7 +39,7 @@ class DashboardAccessTest extends TestCase
         ]);
         $user->assignRole('admin');
 
-        $response = $this->actingAs($user)->get('/dashboard');
+        $response = $this->actingAs($user)->get(self::ROUTE_DASHBOARD);
 
         $response->assertStatus(200);
         $response->assertViewIs('dashboard.index');
@@ -51,7 +53,7 @@ class DashboardAccessTest extends TestCase
         ]);
         $user->assignRole('gestionnaire');
 
-        $response = $this->actingAs($user)->get('/dashboard');
+        $response = $this->actingAs($user)->get(self::ROUTE_DASHBOARD);
 
         $response->assertStatus(200);
     }

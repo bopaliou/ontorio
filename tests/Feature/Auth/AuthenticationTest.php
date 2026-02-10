@@ -10,9 +10,11 @@ class AuthenticationTest extends TestCase
 {
     use RefreshDatabase;
 
+    private const ROUTE_LOGIN = '/login';
+
     public function test_login_screen_can_be_rendered(): void
     {
-        $response = $this->get('/login');
+        $response = $this->get(self::ROUTE_LOGIN);
 
         $response->assertStatus(200);
     }
@@ -21,7 +23,7 @@ class AuthenticationTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $response = $this->post('/login', [
+        $response = $this->post(self::ROUTE_LOGIN, [
             'email' => $user->email,
             'password' => 'password',
         ]);
@@ -34,7 +36,7 @@ class AuthenticationTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $this->post('/login', [
+        $this->post(self::ROUTE_LOGIN, [
             'email' => $user->email,
             'password' => 'wrong-password',
         ]);

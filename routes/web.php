@@ -25,10 +25,12 @@ Route::post('/dashboard/proprietaires', [ProprietaireController::class, 'store']
 Route::put('/dashboard/proprietaires/{proprietaire}', [ProprietaireController::class, 'update'])
     ->middleware(['auth', 'role:admin|gestionnaire'])->name('dashboard.proprietaires.update');
 
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+$profileRoute = '/profile';
+
+Route::middleware('auth')->group(function () use ($profileRoute) {
+    Route::get($profileRoute, [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch($profileRoute, [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete($profileRoute, [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
 // Routes accessibles à Admin et Gestionnaire (Gestion du patrimoine)

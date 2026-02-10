@@ -11,11 +11,15 @@ class ProfileTest extends TestCase
 {
     use RefreshDatabase;
 
+    private const ROUTE_PROFILE = '/profile';
+
+    private const TEST_PASSWORD = 'Pa$$word123!';
+
     public function test_profile_page_is_displayed()
     {
         $user = User::factory()->create(['role' => 'admin']);
 
-        $response = $this->actingAs($user)->get('/profile');
+        $response = $this->actingAs($user)->get(self::ROUTE_PROFILE);
 
         $response->assertOk();
     }
@@ -24,13 +28,13 @@ class ProfileTest extends TestCase
     {
         $user = User::factory()->create(['role' => 'admin']);
 
-        $response = $this->actingAs($user)->patch('/profile', [
+        $response = $this->actingAs($user)->patch(self::ROUTE_PROFILE, [
             'name' => 'Test User',
             'email' => 'test@example.com',
         ]);
 
         $response->assertSessionHasNoErrors();
-        $response->assertRedirect('/profile');
+        $response->assertRedirect(self::ROUTE_PROFILE);
 
         $user->refresh();
 
@@ -42,31 +46,31 @@ class ProfileTest extends TestCase
     {
         $user = User::factory()->create(['password' => Hash::make('password')]);
 
-        $response = $this->actingAs($user)->from('/profile')->put('/password', [
+        $response = $this->actingAs($user)->from(self::ROUTE_PROFILE)->put('/password', [
             'current_password' => 'password',
-            'password' => 'Pa$$word123!',
-            'password_confirmation' => 'Pa$$word123!',
+            'password' => self::TEST_PASSWORD,
+            'password_confirmation' => self::TEST_PASSWORD,
         ]);
 
         $response->assertSessionHasNoErrors();
-        $response->assertRedirect('/profile');
+        $response->assertRedirect(self::ROUTE_PROFILE);
 
-        $this->assertTrue(Hash::check('Pa$$word123!', $user->refresh()->password));
+        $this->assertTrue(Hash::check(self::TEST_PASSWORD, $user->refresh()->password));
 
-        $this->assertTrue(Hash::check('Pa$$word123!', $user->refresh()->password));
+        $this->assertTrue(Hash::check(self::TEST_PASSWORD, $user->refresh()->password));
     }
 
     public function test_delete_account_section_visibility()
     {
         // 1. Non-admin (Gestionnaire) -> Should NOT see delete
         $user = User::factory()->create(['role' => 'gestionnaire']);
-        $response = $this->actingAs($user)->get('/profile');
+        $response = $this->actingAs($user)->get(self::ROUTE_PROFILE);
         $response->assertDontSee('Delete Account');
         $response->assertDontSee('Supprimer le compte');
 
         // 2. Admin -> Should SEE delete
         $admin = User::factory()->create(['role' => 'admin']);
-        $responseAdmin = $this->actingAs($admin)->get('/profile');
+        $responseAdmin = $this->actingAs($admin)->get(self::ROUTE_PROFILE);
 
         // Check for the text or ID. The blade has @include('...delete-user-form')
         // We should check for content inside the form, e.g., 'Delete Account' button or header.
