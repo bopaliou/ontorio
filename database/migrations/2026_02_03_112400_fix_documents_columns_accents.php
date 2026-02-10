@@ -10,6 +10,7 @@ return new class extends Migration
     private const COL_ENTITE_TYPE = 'entité_type';
 
     private const COL_ENTITE_ID = 'entité_id';
+
     /**
      * Run the migrations.
      */
