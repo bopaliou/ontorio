@@ -15,21 +15,30 @@ class CheckRole
      */
     public function handle(Request $request, Closure $next, ...$roles): Response
     {
-        if (! $request->user()) {
+        $user = $request->user();
+
+        if (! $user) {
             return redirect()->route('login');
         }
 
-        // Support for pipe separated roles in middleware definition
-        // e.g. role:admin|gestionnaire
+        // Support pipe-separated roles in middleware definition, e.g. role:admin|gestionnaire
         $allowedRoles = [];
         foreach ($roles as $role) {
             $allowedRoles = array_merge($allowedRoles, explode('|', $role));
         }
 
-        if (! in_array($request->user()->role, $allowedRoles)) {
-            abort(403, 'Unauthorized access');
+        $allowedRoles = array_values(array_unique(array_filter($allowedRoles)));
+
+        // Primary source of truth: Spatie roles
+        if (method_exists($user, 'hasAnyRole') && $user->hasAnyRole($allowedRoles)) {
+            return $next($request);
         }
 
-        return $next($request);
+        // Backward compatibility fallback: legacy users.role field
+        if (in_array($user->role, $allowedRoles, true)) {
+            return $next($request);
+        }
+
+        abort(403, 'Unauthorized access');
     }
 }
