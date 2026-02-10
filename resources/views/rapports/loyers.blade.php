@@ -1,16 +1,16 @@
 <x-app-layout>
     <div class="space-y-8">
         {{-- Header --}}
-        <x-section-header 
-            title="Rapport des Loyers" 
+        <x-section-header
+            title="Rapport des Loyers"
             subtitle="Analyse détaillée des encaissements et performances financières"
             icon="money"
         >
             <x-slot name="actions">
                 <form action="{{ route('rapports.loyers') }}" method="GET" class="flex items-center gap-3">
-                    <input type="month" name="mois" value="{{ $mois }}" onchange="this.form.submit()" 
+                    <input type="month" name="mois" value="{{ $mois }}" onchange="this.form.submit()"
                            class="bg-white border-gray-200 rounded-xl text-sm font-bold text-gray-700 focus:ring-[#cb2d2d] focus:border-[#cb2d2d] shadow-sm">
-                    
+
                     <button type="button" onclick="window.print()" class="bg-gray-900 text-white px-5 py-2.5 rounded-xl font-black hover:bg-black transition shadow-lg shadow-gray-900/20 text-[11px] uppercase tracking-widest flex items-center gap-2">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
                         Imprimer
@@ -20,27 +20,27 @@
 
         {{-- KPIs --}}
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <x-kpi-card 
-                label="Total Encaissé" 
-                :value="number_format($data['loyers_encaisses'], 0, ',', ' ')" 
+            <x-kpi-card
+                label="Total Encaissé"
+                :value="number_format($data['loyers_encaisses'], 0, ',', ' ')"
                 suffix="FCFA"
                 icon="money"
                 color="green"
                 trend="+8.2%"
                 subtext="Ce mois-ci"
             />
-            <x-kpi-card 
-                label="Taux de Recouvrement" 
-                :value="$data['taux_recouvrement']" 
+            <x-kpi-card
+                label="Taux de Recouvrement"
+                :value="$data['taux_recouvrement']"
                 suffix="%"
                 icon="chart"
                 color="blue"
                 :trendUp="$data['taux_recouvrement'] > 80"
                 subtext="Moyenne globale"
             />
-            <x-kpi-card 
-                label="Loyers Impayés" 
-                :value="number_format($data['arrieres_total'], 0, ',', ' ')" 
+            <x-kpi-card
+                label="Loyers Impayés"
+                :value="number_format($data['arrieres_total'], 0, ',', ' ')"
                 suffix="FCFA"
                 icon="clock"
                 color="red"
@@ -48,9 +48,9 @@
                 :trendUp="false"
                 subtext="Total à recouvrer"
             />
-            <x-kpi-card 
-                label="Loyers Émis" 
-                :value="count($loyers)" 
+            <x-kpi-card
+                label="Loyers Émis"
+                :value="count($loyers)"
                 suffix="Termes"
                 icon="document"
                 color="gray"
@@ -77,7 +77,7 @@
                     {{ count($loyers) }} Enregistrements
                 </span>
             </div>
-            
+
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse">
                     <thead>
@@ -134,7 +134,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const chartData = @json($chartData);
-            
+
             const options = {
                 series: [{
                     name: 'Encaissements',

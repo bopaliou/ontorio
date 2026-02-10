@@ -55,9 +55,9 @@
                             ];
                             $config = $typeConfig[$log['type']] ?? $typeConfig['login'];
                         @endphp
-                        
+
                         <div class="group relative flex flex-col md:flex-row gap-6 md:gap-10 items-start md:items-center animate-fade-in-up">
-                            
+
                             {{-- Time (Left Column) --}}
                             <div class="hidden md:flex flex-col items-end w-24 shrink-0 pt-1">
                                 <span class="font-mono text-sm font-bold text-gray-900">{{ \Carbon\Carbon::parse($log['date'])->format('H:i') }}</span>
@@ -78,7 +78,7 @@
                             <div class="flex-1 p-5 rounded-2xl bg-gray-50/50 border border-gray-100 group-hover:bg-white group-hover:shadow-lg group-hover:shadow-gray-100/50 group-hover:-translate-y-1 transition-all duration-300 w-full relative overflow-hidden">
                                 {{-- Hover Stripe --}}
                                 <div class="absolute left-0 top-0 bottom-0 w-1 {{ str_replace('bg-','bg-', $config['bg']) }} opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                                
+
                                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-2">
                                     <div>
                                         <p class="text-sm font-bold text-gray-900 leading-snug">{{ $log['action'] }}</p>

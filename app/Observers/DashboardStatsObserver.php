@@ -3,6 +3,7 @@
 namespace App\Observers;
 
 use App\Services\DashboardStatsService;
+use Illuminate\Database\Eloquent\Model;
 
 class DashboardStatsObserver
 {
@@ -13,12 +14,14 @@ class DashboardStatsObserver
         $this->statsService = $statsService;
     }
 
-    public function saved($model)
+    /** @param  Model  $model  Observed model instance (unused — cache is global) */
+    public function saved(Model $model): void
     {
         $this->statsService->clearCache();
     }
 
-    public function deleted($model)
+    /** @param  Model  $model  Observed model instance (unused — cache is global) */
+    public function deleted(Model $model): void
     {
         $this->statsService->clearCache();
     }

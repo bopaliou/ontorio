@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
-// use Spatie\Permission\Models\Role;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
@@ -51,10 +50,5 @@ class UserFactory extends Factory
     public function configure(): static
     {
         return $this;
-        /* return $this->afterCreating(function (\App\Models\User $user) {
-            $roleName = $user->role ?? 'gestionnaire';
-            Role::firstOrCreate(['name' => $roleName]);
-            $user->assignRole($roleName);
-        }); */
     }
 }

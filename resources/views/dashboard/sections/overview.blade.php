@@ -61,7 +61,7 @@
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {{-- Colonne gauche : Stats Parc (2/3) --}}
             <div class="lg:col-span-2 grid grid-cols-1 sm:grid-cols-3 gap-6 animate-stagger">
-                
+
                 {{-- Parc Immobilier --}}
                 <div data-show-section="biens" onclick="dashboard.show('biens')"
                      class="relative overflow-hidden rounded-3xl p-6 transition-all duration-300 group hover:-translate-y-1 hover:shadow-xl bg-white border border-gray-200 shadow-sm cursor-pointer h-full">
@@ -101,7 +101,7 @@
                                 {{ $rate }}%
                             </span>
                         </div>
-                        
+
                         <div class="mt-4">
                             {{-- Gauge visual using SVG for precision or simple bar --}}
                             <div class="w-full bg-gray-100 rounded-full h-2 overflow-hidden mb-2">

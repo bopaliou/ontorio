@@ -1,8 +1,8 @@
 <x-app-layout>
     <div class="space-y-8">
         {{-- Header --}}
-        <x-section-header 
-            title="Rapport des Impayés" 
+        <x-section-header
+            title="Rapport des Impayés"
             subtitle="Suivi des arriérés et relances locataires"
             icon="clock"
         >
@@ -16,25 +16,25 @@
 
         {{-- KPIs --}}
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <x-kpi-card 
-                label="Total Arriérés" 
-                :value="number_format($impayees->sum('montant'), 0, ',', ' ')" 
+            <x-kpi-card
+                label="Total Arriérés"
+                :value="number_format($impayees->sum('montant'), 0, ',', ' ')"
                 suffix="FCFA"
                 icon="money"
                 color="red"
                 subtext="Montant total à recouvrer"
             />
-            <x-kpi-card 
-                label="Dossiers en retard" 
-                :value="count($impayees)" 
+            <x-kpi-card
+                label="Dossiers en retard"
+                :value="count($impayees)"
                 suffix="Locataires"
                 icon="users"
                 color="gray"
                 subtext="Affectés par des impayés"
             />
-            <x-kpi-card 
-                label="Ancienneté Moyenne" 
-                :value="round($impayees->avg('jours_retard'), 0)" 
+            <x-kpi-card
+                label="Ancienneté Moyenne"
+                :value="round($impayees->avg('jours_retard'), 0)"
                 suffix="Jours"
                 icon="clock"
                 color="blue"
@@ -50,7 +50,7 @@
                     {{ count($impayees) }} Cas critiques
                 </span>
             </div>
-            
+
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse">
                     <thead>

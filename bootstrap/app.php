@@ -27,19 +27,19 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withExceptions(function (Exceptions $exceptions): void {
         $isApi = fn ($request) => $request->is('api/*');
 
-        $exceptions->render(function (\Illuminate\Database\Eloquent\ModelNotFoundException $e, $request) use ($isApi) {
+        $exceptions->render(function (\Illuminate\Database\Eloquent\ModelNotFoundException $_, $request) use ($isApi) {
             if ($isApi($request)) {
                 return response()->json(['message' => 'Ressource non trouvée'], 404);
             }
         });
 
-        $exceptions->render(function (\Illuminate\Auth\AuthenticationException $e, $request) use ($isApi) {
+        $exceptions->render(function (\Illuminate\Auth\AuthenticationException $_, $request) use ($isApi) {
             if ($isApi($request)) {
                 return response()->json(['message' => 'Non authentifié'], 401);
             }
         });
 
-        $exceptions->render(function (\Illuminate\Auth\Access\AuthorizationException $e, $request) use ($isApi) {
+        $exceptions->render(function (\Illuminate\Auth\Access\AuthorizationException $_, $request) use ($isApi) {
             if ($isApi($request)) {
                 return response()->json(['message' => 'Action non autorisée'], 403);
             }
@@ -54,7 +54,7 @@ return Application::configure(basePath: dirname(__DIR__))
             }
         });
 
-        $exceptions->render(function (\Throwable $e, $request) use ($isApi) {
+        $exceptions->render(function (\Throwable $_, $request) use ($isApi) {
             if (! config('app.debug') && $isApi($request)) {
                 return response()->json(['message' => 'Une erreur interne est survenue'], 500);
             }

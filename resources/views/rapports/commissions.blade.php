@@ -1,8 +1,8 @@
 <x-app-layout>
     <div class="space-y-8">
         {{-- Header --}}
-        <x-section-header 
-            title="Rapport des Commissions" 
+        <x-section-header
+            title="Rapport des Commissions"
             subtitle="Suivi des honoraires de gestion (10% des encaissements)"
             icon="calculator"
         >
@@ -15,26 +15,26 @@
 
         {{-- KPIs --}}
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <x-kpi-card 
-                label="Base Commissionnable" 
-                :value="number_format($baseCommissionnable, 0, ',', ' ')" 
+            <x-kpi-card
+                label="Base Commissionnable"
+                :value="number_format($baseCommissionnable, 0, ',', ' ')"
                 suffix="FCFA"
                 icon="money"
                 color="blue"
                 subtext="Total des loyers encaissés"
             />
-            <x-kpi-card 
-                label="Honoraires de Gestion" 
-                :value="number_format($commissionHonoraires, 0, ',', ' ')" 
+            <x-kpi-card
+                label="Honoraires de Gestion"
+                :value="number_format($commissionHonoraires, 0, ',', ' ')"
                 suffix="FCFA"
                 icon="calculator"
                 color="green"
                 trend="+{{ (int) ($tauxCommission * 100) }}%"
                 subtext="Quote-part agence (10%)"
             />
-            <x-kpi-card 
-                label="Nombre d'encaissements" 
-                :value="$encaissements->count()" 
+            <x-kpi-card
+                label="Nombre d'encaissements"
+                :value="$encaissements->count()"
                 suffix="Paiements"
                 icon="document"
                 color="gray"
@@ -84,7 +84,7 @@
             <div>
                 <h4 class="text-[#274256] font-black text-sm uppercase tracking-widest mb-1">Note de calcul</h4>
                 <p class="text-xs text-blue-700 font-medium leading-relaxed">
-                    Les commissions sont calculées sur la base des loyers effectivement encaissés. 
+                    Les commissions sont calculées sur la base des loyers effectivement encaissés.
                     Le taux standard appliqué pour Ontario Group est de 10% HT sur le montant principal du loyer.
                 </p>
             </div>

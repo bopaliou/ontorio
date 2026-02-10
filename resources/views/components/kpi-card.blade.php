@@ -71,19 +71,19 @@
             'pill_bg' => 'bg-white/10',
         ]
     ];
-    
+
     $theme = $colorConfig[$color] ?? $colorConfig['gray'];
     $isGradient = $color === 'gradient';
 @endphp
 
 <div class="relative overflow-hidden rounded-3xl p-6 transition-all duration-300 group hover:-translate-y-1 hover:shadow-xl
-    @if($isGradient) 
+    @if($isGradient)
         bg-gradient-to-br {{ $theme['gradient'] }} text-white shadow-lg shadow-blue-900/20
-    @else 
+    @else
         bg-white border border-gray-100 shadow-sm
     @endif
 ">
-    
+
     {{-- Decorative Color Strip (Top) --}}
     @if(!$isGradient)
         <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r {{ $theme['gradient'] }} opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -109,13 +109,13 @@
         {{-- Header: Label + Trend --}}
         <div class="flex items-start justify-between mb-4">
             <h3 class="text-[11px] font-bold uppercase tracking-[0.2em] @if($isGradient) text-blue-100 @else text-gray-400 @endif">{{ $label }}</h3>
-            
+
             @if($trend)
-                <div class="flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold border 
+                <div class="flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold border
                     @if($isGradient) bg-white/10 border-white/10 text-white
                     @elseif($trendUp) bg-emerald-50 border-emerald-100 text-emerald-600
                     @else bg-red-50 border-red-100 text-red-600 @endif">
-                    
+
                     @if($trendUp)
                         <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 10l7-7m0 0l7 7"/></svg>
                     @else
@@ -136,7 +136,7 @@
                     <span class="text-lg font-bold @if($isGradient) text-blue-200 @else text-gray-400 @endif">{{ $suffix }}</span>
                 @endif
             </div>
-            
+
             @if($subtext)
                 <p class="mt-1 text-xs font-medium @if($isGradient) text-blue-200 @else text-gray-400 @endif">{{ $subtext }}</p>
             @endif

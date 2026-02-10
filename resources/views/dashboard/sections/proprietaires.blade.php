@@ -50,7 +50,7 @@
 
                 <!-- Col 2: Info & Stats (7 cols) -->
                 <div class="lg:col-span-7 flex flex-col justify-center space-y-12">
-                    
+
                     {{-- Contact Grid --}}
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
                         <div class="flex items-center gap-5 group p-4 rounded-2xl hover:bg-gray-50 transition-colors cursor-default">

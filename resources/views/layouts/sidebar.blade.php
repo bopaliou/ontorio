@@ -16,7 +16,7 @@
 
     <!-- Navigation -->
     <nav class="flex-1 overflow-y-auto py-6 px-0 space-y-1 custom-scrollbar scroll-smooth" id="sidebar-nav">
-        
+
         <!-- Dashboard Link -->
         <a href="{{ route('dashboard') }}#overview" class="sidebar-link group relative flex items-center px-8 py-3.5 text-sm font-medium transition-all duration-200 text-gray-400 hover:text-white hover:bg-white/5 border-l-4 border-transparent" data-target="overview">
             <svg class="w-5 h-5 mr-3 transition-colors duration-200 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
@@ -26,12 +26,11 @@
 
         <!-- Section: GESTION -->
         @if(App\Helpers\PermissionHelper::can('biens.view'))
-        <div class="mt-8 mb-2 px-8 flex justify-between items-center group cursor-pointer" 
-             role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ') toggleSection('gestion')"
+        <button type="button" class="mt-8 mb-2 px-8 flex justify-between items-center group cursor-pointer w-full"
              onclick="toggleSection('gestion')">
             <h3 class="text-xs font-bold text-[#cb2d2d] uppercase tracking-[0.15em] transition-colors group-hover:text-white">Gestion</h3>
             <svg id="icon-gestion" class="w-3 h-3 text-gray-500 transform transition-transform duration-300 rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-        </div>
+        </button>
         <div id="section-gestion" class="space-y-0.5 overflow-hidden transition-all duration-300 origin-top">
             <a href="{{ route('dashboard') }}#proprietaires" class="sidebar-link flex items-center px-8 py-3 text-sm font-medium transition-all duration-200 text-gray-400 hover:text-white hover:bg-white/5 border-l-4 border-transparent" data-target="proprietaires">
                <svg class="w-5 h-5 mr-3 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
@@ -54,12 +53,11 @@
 
         <!-- Section: FINANCE -->
         @if(App\Helpers\PermissionHelper::can('loyers.view') || App\Helpers\PermissionHelper::can('paiements.view'))
-        <div class="mt-8 mb-2 px-8 flex justify-between items-center group cursor-pointer" 
-             role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ') toggleSection('finance')"
+        <button type="button" class="mt-8 mb-2 px-8 flex justify-between items-center group cursor-pointer w-full"
              onclick="toggleSection('finance')">
             <h3 class="text-xs font-bold text-[#cb2d2d] uppercase tracking-[0.15em] transition-colors group-hover:text-white">Finance</h3>
             <svg id="icon-finance" class="w-3 h-3 text-gray-500 transform transition-transform duration-300 rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-        </div>
+        </button>
         <div id="section-finance" class="space-y-0.5 overflow-hidden transition-all duration-300 origin-top">
             @if(App\Helpers\PermissionHelper::can('loyers.view'))
             <a href="{{ route('dashboard') }}#loyers" class="sidebar-link flex items-center px-8 py-3 text-sm font-medium transition-all duration-200 text-gray-400 hover:text-white hover:bg-white/5 border-l-4 border-transparent" data-target="loyers">
@@ -89,12 +87,11 @@
         @endif
 
         <!-- Section: RAPPORTS -->
-        <div class="mt-8 mb-2 px-8 flex justify-between items-center group cursor-pointer" 
-             role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ') toggleSection('rapports')"
+        <button type="button" class="mt-8 mb-2 px-8 flex justify-between items-center group cursor-pointer w-full"
              onclick="toggleSection('rapports')">
             <h3 class="text-xs font-bold text-[#cb2d2d] uppercase tracking-[0.15em] transition-colors group-hover:text-white">Rapports</h3>
              <svg id="icon-rapports" class="w-3 h-3 text-gray-500 transform transition-transform duration-300 rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-        </div>
+        </button>
         <div id="section-rapports" class="space-y-0.5 overflow-hidden transition-all duration-300 origin-top">
             <a href="{{ route('rapports.loyers') }}" class="sidebar-link flex items-center px-8 py-3 text-sm font-medium transition-all duration-200 text-gray-400 hover:text-white hover:bg-white/5 border-l-4 border-transparent">
                 <svg class="w-5 h-5 mr-3 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
@@ -112,12 +109,11 @@
 
         <!-- Section: ADMIN -->
         @if(Auth::user()->role === 'admin')
-        <div class="mt-8 mb-2 px-8 flex justify-between items-center group cursor-pointer" 
-             role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ') toggleSection('admin')"
+        <button type="button" class="mt-8 mb-2 px-8 flex justify-between items-center group cursor-pointer w-full"
              onclick="toggleSection('admin')">
             <h3 class="text-xs font-bold text-[#cb2d2d] uppercase tracking-[0.15em] transition-colors group-hover:text-white">Admin</h3>
              <svg id="icon-admin" class="w-3 h-3 text-gray-500 transform transition-transform duration-300 rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-        </div>
+        </button>
         <div id="section-admin" class="space-y-0.5 overflow-hidden transition-all duration-300 origin-top">
             <a href="{{ route('dashboard') }}#utilisateurs" class="sidebar-link flex items-center px-8 py-3 text-sm font-medium transition-all duration-200 text-gray-400 hover:text-white hover:bg-white/5 border-l-4 border-transparent" data-target="utilisateurs">
                 <svg class="w-5 h-5 mr-3 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
@@ -165,7 +161,7 @@
     function toggleSection(sectionId) {
         const section = document.getElementById('section-' + sectionId);
         const icon = document.getElementById('icon-' + sectionId);
-        
+
         if (section.style.maxHeight && section.style.maxHeight !== '0px') {
             // Close
             section.style.maxHeight = '0px';
@@ -178,7 +174,7 @@
             // Open
             section.classList.add('py-2'); // Add subtle padding when open
             // Calculate height including py-2
-            section.style.maxHeight = (section.scrollHeight + 16) + "px"; 
+            section.style.maxHeight = (section.scrollHeight + 16) + "px";
             if(icon) {
                 icon.classList.add('rotate-180');
                 icon.classList.remove('rotate-0');
@@ -200,13 +196,13 @@
         // Function to set active link based on Hash
         const setActiveLink = () => {
             const currentHash = window.location.hash.substring(1) || 'overview'; // Default to overview
-            
+
             // Remove active classes from all links
             document.querySelectorAll('.sidebar-link').forEach(link => {
                 // Inactive State
                 link.classList.remove('text-white', 'bg-gradient-to-r', 'from-[#cb2d2d]/20', 'to-transparent', 'border-[#cb2d2d]');
                 link.classList.add('text-gray-400', 'border-transparent');
-                
+
                 // Icon opacity
                 const svg = link.querySelector('svg');
                 if(svg) svg.classList.add('opacity-70');
@@ -215,7 +211,7 @@
             // Find target link
             // Search by data-target
             let targetLink = document.querySelector(`.sidebar-link[data-target="${currentHash}"]`);
-            
+
             // Fallback for sub-pages or precise matches if needed
             if (!targetLink) {
                 // Try to match href contains hash
@@ -226,7 +222,7 @@
                 // Active State
                 targetLink.classList.remove('text-gray-400', 'border-transparent');
                 targetLink.classList.add('text-white', 'bg-gradient-to-r', 'from-[#cb2d2d]/20', 'to-transparent', 'border-[#cb2d2d]');
-                
+
                 // Icon Opacity
                 const svg = targetLink.querySelector('svg');
                 if(svg) svg.classList.remove('opacity-70');
@@ -265,7 +261,7 @@
         background: transparent;
     }
     .custom-scrollbar::-webkit-scrollbar-thumb {
-        background: #263a4d; 
+        background: #263a4d;
         border-radius: 2px;
     }
     .custom-scrollbar:hover::-webkit-scrollbar-thumb {

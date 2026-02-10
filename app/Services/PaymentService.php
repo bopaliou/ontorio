@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Exceptions\BusinessRuleException;
 use App\Helpers\ActivityLogger;
 use App\Models\Loyer;
 use App\Models\Paiement;
@@ -24,7 +25,7 @@ class PaymentService
             $due = $loyer->montant + ($loyer->penalite ?? 0);
 
             if ($totalPaid >= $due) {
-                throw new \Exception('Ce loyer est déjà entièrement payé.');
+                throw new BusinessRuleException('Ce loyer est déjà entièrement payé.');
             }
 
             // 3. Gestion du fichier de preuve

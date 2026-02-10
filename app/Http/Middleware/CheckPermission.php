@@ -19,18 +19,12 @@ class CheckPermission
             return redirect()->route('login');
         }
 
-        // Super Admin legacy shortcut
-        if ($user->role === 'admin') {
-            return $next($request);
-        }
+        // Super Admin, Spatie permission, or legacy permission matrix
+        $hasAccess = $user->role === 'admin'
+            || (method_exists($user, 'can') && $user->can($permission))
+            || $this->hasLegacyPermission($user, $permission);
 
-        // Primary source of truth: Laravel/Spatie permission system
-        if (method_exists($user, 'can') && $user->can($permission)) {
-            return $next($request);
-        }
-
-        // Backward compatibility fallback while migrating legacy role matrix
-        if ($this->hasLegacyPermission($user, $permission)) {
+        if ($hasAccess) {
             return $next($request);
         }
 

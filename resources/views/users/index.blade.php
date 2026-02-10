@@ -43,7 +43,7 @@
                     </button>
                 </form>
             </div>
-            
+
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse">
                     <thead>
@@ -109,7 +109,7 @@
                     </tbody>
                 </table>
             </div>
-            
+
             <div class="px-6 py-4 border-t border-gray-100">
                 {{ $users->links() }}
             </div>
@@ -126,7 +126,7 @@
                         @csrf
                         <input type="hidden" id="user-method" name="_method" value="POST">
                         <input type="hidden" id="user-id" name="user_id">
-                        
+
                         <div class="bg-gradient-to-r from-[#274256] to-[#1a2e3d] px-6 py-4 flex justify-between items-center">
                             <h3 class="text-lg font-bold text-white flex items-center gap-2" id="modal-title">
                                 <span id="modal-title-text">Nouvel Utilisateur</span>
@@ -135,13 +135,13 @@
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                             </button>
                         </div>
-                        
+
                         <div class="px-6 py-6 space-y-4">
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Nom complet</label>
                                 <input type="text" name="name" id="user-name" required class="w-full rounded-xl border-gray-300 focus:border-[#cb2d2d] focus:ring-[#cb2d2d] shadow-sm">
                             </div>
-                            
+
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
                                 <input type="email" name="email" id="user-email" required class="w-full rounded-xl border-gray-300 focus:border-[#cb2d2d] focus:ring-[#cb2d2d] shadow-sm">
@@ -181,10 +181,10 @@
             title: document.getElementById('modal-title-text'),
             method: document.getElementById('user-method'),
             idInput: document.getElementById('user-id'),
-            
+
             open(mode, user = null) {
                 this.el.classList.remove('hidden');
-                
+
                 if (mode === 'create') {
                     this.title.textContent = 'Nouvel Utilisateur';
                     this.form.action = "{{ route('users.store') }}";
@@ -197,16 +197,16 @@
                     this.form.action = `/users/${user.id}`;
                     this.method.value = 'PUT';
                     this.idInput.value = user.id;
-                    
+
                     document.getElementById('user-name').value = user.name;
                     document.getElementById('user-email').value = user.email;
                     document.getElementById('user-role').value = user.role;
-                    
+
                     document.getElementById('pwd-hint').classList.remove('hidden');
                     document.getElementById('user-password').required = false;
                 }
             },
-            
+
             close() {
                 this.el.classList.add('hidden');
             }
@@ -216,7 +216,7 @@
             e.preventDefault();
             const form = e.target;
             const formData = new FormData(form);
-            
+
             try {
                 const response = await fetch(form.action, {
                     method: 'POST', // Always POST, _method handles PUT
@@ -226,9 +226,9 @@
                     },
                     body: formData
                 });
-                
+
                 const data = await response.json();
-                
+
                 if (data.success) {
                     showToast(data.message, 'success');
                     userModal.close();

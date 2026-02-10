@@ -7,11 +7,10 @@
             </svg>
         </button>
         <nav class="hidden sm:flex text-sm font-medium text-gray-500 gap-2 items-center">
-            <span class="hover:text-[#274256] cursor-pointer transition-colors" 
-                  role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ') dashboard.show('overview')"
-                  onclick="dashboard.show('overview')">
+            <button type="button" class="hover:text-[#274256] cursor-pointer transition-colors"
+                   onclick="dashboard.show('overview')">
                 <svg class="w-4 h-4 inline-block mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
-            </span>
+            </button>
             <span class="text-gray-300">/</span>
             <span class="text-[#274256] font-bold tracking-wide uppercase text-xs" id="topbar-title">VUE D'ENSEMBLE</span>
         </nav>
@@ -54,16 +53,16 @@
             </button>
 
             <!-- Dropdown Menu -->
-            <div x-show="open" 
+            <div x-show="open"
                  x-transition:enter="transition ease-out duration-200"
                  x-transition:enter-start="opacity-0 translate-y-2 scale-95"
                  x-transition:enter-end="opacity-100 translate-y-0 scale-100"
                  x-transition:leave="transition ease-in duration-150"
                  x-transition:leave-start="opacity-100 translate-y-0 scale-100"
                  x-transition:leave-end="opacity-0 translate-y-2 scale-95"
-                 class="absolute right-0 mt-4 w-56 bg-white rounded-2xl shadow-xl shadow-gray-200/50 border border-gray-100 py-2 z-50 origin-top-right overflow-hidden" 
+                 class="absolute right-0 mt-4 w-56 bg-white rounded-2xl shadow-xl shadow-gray-200/50 border border-gray-100 py-2 z-50 origin-top-right overflow-hidden"
                  style="display: none;">
-                 
+
                 <div class="px-5 py-3 border-b border-gray-50 mb-1 bg-gray-50/50">
                     <p class="text-sm font-black text-gray-900 truncate">{{ Auth::user()->name }}</p>
                     <p class="text-[10px] font-bold text-gray-400 truncate uppercase tracking-wider">{{ Auth::user()->email }}</p>
@@ -117,7 +116,7 @@
                 }
             });
          });
-         
+
          const dashboardContent = document.getElementById('dashboard-content');
          if(dashboardContent) {
              observer.observe(dashboardContent, {attributes: true, subtree: true, attributeFilter: ['class', 'style']});

@@ -4,8 +4,8 @@
     <meta charset="utf-8">
     <title>Contrat de Bail - {{ $contrat->locataire->nom }}</title>
     <style>
-        @page { 
-            margin: 0; 
+        @page {
+            margin: 0;
             size: A4;
         }
         body {
@@ -115,7 +115,7 @@
         }
         .party-name {
             font-size: 13px;
-            font-weight: 800; 
+            font-weight: 800;
             color: #1a2e3d;
             margin-bottom: 8px;
         }
@@ -229,13 +229,13 @@
     <div class="page">
         <!-- HEADER -->
         <div class="header">
-            <table width="100%">
+            <table style="width: 100%">
                 <thead>
                     <tr>
-                        <th width="30%" style="text-align: left; font-weight: normal;">
-                            <img src="{{ public_path('images/ontorio-logo.png') }}" style="max-height: 85px;">
+                        <th style="width: 30%; text-align: left; font-weight: normal;">
+                            <img src="{{ public_path('images/ontorio-logo.png') }}" style="max-height: 85px;" alt="Logo Ontario Group">
                         </th>
-                        <th width="70%" align="right" style="font-weight: normal;">
+                        <th style="width: 70%; text-align: right; font-weight: normal;">
                             <div class="font-black text-secondary" style="font-size: 18px; letter-spacing: -0.5px;">ONTARIO GROUP S.A.</div>
                             <div class="agency-info">
                                 Gestion Immobilière & Patrimoniale<br>
@@ -268,7 +268,7 @@
                             Dakar Plateau, Sénégal.
                         </div>
                     </th>
-                    <th width="4%"></th>
+                    <th style="width: 4%"></th>
                     <th class="party-box" style="text-align: left; font-weight: normal; vertical-align: top;">
                         <div class="party-label">Le Preneur</div>
                         <div class="party-name">{{ strtoupper($contrat->locataire->nom) }}</div>
@@ -340,13 +340,13 @@
             <p style="font-size: 10px; color: #64748b; text-align: center; margin-bottom: 25px;">
                 Fait à <strong>Dakar</strong>, le <strong>{{ now()->format('d/m/Y') }}</strong>, en deux exemplaires originaux.
             </p>
-            <table width="100%">
+            <table style="width: 100%">
                 <thead>
                     <tr>
                         <th class="signature-box" style="text-align: left; font-weight: normal; vertical-align: top;">
                             <div class="sign-hint">Cachet et Signature du Bailleur (Ontario)</div>
                         </th>
-                        <th width="10%"></th>
+                        <th style="width: 10%"></th>
                         <th class="signature-box" style="text-align: left; font-weight: normal; vertical-align: top;">
                             <div class="sign-hint">Signature du Preneur (Précédée de "Lu et Approuvé")</div>
                             <div class="sign-name">{{ strtoupper($contrat->locataire->nom) }}</div>

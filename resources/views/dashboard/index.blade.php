@@ -259,7 +259,7 @@
                     link.addEventListener('click', (e) => {
                         const sectionId = link.getAttribute('data-show-section') || link.getAttribute('data-target');
                         if (!sectionId) return;
-                        
+
                         e.preventDefault();
                         this.show(sectionId);
 

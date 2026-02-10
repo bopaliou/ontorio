@@ -4,8 +4,8 @@
     <meta charset="utf-8">
     <title>Bilan Financier - {{ $proprietaire->nom }}</title>
     <style>
-        @page { 
-            margin: 0; 
+        @page {
+            margin: 0;
             size: A4;
         }
         body {
@@ -217,18 +217,18 @@
     <div class="page">
         <!-- HEADER -->
         <div class="header">
-            <table width="100%">
+            <table style="width: 100%">
                 <thead>
                     <tr>
-                        <th width="60%" style="text-align: left; font-weight: normal;">
+                        <th style="width: 60%; text-align: left; font-weight: normal;">
                             <h1 class="agency-name">ONTARIO GROUP S.A.</h1>
                             <div class="header-sub">
                                 Expertise Immobilière & Gestion de Patrimoine<br>
                                 Dakar Plateau, Sénégal | +221 33 822 32 67
                             </div>
                         </th>
-                        <th width="40%" align="right" style="font-weight: normal;">
-                            <img src="{{ public_path('images/ontorio-logo.png') }}" style="max-height: 70px;">
+                        <th style="width: 40%; text-align: right; font-weight: normal;">
+                            <img src="{{ public_path('images/ontorio-logo.png') }}" style="max-height: 70px;" alt="Logo Ontario Group">
                         </th>
                     </tr>
                 </thead>
@@ -254,9 +254,9 @@
         <table class="data-table">
             <thead>
                 <tr>
-                    <th width="40%">Désignation du Bien</th>
-                    <th width="35%">Locataire</th>
-                    <th width="25%" style="text-align: right;">Montant Perçu</th>
+                    <th style="width: 40%">Désignation du Bien</th>
+                    <th style="width: 35%">Locataire</th>
+                    <th style="width: 25%; text-align: right;">Montant Perçu</th>
                 </tr>
             </thead>
             <tbody>
@@ -284,10 +284,10 @@
         <table class="data-table">
             <thead>
                 <tr>
-                    <th width="15%">Date</th>
-                    <th width="25%">Bien</th>
-                    <th width="40%">Libellé / Description</th>
-                    <th width="20%" style="text-align: right;">Montant</th>
+                    <th style="width: 15%">Date</th>
+                    <th style="width: 25%">Bien</th>
+                    <th style="width: 40%">Libellé / Description</th>
+                    <th style="width: 20%; text-align: right;">Montant</th>
                 </tr>
             </thead>
             <tbody>
@@ -305,7 +305,7 @@
                 @endforeach
                 @if(!$hasDepenses)
                     <tr>
-                        <td colspan="4" align="center" style="padding: 25px; color: #94a3b8; font-style: italic;">Aucune charge enregistrée sur la période.</td>
+                        <td colspan="4" style="text-align: center; padding: 25px; color: #94a3b8; font-style: italic;">Aucune charge enregistrée sur la période.</td>
                     </tr>
                 @endif
                 <tr class="total-row">

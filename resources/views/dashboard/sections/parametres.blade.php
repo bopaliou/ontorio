@@ -38,15 +38,15 @@
 
     {{-- Content Area --}}
     <div class="animate-fade-in-up">
-        
+
         {{-- TAB: PROFIL --}}
         <div x-show="activeTab === 'profil'" x-cloak class="grid grid-cols-1 lg:grid-cols-12 gap-8">
             {{-- Left: Personal Card --}}
             <div class="lg:col-span-7 bg-white rounded-3xl p-8 border border-gray-100 shadow-sm relative overflow-hidden group">
                 <div class="absolute top-0 right-0 w-40 h-40 bg-gray-50 rounded-full blur-3xl -mr-16 -mt-16 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
-                
+
                 <h3 class="text-sm font-bold text-gray-500 uppercase tracking-widest mb-6">Informations Personnelles</h3>
-                
+
                 <div class="flex items-start gap-8">
                     <div class="shrink-0 relative">
                         <div class="w-24 h-24 bg-gradient-to-br from-gray-100 to-gray-200 rounded-[2rem] flex items-center justify-center text-gray-400 shadow-inner text-3xl font-black">
@@ -56,19 +56,19 @@
                             <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
                         </div>
                     </div>
-                    
+
                     <form id="profile-update-form" action="{{ route('profile.update') }}" method="POST" class="w-full space-y-5">
                         @csrf
                         @method('PATCH')
-                        
+
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                             <div class="space-y-1.5">
-                                <label class="block text-[11px] font-bold text-gray-400 uppercase tracking-widest pl-1">Nom Complet</label>
-                                <input type="text" name="name" value="{{ auth()->user()->name }}" class="block w-full bg-gray-50 border-gray-200 rounded-xl text-sm font-bold text-gray-900 focus:ring-[#cb2d2d] focus:border-[#cb2d2d] py-3 px-4 transition-all">
+                                <label for="param-input-name" class="block text-[11px] font-bold text-gray-400 uppercase tracking-widest pl-1">Nom Complet</label>
+                                <input type="text" name="name" id="param-input-name" value="{{ auth()->user()->name }}" class="block w-full bg-gray-50 border-gray-200 rounded-xl text-sm font-bold text-gray-900 focus:ring-[#cb2d2d] focus:border-[#cb2d2d] py-3 px-4 transition-all">
                             </div>
                             <div class="space-y-1.5">
-                                <label class="block text-[11px] font-bold text-gray-400 uppercase tracking-widest pl-1">Email</label>
-                                <input type="email" name="email" value="{{ auth()->user()->email }}" class="block w-full bg-gray-50 border-gray-200 rounded-xl text-sm font-bold text-gray-900 focus:ring-[#cb2d2d] focus:border-[#cb2d2d] py-3 px-4 transition-all" readonly title="Contactez l'admin pour changer">
+                                <label for="param-input-email" class="block text-[11px] font-bold text-gray-400 uppercase tracking-widest pl-1">Email</label>
+                                <input type="email" name="email" id="param-input-email" value="{{ auth()->user()->email }}" class="block w-full bg-gray-50 border-gray-200 rounded-xl text-sm font-bold text-gray-900 focus:ring-[#cb2d2d] focus:border-[#cb2d2d] py-3 px-4 transition-all" readonly title="Contactez l'admin pour changer">
                             </div>
                         </div>
 
@@ -86,7 +86,7 @@
             <div class="lg:col-span-5 relative group h-full">
                 <div class="absolute inset-0 bg-gradient-to-br from-[#cb2d2d] to-[#ef4444] rounded-3xl -rotate-1 opacity-80 group-hover:rotate-1 transition-transform duration-500 blur-sm"></div>
                 <div class="relative h-full bg-[#1a1a1a] rounded-3xl p-8 text-white overflow-hidden border border-white/10 flex flex-col justify-between backdrop-blur-xl">
-                    
+
                     {{-- Noise Texture --}}
                     <div class="absolute inset-0 opacity-[0.03]" style="background-image: url('data:image/svg+xml,%3Csvg viewBox=\'0 0 200 200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noise\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.65\' numOctaves=\'3\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noise)\'/%3E%3C/svg%3E');"></div>
 
@@ -179,7 +179,7 @@
                 {{-- Card Header --}}
                 <div @click="expanded = !expanded" class="p-6 cursor-pointer relative overflow-hidden group">
                     <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br {{ $gradient }} opacity-10 rounded-full blur-3xl -mr-16 -mt-16 group-hover:opacity-20 transition-opacity"></div>
-                    
+
                     <div class="flex items-center justify-between relative z-10">
                         <div class="flex items-center gap-4">
                             <div class="w-12 h-12 rounded-2xl bg-gradient-to-br {{ $gradient }} flex items-center justify-center text-white shadow-lg shadow-gray-200">
@@ -203,8 +203,8 @@
                             @foreach(\Spatie\Permission\Models\Permission::all() as $perm)
                             <label class="group flex items-center gap-3 p-2 rounded-lg hover:bg-white hover:shadow-sm transition-all cursor-pointer {{ $role->name === 'admin' ? 'opacity-50 pointer-events-none' : '' }}">
                                 <div class="relative flex items-center">
-                                    <input type="checkbox" class="peer h-4 w-4 rounded border-gray-300 text-[#cb2d2d] focus:ring-[#cb2d2d] transition-all perm-checkbox" 
-                                           data-role="{{ $role->name }}" 
+                                    <input type="checkbox" class="peer h-4 w-4 rounded border-gray-300 text-[#cb2d2d] focus:ring-[#cb2d2d] transition-all perm-checkbox"
+                                           data-role="{{ $role->name }}"
                                            data-permission="{{ $perm->name }}"
                                            {{ $role->hasPermissionTo($perm->name) ? 'checked' : '' }}>
                                 </div>
@@ -212,7 +212,7 @@
                             </label>
                             @endforeach
                         </div>
-                        
+
                         @if($role->name !== 'admin')
                         <button onclick="saveRolePermissions('{{ $role->name }}')" class="w-full py-3 bg-white border border-gray-200 text-gray-700 font-bold text-xs uppercase tracking-widest rounded-xl hover:bg-[#cb2d2d] hover:text-white hover:border-[#cb2d2d] transition-all shadow-sm">
                             Enregistrer les droits
@@ -258,12 +258,12 @@
         e.preventDefault();
         const btn = this.querySelector('button[type="submit"]');
         const originalText = btn.innerHTML;
-        
+
         btn.innerHTML = '<svg class="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>';
         btn.disabled = true;
 
         const formData = new FormData(this);
-        
+
         try {
             const response = await fetch(this.getAttribute('action'), {
                 method: 'POST',

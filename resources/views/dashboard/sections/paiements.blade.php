@@ -194,7 +194,7 @@
 
                 <!-- Sélection Loyer -->
                 <div class="relative bg-gray-50 rounded-2xl border-2 border-gray-100 px-4 py-3 focus-within:ring-4 focus-within:ring-[#274256]/5 focus-within:border-[#274256] transition-all duration-300">
-                    <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[2px] mb-1">Loyer à solder</label>
+                    <label for="pai-select-loyer" class="block text-[10px] font-black text-gray-400 uppercase tracking-[2px] mb-1">Loyer à solder</label>
                     <select name="loyer_id" id="pai-select-loyer" required class="block w-full bg-transparent border-none p-0 text-base sm:text-sm font-bold text-gray-900 focus:ring-0 appearance-none cursor-pointer">
                         @php
                             $unpaidLoyers = $data['loyers_list']->filter(fn($l) => strtolower(trim($l->statut)) !== 'payé');
@@ -205,10 +205,10 @@
                         @if($unpaidLoyers->count() > 0)
                             <option value="">-- Sélectionner un loyer --</option>
                             @foreach($unpaidLoyers as $l)
-                                <option value="{{ $l->id }}" 
-                                        data-montant="{{ $l->montant }}" 
+                                <option value="{{ $l->id }}"
+                                        data-montant="{{ $l->montant }}"
                                         data-reste="{{ $l->reste_a_payer }}"
-                                        data-locataire="{{ $l->contrat->locataire->nom }}" 
+                                        data-locataire="{{ $l->contrat->locataire->nom }}"
                                         data-mois="{{ \Carbon\Carbon::parse($l->mois)->translatedFormat('F Y') }}">
                                     {{ $l->contrat->locataire->nom }} — {{ \Carbon\Carbon::parse($l->mois)->translatedFormat('F Y') }} — {{ number_format($l->reste_a_payer,0,',',' ') }} F (Restant)
                                 </option>
@@ -358,7 +358,7 @@
         e.preventDefault();
         const btn = document.getElementById('pai-submit-btn');
         const originalText = btn.innerHTML;
-        
+
         btn.innerHTML = '<svg class="animate-spin h-3 w-3 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Envoi...';
         btn.disabled = true;
 
@@ -380,7 +380,7 @@
             if(response.ok) {
                 btn.innerHTML = '✅ Encaissé !';
                 showToast(data.message || 'Paiement enregistré avec succès', 'success');
-                
+
                 setTimeout(() => {
                     window.paiSection.closeModal();
                     if(window.dashboard) window.dashboard.refresh();
@@ -420,11 +420,11 @@
             document.getElementById('pai-card-locataire').textContent = locataire;
             document.getElementById('pai-card-mois').textContent = 'Période: ' + mois;
             document.getElementById('pai-card-montant').textContent = new Intl.NumberFormat('fr-FR').format(reste) + ' F';
-            
+
             // On pré-remplit avec le reste à payer
             inputMontant.value = reste;
             inputMontant.dataset.target = reste;
-            
+
             card.classList.remove('hidden');
             card.classList.add('animate-fade-in');
             liveBalance.classList.add('hidden');
@@ -445,7 +445,7 @@
         if (target > 0) {
             const diff = target - val;
             liveBalance.classList.remove('hidden');
-            
+
             if (diff > 0) {
                 liveBalance.className = "text-[10px] font-bold mt-1 text-orange-600";
                 liveBalance.innerHTML = `Reliquat : <span>${new Intl.NumberFormat('fr-FR').format(diff)}</span> F`;

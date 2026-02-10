@@ -15,7 +15,7 @@
             </div>
         </div>
     </div>
-    
+
     <div class="relative h-64 w-full">
         <canvas id="financialTrendChart"></canvas>
     </div>
@@ -24,7 +24,7 @@
 <script>
 async function initFinancialChart() {
     const ctx = document.getElementById('financialTrendChart').getContext('2d');
-    
+
     try {
         const response = await fetch('/api/stats/charts');
         const data = await response.json();

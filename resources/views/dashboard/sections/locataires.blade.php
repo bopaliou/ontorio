@@ -340,7 +340,7 @@
                     <!-- Zone de drop fichier (Premium) -->
                     <div class="relative bg-gray-50 rounded-2xl border-2 border-dashed border-gray-100 flex items-center justify-center h-20 hover:border-[#cb2d2d] transition-all cursor-pointer group">
                         <input type="file" name="document" id="doc-file-input" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" required class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" aria-label="Sélectionner un fichier">
-                        
+
                         <div id="doc-drop-content" class="flex items-center gap-3">
                             <div class="w-8 h-8 rounded-lg bg-white shadow-sm flex items-center justify-center text-[#cb2d2d]">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>

@@ -1,5 +1,6 @@
 <?php
 
+use App\Exceptions\MigrationIntegrityException;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\Schema;
 
@@ -38,10 +39,8 @@ return new class extends Migration
     private function ensureContratPointsToBiens(): void
     {
         // Vérifier que bien_id existe dans contrats
-        if (Schema::hasTable('contrats')) {
-            if (! Schema::hasColumn('contrats', 'bien_id')) {
-                throw new \Exception('La table contrats doit avoir une colonne bien_id pointant vers biens');
-            }
+        if (Schema::hasTable('contrats') && ! Schema::hasColumn('contrats', 'bien_id')) {
+            throw new MigrationIntegrityException('La table contrats doit avoir une colonne bien_id pointant vers biens');
         }
     }
 };

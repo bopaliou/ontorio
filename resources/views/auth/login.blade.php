@@ -82,7 +82,7 @@
                            placeholder="••••••••"
                            style="padding-left: 4.5rem !important; padding-right: 3.5rem !important; padding-top: 1rem !important; padding-bottom: 1rem !important;"
                            class="input-focus block w-full border border-gray-100 rounded-[1.5rem] text-sm font-bold text-gray-900 placeholder-gray-300 transition-all duration-300 bg-gray-50/30">
-                    <button type="button" 
+                    <button type="button"
                             @click="show = !show"
                             class="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-300 hover:text-gray-500 transition-colors z-10">
                         <svg class="h-5 w-5" fill="none" x-show="!show" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>

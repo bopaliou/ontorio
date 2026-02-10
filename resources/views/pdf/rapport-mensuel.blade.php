@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <title>Rapport Mensuel - Ontario Group</title>
     <style>
-        @page { 
-            margin: 0; 
+        @page {
+            margin: 0;
             size: A4;
         }
         body {
@@ -183,15 +183,15 @@
     <div class="page">
         <!-- HEADER -->
         <div class="header">
-            <table width="100%">
+            <table style="width: 100%">
                 <thead>
                     <tr>
-                        <th width="60%" style="text-align: left; font-weight: normal;">
+                        <th style="width: 60%; text-align: left; font-weight: normal;">
                             <h1 class="agency-name">ONTARIO GROUP S.A.</h1>
                             <div class="header-sub">Rapport Stratégique de Gestion Locative</div>
                         </th>
-                        <th width="40%" align="right" style="font-weight: normal;">
-                            <img src="{{ public_path('images/ontorio-logo.png') }}" style="max-height: 70px;">
+                        <th style="width: 40%; text-align: right; font-weight: normal;">
+                            <img src="{{ public_path('images/ontorio-logo.png') }}" style="max-height: 70px;" alt="Logo Ontario Group">
                         </th>
                     </tr>
                 </thead>
@@ -248,23 +248,23 @@
             <tbody>
                 <tr>
                     <td>Émissions des Loyers de la Période</td>
-                    <td class="val-bold" align="right">{{ number_format($data['kpis']['loyers_emis'], 0, ',', ' ') }}</td>
-                    <td align="center"><span class="badge badge-info text-secondary">Facturation</span></td>
+                    <td class="val-bold" style="text-align: right;">{{ number_format($data['kpis']['loyers_emis'], 0, ',', ' ') }}</td>
+                    <td style="text-align: center;"><span class="badge badge-info text-secondary">Facturation</span></td>
                 </tr>
                 <tr>
                     <td>Encaissements Effectifs (Mois en cours)</td>
-                    <td class="val-bold" align="right" style="color: #10b981;">{{ number_format($data['kpis']['loyers_payes'], 0, ',', ' ') }}</td>
-                    <td align="center"><span class="badge badge-success">Recouvrement</span></td>
+                    <td class="val-bold" style="text-align: right; color: #10b981;">{{ number_format($data['kpis']['loyers_payes'], 0, ',', ' ') }}</td>
+                    <td style="text-align: center;"><span class="badge badge-success">Recouvrement</span></td>
                 </tr>
                 <tr>
                     <td>Chiffre d'Affaire Estimé (Honoraires 10%)</td>
-                    <td class="val-bold" align="right">{{ number_format($data['kpis']['commission_mensuelle'], 0, ',', ' ') }}</td>
-                    <td align="center"><span class="badge badge-info">Revenu Agence</span></td>
+                    <td class="val-bold" style="text-align: right;">{{ number_format($data['kpis']['commission_mensuelle'], 0, ',', ' ') }}</td>
+                    <td style="text-align: center;"><span class="badge badge-info">Revenu Agence</span></td>
                 </tr>
                 <tr>
                     <td>Variance Mensuelle (Reliquat à percevoir)</td>
-                    <td class="val-bold" align="right" style="color: #ef4444;">{{ number_format($data['kpis']['total_impaye'], 0, ',', ' ') }}</td>
-                    <td align="center">
+                    <td class="val-bold" style="text-align: right; color: #ef4444;">{{ number_format($data['kpis']['total_impaye'], 0, ',', ' ') }}</td>
+                    <td style="text-align: center;">
                         @if($data['kpis']['total_impaye'] > 0)
                             <span class="badge badge-danger">Déficitaire</span>
                         @else
@@ -278,7 +278,7 @@
         <!-- INSIGHT BOX -->
         <div class="insight-box">
             <strong class="text-secondary" style="font-weight: 900; text-transform: uppercase; font-size: 10px; display: block; margin-bottom: 5px;">Observation Stratégique</strong>
-            Le taux de performance financière pour la période est de <strong>{{ $data['kpis']['taux_collecte'] }}%</strong>. 
+            Le taux de performance financière pour la période est de <strong>{{ $data['kpis']['taux_collecte'] }}%</strong>.
             @if($data['kpis']['taux_collecte'] >= 90)
                 L'efficacité des encaissements est optimale. Maintenir les processus actuels.
             @else
@@ -296,11 +296,11 @@
     <div class="page">
         <!-- HEADER (Simplified for secondary pages) -->
         <div class="header">
-            <table width="100%">
+            <table style="width: 100%">
                 <thead>
                     <tr>
                         <th style="text-align: left; font-weight: normal;"><div class="agency-name">Détail Opérationnel</div></th>
-                        <th align="right" style="font-weight: normal;"><div class="report-period">{{ \Carbon\Carbon::parse($mois)->translatedFormat('F Y') }}</div></th>
+                        <th style="text-align: right; font-weight: normal;"><div class="report-period">{{ \Carbon\Carbon::parse($mois)->translatedFormat('F Y') }}</div></th>
                     </tr>
                 </thead>
             </table>
@@ -324,7 +324,7 @@
                         <div style="font-size: 9px; color: #94a3b8;">{{ $bien->ville }}</div>
                     </td>
                     <td>{{ ucfirst($bien->type) }}</td>
-                    <td align="center">
+                    <td style="text-align: center;">
                         @if($bien->statut === 'libre' || $bien->statut === 'disponible')
                             <span class="badge badge-success">Disponible</span>
                         @elseif($bien->statut === 'occupé')
@@ -333,7 +333,7 @@
                             <span class="badge badge-danger">{{ $bien->statut }}</span>
                         @endif
                     </td>
-                    <td align="right" class="val-bold">{{ number_format($bien->loyer_mensuel, 0, ',', ' ') }} F</td>
+                    <td style="text-align: right;" class="val-bold">{{ number_format($bien->loyer_mensuel, 0, ',', ' ') }} F</td>
                 </tr>
                 @endforeach
             </tbody>

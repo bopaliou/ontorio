@@ -66,7 +66,7 @@
                     <p class="text-xs text-gray-400 font-medium mt-1">Évolution de vos encaissements nets (6 mois)</p>
                 </div>
             </div>
-            
+
             <div class="h-72 flex items-end justify-between gap-4 px-2">
                 @php $maxValTrend = max(array_column($data['revenus_par_mois'], 'montant')) ?: 1; @endphp
                 @foreach($data['revenus_par_mois'] as $revData)

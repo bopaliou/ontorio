@@ -4,8 +4,8 @@
     <meta charset="utf-8">
     <title>Quittance de Loyer - {{ $loyer->contrat->locataire->nom ?? 'Locataire' }}</title>
     <style>
-        @page { 
-            margin: 0; 
+        @page {
+            margin: 0;
             size: A4;
         }
         body {
@@ -126,15 +126,15 @@
             border-bottom: 1px solid #e2e8f0;
             padding-bottom: 5px;
         }
-        .card-value { 
-            font-size: 12px; 
-            font-weight: 800; 
-            color: #1a2e3d; 
+        .card-value {
+            font-size: 12px;
+            font-weight: 800;
+            color: #1a2e3d;
             margin-top: 5px;
         }
-        .card-subtext { 
-            font-size: 10px; 
-            color: #64748b; 
+        .card-subtext {
+            font-size: 10px;
+            color: #64748b;
             margin-top: 5px;
             line-height: 1.4;
         }
@@ -168,7 +168,7 @@
             letter-spacing: 1px;
         }
         .receipt-table th.right { text-align: right; }
-        
+
         .receipt-table td {
             padding: 18px 20px;
             border-bottom: 1px solid #f1f5f9;
@@ -194,7 +194,7 @@
         }
         .total-label { font-size: 10px; font-weight: 700; color: #94a3b8; text-transform: uppercase; }
         .total-val { font-size: 13px; font-weight: 800; color: #1a2e3d; text-align: right; float: right; }
-        
+
         .final-total {
             background-color: #cb2d2d;
             color: #fff;
@@ -279,10 +279,10 @@
         <!-- HEADER -->
         <div class="header">
             <div class="header-content">
-                <table width="100%">
+                <table style="width: 100%">
                     <thead>
                         <tr>
-                            <th width="50%" valign="bottom" style="text-align: left; font-weight: normal;">
+                            <th style="width: 50%; vertical-align: bottom; text-align: left; font-weight: normal;">
                                 <h1 class="agency-name">ONTARIO GROUP S.A.</h1>
                                 <div class="agency-info">
                                     <strong>Pionnier de la Gestion Immobilière au Sénégal</strong><br>
@@ -291,14 +291,14 @@
                                     <strong>Assistance :</strong> +221 33 822 32 67 | commercial@ontariogroup.net
                                 </div>
                             </th>
-                            <th width="50%" align="right" valign="top" style="font-weight: normal;">
-                                <img src="{{ public_path('images/ontorio-logo.png') }}" style="max-height: 75px;">
+                            <th style="width: 50%; text-align: right; vertical-align: top; font-weight: normal;">
+                                <img src="{{ public_path('images/ontorio-logo.png') }}" style="max-height: 75px;" alt="Logo Ontario Group">
                             </th>
                         </tr>
                     </thead>
                 </table>
             </div>
-            
+
             <div class="doc-title-section">
                 <div class="doc-title">Quittance de Loyer</div>
                 <div class="doc-ref">N° Q{{ date('Y') }}-{{ str_pad($loyer->id, 4, '0', STR_PAD_LEFT) }} | ÉTABLI LE {{ date('d/m/Y') }}</div>
@@ -345,8 +345,8 @@
         <table class="receipt-table">
             <thead>
                 <tr>
-                    <th width="70%">Description des Terminologies du Loyer</th>
-                    <th width="30%" class="right">Montant (FCFA)</th>
+                    <th style="width: 70%">Description des Terminologies du Loyer</th>
+                    <th style="width: 30%" class="right">Montant (FCFA)</th>
                 </tr>
             </thead>
             <tbody>
@@ -394,17 +394,17 @@
 
         <!-- SIGNATURES & FOOTER -->
         <div class="footer">
-            <table width="100%" class="signature-area">
+            <table style="width: 100%" class="signature-area">
                 <thead>
                     <tr>
-                        <th width="65%" style="font-size: 9px; color: #64748b; padding-right: 50px; text-align: left; font-weight: normal; vertical-align: top;">
+                        <th style="width: 65%; font-size: 9px; color: #64748b; padding-right: 50px; text-align: left; font-weight: normal; vertical-align: top;">
                             <div style="font-weight: 900; color: #1a2e3d; text-transform: uppercase; margin-bottom: 8px; letter-spacing: 0.5px;">Informations de Paiement</div>
                             <strong>Mode de versement :</strong> {{ $loyer->mode_paiement ?? 'Espèces / Chèque / Virement' }}<br>
                             <strong>Date d'encaissement :</strong> {{ $loyer->date_paiement ? \Carbon\Carbon::parse($loyer->date_paiement)->format('d/m/Y') : date('d/m/Y') }}<br>
                             <br>
                             <em>La présente quittance libère le locataire pour le mois indiqué. Elle n'emporte pas présomption de paiement des termes antérieurs non encore soldés.</em>
                         </th>
-                        <th width="35%" style="font-weight: normal; vertical-align: top;">
+                        <th style="width: 35%; font-weight: normal; vertical-align: top;">
                             <div class="sign-box">
                                 <div class="sign-label">Cachet de l'Agence & Signature</div>
                             </div>

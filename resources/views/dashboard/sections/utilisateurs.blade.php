@@ -42,7 +42,7 @@
 
                 <!-- User Card -->
                 <div class="group relative bg-white rounded-3xl p-6 border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden cursor-default">
-                    
+
                     {{-- Decorative Top Line --}}
                     <div class="absolute top-0 left-0 w-full h-1 {{ str_replace('bg-', 'bg-', $role['bg']) }} opacity-0 group-hover:opacity-100 transition-opacity"></div>
 
@@ -95,17 +95,16 @@
                     <p class="text-gray-500 text-sm mt-1 max-w-xs">Commencez par ajouter des utilisateurs pour collaborer sur la plateforme.</p>
                 </div>
             @endforelse
-            
+
             {{-- "Add New" Placeholder Card --}}
-            <div onclick="userSection.openModal('create')" 
-                 role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ') userSection.openModal('create')"
-                 class="group flex flex-col items-center justify-center p-6 border-2 border-dashed border-gray-200 rounded-3xl hover:border-[#cb2d2d] hover:bg-red-50/10 cursor-pointer transition-all duration-300 min-h-[320px]">
+            <button type="button" onclick="userSection.openModal('create')"
+                 class="group flex flex-col items-center justify-center p-6 border-2 border-dashed border-gray-200 rounded-3xl hover:border-[#cb2d2d] hover:bg-red-50/10 cursor-pointer transition-all duration-300 min-h-[320px] w-full bg-transparent">
                 <div class="w-16 h-16 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 group-hover:bg-[#cb2d2d] group-hover:text-white transition-all duration-300 shadow-sm group-hover:scale-110 mb-4">
                     <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
                 </div>
                 <h3 class="text-gray-400 group-hover:text-[#cb2d2d] font-bold text-sm uppercase tracking-widest transition-colors">Ajouter un Membre</h3>
             </div>
-        </div>
+        </button>
     </div>
 
     <!-- MAIN FORM MODAL (Revised Layout) -->

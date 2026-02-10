@@ -92,7 +92,7 @@
                     </div>
                     <h4 class="text-xl font-black text-gray-900 tracking-tight mb-1">{{ $tmpl['title'] }}</h4>
                     <p class="text-xs text-gray-400 font-medium mb-6">{{ $tmpl['description'] }}</p>
-                    
+
                     <div class="bg-gray-50 rounded-2xl p-5 border border-gray-100 relative group-hover:bg-white transition-colors duration-500">
                         <p class="text-[13px] leading-relaxed text-gray-600 font-medium italic">"{{ $tmpl['message'] }}"</p>
                         <div class="mt-4 flex flex-wrap gap-1.5">
@@ -181,7 +181,7 @@
         <div x-show="activeTab === 'settings'" x-transition class="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div class="bg-white rounded-3xl p-8 border border-gray-100 shadow-sm space-y-8">
                 <h4 class="text-sm font-black text-gray-900 uppercase tracking-widest">Contrôle Automatique</h4>
-                
+
                 <div class="space-y-6">
                     <div class="flex items-center justify-between">
                         <div>
@@ -196,10 +196,10 @@
 
                     <div class="flex items-center justify-between">
                         <div>
-                            <p class="text-sm font-bold text-gray-800">Canal Prioritaire</p>
+                            <label for="relance-canal" class="text-sm font-bold text-gray-800 cursor-pointer">Canal Prioritaire</label>
                             <p class="text-[11px] text-gray-400 font-medium">WhatsApp est recommandé pour le Sénégal.</p>
                         </div>
-                        <select class="bg-gray-50 border-gray-100 rounded-xl text-[10px] font-black uppercase tracking-widest py-2 px-4 focus:ring-blue-500 focus:border-blue-500">
+                        <select id="relance-canal" class="bg-gray-50 border-gray-100 rounded-xl text-[10px] font-black uppercase tracking-widest py-2 px-4 focus:ring-blue-500 focus:border-blue-500">
                             <option>WhatsApp</option>
                             <option>SMS</option>
                             <option>Email</option>

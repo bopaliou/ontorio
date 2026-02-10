@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\BusinessRuleException;
 use App\Http\Responses\ApiResponse;
 use App\Models\Paiement;
 
@@ -41,13 +42,11 @@ class PaiementController extends Controller
             $paiement = $this->paymentService->recordPayment($request->validated());
 
             return ApiResponse::created($paiement, 'Paiement enregistré avec succès !');
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException) {
             return ApiResponse::notFound('Loyer non trouvé.');
+        } catch (BusinessRuleException $e) {
+            return ApiResponse::conflict($e->getMessage());
         } catch (\Exception $e) {
-            if ($e->getMessage() === 'Ce loyer est déjà entièrement payé.') {
-                return ApiResponse::conflict($e->getMessage());
-            }
-
             \Log::error('Erreur enregistrement paiement', [
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),

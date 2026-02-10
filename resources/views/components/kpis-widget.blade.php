@@ -1,15 +1,14 @@
 {{-- Widget KPIs dynamiques avec refresh AJAX (Refactorisé Modern Widget Style) --}}
 <div id="kpis-widget" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 animate-stagger">
-    
+
     {{-- KPI 1: Loyers Facturés --}}
-    <div class="relative overflow-hidden rounded-3xl p-6 transition-all duration-300 group hover:-translate-y-1 hover:shadow-xl bg-white border border-blue-100 shadow-sm cursor-pointer"
-         role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ') dashboard.show('loyers')"
+    <button type="button" class="relative overflow-hidden rounded-3xl p-6 transition-all duration-300 group hover:-translate-y-1 hover:shadow-xl bg-white border border-blue-100 shadow-sm cursor-pointer text-left w-full"
          data-show-section="loyers" onclick="dashboard.show('loyers')">
         {{-- Watermark --}}
         <div class="absolute -bottom-6 -right-6 opacity-[0.08] transform rotate-[-15deg] group-hover:scale-110 group-hover:rotate-0 transition-all duration-500">
             <svg class="w-32 h-32 text-blue-600" fill="currentColor" viewBox="0 0 24 24"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
         </div>
-        
+
         <div class="relative z-10 flex flex-col h-full justify-between">
             <h3 class="text-[11px] font-bold uppercase tracking-[0.2em] text-gray-400">Loyers Facturés</h3>
             <div>
@@ -21,11 +20,10 @@
                 <p class="mt-1 text-xs font-medium text-blue-600">Ce mois</p>
             </div>
         </div>
-    </div>
+    </button>
 
     {{-- KPI 2: Encaissé --}}
-    <div class="relative overflow-hidden rounded-3xl p-6 transition-all duration-300 group hover:-translate-y-1 hover:shadow-xl bg-white border border-emerald-100 shadow-sm cursor-pointer"
-         role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ') dashboard.show('paiements')"
+    <button type="button" class="relative overflow-hidden rounded-3xl p-6 transition-all duration-300 group hover:-translate-y-1 hover:shadow-xl bg-white border border-emerald-100 shadow-sm cursor-pointer text-left w-full"
          data-show-section="paiements" onclick="dashboard.show('paiements')">
         {{-- Watermark --}}
         <div class="absolute -bottom-6 -right-6 opacity-[0.08] transform rotate-[-15deg] group-hover:scale-110 group-hover:rotate-0 transition-all duration-500">
@@ -39,7 +37,7 @@
                     --%
                 </span>
             </div>
-            
+
             <div>
                 <div class="flex items-baseline gap-1">
                      <p id="kpi-encaisses" class="text-4xl font-black tracking-tighter text-emerald-600 tabular-nums">
@@ -52,11 +50,10 @@
                 </div>
             </div>
         </div>
-    </div>
+    </button>
 
     {{-- KPI 3: Impayés --}}
-    <div class="relative overflow-hidden rounded-3xl p-6 transition-all duration-300 group hover:-translate-y-1 hover:shadow-xl bg-white border border-red-100 shadow-sm cursor-pointer"
-         role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ') dashboard.show('loyers')"
+    <button type="button" class="relative overflow-hidden rounded-3xl p-6 transition-all duration-300 group hover:-translate-y-1 hover:shadow-xl bg-white border border-red-100 shadow-sm cursor-pointer text-left w-full"
          data-show-section="loyers" onclick="dashboard.show('loyers')">
         {{-- Watermark --}}
         <div class="absolute -bottom-6 -right-6 opacity-[0.08] transform rotate-[-15deg] group-hover:scale-110 group-hover:rotate-0 transition-all duration-500">
@@ -70,7 +67,7 @@
                     -- retards
                 </span>
             </div>
-           
+
             <div>
                 <div class="flex items-baseline gap-1">
                     <p id="kpi-arrieres" class="text-4xl font-black tracking-tighter text-[#cb2d2d] tabular-nums">
@@ -83,11 +80,10 @@
                 </div>
             </div>
         </div>
-    </div>
+    </button>
 
     {{-- KPI 4: Solde Net --}}
-    <div class="relative overflow-hidden rounded-3xl p-6 transition-all duration-300 group hover:-translate-y-1 hover:shadow-xl bg-gradient-to-br from-[#274256] to-[#1a2e3d] text-white shadow-lg shadow-blue-900/20 cursor-pointer"
-         role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ') dashboard.show('depenses')"
+    <button type="button" class="relative overflow-hidden rounded-3xl p-6 transition-all duration-300 group hover:-translate-y-1 hover:shadow-xl bg-gradient-to-br from-[#274256] to-[#1a2e3d] text-white shadow-lg shadow-blue-900/20 cursor-pointer text-left w-full"
          data-show-section="depenses" onclick="dashboard.show('depenses')">
         {{-- Watermark --}}
         <div class="absolute -bottom-6 -right-6 opacity-[0.08] transform rotate-[-15deg] group-hover:scale-110 group-hover:rotate-0 transition-all duration-500">
@@ -105,7 +101,7 @@
                 <p class="mt-1 text-xs font-medium text-blue-300">Encaissements - Dépenses</p>
             </div>
         </div>
-    </div>
+    </button>
 </div>
 
 <script>
@@ -149,14 +145,14 @@ async function loadKPIs() {
         if (data.kpis_modern && data.kpis_modern.arrears_aging) {
             const agingEl = document.getElementById('kpi-aging');
             const ag = data.kpis_modern.arrears_aging;
-            
+
             // Format short: "30j: 100k | 60j: 50k"
             let html = '';
             // Only show significant buckets
             if(ag['0-30'] > 0) html += `<span class="text-red-300">30j:${fmt(ag['0-30']/1000)}k</span>`;
             if(ag['31-60'] > 0) html += `<span class="text-red-400 font-bold ml-1">60j:${fmt(ag['31-60']/1000)}k</span>`;
             if(ag['90+'] > 0) html += `<span class="text-red-600 font-black ml-1">90j+:${fmt(ag['90+']/1000)}k</span>`;
-            
+
             if (html && agingEl) {
                 agingEl.innerHTML = html;
                 agingEl.classList.remove('hidden');
