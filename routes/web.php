@@ -13,6 +13,8 @@ use App\Http\Controllers\RapportController;
 use App\Http\Controllers\RevisionLoyerController;
 use Illuminate\Support\Facades\Route;
 
+$profilePath = '/profile';
+
 Route::get('/', function () {
     return auth()->check() ? redirect()->route('dashboard') : redirect()->route('login');
 });
@@ -26,9 +28,9 @@ Route::put('/dashboard/proprietaires/{proprietaire}', [ProprietaireController::c
     ->middleware(['auth', 'role:admin|gestionnaire'])->name('dashboard.proprietaires.update');
 
 Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::get($profilePath, [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch($profilePath, [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete($profilePath, [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
 // Routes accessibles à Admin et Gestionnaire (Gestion du patrimoine)

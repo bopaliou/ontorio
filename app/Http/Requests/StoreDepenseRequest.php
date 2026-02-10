@@ -2,6 +2,12 @@
 
 namespace App\Http\Requests;
 
+class StoreDepenseRequest extends BaseApiFormRequest
+{
+    protected bool $requiresAuthentication = true;
+
+    protected ?int $maxContentLengthBytes = 11534336;
+
 class StoreDepenseRequest extends AuthenticatedApiFormRequest
 {
     public function rules(): array

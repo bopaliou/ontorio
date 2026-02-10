@@ -19,6 +19,8 @@ use Carbon\Carbon;
  */
 class DashboardStatsService
 {
+    private const STATUS_ANNULE = 'annulé';
+
     /**
      * Obtenir les KPIs financiers principaux pour un mois donné
      */
@@ -41,6 +43,7 @@ class DashboardStatsService
                 ->first();
 
             $dateObj = Carbon::parse($mois);
+            ['encaissements' => $paiementsMois, 'depenses' => $depensesMois] = $this->getMonthlyCashflows($dateObj);
             $paiementsMois = $this->sumForMonth(Paiement::query(), 'date_paiement', $dateObj);
             $depensesMois = $this->sumForMonth(Depense::query(), 'date_depense', $dateObj);
 
@@ -161,6 +164,9 @@ class DashboardStatsService
                 $date = Carbon::now()->subMonths($i);
                 $labels[] = $date->translatedFormat('M Y');
 
+                ['encaissements' => $encaissementMois, 'depenses' => $depenseMois] = $this->getMonthlyCashflows($date);
+                $encaissements[] = $encaissementMois;
+                $depenses[] = $depenseMois;
                 $encaissements[] = $this->sumForMonth(Paiement::query(), 'date_paiement', $date);
                 $depenses[] = $this->sumForMonth(Depense::query(), 'date_depense', $date);
             }
@@ -214,6 +220,14 @@ class DashboardStatsService
         // On ne peut pas facilement tout oublier sans tags, mais vider les clés globales est un bon début.
         // Pour les clés par mois ou par proprietaire, elles expireront ou seront écrasées.
         // Idéalement on viderait tout le cache si c'est acceptable, ou on utiliserait un driver supportant les tags.
+    }
+
+    private function getMonthlyCashflows(Carbon $date): array
+    {
+        return [
+            'encaissements' => $this->sumForMonth(Paiement::query(), 'date_paiement', $date),
+            'depenses' => $this->sumForMonth(Depense::query(), 'date_depense', $date),
+        ];
     }
 
     private function sumForMonth($query, string $dateColumn, Carbon $date): float
