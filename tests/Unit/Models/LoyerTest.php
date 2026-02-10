@@ -9,6 +9,9 @@ use Tests\TestCase;
 
 class LoyerTest extends TestCase
 {
+    private const TEST_DATE = '2026-02-15';
+    private const TEST_MOIS = '2026-01';
+
     use \Illuminate\Foundation\Testing\RefreshDatabase;
 
     /**
@@ -32,10 +35,10 @@ class LoyerTest extends TestCase
      */
     public function test_date_echeance_calculation()
     {
-        Carbon::setTestNow('2026-02-15');
+        Carbon::setTestNow(self::TEST_DATE);
 
         $loyer = Loyer::factory()->create([
-            'mois' => '2026-01', // Janvier
+            'mois' => self::TEST_MOIS, // Janvier
         ]);
 
         // Échéance = 05/02
@@ -48,10 +51,10 @@ class LoyerTest extends TestCase
      */
     public function test_jours_retard_calculation()
     {
-        Carbon::setTestNow('2026-02-15');
+        Carbon::setTestNow(self::TEST_DATE);
 
         $loyer = Loyer::factory()->create([
-            'mois' => '2026-01', // Échéance: 05/02
+            'mois' => self::TEST_MOIS, // Échéance: 05/02
             'statut' => 'en_retard',
         ]);
 
@@ -93,7 +96,7 @@ class LoyerTest extends TestCase
      */
     public function test_est_en_retard_flag()
     {
-        Carbon::setTestNow('2026-02-15');
+        Carbon::setTestNow(self::TEST_DATE);
 
         // Loyer en retard
         $payé = Loyer::factory()->create([
@@ -102,7 +105,7 @@ class LoyerTest extends TestCase
         ]);
 
         $retard = Loyer::factory()->create([
-            'mois' => '2026-01',
+            'mois' => self::TEST_MOIS,
             'statut' => 'en_retard',
         ]);
 
