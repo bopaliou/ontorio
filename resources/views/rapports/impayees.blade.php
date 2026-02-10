@@ -34,7 +34,7 @@
             />
             <x-kpi-card 
                 label="Ancienneté Moyenne" 
-                :value="round($impayees->avg(fn($l) => $l->date_echeance->diffInDays(now())), 0)" 
+                :value="round($impayees->avg('jours_retard'), 0)" 
                 suffix="Jours"
                 icon="clock"
                 color="blue"
@@ -65,7 +65,7 @@
                     <tbody class="divide-y divide-gray-50">
                         @foreach($impayees as $loyer)
                             @php
-                                $retard = $loyer->date_echeance->diffInDays(now());
+                                $retard = $loyer->jours_retard;
                                 $retardColor = $retard > 30 ? 'text-red-600' : ($retard > 15 ? 'text-amber-600' : 'text-gray-600');
                                 $retardBg = $retard > 30 ? 'bg-red-50' : ($retard > 15 ? 'bg-amber-50' : 'bg-gray-50');
                             @endphp

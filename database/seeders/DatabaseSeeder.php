@@ -15,19 +15,9 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        // Comptes de test pour chaque rôle
         $this->call([
-            RolesAndPermissionsSeeder::class,
-            RoleUsersSeeder::class,
-            ActivityLogsSeeder::class,
-            MockDataSeeder::class,
-            OntarioPublicSiteSeeder::class,
+            TestUsersSeeder::class,
         ]);
-
-        // User::factory(10)->create();
-
-        // User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
     }
 }

@@ -42,6 +42,11 @@ class DashboardStatsService
             $paiementsMois = $this->sumForMonth(Paiement::query(), 'date_paiement', $dateObj);
             $depensesMois = $this->sumForMonth(Depense::query(), 'date_depense', $dateObj);
 
+            // Paiements pour les loyers du mois spécifique (pas tous les paiements du mois)
+            $paiementsPourLoyersMois = Paiement::whereHas('loyer', function ($q) use ($mois) {
+                $q->where('mois', $mois);
+            })->sum('montant');
+
             $arrieres = Loyer::whereIn('statut', ['émis', 'en_retard', 'partiellement_payé'])
                 ->where('statut', '!=', 'annulé')
                 ->selectRaw('SUM(montant) - SUM((SELECT COALESCE(SUM(montant), 0) FROM paiements WHERE paiements.loyer_id = loyers.id)) as solde_du')
@@ -49,7 +54,7 @@ class DashboardStatsService
                 ->solde_du ?? 0;
 
             $grossPotentialRent = Bien::sum('loyer_mensuel');
-            $tauxRecouvrement = $loyersStats->total_facture > 0 ? ($paiementsMois / $loyersStats->total_facture) * 100 : 0;
+            $tauxRecouvrement = $loyersStats->total_facture > 0 ? ($paiementsPourLoyersMois / $loyersStats->total_facture) * 100 : 0;
             $tauxOccupationFinancier = $grossPotentialRent > 0 ? ($loyersStats->total_facture / $grossPotentialRent) * 100 : 0;
 
             return [
