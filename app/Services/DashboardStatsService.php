@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\Enums\ContratStatus;
+use App\Enums\LoyerStatus;
 use App\Models\Bien;
 use App\Models\Contrat;
 use App\Models\Depense;
@@ -28,7 +30,7 @@ class DashboardStatsService
         return \Illuminate\Support\Facades\Cache::remember($cacheKey, now()->addHours(1), function () use ($mois) {
             // Loyers du mois
             $loyersStats = Loyer::where('mois', $mois)
-                ->where('statut', '!=', 'annulé')
+                ->where('statut', '!=', LoyerStatus::ANNULE->value)
                 ->selectRaw('
                     SUM(montant) as total_facture,
                     SUM(CASE WHEN statut = "payé" THEN montant ELSE 0 END) as total_paye,
@@ -47,8 +49,8 @@ class DashboardStatsService
                 $q->where('mois', $mois);
             })->sum('montant');
 
-            $arrieres = Loyer::whereIn('statut', ['émis', 'en_retard', 'partiellement_payé'])
-                ->where('statut', '!=', 'annulé')
+            $arrieres = Loyer::whereIn('statut', [LoyerStatus::EMIS->value, LoyerStatus::EN_RETARD->value, LoyerStatus::PARTIELLEMENT_PAYE->value])
+                ->where('statut', '!=', LoyerStatus::ANNULE->value)
                 ->selectRaw('SUM(montant) - SUM((SELECT COALESCE(SUM(montant), 0) FROM paiements WHERE paiements.loyer_id = loyers.id)) as solde_du')
                 ->first()
                 ->solde_du ?? 0;
@@ -81,7 +83,7 @@ class DashboardStatsService
     {
         return \Illuminate\Support\Facades\Cache::remember('dashboard_parc_stats', now()->addHours(1), function () {
             $totalBiens = Bien::count();
-            $biensOccupes = Contrat::where('statut', 'actif')->distinct('bien_id')->count('bien_id');
+            $biensOccupes = Contrat::where('statut', ContratStatus::ACTIF->value)->distinct('bien_id')->count('bien_id');
             $biensVacants = $totalBiens - $biensOccupes;
 
             return [
@@ -89,7 +91,7 @@ class DashboardStatsService
                 'biens_occupes' => $biensOccupes,
                 'biens_vacants' => $biensVacants,
                 'taux_occupation' => $totalBiens > 0 ? round(($biensOccupes / $totalBiens) * 100, 1) : 0,
-                'contrats_expirants' => Contrat::where('statut', 'actif')
+                'contrats_expirants' => Contrat::where('statut', ContratStatus::ACTIF->value)
                     ->whereNotNull('date_fin')
                     ->whereBetween('date_fin', [now(), now()->addDays(60)])
                     ->count(),
@@ -123,7 +125,7 @@ class DashboardStatsService
             $commissionMois = round($revenusMois * 0.10);
 
             $biensPerformance = Bien::where('proprietaire_id', $proprietaire->id)
-                ->withCount(['contrats as is_active' => fn ($q) => $q->where('statut', 'actif')])
+                ->withCount(['contrats as is_active' => fn ($q) => $q->where('statut', ContratStatus::ACTIF->value)])
                 ->addSelect([
                     'revenus_cumules' => Paiement::selectRaw('sum(montant)')
                         ->join('loyers', 'paiements.loyer_id', '=', 'loyers.id')
@@ -179,17 +181,17 @@ class DashboardStatsService
         return \Illuminate\Support\Facades\Cache::remember('dashboard_alerts', now()->addMinutes(30), function () {
             $alerts = [];
 
-            $loyersRetard = Loyer::where('statut', 'en_retard')->count();
+            $loyersRetard = Loyer::where('statut', LoyerStatus::EN_RETARD->value)->count();
             if ($loyersRetard > 0) {
                 $alerts[] = ['type' => 'warning', 'icon' => 'exclamation-triangle', 'message' => "$loyersRetard loyer(s) en retard", 'action' => 'loyers'];
             }
 
-            $contratsUrgents = Contrat::where('statut', 'actif')->whereNotNull('date_fin')->whereBetween('date_fin', [now(), now()->addDays(30)])->count();
+            $contratsUrgents = Contrat::where('statut', ContratStatus::ACTIF->value)->whereNotNull('date_fin')->whereBetween('date_fin', [now(), now()->addDays(30)])->count();
             if ($contratsUrgents > 0) {
                 $alerts[] = ['type' => 'info', 'icon' => 'calendar', 'message' => "$contratsUrgents contrat(s) expirant bientôt", 'action' => 'contrats'];
             }
 
-            $biensVacants = Bien::whereDoesntHave('contrats', fn ($q) => $q->where('statut', 'actif'))->count();
+            $biensVacants = Bien::whereDoesntHave('contrats', fn ($q) => $q->where('statut', ContratStatus::ACTIF->value))->count();
             if ($biensVacants > 0) {
                 $alerts[] = ['type' => 'secondary', 'icon' => 'home', 'message' => "$biensVacants bien(s) vacant(s)", 'action' => 'biens'];
             }
@@ -224,8 +226,8 @@ class DashboardStatsService
 
     protected function calculateArrearsAging(): array
     {
-        $loyersImpayes = Loyer::whereIn('statut', ['émis', 'en_retard', 'partiellement_payé'])
-            ->where('statut', '!=', 'annulé')
+        $loyersImpayes = Loyer::whereIn('statut', [LoyerStatus::EMIS->value, LoyerStatus::EN_RETARD->value, LoyerStatus::PARTIELLEMENT_PAYE->value])
+            ->where('statut', '!=', LoyerStatus::ANNULE->value)
             ->withSum('paiements', 'montant')
             ->get();
 

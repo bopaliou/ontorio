@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\LoyerStatus;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -141,5 +142,44 @@ class Loyer extends Model
     public function montantPayé()
     {
         return $this->paiements()->sum('montant') ?? 0;
+    }
+
+    /**
+     * Met à jour le statut du loyer en fonction des paiements et de la date
+     */
+    public function updateStatus(): string
+    {
+        // Ne pas changer le statut si annulé (sauf si on veut permettre la réactivation ?)
+        // Pour l'instant, on suppose que si on paie, on veut mettre à jour.
+        
+        $totalPaid = $this->paiements()->sum('montant');
+        $due = $this->montant + ($this->penalite ?? 0);
+        $tolerance = 0.5;
+
+        $oldStatus = $this->statut;
+
+        if ($totalPaid >= $due - $tolerance) {
+            $this->statut = LoyerStatus::PAYE->value;
+        } elseif ($totalPaid > $tolerance) {
+            $this->statut = LoyerStatus::PARTIELLEMENT_PAYE->value;
+        } else {
+            // Aucun paiement significatif
+            
+            // Si c'était annulé, on ne touche pas ? 
+            // Mais la logique de suppression de paiement réinitialisait à émis/retard.
+            // On va suivre la logique : recalculer basé sur la date.
+            
+            if (now()->gt($this->date_echeance)) {
+                $this->statut = LoyerStatus::EN_RETARD->value;
+            } else {
+                $this->statut = LoyerStatus::EMIS->value;
+            }
+        }
+
+        if ($this->statut !== $oldStatus) {
+            $this->save();
+        }
+
+        return $this->statut;
     }
 }
