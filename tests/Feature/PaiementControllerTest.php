@@ -119,8 +119,6 @@ class PaiementControllerTest extends TestCase
      */
     public function test_paiement_met_a_jour_loyer_status()
     {
-        $initial = $this->loyer->statut; // 'émis'
-
         Paiement::create([
             'loyer_id' => $this->loyer->id,
             'montant' => 100000, // Montant complet

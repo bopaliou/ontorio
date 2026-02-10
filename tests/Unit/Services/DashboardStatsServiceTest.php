@@ -137,7 +137,7 @@ class DashboardStatsServiceTest extends TestCase
 
         // 2 biens
         $bien1 = Bien::factory()->create(['proprietaire_id' => $proprio->id]);
-        $bien2 = Bien::factory()->create(['proprietaire_id' => $proprio->id]);
+        Bien::factory()->create(['proprietaire_id' => $proprio->id]);
 
         $locataire = Locataire::factory()->create();
 

@@ -100,7 +100,7 @@ class LoyerTest extends TestCase
         Carbon::setTestNow(self::TEST_DATE);
 
         // Loyer en retard
-        $payé = Loyer::factory()->create([
+        $paye = Loyer::factory()->create([
             'mois' => '2026-02',
             'statut' => 'payé',
         ]);
@@ -110,7 +110,7 @@ class LoyerTest extends TestCase
             'statut' => 'en_retard',
         ]);
 
-        $this->assertEquals(0, $payé->jours_retard);
+        $this->assertEquals(0, $paye->jours_retard);
         $this->assertGreaterThan(0, $retard->jours_retard);
     }
 }
