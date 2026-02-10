@@ -117,7 +117,7 @@
     </div>
 
     <!-- Modal User (Create/Edit) -->
-    <div id="user-modal" class="fixed inset-0 z-[200] hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <dialog id="user-modal" class="fixed inset-0 z-[200] hidden bg-transparent" aria-labelledby="modal-title" aria-modal="true">
         <div class="fixed inset-0 bg-gray-900/60 transition-opacity backdrop-blur-sm"></div>
         <div class="fixed inset-0 z-10 overflow-y-auto">
             <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
@@ -138,17 +138,17 @@
 
                         <div class="px-6 py-6 space-y-4">
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Nom complet</label>
+                                <label for="user-name" class="block text-sm font-medium text-gray-700 mb-1">Nom complet</label>
                                 <input type="text" name="name" id="user-name" required class="w-full rounded-xl border-gray-300 focus:border-[#cb2d2d] focus:ring-[#cb2d2d] shadow-sm">
                             </div>
 
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                                <label for="user-email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
                                 <input type="email" name="email" id="user-email" required class="w-full rounded-xl border-gray-300 focus:border-[#cb2d2d] focus:ring-[#cb2d2d] shadow-sm">
                             </div>
 
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Rôle</label>
+                                <label for="user-role" class="block text-sm font-medium text-gray-700 mb-1">Rôle</label>
                                 <select name="role" id="user-role" required class="w-full rounded-xl border-gray-300 focus:border-[#cb2d2d] focus:ring-[#cb2d2d] shadow-sm">
                                     <option value="gestionnaire">Gestionnaire</option>
                                     <option value="comptable">Comptable</option>
@@ -158,7 +158,7 @@
                             </div>
 
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Mot de passe <span id="pwd-hint" class="text-xs text-gray-400 font-normal">(Laisser vide si inchangé)</span></label>
+                                <label for="user-password" class="block text-sm font-medium text-gray-700 mb-1">Mot de passe <span id="pwd-hint" class="text-xs text-gray-400 font-normal">(Laisser vide si inchangé)</span></label>
                                 <input type="password" name="password" id="user-password" class="w-full rounded-xl border-gray-300 focus:border-[#cb2d2d] focus:ring-[#cb2d2d] shadow-sm">
                             </div>
                         </div>
@@ -171,7 +171,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </dialog>
 
     <!-- JS Logic -->
     <script>
@@ -205,10 +205,17 @@
                     document.getElementById('pwd-hint').classList.remove('hidden');
                     document.getElementById('user-password').required = false;
                 }
+
+                if (typeof this.el.showModal === 'function') {
+                    this.el.showModal();
+                }
             },
 
             close() {
                 this.el.classList.add('hidden');
+                if (typeof this.el.close === 'function') {
+                    this.el.close();
+                }
             }
         };
 

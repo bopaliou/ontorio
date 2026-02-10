@@ -38,22 +38,25 @@ class PaiementController extends Controller
      */
     public function store(\App\Http\Requests\StorePaiementRequest $request)
     {
+        $response = null;
+
         try {
             $paiement = $this->paymentService->recordPayment($request->validated());
-
-            return ApiResponse::created($paiement, 'Paiement enregistré avec succès !');
+            $response = ApiResponse::created($paiement, 'Paiement enregistré avec succès !');
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException) {
-            return ApiResponse::notFound('Loyer non trouvé.');
+            $response = ApiResponse::notFound('Loyer non trouvé.');
         } catch (BusinessRuleException $e) {
-            return ApiResponse::conflict($e->getMessage());
+            $response = ApiResponse::conflict($e->getMessage());
         } catch (\Exception $e) {
             \Log::error('Erreur enregistrement paiement', [
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
             ]);
 
-            return ApiResponse::error('Une erreur est survenue lors de l\'enregistrement.', 500);
+            $response = ApiResponse::error('Une erreur est survenue lors de l\'enregistrement.', 500);
         }
+
+        return $response;
     }
 
     /**

@@ -15,13 +15,13 @@ class DashboardStatsObserver
     }
 
     /** @param  Model  $model  Observed model instance (unused — cache is global) */
-    public function saved(Model $model): void
+    public function saved(): void
     {
         $this->statsService->clearCache();
     }
 
     /** @param  Model  $model  Observed model instance (unused — cache is global) */
-    public function deleted(Model $model): void
+    public function deleted(): void
     {
         $this->statsService->clearCache();
     }
