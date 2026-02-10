@@ -130,7 +130,7 @@
     </div>
 
     @push('scripts')
-    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <!-- ApexCharts bundled via Vite (app.js) -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const chartData = @json($chartData);
