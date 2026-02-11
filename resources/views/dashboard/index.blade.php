@@ -327,7 +327,7 @@
                 const activePanes = document.querySelectorAll('.section-pane:not(.hidden)');
                 activePanes.forEach(pane => {
                     if (pane.id !== 'section-' + sectionId) {
-                        pane.classList.add('opacity-0');
+                        pane.classList.add('opacity-0', 'translate-y-4'); // Reset position for exit
                         setTimeout(() => pane.classList.add('hidden'), 500);
                     }
                 });
@@ -347,7 +347,7 @@
                     this.loader.style.width = '70%';
 
                     requestAnimationFrame(() => {
-                        target.classList.remove('opacity-0');
+                        target.classList.remove('opacity-0', 'translate-y-4'); // Ensure clean stacking context
 
                         // Simulation d'un chargement de données (0.8s) pour apprécier le skeleton
                         setTimeout(() => {
