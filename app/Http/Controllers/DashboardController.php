@@ -140,7 +140,6 @@ class DashboardController extends Controller
         $financial = $this->statsService->getFinancialKPIs();
         $parc = $this->statsService->getParcStats();
         $commissionRate = (float) config('real_estate.commission.rate', 0.10);
-        $chartData = $this->statsService->getChartData();
 
         return [
             'role' => 'direction',

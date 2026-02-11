@@ -189,7 +189,7 @@
                 </button>
             </div>
 
-            <form id="pai-main-form" action="{{ route('paiements.store') }}" method="POST" enctype="multipart/form-data" class="p-6 form-stack field-gap max-h-[70vh] overflow-y-auto">
+            <form id="pai-main-form" action="{{ route('paiements.store') }}" method="POST" enctype="multipart/form-data" class="p-6 form-stack field-gap">
                 @csrf
 
                 <!-- Sélection Loyer -->

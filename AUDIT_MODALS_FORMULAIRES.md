@@ -32,6 +32,11 @@
    - migration des modals de: biens, locataires, contrats, dépenses, propriétaires, utilisateurs, paiements.
 4. **Résultat attendu**
    - rendu plus cohérent, meilleure lisibilité des formulaires, maintenance simplifiée, look plus professionnel.
+5. **Visibilité immédiate du contenu modal**
+   - réduction des espacements verticaux formulaires (tokens),
+   - augmentation de la largeur du modal dépenses,
+   - suppression du scroll forcé sur le formulaire paiements,
+   - contrainte de hauteur desktop du panel modal pour éviter les découpes visuelles.
 
 ## Recommandations supplémentaires (prochaine itération) — implémentées
 - ✅ Focus trap + retour focus au déclencheur sur fermeture (`window.modalUX`).
