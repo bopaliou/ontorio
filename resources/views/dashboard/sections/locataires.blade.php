@@ -216,14 +216,14 @@
     </div>
 
     <!-- MODAL (ULTRA COMPACT GRID) -->
-    <div id="loc-modal-wrapper" class="relative z-[100] hidden" aria-labelledby="loc-modal-title" role="dialog" aria-modal="true">
-        <div id="loc-modal-overlay" class="fixed inset-0 bg-gray-900/40 backdrop-blur-md transition-opacity opacity-0 duration-300"></div>
+    <div id="loc-modal-wrapper" class="app-modal-root hidden" aria-labelledby="loc-modal-title" role="dialog" aria-modal="true">
+        <div id="loc-modal-overlay" class="app-modal-overlay opacity-0"></div>
         <div class="fixed inset-0 z-10 w-screen overflow-y-auto" onclick="if(event.target === this) locSection.closeModal()">
             <div class="flex min-h-full items-end justify-center p-0 text-center sm:items-center sm:p-0" onclick="if(event.target === this) locSection.closeModal()">
-                <div id="loc-modal-container" class="relative transform overflow-hidden bg-white text-left shadow-2xl transition-all w-full h-full sm:h-auto sm:w-full sm:max-w-xl sm:my-8 rounded-none sm:rounded-2xl opacity-0 scale-95 duration-300 border border-gray-100">
+                <div id="loc-modal-container" class="app-modal-panel app-modal-panel-xl opacity-0 scale-95">
 
                     <!-- Header -->
-                    <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-white">
+                    <div class="app-modal-header px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-white">
                         <div>
                             <h3 id="loc-modal-title" class="text-base font-bold text-gray-900">Nouveau Dossier</h3>
                             <p class="text-[11px] text-gray-500 font-medium">Informations locataire.</p>
@@ -233,7 +233,7 @@
                         </button>
                     </div>
 
-                    <form id="loc-main-form" class="p-6 space-y-4">
+                    <form id="loc-main-form" class="p-6 form-stack field-gap">
                         <input type="hidden" name="id" id="loc-input-id">
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -269,7 +269,7 @@
                         </div>
 
                         <!-- Footer Actions -->
-                        <div class="pt-4 flex items-center justify-end gap-3 border-t border-gray-100">
+                        <div class="app-modal-footer pt-4 flex items-center justify-end gap-3 border-t border-gray-100">
                             <button type="button" onclick="locSection.closeModal()" class="px-4 py-2 text-gray-500 font-bold hover:bg-gray-50 rounded-xl transition text-[11px] uppercase tracking-widest">Annuler</button>
                             <button type="submit" id="loc-submit-btn" class="bg-[#cb2d2d] text-white px-6 py-2.5 rounded-xl font-black hover:bg-[#a82020] transition shadow-lg shadow-red-900/10 text-[11px] uppercase tracking-widest flex items-center gap-2">
                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
@@ -305,7 +305,7 @@
     <div id="loc-doc-modal" role="dialog" aria-modal="true" aria-labelledby="loc-doc-modal-title" onclick="if(event.target === this) locSection.closeDocumentModal()" class="fixed inset-0 z-[130] hidden bg-gray-900/60 backdrop-blur-sm flex items-center justify-center p-4 transition-opacity opacity-0 duration-300">
         <div id="loc-doc-container" class="bg-white rounded-2xl shadow-2xl max-w-lg w-full transform scale-95 transition-all duration-300 overflow-hidden border border-gray-100">
             <!-- Header -->
-            <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-white">
+            <div class="app-modal-header px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-white">
                 <div>
                     <h3 id="loc-doc-modal-title" class="text-base font-bold text-gray-900">Ajouter un Document</h3>
                     <p class="text-[11px] text-gray-500 font-medium">PDF, JPG, PNG, DOC (max 10 Mo)</p>
@@ -315,7 +315,7 @@
                 </button>
             </div>
 
-            <form id="loc-doc-form" class="p-6 space-y-4" enctype="multipart/form-data">
+            <form id="loc-doc-form" class="p-6 form-stack field-gap" enctype="multipart/form-data">
                 <input type="hidden" id="doc-locataire-id" name="locataire_id">
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -363,7 +363,7 @@
                 </div>
 
                 <!-- Footer Actions -->
-                <div class="pt-4 flex items-center justify-end gap-3 border-t border-gray-100">
+                <div class="app-modal-footer pt-4 flex items-center justify-end gap-3 border-t border-gray-100">
                     <button type="button" onclick="locSection.closeDocumentModal()" class="px-4 py-2 text-gray-500 font-bold hover:bg-gray-50 rounded-xl transition text-[11px] uppercase tracking-widest">Annuler</button>
                     <button type="submit" id="doc-submit-btn" class="bg-[#cb2d2d] text-white px-6 py-2.5 rounded-xl font-black hover:bg-[#a82020] transition shadow-lg shadow-red-900/10 text-[11px] uppercase tracking-widest flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
@@ -425,6 +425,7 @@
             const btn = document.getElementById('loc-submit-btn');
 
             wrapper.classList.remove('hidden');
+            window.modalUX?.activate(wrapper, container);
             setTimeout(() => {
                 overlay.classList.remove('opacity-0');
                 container.classList.remove('opacity-0', 'scale-95');
@@ -458,6 +459,7 @@
             overlay.classList.add('opacity-0');
             container.classList.remove('opacity-100', 'scale-100');
             container.classList.add('opacity-0', 'scale-95');
+            window.modalUX?.deactivate(wrapper);
 
             setTimeout(() => { wrapper.classList.add('hidden'); }, 300);
         },

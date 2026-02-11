@@ -42,11 +42,13 @@ class LoyerService
             }
 
             try {
+                $commissionRate = (float) config('real_estate.commission.rate', 0.10);
+
                 Loyer::create([
                     'contrat_id' => $contrat->id,
                     'mois' => $mois,
                     'montant' => $contrat->loyer_montant,
-                    'commission' => $contrat->loyer_montant * 0.10, // 10% commission
+                    'commission' => $contrat->loyer_montant * $commissionRate,
                     'statut' => 'émis',
                 ]);
                 $generes++;

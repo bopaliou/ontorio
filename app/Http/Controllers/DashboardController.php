@@ -139,6 +139,8 @@ class DashboardController extends Controller
     {
         $financial = $this->statsService->getFinancialKPIs();
         $parc = $this->statsService->getParcStats();
+        $chartData = $this->statsService->getChartData();
+        $commissionRate = (float) config('real_estate.commission.rate', 0.10);
 
         return [
             'role' => 'direction',
@@ -148,14 +150,21 @@ class DashboardController extends Controller
                 'taux_occupation' => $parc['taux_occupation'],
                 'revenu_mensuel' => $financial['loyers_encaisses'],
                 'taux_collecte' => $financial['taux_recouvrement'],
-                'commission_mensuelle' => round($financial['loyers_encaisses'] * 0.10),
+                'commission_mensuelle' => round($financial['loyers_encaisses'] * $commissionRate),
                 'impayes' => $financial['arrieres_total'],
                 'valeur_portefeuille' => $financial['gross_potential_rent'],
                 'loyer_moyen' => $parc['total_biens'] > 0 ? round($financial['gross_potential_rent'] / $parc['total_biens']) : 0,
-                'projection_annuelle' => round($financial['loyers_encaisses'] * 0.10) * 12,
+                'projection_annuelle' => round($financial['loyers_encaisses'] * $commissionRate) * 12,
+                'taux_vacance_economique' => $financial['economic_vacancy_rate'],
+                'perte_vacance_economique' => $financial['economic_vacancy_loss'],
             ],
             'repartition_type' => DB::table('biens')->select('type', DB::raw('count(*) as total'))->groupBy('type')->get(),
-            'revenus_par_mois' => $this->statsService->getChartData()['encaissements'], // Simplifié ou adapté selon vue
+            'revenus_par_mois' => collect($chartData['labels'] ?? [])->map(function ($label, $index) use ($chartData) {
+                return [
+                    'mois' => $label,
+                    'montant' => (float) ($chartData['encaissements'][$index] ?? 0),
+                ];
+            })->all(),
             'derniers_paiements' => Paiement::with(['loyer.contrat.locataire'])->latest()->limit(5)->get(),
             'contrats_expiration' => Contrat::with(['bien', 'locataire'])
                 ->where('statut', 'actif')
@@ -172,6 +181,7 @@ class DashboardController extends Controller
     public function exporterRapportMensuel($mois = null)
     {
         $mois = $mois ?? request('mois') ?? Carbon::now()->format('Y-m');
+        $commissionRate = (float) config('real_estate.commission.rate', 0.10);
 
         $financial = $this->statsService->getFinancialKPIs($mois);
         $parc = $this->statsService->getParcStats();
@@ -187,7 +197,9 @@ class DashboardController extends Controller
                 'loyers_emis' => $financial['loyers_factures'],
                 'loyers_payes' => $financial['loyers_encaisses'],
                 'total_impaye' => $financial['arrieres_total'],
-                'commission_mensuelle' => round($financial['loyers_encaisses'] * 0.10),
+                'commission_mensuelle' => round($financial['loyers_encaisses'] * $commissionRate),
+                'taux_vacance_economique' => $financial['economic_vacancy_rate'],
+                'perte_vacance_economique' => $financial['economic_vacancy_loss'],
             ],
             'revenus_par_mois' => array_map(function ($label, $val) {
                 return ['mois' => $label, 'montant' => $val];
