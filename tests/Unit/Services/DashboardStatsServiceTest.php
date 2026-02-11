@@ -129,6 +129,65 @@ class DashboardStatsServiceTest extends TestCase
     }
 
     /**
+     * Test: Les arriérés incluent aussi les pénalités
+     */
+    public function test_financial_kpis_arrieres_include_penalites()
+    {
+        $proprio = Proprietaire::factory()->create();
+        $bien = Bien::factory()->create(['proprietaire_id' => $proprio->id]);
+        $locataire = Locataire::factory()->create();
+
+        $contrat = Contrat::factory()->create([
+            'bien_id' => $bien->id,
+            'locataire_id' => $locataire->id,
+            'loyer_montant' => 100000,
+        ]);
+
+        Loyer::create([
+            'contrat_id' => $contrat->id,
+            'mois' => '2026-01',
+            'montant' => 100000,
+            'penalite' => 5000,
+            'statut' => 'en_retard',
+        ]);
+
+        $kpis = $this->service->getFinancialKPIs(self::TEST_MONTH);
+
+        $this->assertEquals(105000.0, $kpis['arrieres_total']);
+    }
+
+    /**
+     * Test: Le vieillissement des impayés est basé sur la date d'échéance
+     */
+    public function test_arrears_aging_uses_due_date()
+    {
+        $proprio = Proprietaire::factory()->create();
+        $bien = Bien::factory()->create(['proprietaire_id' => $proprio->id]);
+        $locataire = Locataire::factory()->create();
+
+        $contrat = Contrat::factory()->create([
+            'bien_id' => $bien->id,
+            'locataire_id' => $locataire->id,
+            'loyer_montant' => 100000,
+        ]);
+
+        // Mois en cours: échéance au 05/03, donc à la date test (15/02) il n'est pas encore en retard
+        Loyer::create([
+            'contrat_id' => $contrat->id,
+            'mois' => self::TEST_MONTH,
+            'montant' => 100000,
+            'statut' => 'émis',
+        ]);
+
+        $kpis = $this->service->getFinancialKPIs(self::TEST_MONTH);
+
+        $this->assertEquals(100000.0, $kpis['arrears_aging']['0-30']);
+        $this->assertEquals(0.0, $kpis['arrears_aging']['31-60']);
+        $this->assertEquals(0.0, $kpis['arrears_aging']['61-90']);
+        $this->assertEquals(0.0, $kpis['arrears_aging']['90+']);
+    }
+
+    /**
      * Test: Statistiques parc immobilier
      */
     public function test_parc_stats_occupancy_rate()
