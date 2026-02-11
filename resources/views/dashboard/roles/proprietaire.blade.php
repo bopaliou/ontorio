@@ -68,7 +68,11 @@
             </div>
 
             <div class="h-72 flex items-end justify-between gap-4 px-2">
-                @php $maxValTrend = max(array_column($data['revenus_par_mois'], 'montant')) ?: 1; @endphp
+                @php
+                    $montantsTrend = array_column($data['revenus_par_mois'], 'montant');
+                    $maxValTrend = !empty($montantsTrend) ? max($montantsTrend) : 0;
+                    $maxValTrend = $maxValTrend ?: 1;
+                @endphp
                 @foreach($data['revenus_par_mois'] as $revData)
                     @php $hTrend = ($revData['montant'] / $maxValTrend) * 90; @endphp
                     <div class="flex-1 flex flex-col items-center group">
