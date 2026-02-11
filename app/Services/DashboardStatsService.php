@@ -51,13 +51,15 @@ class DashboardStatsService
 
             $arrieres = Loyer::whereIn('statut', [LoyerStatus::EMIS->value, LoyerStatus::EN_RETARD->value, LoyerStatus::PARTIELLEMENT_PAYE->value])
                 ->where('statut', '!=', LoyerStatus::ANNULE->value)
-                ->selectRaw('SUM(montant) - SUM((SELECT COALESCE(SUM(montant), 0) FROM paiements WHERE paiements.loyer_id = loyers.id)) as solde_du')
+                ->selectRaw('SUM(montant + COALESCE(penalite, 0)) - SUM((SELECT COALESCE(SUM(montant), 0) FROM paiements WHERE paiements.loyer_id = loyers.id)) as solde_du')
                 ->first()
                 ->solde_du ?? 0;
 
             $grossPotentialRent = Bien::sum('loyer_mensuel');
             $tauxRecouvrement = $loyersStats->total_facture > 0 ? ($paiementsPourLoyersMois / $loyersStats->total_facture) * 100 : 0;
             $tauxOccupationFinancier = $grossPotentialRent > 0 ? ($loyersStats->total_facture / $grossPotentialRent) * 100 : 0;
+            $vacanceEconomiqueMontant = max(0, $grossPotentialRent - ($loyersStats->total_facture ?? 0));
+            $tauxVacanceEconomique = $grossPotentialRent > 0 ? ($vacanceEconomiqueMontant / $grossPotentialRent) * 100 : 0;
 
             return [
                 'loyers_factures' => (float) ($loyersStats->total_facture ?? 0),
@@ -71,6 +73,8 @@ class DashboardStatsService
                 'arrieres_total' => (float) $arrieres,
                 'gross_potential_rent' => (float) $grossPotentialRent,
                 'financial_occupancy_rate' => round($tauxOccupationFinancier, 1),
+                'economic_vacancy_loss' => (float) $vacanceEconomiqueMontant,
+                'economic_vacancy_rate' => round($tauxVacanceEconomique, 1),
                 'arrears_aging' => $this->calculateArrearsAging(),
             ];
         });
@@ -122,7 +126,8 @@ class DashboardStatsService
                 $q->where('proprietaire_id', $proprietaire->id);
             })->where('date_depense', 'like', $moisActuel.'%')->sum('montant');
 
-            $commissionMois = round($revenusMois * 0.10);
+            $commissionRate = (float) config('real_estate.commission.rate', 0.10);
+            $commissionMois = round($revenusMois * $commissionRate);
 
             $biensPerformance = Bien::where('proprietaire_id', $proprietaire->id)
                 ->withCount(['contrats as is_active' => fn ($q) => $q->where('statut', ContratStatus::ACTIF->value)])
@@ -234,13 +239,22 @@ class DashboardStatsService
         $aging = ['0-30' => 0, '31-60' => 0, '61-90' => 0, '90+' => 0];
 
         foreach ($loyersImpayes as $loyer) {
-            $reste = $loyer->montant - ($loyer->paiements_sum_montant ?? 0);
+            $reste = ($loyer->montant + ($loyer->penalite ?? 0)) - ($loyer->paiements_sum_montant ?? 0);
             if ($reste <= 0.5) {
                 continue;
             }
 
-            $dateLoyer = Carbon::parse($loyer->mois.'-01');
-            $ageJours = $dateLoyer->diffInDays(Carbon::now());
+            $dateEcheance = $loyer->date_echeance;
+            if (!$dateEcheance) {
+                continue;
+            }
+
+            if (Carbon::now()->lte($dateEcheance)) {
+                $aging['0-30'] += $reste;
+                continue;
+            }
+
+            $ageJours = $dateEcheance->diffInDays(Carbon::now());
 
             if ($ageJours <= 30) {
                 $aging['0-30'] += $reste;
