@@ -202,6 +202,105 @@
                 }
             };
 
+            // Gestion accessibilité/UX des modals (focus trap + retour focus)
+            window.modalUX = (function() {
+                const stack = [];
+                const selector = 'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]):not([type="hidden"]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
+                function getFocusable(container) {
+                    if (!container) return [];
+                    return Array.from(container.querySelectorAll(selector)).filter(el => el.offsetParent !== null);
+                }
+
+                function onKeydown(event) {
+                    if (event.key !== 'Tab') return;
+                    const current = stack[stack.length - 1];
+                    if (!current) return;
+
+                    const focusable = getFocusable(current.container);
+                    if (!focusable.length) return;
+
+                    const first = focusable[0];
+                    const last = focusable[focusable.length - 1];
+
+                    if (event.shiftKey && document.activeElement === first) {
+                        event.preventDefault();
+                        last.focus();
+                    } else if (!event.shiftKey && document.activeElement === last) {
+                        event.preventDefault();
+                        first.focus();
+                    }
+                }
+
+                document.addEventListener('keydown', onKeydown);
+
+                return {
+                    activate: function(root, container) {
+                        if (!root || !container) return;
+                        const trigger = document.activeElement;
+                        stack.push({ root, container, trigger });
+
+                        requestAnimationFrame(() => {
+                            const focusable = getFocusable(container);
+                            (focusable[0] || container).focus?.();
+                        });
+                    },
+                    deactivate: function(root) {
+                        if (!root) return;
+                        const idx = stack.map(s => s.root).lastIndexOf(root);
+                        if (idx === -1) return;
+
+                        const [entry] = stack.splice(idx, 1);
+                        if (entry?.trigger && document.contains(entry.trigger)) {
+                            requestAnimationFrame(() => entry.trigger.focus());
+                        }
+                    },
+                };
+            })();
+
+            // Validation inline uniforme pour formulaires modaux
+            document.addEventListener('submit', function(event) {
+                const form = event.target;
+                if (!(form instanceof HTMLFormElement)) return;
+                if (!form.id || !form.id.endsWith('-main-form')) return;
+
+                form.querySelectorAll('.field-invalid').forEach(el => el.classList.remove('field-invalid'));
+                form.querySelectorAll('.form-error-message').forEach(el => el.remove());
+
+                if (form.checkValidity()) return;
+
+                event.preventDefault();
+                const invalidFields = Array.from(form.querySelectorAll('input, select, textarea')).filter(el => !el.checkValidity());
+
+                invalidFields.forEach((field) => {
+                    field.classList.add('field-invalid');
+                    field.setAttribute('aria-invalid', 'true');
+
+                    if (!field.nextElementSibling || !field.nextElementSibling.classList.contains('form-error-message')) {
+                        const hint = document.createElement('p');
+                        hint.className = 'form-error-message';
+                        hint.innerHTML = '<span aria-hidden="true">⚠️</span><span>' + (field.validationMessage || 'Champ invalide.') + '</span>';
+                        field.insertAdjacentElement('afterend', hint);
+                    }
+                });
+
+                invalidFields[0]?.focus();
+            });
+
+            document.addEventListener('input', function(event) {
+                const field = event.target;
+                if (!(field instanceof HTMLInputElement || field instanceof HTMLSelectElement || field instanceof HTMLTextAreaElement)) {
+                    return;
+                }
+
+                if (field.checkValidity()) {
+                    field.classList.remove('field-invalid');
+                    if (field.nextElementSibling?.classList.contains('form-error-message')) {
+                        field.nextElementSibling.remove();
+                    }
+                }
+            });
+
             // Fermer les modaux avec la touche Échap
             document.addEventListener('keydown', function(event) {
                 if (event.key === 'Escape') {

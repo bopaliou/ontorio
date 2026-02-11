@@ -175,8 +175,8 @@
     </div>
 
     <!-- MODAL (ULTRA COMPACT GRID) -->
-    <div id="pai-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="pai-modal-title" onclick="if(event.target === this) paiSection.closeModal()" class="fixed inset-0 z-[60] hidden bg-slate-900/40 backdrop-blur-md transition-all duration-300 flex items-end sm:items-center justify-center p-0 sm:p-4">
-        <div id="pai-modal-container" class="bg-white w-full h-full sm:h-auto sm:max-w-xl rounded-none sm:rounded-2xl shadow-2xl transform scale-95 opacity-0 transition-all duration-300 overflow-hidden border border-gray-100">
+    <div id="pai-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="pai-modal-title" onclick="if(event.target === this) paiSection.closeModal()" class="fixed inset-0 z-[60] hidden bg-slate-900/55 backdrop-blur-[2px] transition-all duration-300 flex items-end sm:items-center justify-center p-0 sm:p-4">
+        <div id="pai-modal-container" class="app-modal-panel app-modal-panel-xl scale-95 opacity-0">
 
             <!-- Header Compact -->
             <div class="bg-[#274256] px-6 py-4 flex items-center justify-between">
@@ -189,7 +189,7 @@
                 </button>
             </div>
 
-            <form id="pai-main-form" action="{{ route('paiements.store') }}" method="POST" enctype="multipart/form-data" class="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
+            <form id="pai-main-form" action="{{ route('paiements.store') }}" method="POST" enctype="multipart/form-data" class="p-6 form-stack field-gap max-h-[70vh] overflow-y-auto">
                 @csrf
 
                 <!-- Sélection Loyer -->
@@ -300,7 +300,7 @@
                 </div>
 
                 <!-- Footer Actions -->
-                <div class="pt-4 flex items-center justify-end gap-3 border-t border-gray-100">
+                <div class="app-modal-footer pt-4 flex items-center justify-end gap-3 border-t border-gray-100">
                     <button type="button" onclick="paiSection.closeModal()" class="px-4 py-2 text-gray-500 font-bold hover:bg-gray-50 rounded-xl transition text-[11px] uppercase tracking-widest">Annuler</button>
                     <button type="submit" id="pai-submit-btn" class="bg-[#cb2d2d] text-white px-6 py-2.5 rounded-xl font-black hover:bg-[#a82020] transition shadow-lg shadow-red-900/20 text-[11px] uppercase tracking-widest flex items-center gap-2">
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
@@ -342,6 +342,7 @@
             const overlay = document.getElementById('pai-modal-overlay');
             const container = document.getElementById('pai-modal-container');
             overlay.classList.remove('hidden');
+            window.modalUX?.activate(overlay, container);
             setTimeout(() => { container.classList.remove('scale-95', 'opacity-0'); }, 10);
         },
 
@@ -349,6 +350,7 @@
             const overlay = document.getElementById('pai-modal-overlay');
             const container = document.getElementById('pai-modal-container');
             container.classList.add('scale-95', 'opacity-0');
+            window.modalUX?.deactivate(overlay);
             setTimeout(() => { overlay.classList.add('hidden'); }, 300);
         }
     };
