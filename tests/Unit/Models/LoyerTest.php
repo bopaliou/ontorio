@@ -148,7 +148,7 @@ class LoyerTest extends TestCase
             'mois' => '2025-10',
             'montant' => 100000,
             'statut' => 'en_retard',
-            'taux_penalite' => null,
+            'taux_penalite' => 0,
         ]);
 
         // Retard > 4 mois, plafonné à 4 mois en commercial: 100000 * 12% * 4 = 48000

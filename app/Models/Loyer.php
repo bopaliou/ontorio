@@ -115,7 +115,12 @@ class Loyer extends Model
 
         $rules = $this->getPenaltyRules();
         $configuredRate = (float) ($rules['rate_percent'] ?? config('real_estate.penalties.default_rate_percent', 10));
-        $tauxMensuel = ($this->taux_penalite ?? $configuredRate) / 100;
+        $penaltyRate = (float) ($this->taux_penalite ?? 0);
+        if ($penaltyRate <= 0) {
+            $penaltyRate = $configuredRate;
+        }
+
+        $tauxMensuel = $penaltyRate / 100;
         $moisRetard = ceil($this->jours_retard / 30);
 
         // Pénalité = montant * taux * nombre de mois de retard (plafonné selon la grille)

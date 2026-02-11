@@ -132,11 +132,11 @@ class DashboardStatsService
             $biensPerformance = Bien::where('proprietaire_id', $proprietaire->id)
                 ->withCount(['contrats as is_active' => fn ($q) => $q->where('statut', ContratStatus::ACTIF->value)])
                 ->addSelect([
-                    'revenus_cumules' => Paiement::selectRaw('sum(montant)')
+                    'revenus_cumules' => Paiement::selectRaw('sum(paiements.montant)')
                         ->join('loyers', 'paiements.loyer_id', '=', 'loyers.id')
                         ->join('contrats', 'loyers.contrat_id', '=', 'contrats.id')
                         ->whereColumn('contrats.bien_id', 'biens.id'),
-                    'charges_cumulees' => Depense::selectRaw('sum(montant)')
+                    'charges_cumulees' => Depense::selectRaw('sum(depenses.montant)')
                         ->whereColumn('depenses.bien_id', 'biens.id'),
                 ])
                 ->get();
