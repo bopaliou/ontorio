@@ -143,14 +143,14 @@
     </div>
 
     <!-- MODAL (ULTRA COMPACT GRID) -->
-    <div id="con-modal-wrapper" class="relative z-[100] hidden" aria-labelledby="con-modal-title" role="dialog" aria-modal="true">
-        <div id="con-modal-overlay" class="fixed inset-0 bg-gray-900/40 backdrop-blur-md transition-opacity opacity-0 duration-300"></div>
+    <div id="con-modal-wrapper" class="app-modal-root hidden" aria-labelledby="con-modal-title" role="dialog" aria-modal="true">
+        <div id="con-modal-overlay" class="app-modal-overlay opacity-0"></div>
         <div class="fixed inset-0 z-10 w-screen overflow-y-auto" onclick="if(event.target === this) conSection.closeModal()">
             <div class="flex min-h-full items-end justify-center p-0 text-center sm:items-center sm:p-0" onclick="if(event.target === this) conSection.closeModal()">
-                <div id="con-modal-container" class="relative transform overflow-hidden bg-white text-left shadow-2xl transition-all w-full h-full sm:h-auto sm:w-full sm:max-w-xl sm:my-8 rounded-none sm:rounded-2xl opacity-0 scale-95 duration-300 border border-gray-100">
+                <div id="con-modal-container" class="app-modal-panel app-modal-panel-xl opacity-0 scale-95">
 
                     <!-- Header -->
-                    <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-white">
+                    <div class="app-modal-header px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-white">
                         <div>
                             <h3 id="con-modal-title" class="text-base font-bold text-gray-900">Éditer un Bail</h3>
                             <p class="text-[11px] text-gray-500 mt-0.5 font-medium">Création du contrat.</p>
@@ -160,7 +160,7 @@
                         </button>
                     </div>
 
-                    <form id="con-main-form" class="p-6 space-y-4">
+                    <form id="con-main-form" class="p-6 form-stack field-gap">
                         <input type="hidden" name="id" id="con-input-id">
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -228,7 +228,7 @@
                         </div>
 
                          <!-- Footer Actions -->
-                        <div class="pt-4 flex items-center justify-end gap-3 border-t border-gray-100">
+                        <div class="app-modal-footer pt-4 flex items-center justify-end gap-3 border-t border-gray-100">
                             <button type="button" onclick="conSection.closeModal()" class="px-4 py-2 text-gray-500 font-bold hover:bg-gray-50 rounded-xl transition text-[11px] uppercase tracking-widest">Annuler</button>
                             <button type="submit" id="con-submit-btn" class="bg-[#cb2d2d] text-white px-6 py-2.5 rounded-xl font-black hover:bg-[#a82020] transition shadow-lg shadow-red-900/10 text-[11px] uppercase tracking-widest flex items-center gap-2">
                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
@@ -313,6 +313,7 @@
             }
 
             wrapper.classList.remove('hidden');
+            window.modalUX?.activate(wrapper, container);
             setTimeout(() => {
                 overlay.classList.remove('opacity-0');
                 container.classList.remove('opacity-0', 'scale-95');
@@ -330,6 +331,7 @@
             overlay.classList.add('opacity-0');
             container.classList.remove('opacity-100', 'scale-100');
             container.classList.add('opacity-0', 'scale-95');
+            window.modalUX?.deactivate(wrapper);
 
             setTimeout(() => { wrapper.classList.add('hidden'); }, 300);
         },
