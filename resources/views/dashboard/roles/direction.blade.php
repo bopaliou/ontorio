@@ -76,7 +76,11 @@
             </div>
 
             <div class="flex-1 h-64 flex items-end justify-between gap-6 px-4">
-                @php $maxVal = max(array_column($data['revenus_par_mois'], 'montant')) ?: 1; @endphp
+                @php
+                    $montants = array_column($data['revenus_par_mois'], 'montant');
+                    $maxVal = !empty($montants) ? max($montants) : 0;
+                    $maxVal = $maxVal ?: 1;
+                @endphp
                 @foreach(array_reverse($data['revenus_par_mois']) as $moisData)
                     @php $height = ($moisData['montant'] / $maxVal) * 100; @endphp
                     <div class="flex-1 flex flex-col justify-end group cursor-pointer">
