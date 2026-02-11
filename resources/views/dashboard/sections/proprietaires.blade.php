@@ -156,14 +156,14 @@
     </div>
 
     <!-- MODAL: CONFIGURATION AGENCE (Refined) -->
-    <div id="prop-modal-wrapper" class="relative z-[100] hidden" aria-labelledby="prop-modal-title" role="dialog" aria-modal="true">
-        <div id="prop-modal-overlay" class="fixed inset-0 bg-[#274256]/60 backdrop-blur-sm transition-opacity opacity-0 duration-300"></div>
+    <div id="prop-modal-wrapper" class="app-modal-root hidden" aria-labelledby="prop-modal-title" role="dialog" aria-modal="true">
+        <div id="prop-modal-overlay" class="app-modal-overlay opacity-0"></div>
         <div class="fixed inset-0 z-10 w-screen overflow-y-auto" onclick="if(event.target === this) propSection.closeModal()">
             <div class="flex min-h-full items-end justify-center p-0 text-center sm:items-center sm:p-0" onclick="if(event.target === this) propSection.closeModal()">
-                <div id="prop-modal-container" class="relative transform overflow-hidden bg-white text-left shadow-2xl transition-all w-full h-full sm:h-auto sm:w-full sm:max-w-2xl sm:my-8 rounded-none sm:rounded-3xl opacity-0 scale-95 duration-300 border border-gray-100">
+                <div id="prop-modal-container" class="app-modal-panel app-modal-panel-2xl app-modal-panel-soft opacity-0 scale-95">
 
                     <!-- Header -->
-                    <div class="px-8 py-6 border-b border-gray-100 flex items-center justify-between bg-white sticky top-0 z-10">
+                    <div class="app-modal-header px-8 py-6 border-b border-gray-100 flex items-center justify-between bg-white">
                         <div>
                             <h3 id="prop-modal-title" class="text-xl font-black text-gray-900 tracking-tight">Identité Agence</h3>
                             <p class="text-xs text-gray-500 font-medium mt-1">Données légales et publiques.</p>
@@ -174,7 +174,7 @@
                     </div>
 
                     <!-- Form -->
-                    <form id="prop-main-form" class="p-8 space-y-6">
+                    <form id="prop-main-form" class="p-8 form-stack field-gap">
                         <input type="hidden" name="id" id="prop-input-id">
 
                          <div class="bg-blue-50 rounded-2xl p-4 flex items-start gap-4 mb-6">
@@ -244,6 +244,7 @@
             const title = document.getElementById('prop-modal-title');
 
             wrapper.classList.remove('hidden');
+            window.modalUX?.activate(wrapper, container);
             setTimeout(() => {
                 overlay.classList.remove('opacity-0');
                 container.classList.remove('opacity-0', 'scale-95');
@@ -274,6 +275,7 @@
             overlay.classList.add('opacity-0');
             container.classList.remove('opacity-100', 'scale-100');
             container.classList.add('opacity-0', 'scale-95');
+            window.modalUX?.deactivate(wrapper);
 
             setTimeout(() => { wrapper.classList.add('hidden'); }, 300);
         }

@@ -173,14 +173,14 @@
     </div>
 
     <!-- MODAL FORM (ULTRA COMPACT GRID) -->
-    <div id="bien-modal-wrapper" class="relative z-[100] hidden" aria-labelledby="bien-modal-title" role="dialog" aria-modal="true">
-        <div id="bien-modal-overlay" class="fixed inset-0 bg-gray-900/40 backdrop-blur-md transition-opacity opacity-0 duration-300"></div>
+    <div id="bien-modal-wrapper" class="app-modal-root hidden" aria-labelledby="bien-modal-title" role="dialog" aria-modal="true">
+        <div id="bien-modal-overlay" class="app-modal-overlay opacity-0"></div>
         <div class="fixed inset-0 z-10 w-screen overflow-y-auto" onclick="if(event.target === this) bienSection.closeModal()">
             <div class="flex min-h-full items-end justify-center p-0 text-center sm:items-center sm:p-0" onclick="if(event.target === this) bienSection.closeModal()">
-                <div id="bien-modal-container" class="relative transform overflow-hidden bg-white text-left shadow-2xl transition-all w-full h-full sm:h-auto sm:w-full sm:max-w-xl sm:my-8 rounded-none sm:rounded-2xl opacity-0 scale-95 duration-300 border border-gray-100">
+                <div id="bien-modal-container" class="app-modal-panel app-modal-panel-xl opacity-0 scale-95">
 
                     <!-- Header -->
-                    <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-white">
+                    <div class="app-modal-header px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-white">
                         <div>
                             <h3 id="bien-modal-title" class="text-base font-bold text-gray-900">Nouveau Bien</h3>
                             <p class="text-[11px] text-gray-500 font-medium">Informations du logement.</p>
@@ -190,7 +190,7 @@
                         </button>
                     </div>
 
-                    <form id="bien-main-form" class="p-6 space-y-4" enctype="multipart/form-data">
+                    <form id="bien-main-form" class="p-6 form-stack field-gap" enctype="multipart/form-data">
                         <input type="hidden" name="id" id="bien-input-id">
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -263,7 +263,7 @@
                         </div>
 
                         <!-- Footer Actions -->
-                        <div class="pt-4 flex items-center justify-end gap-3 border-t border-gray-100">
+                        <div class="app-modal-footer pt-4 flex items-center justify-end gap-3 border-t border-gray-100">
                             <button type="button" onclick="bienSection.closeModal()" class="px-4 py-2 text-gray-500 font-bold hover:bg-gray-50 rounded-xl transition text-[11px] uppercase tracking-widest">Annuler</button>
                             <button type="submit" id="bien-submit-btn" class="bg-[#cb2d2d] text-white px-6 py-2.5 rounded-xl font-black hover:bg-[#a82020] transition shadow-lg shadow-red-900/20 text-[11px] uppercase tracking-widest flex items-center gap-2">
                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
@@ -314,6 +314,7 @@
             const btn = document.getElementById('bien-submit-btn');
 
             wrapper.classList.remove('hidden');
+            window.modalUX?.activate(wrapper, container);
             setTimeout(() => {
                 overlay.classList.remove('opacity-0');
                 container.classList.remove('opacity-0', 'scale-95');
@@ -348,6 +349,7 @@
             overlay.classList.add('opacity-0');
             container.classList.remove('opacity-100', 'scale-100');
             container.classList.add('opacity-0', 'scale-95');
+            window.modalUX?.deactivate(wrapper);
 
             setTimeout(() => { wrapper.classList.add('hidden'); }, 300);
         },
