@@ -158,7 +158,12 @@ class DashboardController extends Controller
                 'perte_vacance_economique' => $financial['economic_vacancy_loss'],
             ],
             'repartition_type' => DB::table('biens')->select('type', DB::raw('count(*) as total'))->groupBy('type')->get(),
-            'revenus_par_mois' => $this->statsService->getChartData()['encaissements'], // Simplifié ou adapté selon vue
+            'revenus_par_mois' => collect($chartData['labels'])->map(function ($label, $index) use ($chartData) {
+                return [
+                    'mois' => $label,
+                    'montant' => $chartData['encaissements'][$index] ?? 0,
+                ];
+            })->all(),
             'derniers_paiements' => Paiement::with(['loyer.contrat.locataire'])->latest()->limit(5)->get(),
             'contrats_expiration' => Contrat::with(['bien', 'locataire'])
                 ->where('statut', 'actif')
