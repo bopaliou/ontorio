@@ -51,7 +51,7 @@ class DashboardStatsService
 
             $arrieres = Loyer::whereIn('statut', [LoyerStatus::EMIS->value, LoyerStatus::EN_RETARD->value, LoyerStatus::PARTIELLEMENT_PAYE->value])
                 ->where('statut', '!=', LoyerStatus::ANNULE->value)
-                ->selectRaw('SUM(montant) - SUM((SELECT COALESCE(SUM(montant), 0) FROM paiements WHERE paiements.loyer_id = loyers.id)) as solde_du')
+                ->selectRaw('SUM(montant + COALESCE(penalite, 0)) - SUM((SELECT COALESCE(SUM(montant), 0) FROM paiements WHERE paiements.loyer_id = loyers.id)) as solde_du')
                 ->first()
                 ->solde_du ?? 0;
 
@@ -234,13 +234,22 @@ class DashboardStatsService
         $aging = ['0-30' => 0, '31-60' => 0, '61-90' => 0, '90+' => 0];
 
         foreach ($loyersImpayes as $loyer) {
-            $reste = $loyer->montant - ($loyer->paiements_sum_montant ?? 0);
+            $reste = ($loyer->montant + ($loyer->penalite ?? 0)) - ($loyer->paiements_sum_montant ?? 0);
             if ($reste <= 0.5) {
                 continue;
             }
 
-            $dateLoyer = Carbon::parse($loyer->mois.'-01');
-            $ageJours = $dateLoyer->diffInDays(Carbon::now());
+            $dateEcheance = $loyer->date_echeance;
+            if (!$dateEcheance) {
+                continue;
+            }
+
+            if (Carbon::now()->lte($dateEcheance)) {
+                $aging['0-30'] += $reste;
+                continue;
+            }
+
+            $ageJours = $dateEcheance->diffInDays(Carbon::now());
 
             if ($ageJours <= 30) {
                 $aging['0-30'] += $reste;
