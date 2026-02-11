@@ -245,12 +245,13 @@ class DashboardStatsService
             }
 
             $dateEcheance = $loyer->date_echeance;
-            if (!$dateEcheance) {
+            if (! $dateEcheance) {
                 continue;
             }
 
             if (Carbon::now()->lte($dateEcheance)) {
                 $aging['0-30'] += $reste;
+
                 continue;
             }
 
