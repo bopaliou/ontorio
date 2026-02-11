@@ -240,7 +240,7 @@ class DashboardStatsService
             }
 
             $dateEcheance = $loyer->date_echeance;
-            if (! $dateEcheance) {
+            if (!$dateEcheance) {
                 continue;
             }
 
