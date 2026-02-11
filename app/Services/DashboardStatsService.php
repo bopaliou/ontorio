@@ -58,6 +58,8 @@ class DashboardStatsService
             $grossPotentialRent = Bien::sum('loyer_mensuel');
             $tauxRecouvrement = $loyersStats->total_facture > 0 ? ($paiementsPourLoyersMois / $loyersStats->total_facture) * 100 : 0;
             $tauxOccupationFinancier = $grossPotentialRent > 0 ? ($loyersStats->total_facture / $grossPotentialRent) * 100 : 0;
+            $vacanceEconomiqueMontant = max(0, $grossPotentialRent - ($loyersStats->total_facture ?? 0));
+            $tauxVacanceEconomique = $grossPotentialRent > 0 ? ($vacanceEconomiqueMontant / $grossPotentialRent) * 100 : 0;
 
             return [
                 'loyers_factures' => (float) ($loyersStats->total_facture ?? 0),
@@ -71,6 +73,8 @@ class DashboardStatsService
                 'arrieres_total' => (float) $arrieres,
                 'gross_potential_rent' => (float) $grossPotentialRent,
                 'financial_occupancy_rate' => round($tauxOccupationFinancier, 1),
+                'economic_vacancy_loss' => (float) $vacanceEconomiqueMontant,
+                'economic_vacancy_rate' => round($tauxVacanceEconomique, 1),
                 'arrears_aging' => $this->calculateArrearsAging(),
             ];
         });
@@ -122,7 +126,8 @@ class DashboardStatsService
                 $q->where('proprietaire_id', $proprietaire->id);
             })->where('date_depense', 'like', $moisActuel.'%')->sum('montant');
 
-            $commissionMois = round($revenusMois * 0.10);
+            $commissionRate = (float) config('real_estate.commission.rate', 0.10);
+            $commissionMois = round($revenusMois * $commissionRate);
 
             $biensPerformance = Bien::where('proprietaire_id', $proprietaire->id)
                 ->withCount(['contrats as is_active' => fn ($q) => $q->where('statut', ContratStatus::ACTIF->value)])
@@ -240,13 +245,12 @@ class DashboardStatsService
             }
 
             $dateEcheance = $loyer->date_echeance;
-            if (! $dateEcheance) {
+            if (!$dateEcheance) {
                 continue;
             }
 
             if (Carbon::now()->lte($dateEcheance)) {
                 $aging['0-30'] += $reste;
-
                 continue;
             }
 

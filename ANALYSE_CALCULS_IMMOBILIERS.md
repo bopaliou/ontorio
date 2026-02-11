@@ -44,7 +44,7 @@ Le moteur de calcul est maintenant mieux aligné avec les pratiques courantes:
 - lecture du risque via **aging basé échéance** (DSO/recouvrement);
 - contrôle anti-surpaiement et robustesse transactionnelle.
 
-## Recommandations complémentaires (non bloquantes)
-- Externaliser le taux de commission (10%) dans la configuration.
-- Versionner les règles de pénalité (grille par type de bail/propriétaire).
-- Ajouter un KPI "taux de vacance économique" (perte de loyer sur vacance).
+## Recommandations complémentaires
+- ✅ Taux de commission externalisé dans la configuration (`config/real_estate.php`).
+- ✅ Règles de pénalité versionnées (grille par `type_bail`).
+- ✅ KPI ajouté: `economic_vacancy_rate` + `economic_vacancy_loss`.

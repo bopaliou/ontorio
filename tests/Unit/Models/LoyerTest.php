@@ -2,8 +2,12 @@
 
 namespace Tests\Unit\Models;
 
+use App\Models\Bien;
+use App\Models\Contrat;
+use App\Models\Locataire;
 use App\Models\Loyer;
 use App\Models\Paiement;
+use App\Models\Proprietaire;
 use Carbon\Carbon;
 use Tests\TestCase;
 
@@ -112,5 +116,44 @@ class LoyerTest extends TestCase
 
         $this->assertEquals(0, $paye->jours_retard);
         $this->assertGreaterThan(0, $retard->jours_retard);
+    }
+
+    /**
+     * Test: Calcul pénalité selon la grille versionnée (type_bail)
+     */
+    public function test_calculer_penalite_uses_versioned_rules_by_type_bail()
+    {
+        Carbon::setTestNow('2026-02-15');
+
+        config([
+            'real_estate.penalties.version' => 'v1',
+            'real_estate.penalties.rules.v1' => [
+                'default' => ['rate_percent' => 10, 'max_months' => 3],
+                'commercial' => ['rate_percent' => 12, 'max_months' => 4],
+            ],
+        ]);
+
+        $proprio = Proprietaire::factory()->create();
+        $bien = Bien::factory()->create(['proprietaire_id' => $proprio->id]);
+        $locataire = Locataire::factory()->create();
+        $contrat = Contrat::factory()->create([
+            'bien_id' => $bien->id,
+            'locataire_id' => $locataire->id,
+            'type_bail' => 'commercial',
+            'statut' => 'actif',
+        ]);
+
+        $loyer = Loyer::create([
+            'contrat_id' => $contrat->id,
+            'mois' => '2025-10',
+            'montant' => 100000,
+            'statut' => 'en_retard',
+            'taux_penalite' => null,
+        ]);
+
+        // Retard > 4 mois, plafonné à 4 mois en commercial: 100000 * 12% * 4 = 48000
+        $penalite = $loyer->calculerPenalite();
+
+        $this->assertEquals(48000.0, (float) $penalite);
     }
 }

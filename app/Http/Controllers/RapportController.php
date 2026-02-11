@@ -46,7 +46,7 @@ class RapportController extends Controller
     public function commissions(Request $request)
     {
         $mois = $request->get('mois', Carbon::now()->format('Y-m'));
-        $tauxCommission = 0.10;
+        $tauxCommission = (float) config('real_estate.commission.rate', 0.10);
 
         $data = $this->statsService->getFinancialKPIs($mois);
 

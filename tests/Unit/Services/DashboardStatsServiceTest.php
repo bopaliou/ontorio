@@ -10,6 +10,7 @@ use App\Models\Paiement;
 use App\Models\Proprietaire;
 use App\Services\DashboardStatsService;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Cache;
 use Tests\TestCase;
 
 class DashboardStatsServiceTest extends TestCase
@@ -23,6 +24,7 @@ class DashboardStatsServiceTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        Cache::flush();
         $this->service = new DashboardStatsService;
         Carbon::setTestNow('2026-02-15');
     }
@@ -97,6 +99,37 @@ class DashboardStatsServiceTest extends TestCase
 
         // Taux = (50000 / 100000) * 100 = 50%
         $this->assertEquals(50.0, $kpis['taux_recouvrement']);
+    }
+
+    /**
+     * Test: KPI vacance économique (perte + taux)
+     */
+    public function test_financial_kpis_economic_vacancy()
+    {
+        $proprio = Proprietaire::factory()->create();
+        $bien1 = Bien::factory()->create(['proprietaire_id' => $proprio->id, 'loyer_mensuel' => 100000]);
+        $bien2 = Bien::factory()->create(['proprietaire_id' => $proprio->id, 'loyer_mensuel' => 100000]);
+        $locataire = Locataire::factory()->create();
+
+        $contrat = Contrat::factory()->create([
+            'bien_id' => $bien1->id,
+            'locataire_id' => $locataire->id,
+            'loyer_montant' => 100000,
+            'statut' => 'actif',
+        ]);
+
+        Loyer::create([
+            'contrat_id' => $contrat->id,
+            'mois' => self::TEST_MONTH,
+            'montant' => 100000,
+            'statut' => 'émis',
+        ]);
+
+        $kpis = $this->service->getFinancialKPIs(self::TEST_MONTH);
+
+        // Potentiel 200k, facturé 100k => perte 100k, vacance 50%
+        $this->assertEquals(100000.0, $kpis['economic_vacancy_loss']);
+        $this->assertEquals(50.0, $kpis['economic_vacancy_rate']);
     }
 
     /**
@@ -213,5 +246,42 @@ class DashboardStatsServiceTest extends TestCase
         $this->assertEquals(1, $stats['biens_occupes']);
         $this->assertEquals(1, $stats['biens_vacants']);
         $this->assertEquals(50.0, $stats['taux_occupation']); // 1/2 = 50%
+    }
+
+    /**
+     * Test: Commission propriétaire configurable via config
+     */
+    public function test_proprietaire_stats_use_configured_commission_rate()
+    {
+        config(['real_estate.commission.rate' => 0.12]);
+
+        $proprio = Proprietaire::factory()->create();
+        $bien = Bien::factory()->create(['proprietaire_id' => $proprio->id]);
+        $locataire = Locataire::factory()->create();
+
+        $contrat = Contrat::factory()->create([
+            'bien_id' => $bien->id,
+            'locataire_id' => $locataire->id,
+            'statut' => 'actif',
+        ]);
+
+        $loyer = Loyer::create([
+            'contrat_id' => $contrat->id,
+            'mois' => self::TEST_MONTH,
+            'montant' => 100000,
+            'statut' => 'payé',
+        ]);
+
+        Paiement::create([
+            'loyer_id' => $loyer->id,
+            'montant' => 100000,
+            'date_paiement' => now()->toDateString(),
+            'mode' => 'virement',
+            'user_id' => null,
+        ]);
+
+        $stats = $this->service->getProprietaireStats($proprio);
+
+        $this->assertEquals(12000.0, $stats['commissions_mensuelles']);
     }
 }

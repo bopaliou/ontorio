@@ -25,6 +25,7 @@ class GenerateMonthlyRents extends Command
     public function handle()
     {
         $mois = $this->option('mois') ?? Carbon::now()->format('Y-m');
+        $defaultPenaltyRate = (float) config('real_estate.penalties.default_rate_percent', 10);
 
         $this->info("Génération des loyers pour le mois: {$mois}");
 
@@ -53,7 +54,7 @@ class GenerateMonthlyRents extends Command
                 'montant' => $contrat->loyer_montant,
                 'statut' => 'émis',
                 'penalite' => 0,
-                'taux_penalite' => 10, // 10% par défaut
+                'taux_penalite' => $defaultPenaltyRate,
             ]);
 
             $created++;

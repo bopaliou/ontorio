@@ -113,11 +113,14 @@ class Loyer extends Model
             return 0;
         }
 
-        $tauxMensuel = ($this->taux_penalite ?? 10) / 100; // 10% par défaut
+        $rules = $this->getPenaltyRules();
+        $configuredRate = (float) ($rules['rate_percent'] ?? config('real_estate.penalties.default_rate_percent', 10));
+        $tauxMensuel = ($this->taux_penalite ?? $configuredRate) / 100;
         $moisRetard = ceil($this->jours_retard / 30);
 
-        // Pénalité = montant * taux * nombre de mois de retard (plafonné à 3 mois)
-        $moisRetard = min($moisRetard, 3);
+        // Pénalité = montant * taux * nombre de mois de retard (plafonné selon la grille)
+        $maxMonths = (int) ($rules['max_months'] ?? config('real_estate.penalties.max_months', 3));
+        $moisRetard = min($moisRetard, $maxMonths);
         $penalite = $this->montant * $tauxMensuel * $moisRetard;
 
         $this->penalite = round($penalite, 2);
@@ -181,5 +184,18 @@ class Loyer extends Model
         }
 
         return $this->statut;
+    }
+
+    /**
+     * Résout la règle de pénalité en fonction de la version de grille et du type de bail.
+     */
+    protected function getPenaltyRules(): array
+    {
+        $version = (string) config('real_estate.penalties.version', 'v1');
+        $grid = (array) config("real_estate.penalties.rules.{$version}", []);
+
+        $typeBail = optional($this->contrat)->type_bail;
+
+        return $grid[$typeBail] ?? ($grid['default'] ?? []);
     }
 }
