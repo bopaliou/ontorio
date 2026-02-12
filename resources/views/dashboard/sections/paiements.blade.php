@@ -209,7 +209,7 @@
                         </div>
                     </div>
 
-                    <form id="pai-main-form" action="{{ route('paiements.store') }}" method="POST" enctype="multipart/form-data" class="p-8 space-y-8 bg-white">
+                    <form id="pai-main-form" onsubmit="paiSection.submitForm(event)" action="{{ route('paiements.store') }}" method="POST" enctype="multipart/form-data" class="p-8 space-y-8 bg-white">
                         @csrf
 
                         <!-- Étape 1: Identification -->
@@ -396,17 +396,20 @@
 
 <script>
     window.paiSection = {
+        deleteTargetId: null,
+
         openModal: function(mode) {
             const wrapper = document.getElementById('pai-modal-wrapper');
             const overlay = document.getElementById('pai-modal-overlay');
             const container = document.getElementById('pai-modal-container');
 
+            if (!wrapper) return;
             wrapper.classList.remove('hidden');
             window.modalUX?.activate(wrapper, container);
             
             setTimeout(() => { 
-                overlay.classList.remove('opacity-0');
-                container.classList.remove('scale-95', 'opacity-0'); 
+                overlay?.classList.remove('opacity-0');
+                container?.classList.remove('scale-95', 'opacity-0'); 
             }, 10);
         },
 
@@ -415,75 +418,78 @@
             const overlay = document.getElementById('pai-modal-overlay');
             const container = document.getElementById('pai-modal-container');
 
-            overlay.classList.add('opacity-0');
-            container.classList.add('scale-95', 'opacity-0');
+            if (!wrapper) return;
+            overlay?.classList.add('opacity-0');
+            container?.classList.add('scale-95', 'opacity-0');
             
             window.modalUX?.deactivate(wrapper);
             setTimeout(() => { 
                 wrapper.classList.add('hidden'); 
                 // Reset card on close
-                document.getElementById('pai-locataire-card').classList.add('hidden', 'opacity-0', 'translate-y-4');
+                const card = document.getElementById('pai-locataire-card');
+                if (card) card.classList.add('hidden', 'opacity-0', 'translate-y-4');
             }, 300);
+        },
+
+        submitForm: async function(e) {
+            e.preventDefault();
+            const form = e.target;
+            const btn = document.getElementById('pai-submit-btn');
+            if (!btn || btn.disabled) return;
+
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<svg class="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Traitement...';
+            btn.disabled = true;
+
+            const formData = new FormData(form);
+            const url = form.getAttribute('action');
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        'Accept': 'application/json'
+                    },
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if(response.ok) {
+                    btn.innerHTML = '✅ Transaction Réussie';
+                    showToast(data.message || 'Paiement enregistré avec succès', 'success');
+
+                    setTimeout(() => {
+                        this.closeModal();
+                        if(window.dashboard) window.dashboard.refresh();
+                        else window.location.reload();
+                    }, 1000);
+                } else {
+                    btn.innerHTML = '⚠️ Erreur';
+                    showToast(data.message || 'Erreur lors de l\'enregistrement', 'error');
+                    setTimeout(() => { 
+                        btn.innerHTML = originalText;
+                        btn.disabled = false;
+                    }, 2000);
+                }
+            } catch(e) {
+                console.error(e);
+                showToast('Erreur de connexion au serveur', 'error');
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
         }
     };
 
-    // Feedback de chargement et soumission AJAX
-    document.getElementById('pai-main-form').addEventListener('submit', async function(e) {
-        e.preventDefault();
-        const btn = document.getElementById('pai-submit-btn');
-        const originalText = btn.innerHTML;
-
-        btn.innerHTML = '<svg class="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Traitement...';
-        btn.disabled = true;
-
-        const formData = new FormData(this);
-        const url = this.getAttribute('action');
-
-        try {
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                    'Accept': 'application/json'
-                },
-                body: formData
-            });
-
-            const data = await response.json();
-
-            if(response.ok) {
-                btn.innerHTML = '✅ Transaction Réussie';
-                showToast(data.message || 'Paiement enregistré avec succès', 'success');
-
-                setTimeout(() => {
-                    window.paiSection.closeModal();
-                    if(window.dashboard) window.dashboard.refresh();
-                    else window.location.reload();
-                }, 1000);
-            } else {
-                btn.innerHTML = '⚠️ Erreur';
-                showToast(data.message || 'Erreur lors de l\'enregistrement', 'error');
-                setTimeout(() => { 
-                    btn.innerHTML = originalText;
-                    btn.disabled = false;
-                }, 2000);
-            }
-        } catch(e) {
-            console.error(e);
-            showToast('Erreur de connexion au serveur', 'error');
-            btn.innerHTML = originalText;
-            btn.disabled = false;
-        }
-    });
-
     // Mise à jour dynamique de la card locataire
-    document.getElementById('pai-select-loyer').addEventListener('change', function() {
+    document.getElementById('pai-select-loyer')?.addEventListener('change', function() {
         const selected = this.options[this.selectedIndex];
         const card = document.getElementById('pai-locataire-card');
         const inputMontant = document.getElementById('pai-input-montant');
         const liveBalance = document.getElementById('pai-live-balance');
 
-        if (this.value) {
+        if (this.value && card && inputMontant) {
             const reste = selected.dataset.reste;
             const locataire = selected.dataset.locataire;
             const mois = selected.dataset.mois;
@@ -502,23 +508,23 @@
             
             // Trigger input event to calculate balance immediately
             inputMontant.dispatchEvent(new Event('input'));
-        } else {
+        } else if (card) {
             card.classList.add('opacity-0', 'translate-y-4');
             setTimeout(() => card.classList.add('hidden'), 500);
-            inputMontant.value = '';
-            liveBalance.classList.add('hidden');
+            if (inputMontant) inputMontant.value = '';
+            if (liveBalance) liveBalance.classList.add('hidden');
         }
     });
 
     // Calcul en temps réel du restant (Premium UI)
-    document.getElementById('pai-input-montant').addEventListener('input', function() {
+    document.getElementById('pai-input-montant')?.addEventListener('input', function() {
         const val = parseFloat(this.value) || 0;
         const target = parseFloat(this.dataset.target) || 0;
         const liveBalance = document.getElementById('pai-live-balance');
         const liveText = document.getElementById('pai-live-text');
         const cardMontant = document.getElementById('pai-card-montant');
 
-        if (target > 0) {
+        if (target > 0 && liveBalance && liveText && cardMontant) {
             const diff = target - val;
             liveBalance.classList.remove('hidden');
 
@@ -545,7 +551,7 @@
         const nameEl = document.getElementById('pai-preuve-name');
         const sizeEl = document.getElementById('pai-preuve-size');
 
-        if (input.files && input.files[0]) {
+        if (input.files && input.files[0] && placeholder && preview) {
             const file = input.files[0];
             nameEl.textContent = file.name;
             sizeEl.textContent = (file.size / 1024).toFixed(1) + ' Ko';
@@ -559,9 +565,9 @@
         const placeholder = document.getElementById('pai-preuve-placeholder');
         const preview = document.getElementById('pai-preuve-preview');
 
-        input.value = '';
-        placeholder.classList.remove('hidden');
-        preview.classList.add('hidden');
+        if (input) input.value = '';
+        if (placeholder) placeholder.classList.remove('hidden');
+        if (preview) preview.classList.add('hidden');
     };
 
     // Gestion Suppression Paiement
@@ -569,20 +575,26 @@
         this.deleteTargetId = id;
         const modal = document.getElementById('pai-delete-modal');
         const container = document.getElementById('pai-delete-container');
+        if (!modal) return;
         modal.classList.remove('hidden');
         setTimeout(() => {
             modal.classList.remove('opacity-0');
-            container.classList.remove('scale-95');
-            container.classList.add('scale-100');
+            if (container) {
+                container.classList.remove('scale-95');
+                container.classList.add('scale-100');
+            }
         }, 10);
     };
 
     window.paiSection.closeDeleteModal = function() {
         const modal = document.getElementById('pai-delete-modal');
         const container = document.getElementById('pai-delete-container');
+        if (!modal) return;
         modal.classList.add('opacity-0');
-        container.classList.remove('scale-100');
-        container.classList.add('scale-95');
+        if (container) {
+            container.classList.remove('scale-100');
+            container.classList.add('scale-95');
+        }
         setTimeout(() => {
             modal.classList.add('hidden');
             this.deleteTargetId = null;
@@ -592,6 +604,7 @@
     window.paiSection.executeDelete = async function() {
         if(!this.deleteTargetId) return;
         const btn = document.getElementById('pai-confirm-delete-btn');
+        if (!btn) return;
         const originalText = btn.innerText;
         btn.innerText = 'Suppression...';
         btn.disabled = true;
