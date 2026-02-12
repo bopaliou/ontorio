@@ -10,112 +10,64 @@
         }
         body {
             font-family: 'Helvetica', 'Arial', sans-serif;
-            font-size: 11px;
+            font-size: 10px;
             color: #1e293b;
-            line-height: 1.6;
+            line-height: 1.5;
+            background-color: #fff;
             margin: 0;
             padding: 0;
-            background-color: #fff;
         }
 
         .page {
             position: relative;
-            padding: 40px 50px;
+            padding: 30px 40px;
             box-sizing: border-box;
             height: 100%;
         }
 
-        /* Branding */
-        .header {
-            border-bottom: 4px solid #cb2d2d;
-            padding-bottom: 25px;
-            margin-bottom: 35px;
-        }
-        .agency-name {
-            font-size: 22px;
-            font-weight: 900;
-            color: #1a2e3d;
-            letter-spacing: -1px;
-        }
-        .header-sub {
-            font-size: 9.5px;
-            color: #64748b;
-            margin-top: 5px;
-        }
-
-        /* Title Area */
-        .report-header {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-        .report-label {
-            font-size: 10px;
-            font-weight: 900;
-            color: #cb2d2d;
-            text-transform: uppercase;
-            letter-spacing: 4px;
-            margin-bottom: 8px;
-        }
-        .report-title {
-            font-size: 26px;
-            font-weight: 900;
-            color: #1a2e3d;
-            text-transform: uppercase;
-            letter-spacing: -1px;
-        }
-        .report-period {
-            font-size: 12px;
-            color: #64748b;
-            font-weight: 800;
-            margin-top: 10px;
-        }
+        /* Branding Colors */
+        .text-primary { color: #cb2d2d; }
+        .text-secondary { color: #1a2e3d; }
 
         /* KPI Tiles */
         .kpi-container {
             width: 100%;
-            margin-bottom: 35px;
+            margin-bottom: 25px;
+            overflow: hidden;
         }
         .kpi-tile {
             width: 23%;
             float: left;
             background-color: #f8fafc;
             border: 1px solid #e2e8f0;
-            padding: 15px;
-            border-radius: 12px;
+            padding: 12px;
+            border-radius: 8px;
             text-align: center;
         }
-        .kpi-gap { width: 2.66%; float: left; height: 10px; }
+        .kpi-gap { width: 2.6%; float: left; height: 10px; }
         .kpi-label {
-            font-size: 8px;
+            font-size: 7.5px;
             font-weight: 900;
             color: #94a3b8;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 8px;
+            margin-bottom: 5px;
         }
         .kpi-value {
-            font-size: 18px;
+            font-size: 14px;
             font-weight: 900;
             color: #1a2e3d;
         }
-        .kpi-trend {
-            font-size: 8px;
-            font-weight: 800;
-            margin-top: 5px;
-        }
-        .trend-up { color: #10b981; }
-        .trend-down { color: #ef4444; }
 
         /* Sections */
         .section-title {
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 900;
             color: #1a2e3d;
             text-transform: uppercase;
-            letter-spacing: 1.5px;
-            margin: 40px 0 20px;
-            border-bottom: 2px solid #f1f5f9;
-            padding-bottom: 10px;
+            letter-spacing: 1px;
+            margin: 30px 0 15px;
+            border-bottom: 2px solid #cb2d2d;
+            padding-bottom: 5px;
         }
 
         /* Tables */
@@ -123,29 +75,27 @@
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 20px;
+            page-break-inside: avoid;
         }
         .data-table th {
             background-color: #1a2e3d;
             color: #fff;
-            padding: 12px 15px;
+            padding: 10px 12px;
             text-align: left;
-            font-size: 9px;
+            font-size: 8px;
             font-weight: 900;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
         }
         .data-table td {
-            padding: 12px 15px;
+            padding: 10px 12px;
             border-bottom: 1px solid #f1f5f9;
-            font-size: 11px;
-            color: #334155;
+            font-size: 9.5px;
         }
-        .data-table .val-bold { font-weight: 800; color: #1a2e3d; }
+        .data-table .val-bold { font-weight: 800; }
         .data-table .badge {
-            display: inline-block;
-            padding: 3px 10px;
+            padding: 2px 8px;
             border-radius: 4px;
-            font-size: 8px;
+            font-size: 7.5px;
             font-weight: 900;
             text-transform: uppercase;
         }
@@ -155,24 +105,12 @@
 
         /* Insight Box */
         .insight-box {
-            background-color: #fff7ed;
-            border-left: 5px solid #f97316;
-            padding: 20px;
-            margin-top: 30px;
-            font-size: 11px;
-        }
-
-        /* Footer */
-        .footer {
-            position: absolute;
-            bottom: 30px;
-            left: 50px;
-            right: 50px;
-            text-align: center;
-            font-size: 8.5px;
-            color: #94a3b8;
-            border-top: 1px solid #f1f5f9;
-            padding-top: 15px;
+            background-color: #fefce8;
+            border-left: 4px solid #eab308;
+            padding: 15px;
+            margin-top: 20px;
+            font-size: 9.5px;
+            page-break-inside: avoid;
         }
 
         .clearfix { clear: both; }
@@ -183,7 +121,7 @@
     <div class="page">
         <!-- HEADER -->
         @include('pdf.partials.header', [
-            'title' => 'Tableau de Bord Exécutif',
+            'title' => 'Rapport de Gestion Mensuel',
             'ref' => 'REP-' . date('Ym'),
             'date' => \Carbon\Carbon::parse($mois)->translatedFormat('F Y')
         ])
@@ -192,60 +130,48 @@
         <div class="kpi-container">
             <div class="kpi-tile">
                 <div class="kpi-label">Revenus Bruts</div>
-                <div class="kpi-value text-secondary">{{ format_money($data['kpis']['revenu_mensuel']) }}</div>
-                <div class="kpi-trend trend-up">↑ +4.2% vs M-1</div>
+                <div class="kpi-value">{{ format_money($data['kpis']['revenu_mensuel']) }}</div>
             </div>
             <div class="kpi-gap"></div>
             <div class="kpi-tile">
                 <div class="kpi-label">Occupation</div>
                 <div class="kpi-value">{{ $data['kpis']['taux_occupation'] }}%</div>
-                <div class="kpi-trend trend-up">Stable</div>
             </div>
             <div class="kpi-gap"></div>
             <div class="kpi-tile">
-                <div class="kpi-label">Taux de Collecte</div>
-                <div class="kpi-value text-secondary">{{ $data['kpis']['taux_collecte'] }}%</div>
-                <div class="kpi-trend {{ $data['kpis']['taux_collecte'] >= 90 ? 'trend-up' : 'trend-down' }}">
-                    {{ $data['kpis']['taux_collecte'] >= 90 ? 'Performant' : 'À surveiller' }}
-                </div>
+                <div class="kpi-label">Collecte</div>
+                <div class="kpi-value">{{ $data['kpis']['taux_collecte'] }}%</div>
             </div>
             <div class="kpi-gap"></div>
             <div class="kpi-tile">
                 <div class="kpi-label">Impayés</div>
                 <div class="kpi-value" style="color: #ef4444;">{{ format_money($data['kpis']['impayes']) }}</div>
-                <div class="kpi-trend trend-down">Dette cumulée</div>
             </div>
             <div class="clearfix"></div>
         </div>
 
-        <!-- FINANCIAL SUMMARY -->
-        <div class="section-title">Synthèse Financière de la Période</div>
+        <div class="section-title">Analyse Financière</div>
         <table class="data-table">
             <thead>
                 <tr>
-                    <th>Indicateur de Performance</th>
+                    <th>Indicateur</th>
                     <th style="text-align: right;">Valeur (FCFA)</th>
-                    <th style="text-align: center;">Statut Opérationnel</th>
+                    <th style="text-align: center;">Statut</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
-                    <td>Émissions des Loyers de la Période</td>
+                    <td>Émissions des Loyers</td>
                     <td class="val-bold" style="text-align: right;">{{ number_format($data['kpis']['loyers_emis'], 0, ',', ' ') }}</td>
-                    <td style="text-align: center;"><span class="badge badge-info text-secondary">Facturation</span></td>
+                    <td style="text-align: center;"><span class="badge badge-info">Facturation</span></td>
                 </tr>
                 <tr>
-                    <td>Encaissements Effectifs (Mois en cours)</td>
+                    <td>Encaissements Effectifs</td>
                     <td class="val-bold" style="text-align: right; color: #10b981;">{{ number_format($data['kpis']['loyers_payes'], 0, ',', ' ') }}</td>
                     <td style="text-align: center;"><span class="badge badge-success">Recouvrement</span></td>
                 </tr>
                 <tr>
-                    <td>Chiffre d'Affaire Estimé (Honoraires 10%)</td>
-                    <td class="val-bold" style="text-align: right;">{{ number_format($data['kpis']['commission_mensuelle'], 0, ',', ' ') }}</td>
-                    <td style="text-align: center;"><span class="badge badge-info">Revenu Agence</span></td>
-                </tr>
-                <tr>
-                    <td>Variance Mensuelle (Reliquat à percevoir)</td>
+                    <td>Variance (Reliquat)</td>
                     <td class="val-bold" style="text-align: right; color: #ef4444;">{{ number_format($data['kpis']['total_impaye'], 0, ',', ' ') }}</td>
                     <td style="text-align: center;">
                         @if($data['kpis']['total_impaye'] > 0)
@@ -258,62 +184,45 @@
             </tbody>
         </table>
 
-        <!-- INSIGHT BOX -->
         <div class="insight-box">
-            <strong class="text-secondary" style="font-weight: 900; text-transform: uppercase; font-size: 10px; display: block; margin-bottom: 5px;">Observation Stratégique</strong>
-            Le taux de performance financière pour la période est de <strong>{{ $data['kpis']['taux_collecte'] }}%</strong>.
-            @if($data['kpis']['taux_collecte'] >= 90)
-                L'efficacité des encaissements est optimale. Maintenir les processus actuels.
+            <strong class="text-secondary" style="text-transform: uppercase; font-size: 9px; display: block; margin-bottom: 4px;">Recommandation de Gestion</strong>
+            Le taux de performance est de <strong>{{ $data['kpis']['taux_collecte'] }}%</strong>.
+            @if($data['kpis']['taux_collecte'] < 90)
+                Une accélération des relances est nécessaire pour les dossiers en variance négative.
             @else
-                Des mesures de relance active sont préconisées pour les dossiers en variance négative afin de stabiliser les flux de trésorerie.
+                La gestion des flux est optimale pour cette période.
             @endif
         </div>
 
-        <div class="footer">
-            Ontario Group S.A. | Rapport de Gestion Généré Numériquement | Page 1/2
-        </div>
+        @include('pdf.partials.footer')
     </div>
 
     <div class="page-break"></div>
 
     <div class="page">
-        <!-- HEADER (Simplified for secondary pages) -->
-        <div class="header">
-            <table style="width: 100%">
-                <thead>
-                    <tr>
-                        <th style="text-align: left; font-weight: normal;"><div class="agency-name">Détail Opérationnel</div></th>
-                        <th style="text-align: right; font-weight: normal;"><div class="report-period">{{ \Carbon\Carbon::parse($mois)->translatedFormat('F Y') }}</div></th>
-                    </tr>
-                </thead>
-            </table>
-        </div>
-
-        <div class="section-title">Portefeuille Immobilier & Occupation</div>
+        <div class="section-title" style="margin-top: 0;">Portefeuille Immobilier & Occupation</div>
         <table class="data-table">
             <thead>
                 <tr>
                     <th>Bien & Localisation</th>
                     <th>Typologie</th>
-                    <th style="text-align: center;">Statut Actuel</th>
+                    <th style="text-align: center;">Statut</th>
                     <th style="text-align: right;">Loyer Nominal</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach($data['biens_list']->take(20) as $bien)
+                @foreach($data['biens_list']->take(25) as $bien)
                 <tr>
                     <td>
                         <div class="val-bold">{{ $bien->nom }}</div>
-                        <div style="font-size: 9px; color: #94a3b8;">{{ $bien->ville }}</div>
+                        <div style="font-size: 8px; color: #94a3b8;">{{ $bien->ville }}</div>
                     </td>
                     <td>{{ ucfirst($bien->type) }}</td>
                     <td style="text-align: center;">
                         @if($bien->statut === 'libre' || $bien->statut === 'disponible')
-                            <span class="badge badge-success">Disponible</span>
-                        @elseif($bien->statut === 'occupé')
-                            <span class="badge badge-info">Loué</span>
+                            <span class="badge badge-success">Libre</span>
                         @else
-                            <span class="badge badge-danger">{{ $bien->statut }}</span>
+                            <span class="badge badge-info">Loué</span>
                         @endif
                     </td>
                     <td style="text-align: right;" class="val-bold">{{ format_money($bien->loyer_mensuel) }}</td>
