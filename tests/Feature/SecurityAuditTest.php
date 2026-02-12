@@ -16,7 +16,7 @@ class SecurityAuditTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        \Illuminate\Support\Facades\Artisan::call('app:setup-roles-and-permissions');
+        \Illuminate\Support\Facades\Artisan::call('app:setup-roles-permissions');
     }
 
     /**
@@ -58,8 +58,8 @@ class SecurityAuditTest extends TestCase
      */
     public function test_api_stats_restricted_to_authorized_roles()
     {
-        $authorizedRoles = ['admin', 'direction', 'gestionnaire'];
-        $unauthorizedRoles = ['comptable'];
+        $authorizedRoles = ['admin', 'direction', 'gestionnaire', 'comptable'];
+        $unauthorizedRoles = ['proprietaire'];
 
         foreach ($authorizedRoles as $role) {
             $user = User::factory()->create(['role' => $role]);

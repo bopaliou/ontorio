@@ -13,7 +13,7 @@ class AdminAccessTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        \Illuminate\Support\Facades\Artisan::call('app:setup-roles-and-permissions');
+        \Illuminate\Support\Facades\Artisan::call('app:setup-roles-permissions');
     }
 
     public function test_admin_section_hidden_for_unauthorized_users()
