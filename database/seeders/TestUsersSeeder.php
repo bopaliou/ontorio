@@ -41,14 +41,21 @@ class TestUsersSeeder extends Seeder
         ];
 
         foreach ($users as $userData) {
-            $user = User::firstOrCreate(
+            $user = User::updateOrCreate(
                 ['email' => $userData['email']],
-                $userData
+                [
+                    'name' => $userData['name'],
+                    'password' => $userData['password'], // Sera haché automatiquement via le cast du modèle User
+                    'role' => $userData['role']
+                ]
             );
 
-            // Assigner le rôle Spatie correspondant
+            // S'assurer que les rôles Spatie sont bien assignés
             if (isset($userData['role'])) {
-                $user->assignRole($userData['role']);
+                // On donne tous les droits à l'admin, et les rôles spécifiques aux autres
+                if (!$user->hasRole($userData['role'])) {
+                    $user->assignRole($userData['role']);
+                }
             }
         }
 

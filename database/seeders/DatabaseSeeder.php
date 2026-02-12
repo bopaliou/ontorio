@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
         // Comptes de test pour chaque rôle
         $this->call([
             TestUsersSeeder::class,
+            SenegalDataSeeder::class,
         ]);
     }
 }
