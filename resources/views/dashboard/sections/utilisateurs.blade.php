@@ -108,14 +108,14 @@
     </div>
 
     <!-- MAIN FORM MODAL (Revised Layout) -->
-    <div id="user-modal-wrapper" class="relative z-[100] hidden" aria-labelledby="user-modal-title" role="dialog" aria-modal="true">
-        <div id="user-modal-overlay" class="fixed inset-0 bg-[#274256]/60 backdrop-blur-sm transition-opacity opacity-0 duration-300"></div>
+    <div id="user-modal-wrapper" class="app-modal-root hidden" aria-labelledby="user-modal-title" role="dialog" aria-modal="true">
+        <div id="user-modal-overlay" class="app-modal-overlay opacity-0"></div>
         <div class="fixed inset-0 z-10 w-screen overflow-y-auto" onclick="if(event.target === this) userSection.closeModal()">
             <div class="flex min-h-full items-end justify-center p-0 text-center sm:items-center sm:p-0" onclick="if(event.target === this) userSection.closeModal()">
-                <div id="user-modal-container" class="relative transform overflow-hidden bg-white text-left shadow-2xl transition-all w-full h-full sm:h-auto sm:w-full sm:max-w-xl sm:my-8 rounded-none sm:rounded-3xl opacity-0 scale-95 duration-300 border border-gray-100">
+                <div id="user-modal-container" class="app-modal-panel app-modal-panel-xl app-modal-panel-soft opacity-0 scale-95">
 
                     <!-- Header -->
-                    <div class="px-8 py-6 border-b border-gray-100 flex items-center justify-between bg-white sticky top-0 z-10">
+                    <div class="app-modal-header px-8 py-6 border-b border-gray-100 flex items-center justify-between bg-white">
                         <div>
                             <h3 id="user-modal-title" class="text-xl font-black text-gray-900 tracking-tight">Nouveau Membre</h3>
                             <p class="text-xs text-gray-500 font-medium mt-1">Configuration du profil et des accès.</p>
@@ -125,7 +125,7 @@
                         </button>
                     </div>
 
-                    <form id="user-main-form" class="p-8 space-y-6">
+                    <form id="user-main-form" class="p-8 form-stack field-gap">
                         <input type="hidden" name="id" id="user-input-id">
 
                         {{-- Avatar Visual Placeholder (Static) --}}
@@ -224,6 +224,7 @@
             const btn = document.getElementById('user-submit-btn');
 
             wrapper.classList.remove('hidden');
+            window.modalUX?.activate(wrapper, container);
             setTimeout(() => {
                 overlay.classList.remove('opacity-0');
                 container.classList.remove('opacity-0', 'scale-95');
@@ -256,6 +257,7 @@
             overlay.classList.add('opacity-0');
             container.classList.remove('opacity-100', 'scale-100');
             container.classList.add('opacity-0', 'scale-95');
+            window.modalUX?.deactivate(wrapper);
 
             setTimeout(() => { wrapper.classList.add('hidden'); }, 300);
         },
