@@ -87,7 +87,7 @@
                         <td class="px-6 py-4 font-medium text-gray-900">{{ $contrat->logement->immeuble->nom ?? '-' }}</td>
                         <td class="px-6 py-4 text-gray-600">{{ $contrat->locataire->nom ?? '-' }}</td>
                         <td class="px-6 py-4 text-gray-500">{{ $contrat->date_debut }}</td>
-                        <td class="px-6 py-4 font-bold text-[#274256]">{{ number_format($contrat->loyer_montant, 0, ',', ' ') }} F CFA</td>
+                        <td class="px-6 py-4 font-bold text-[#274256]">{{ format_money($contrat->loyer_montant) }}</td>
                         <td class="px-6 py-4 text-right">
                            <a href="{{ route('contrats.edit', $contrat->id) }}" class="text-gray-400 hover:text-[#cb2d2d]">Modifier</a>
                         </td>

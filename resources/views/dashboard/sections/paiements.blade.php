@@ -86,11 +86,11 @@
                         </span>
                     </td>
                     <td class="px-6 py-4 text-right">
-                        <span class="font-extrabold text-green-600 text-lg">{{ number_format($pai->montant, 0, ',', ' ') }} F</span>
+                        <span class="font-extrabold text-green-600 text-lg">{{ format_money($pai->montant) }}</span>
                     </td>
                     <td class="px-6 py-4 text-center">
                         @if($pai->preuve)
-                        <button onclick="window.previewDoc({url: '/storage/{{ $pai->preuve }}', nom_original: 'Preuve_{{ $pai->reference }}.{{ pathinfo($pai->preuve, PATHINFO_EXTENSION) }}', type_label: 'Preuve de Paiement'})"
+                        <button onclick="window.previewDoc({url: '{{ get_secure_url($pai->preuve) }}', nom_original: 'Preuve_{{ $pai->reference }}.{{ pathinfo($pai->preuve, PATHINFO_EXTENSION) }}', type_label: 'Preuve de Paiement'})"
                            class="inline-flex items-center justify-center gap-1 px-2.5 py-1.5 rounded-lg bg-amber-50 text-amber-600 hover:bg-amber-500 hover:text-white transition-all text-xs font-bold"
                            title="Voir la preuve jointe">
                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/></svg>
@@ -146,14 +146,14 @@
                                 <div class="flex flex-col gap-1 text-gray-600">
                                     <div class="font-bold text-gray-900 capitalize">{{ $pai->loyer->contrat->locataire->nom ?? 'Inconnu' }}</div>
                                     <div class="flex justify-between items-center mt-1">
-                                        <div class="font-bold text-green-600">{{ number_format($pai->montant, 0, ',', ' ') }} F</div>
+                                        <div class="font-bold text-green-600">{{ format_money($pai->montant) }}</div>
                                         <span class="text-xs px-2 py-0.5 rounded-full bg-gray-100 uppercase">{{ $pai->mode ?? 'Espèces' }}</span>
                                     </div>
                                 </div>
 
                                 <x-slot name="actions">
                                     @if($pai->preuve)
-                                        <button onclick="window.previewDoc({url: '/storage/{{ $pai->preuve }}', nom_original: 'Preuve_{{ $pai->id }}.{{ pathinfo($pai->preuve, PATHINFO_EXTENSION) }}', type_label: 'Preuve de Paiement'})" class="p-3 bg-amber-50 text-amber-600 rounded-lg hover:bg-amber-100" title="Voir la preuve jointe">
+                                        <button onclick="window.previewDoc({url: '{{ get_secure_url($pai->preuve) }}', nom_original: 'Preuve_{{ $pai->id }}.{{ pathinfo($pai->preuve, PATHINFO_EXTENSION) }}', type_label: 'Preuve de Paiement'})" class="p-3 bg-amber-50 text-amber-600 rounded-lg hover:bg-amber-100" title="Voir la preuve jointe">
                                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/></svg>
                                         </button>
                                     @endif

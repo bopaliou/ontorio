@@ -65,9 +65,16 @@ Route::middleware(['auth', 'role:admin|direction|gestionnaire|comptable', 'throt
     Route::get('/rapports/loyers', [RapportController::class, 'loyers'])
         ->middleware('permission:rapports.view')
         ->name('rapports.loyers');
+    Route::get('/rapports/loyers/csv', [RapportController::class, 'exportLoyersCSV'])
+        ->middleware('permission:rapports.view')
+        ->name('rapports.loyers.csv');
+
     Route::get('/rapports/impayees', [RapportController::class, 'impayees'])
         ->middleware('permission:rapports.view')
         ->name('rapports.impayees');
+    Route::get('/rapports/impayees/csv', [RapportController::class, 'exportImpayeesCSV'])
+        ->middleware('permission:rapports.view')
+        ->name('rapports.impayees.csv');
     Route::get('/rapports/commissions', [RapportController::class, 'commissions'])
         ->middleware('permission:rapports.view')
         ->name('rapports.commissions');
@@ -233,5 +240,10 @@ Route::middleware(['auth', 'role:admin', 'throttle:global-mutations'])->group(fu
         ->middleware('throttle:strict-migration')
         ->name('system.migrate');
 });
+
+// Route pour servir les documents de manière sécurisée (URL signée)
+Route::get('/documents/secure-access/{path}', [DocumentController::class, 'download'])
+    ->name('documents.secure')
+    ->middleware('signed');
 
 require __DIR__.'/auth.php';

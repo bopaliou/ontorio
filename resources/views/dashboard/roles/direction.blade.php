@@ -87,9 +87,10 @@
                         <div class="relative w-full bg-gray-50 rounded-t-2xl group-hover:bg-blue-50 transition-colors duration-300" style="height: 100%">
                             <div class="absolute bottom-0 left-0 right-0 bg-[#274256] rounded-t-2xl transition-all duration-700 delay-100 group-hover:bg-blue-600" style="height: {{ $height }}%">
                                 <div class="opacity-0 group-hover:opacity-100 absolute -top-12 left-1/2 -translate-x-1/2 bg-[#274256] text-white text-[10px] font-black py-2 px-3 rounded-xl whitespace-nowrap shadow-xl z-20 transition-all">
-                                    {{ number_format($moisData['montant'], 0, ',', ' ') }} F
+                                    {{ format_money($moisData['montant']) }}
                                 </div>
                             </div>
+
                         </div>
                         <p class="text-center mt-4 text-[10px] font-black text-gray-400 uppercase tracking-tighter">{{ $moisData['mois'] }}</p>
                     </div>
@@ -104,17 +105,18 @@
                 <div class="space-y-6">
                     <div class="flex items-center justify-between">
                         <span class="text-xs font-bold text-gray-400 uppercase">Masse Locative</span>
-                        <span class="text-sm font-black text-[#274256]">{{ number_format($data['kpis']['valeur_portefeuille'], 0, ',', ' ') }} F</span>
+                        <span class="text-sm font-black text-[#274256]">{{ format_money($data['kpis']['valeur_portefeuille']) }}</span>
                     </div>
                     <div class="flex items-center justify-between">
                         <span class="text-xs font-bold text-gray-400 uppercase">Loyer Moyen Unitaire</span>
-                        <span class="text-sm font-black text-[#274256]">{{ number_format($data['kpis']['loyer_moyen'], 0, ',', ' ') }} F</span>
+                        <span class="text-sm font-black text-[#274256]">{{ format_money($data['kpis']['loyer_moyen']) }}</span>
                     </div>
                     <div class="h-px bg-gray-100 my-4"></div>
                     <div class="p-4 bg-blue-50 rounded-2xl border border-blue-100">
                         <p class="text-[10px] font-black text-blue-400 uppercase mb-1">Projection Annuelle (Commissions)</p>
-                        <p class="text-xl font-black text-blue-700 font-mono">{{ number_format($data['kpis']['projection_annuelle'], 0, ',', ' ') }} F</p>
+                        <p class="text-xl font-black text-blue-700 font-mono">{{ format_money($data['kpis']['projection_annuelle']) }}</p>
                     </div>
+
                 </div>
             </div>
 
@@ -165,7 +167,7 @@
                                 <div class="text-[9px] text-gray-400 font-medium tracking-widest">{{ \Carbon\Carbon::parse($paiement->date_paiement)->translatedFormat('d M Y') }}</div>
                             </td>
                             <td class="px-8 py-5 text-right font-black text-green-600 text-sm">
-                                + {{ number_format($paiement->montant, 0, ',', ' ') }} F
+                                + {{ format_money($paiement->montant) }}
                             </td>
                         </tr>
                         @empty

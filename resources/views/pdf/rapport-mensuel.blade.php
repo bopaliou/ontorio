@@ -182,34 +182,17 @@
 <body>
     <div class="page">
         <!-- HEADER -->
-        <div class="header">
-            <table style="width: 100%">
-                <thead>
-                    <tr>
-                        <th style="width: 60%; text-align: left; font-weight: normal;">
-                            <h1 class="agency-name">ONTARIO GROUP S.A.</h1>
-                            <div class="header-sub">Rapport Stratégique de Gestion Locative</div>
-                        </th>
-                        <th style="width: 40%; text-align: right; font-weight: normal;">
-                            <img src="{{ public_path('images/ontorio-logo.png') }}" style="max-height: 70px;" alt="Logo Ontario Group">
-                        </th>
-                    </tr>
-                </thead>
-            </table>
-        </div>
-
-        <!-- REPORT HEADER -->
-        <div class="report-header">
-            <div class="report-label">Analyse Mensuelle</div>
-            <h1 class="report-title">Tableau de Bord Exécutif</h1>
-            <div class="report-period">{{ \Carbon\Carbon::parse($mois)->translatedFormat('F Y') }}</div>
-        </div>
+        @include('pdf.partials.header', [
+            'title' => 'Tableau de Bord Exécutif',
+            'ref' => 'REP-' . date('Ym'),
+            'date' => \Carbon\Carbon::parse($mois)->translatedFormat('F Y')
+        ])
 
         <!-- KPI GRID -->
         <div class="kpi-container">
             <div class="kpi-tile">
                 <div class="kpi-label">Revenus Bruts</div>
-                <div class="kpi-value text-secondary">{{ number_format($data['kpis']['revenu_mensuel'], 0, ',', ' ') }} F</div>
+                <div class="kpi-value text-secondary">{{ format_money($data['kpis']['revenu_mensuel']) }}</div>
                 <div class="kpi-trend trend-up">↑ +4.2% vs M-1</div>
             </div>
             <div class="kpi-gap"></div>
@@ -229,7 +212,7 @@
             <div class="kpi-gap"></div>
             <div class="kpi-tile">
                 <div class="kpi-label">Impayés</div>
-                <div class="kpi-value" style="color: #ef4444;">{{ number_format($data['kpis']['impayes'], 0, ',', ' ') }} F</div>
+                <div class="kpi-value" style="color: #ef4444;">{{ format_money($data['kpis']['impayes']) }}</div>
                 <div class="kpi-trend trend-down">Dette cumulée</div>
             </div>
             <div class="clearfix"></div>
@@ -333,15 +316,13 @@
                             <span class="badge badge-danger">{{ $bien->statut }}</span>
                         @endif
                     </td>
-                    <td style="text-align: right;" class="val-bold">{{ number_format($bien->loyer_mensuel, 0, ',', ' ') }} F</td>
+                    <td style="text-align: right;" class="val-bold">{{ format_money($bien->loyer_mensuel) }}</td>
                 </tr>
                 @endforeach
             </tbody>
         </table>
 
-        <div class="footer">
-            Document Interne de Pilotage | Ontario Group S.A. | Page 2/2
-        </div>
+        @include('pdf.partials.footer')
     </div>
 </body>
 </html>

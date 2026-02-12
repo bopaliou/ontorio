@@ -82,10 +82,10 @@
                         <div class="text-[11px] text-gray-400 italic">Bien: {{ $loy->contrat->bien->nom ?? 'Unité' }}</div>
                     </td>
                     <td class="px-6 py-4 text-right font-black text-[#274256]">
-                        {{ number_format($loy->montant, 0, ',', ' ') }} F
+                        {{ format_money($loy->montant) }}
                         @if($loy->statut === 'partiellement_payé')
                             <div class="text-[11px] text-red-500 font-bold mt-1">
-                                Reste: {{ number_format($loy->montant - $loy->montant_paye_cache, 0, ',', ' ') }} F
+                                Reste: {{ format_money($loy->montant - $loy->montant_paye_cache) }}
                             </div>
                         @endif
                     </td>

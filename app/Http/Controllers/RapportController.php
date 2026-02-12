@@ -34,11 +34,16 @@ class RapportController extends Controller
         $mois = $request->get('mois', Carbon::now()->format('Y-m'));
         $data = $this->statsService->getFinancialKPIs($mois);
 
-        $impayees = Loyer::with(['contrat.locataire', 'contrat.bien'])
+        $allUnpaid = Loyer::with(['contrat.locataire', 'contrat.bien'])
             ->where('mois', $mois)
             ->whereIn('statut', ['en_retard', 'partiellement_payé', 'émis'])
-            ->get()
-            ->sortBy('date_echeance');
+            ->get();
+
+        $impayees = [
+            'en_retard' => $allUnpaid->filter(fn($l) => $l->statut === 'en_retard' || ($l->statut === 'émis' && now()->gt($l->date_echeance))),
+            'partiellement_paye' => $allUnpaid->filter(fn($l) => $l->statut === 'partiellement_payé'),
+            'non_echu' => $allUnpaid->filter(fn($l) => $l->statut === 'émis' && now()->lte($l->date_echeance)),
+        ];
 
         return view('rapports.impayees', compact('data', 'impayees', 'mois'));
     }
@@ -71,5 +76,83 @@ class RapportController extends Controller
             'baseCommissionnable',
             'commissionHonoraires'
         ));
+    }
+
+    public function exportLoyersCSV(Request $request)
+    {
+        $mois = $request->get('mois', Carbon::now()->format('Y-m'));
+        $loyers = Loyer::with(['contrat.locataire', 'contrat.bien'])
+            ->where('mois', $mois)
+            ->get();
+
+        $filename = "rapport_loyers_{$mois}.csv";
+        $headers = [
+            "Content-type"        => "text/csv",
+            "Content-Disposition" => "attachment; filename=$filename",
+            "Pragma"              => "no-cache",
+            "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
+            "Expires"             => "0"
+        ];
+
+        $columns = ['Bien', 'Locataire', 'Montant', 'Statut', 'Date Echeance'];
+
+        $callback = function() use($loyers, $columns) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, $columns, ';');
+
+            foreach ($loyers as $loyer) {
+                fputcsv($file, [
+                    $loyer->contrat->bien->nom ?? 'N/A',
+                    $loyer->contrat->locataire->nom ?? 'N/A',
+                    $loyer->montant,
+                    $loyer->statut,
+                    $loyer->date_echeance->format('d/m/Y'),
+                ], ';');
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
+    public function exportImpayeesCSV(Request $request)
+    {
+        $mois = $request->get('mois', Carbon::now()->format('Y-m'));
+        $allUnpaid = Loyer::with(['contrat.locataire', 'contrat.bien'])
+            ->where('mois', $mois)
+            ->whereIn('statut', ['en_retard', 'partiellement_payé', 'émis'])
+            ->get();
+
+        $filename = "rapport_impayes_{$mois}.csv";
+        $headers = [
+            "Content-type"        => "text/csv",
+            "Content-Disposition" => "attachment; filename=$filename",
+            "Pragma"              => "no-cache",
+            "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
+            "Expires"             => "0"
+        ];
+
+        $columns = ['Locataire', 'Bien', 'Montant Total', 'Reste à Payer', 'Jours de Retard', 'Statut'];
+
+        $callback = function() use($allUnpaid, $columns) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, $columns, ';');
+
+            foreach ($allUnpaid as $loyer) {
+                fputcsv($file, [
+                    $loyer->contrat->locataire->nom ?? 'N/A',
+                    $loyer->contrat->bien->nom ?? 'N/A',
+                    $loyer->montant,
+                    $loyer->reste_a_payer,
+                    $loyer->jours_retard,
+                    $loyer->statut,
+                ], ';');
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
     }
 }

@@ -307,7 +307,7 @@
             <table class="data-table">
                 <tr>
                     <td class="label">Loyer Principal HT</td>
-                    <td class="value" style="font-size: 14px; color: #cb2d2d;">{{ number_format($contrat->loyer_montant, 0, ',', ' ') }} FCFA</td>
+                    <td class="value" style="font-size: 14px; color: #cb2d2d;">{{ format_money($contrat->loyer_montant) }}</td>
                 </tr>
                 <tr>
                     <td class="label">Échéance de Paiement</td>

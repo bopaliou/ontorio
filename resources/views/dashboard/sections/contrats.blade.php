@@ -66,7 +66,7 @@
                             <span class="italic text-gray-300">Inconnu</span>
                         @endif
                     </td>
-                    <td class="px-6 py-4 text-right font-mono font-bold">{{ number_format($con->loyer_montant, 0, ',', ' ') }} F</td>
+                    <td class="px-6 py-4 text-right font-mono font-bold">{{ format_money($con->loyer_montant) }}</td>
                     <td class="px-6 py-4 text-center">
                         @if($con->statut === 'actif')
                             <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-green-50 text-green-700 border border-green-100 rounded-full text-[11px] font-bold uppercase tracking-wide">
@@ -115,7 +115,7 @@
                                     </div>
                                     <div class="flex items-center gap-2">
                                          <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                                         <span class="font-bold text-gray-900">{{ number_format($con->loyer_montant, 0, ',', ' ') }} F</span>
+                                         <span class="font-bold text-gray-900">{{ format_money($con->loyer_montant) }}</span>
                                     </div>
                                 </div>
 
@@ -171,7 +171,7 @@
                                 <select name="bien_id" id="con-input-bien" class="input-focus block w-full bg-gray-50 border-none px-4 py-4 rounded-2xl text-base sm:text-sm font-bold text-gray-900 focus:ring-4 focus:ring-red-500/5 transition-all appearance-none cursor-pointer">
                                     <option value="">Sélectionner un bien...</option>
                                     @foreach($data['biens_list']->whereIn('statut', ['libre', 'disponible']) as $bien)
-                                        <option value="{{ $bien->id }}" data-loyer="{{ $bien->loyer_mensuel }}">{{ $bien->nom }} — {{ number_format($bien->loyer_mensuel, 0, ',', ' ') }} F</option>
+                                        <option value="{{ $bien->id }}" data-loyer="{{ $bien->loyer_mensuel }}">{{ $bien->nom }} — {{ format_money($bien->loyer_mensuel) }}</option>
                                     @endforeach
                                 </select>
                             </div>

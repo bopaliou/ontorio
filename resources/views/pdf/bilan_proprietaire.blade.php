@@ -269,12 +269,12 @@
                     <tr>
                         <td style="font-weight: 800; color: #1a2e3d;">{{ $bien->nom }}</td>
                         <td>{{ $bien->contrats->where('statut', 'actif')->first()->locataire->nom ?? '---' }}</td>
-                        <td class="amount text-primary">{{ number_format($encaisséBien, 0, ',', ' ') }} F</td>
+                        <td class="amount text-primary">{{ format_money($encaisséBien) }}</td>
                     </tr>
                 @endforeach
                 <tr class="total-row">
                     <td colspan="2">TOTAL DES REVENUS LOCATIFS</td>
-                    <td class="amount text-primary" style="font-size: 14px;">{{ number_format($totalRecettes, 0, ',', ' ') }} F</td>
+                    <td class="amount text-primary" style="font-size: 14px;">{{ format_money($totalRecettes) }}</td>
                 </tr>
             </tbody>
         </table>
@@ -299,7 +299,7 @@
                             <td>{{ $dep->date_depense->format('d/m/y') }}</td>
                             <td>{{ $bien->nom }}</td>
                             <td>{{ $dep->titre }} <span style="color: #94a3b8; font-size: 9px;">({{ $dep->categorie }})</span></td>
-                            <td class="amount" style="color: #64748b;">{{ number_format($dep->montant, 0, ',', ' ') }} F</td>
+                            <td class="amount" style="color: #64748b;">{{ format_money($dep->montant) }}</td>
                         </tr>
                     @endforeach
                 @endforeach
@@ -310,7 +310,7 @@
                 @endif
                 <tr class="total-row">
                     <td colspan="3">TOTAL DES DÉPENSES OPÉRATIONNELLES</td>
-                    <td class="amount" style="font-size: 14px; color: #64748b;">{{ number_format($totalDepenses, 0, ',', ' ') }} F</td>
+                    <td class="amount" style="font-size: 14px; color: #64748b;">{{ format_money($totalDepenses) }}</td>
                 </tr>
             </tbody>
         </table>
@@ -319,17 +319,17 @@
         <div class="synthesis-box">
             <div class="synth-item">
                 <span class="synth-label">Total Recettes Brutes</span>
-                <span class="synth-val">{{ number_format($totalRecettes, 0, ',', ' ') }} F</span>
+                <span class="synth-val">{{ format_money($totalRecettes) }}</span>
                 <div class="clearfix"></div>
             </div>
             <div class="synth-item">
                 <span class="synth-label">Total Charges & Dépenses</span>
-                <span class="synth-val">- {{ number_format($totalDepenses, 0, ',', ' ') }} F</span>
+                <span class="synth-val">- {{ format_money($totalDepenses) }}</span>
                 <div class="clearfix"></div>
             </div>
             <div class="net-result">
                 <span class="net-label">Net de Gestion à Reverser</span>
-                <span class="net-val">{{ number_format($totalRecettes - $totalDepenses, 0, ',', ' ') }} F CFA</span>
+                <span class="net-val">{{ format_money($totalRecettes - $totalDepenses) }}</span>
                 <div class="clearfix"></div>
             </div>
         </div>

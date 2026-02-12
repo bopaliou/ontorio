@@ -68,7 +68,7 @@ class DocumentController extends Controller
                     'id' => $document->id,
                     'type' => $document->type,
                     'nom_original' => $document->nom_original,
-                    'url' => Storage::url($document->chemin_fichier),
+                    'url' => get_secure_url($document->chemin_fichier),
                     'created_at' => $document->created_at->format(self::DATE_FORMAT),
                 ],
             ]);
@@ -93,7 +93,7 @@ class DocumentController extends Controller
                 'type' => $doc->type,
                 'type_label' => $this->getTypeLabel($doc->type),
                 'nom_original' => $doc->nom_original,
-                'url' => Storage::url($doc->chemin_fichier),
+                'url' => get_secure_url($doc->chemin_fichier),
                 'created_at' => $doc->created_at->format(self::DATE_FORMAT),
             ];
         });
@@ -131,10 +131,38 @@ class DocumentController extends Controller
                 'type' => $document->type,
                 'type_label' => $this->getTypeLabel($document->type),
                 'nom_original' => $document->nom_original,
-                'url' => Storage::url($document->chemin_fichier),
+                'url' => get_secure_url($document->chemin_fichier),
                 'created_at' => $document->created_at->format(self::DATE_FORMAT),
             ],
         ]);
+    }
+
+    /**
+     * Serve a document securely using a signed URL.
+     */
+    public function download(Request $request, string $path)
+    {
+        if (! $request->hasValidSignature()) {
+            abort(403, 'Lien expiré ou signature invalide.');
+        }
+
+        // On décode le chemin qui a été passé en paramètre
+        $filePath = decrypt($path);
+
+        if (! Storage::disk('public')->exists($filePath)) {
+            abort(404, 'Fichier introuvable.');
+        }
+
+        // Log de consultation
+        if (auth()->check()) {
+            \App\Helpers\ActivityLogger::log(
+                'Consultation Document',
+                'Le document a été consulté : ' . basename($filePath),
+                'info'
+            );
+        }
+
+        return Storage::disk('public')->response($filePath);
     }
 
     /**

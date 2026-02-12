@@ -277,33 +277,11 @@
         <div class="watermark">ONTARIO GROUP</div>
 
         <!-- HEADER -->
-        <div class="header">
-            <div class="header-content">
-                <table style="width: 100%">
-                    <thead>
-                        <tr>
-                            <th style="width: 50%; vertical-align: bottom; text-align: left; font-weight: normal;">
-                                <h1 class="agency-name">ONTARIO GROUP S.A.</h1>
-                                <div class="agency-info">
-                                    <strong>Pionnier de la Gestion Immobilière au Sénégal</strong><br>
-                                    Siége Social : 5 Félix Faure x Colbert, Dakar Plateau<br>
-                                    NINEA : 006421045 2G3 | RCCM : SN.DKR.2017.B.15234<br>
-                                    <strong>Assistance :</strong> +221 33 822 32 67 | commercial@ontariogroup.net
-                                </div>
-                            </th>
-                            <th style="width: 50%; text-align: right; vertical-align: top; font-weight: normal;">
-                                <img src="{{ public_path('images/ontorio-logo.png') }}" style="max-height: 75px;" alt="Logo Ontario Group">
-                            </th>
-                        </tr>
-                    </thead>
-                </table>
-            </div>
-
-            <div class="doc-title-section">
-                <div class="doc-title">Quittance de Loyer</div>
-                <div class="doc-ref">N° Q{{ date('Y') }}-{{ str_pad($loyer->id, 4, '0', STR_PAD_LEFT) }} | ÉTABLI LE {{ date('d/m/Y') }}</div>
-            </div>
-        </div>
+        @include('pdf.partials.header', [
+            'title' => 'Quittance de Loyer',
+            'ref' => 'Q' . date('Y') . '-' . str_pad($loyer->id, 4, '0', STR_PAD_LEFT),
+            'date' => date('d/m/Y')
+        ])
 
         <!-- INFO GRID -->
         <table class="info-grid">
@@ -337,7 +315,7 @@
         <!-- STATEMENT -->
         <div class="narration">
             Nous, <strong>ONTARIO GROUP S.A.</strong>, certifions avoir reçu de M./Mme/Mlle <strong>{{ $loyer->contrat->locataire->nom }}</strong>,
-            la somme de <strong>{{ number_format($loyer->montant + ($loyer->penalite ?? 0), 0, ',', ' ') }} FCFA</strong>
+            la somme de <strong>{{ format_money($loyer->montant + ($loyer->penalite ?? 0)) }}</strong>
             en règlement libératoire du loyer pour le mois de <strong>{{ \Carbon\Carbon::parse($loyer->mois)->translatedFormat('F Y') }}</strong>.
         </div>
 
@@ -355,7 +333,7 @@
                         <div class="desc">Loyer Principal</div>
                         <div class="sub-desc">Appel de loyer standard pour la période {{ \Carbon\Carbon::parse($loyer->mois)->translatedFormat('F Y') }}</div>
                     </td>
-                    <td class="amount">{{ number_format($loyer->montant, 0, ',', ' ') }}</td>
+                    <td class="amount">{{ format_money($loyer->montant, '') }}</td>
                 </tr>
                 @if($loyer->penalite > 0)
                 <tr>
@@ -363,7 +341,7 @@
                         <div class="desc" style="color: #cb2d2d;">Pénalités de Retard</div>
                         <div class="sub-desc">Frais administratifs suite au retard de régularisation</div>
                     </td>
-                    <td class="amount" style="color: #cb2d2d;">{{ number_format($loyer->penalite, 0, ',', ' ') }}</td>
+                    <td class="amount" style="color: #cb2d2d;">{{ format_money($loyer->penalite, '') }}</td>
                 </tr>
                 @endif
             </tbody>
@@ -374,12 +352,12 @@
             <div class="totals-box">
                 <div class="total-row">
                     <span class="total-label">Sous-total HT</span>
-                    <span class="total-val">{{ number_format($loyer->montant + ($loyer->penalite ?? 0), 0, ',', ' ') }}</span>
+                    <span class="total-val">{{ format_money($loyer->montant + ($loyer->penalite ?? 0), '') }}</span>
                     <div class="clearfix"></div>
                 </div>
                 <div class="final-total">
                     <span class="final-label">Net Perçu</span>
-                    <span class="final-val">{{ number_format($loyer->montant + ($loyer->penalite ?? 0), 0, ',', ' ') }} F</span>
+                    <span class="final-val">{{ format_money($loyer->montant + ($loyer->penalite ?? 0)) }}</span>
                     <div class="clearfix"></div>
                 </div>
             </div>
@@ -392,33 +370,10 @@
         </div>
         @endif
 
-        <!-- SIGNATURES & FOOTER -->
-        <div class="footer">
-            <table style="width: 100%" class="signature-area">
-                <thead>
-                    <tr>
-                        <th style="width: 65%; font-size: 9px; color: #64748b; padding-right: 50px; text-align: left; font-weight: normal; vertical-align: top;">
-                            <div style="font-weight: 900; color: #1a2e3d; text-transform: uppercase; margin-bottom: 8px; letter-spacing: 0.5px;">Informations de Paiement</div>
-                            <strong>Mode de versement :</strong> {{ $loyer->mode_paiement ?? 'Espèces / Chèque / Virement' }}<br>
-                            <strong>Date d'encaissement :</strong> {{ $loyer->date_paiement ? \Carbon\Carbon::parse($loyer->date_paiement)->format('d/m/Y') : date('d/m/Y') }}<br>
-                            <br>
-                            <em>La présente quittance libère le locataire pour le mois indiqué. Elle n'emporte pas présomption de paiement des termes antérieurs non encore soldés.</em>
-                        </th>
-                        <th style="width: 35%; font-weight: normal; vertical-align: top;">
-                            <div class="sign-box">
-                                <div class="sign-label">Cachet de l'Agence & Signature</div>
-                            </div>
-                        </th>
-                    </tr>
-                </thead>
-            </table>
-
-            <div class="bottom-legal">
-                <strong>ONTARIO GROUP S.A.</strong> - Société Anonyme au capital de 10.000.000 FCFA<br>
-                Une plateforme éditée par le département digital de Ontario Group.<br>
-                L'authenticité de ce document peut être vérifiée sur notre portail client : https://ontariogroup.net
-            </div>
-        </div>
+        @include('pdf.partials.footer')
+    </div>
+</body>
+</html>
     </div>
 </body>
 </html>

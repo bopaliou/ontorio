@@ -124,7 +124,7 @@
                         {{ $dep->bien->nom ?? 'Bien supprimé' }}
                     </td>
                     <td class="px-6 py-4 text-right">
-                        <span class="font-extrabold text-gray-900">{{ number_format($dep->montant, 0, ',', ' ') }} F</span>
+                        <span class="font-extrabold text-gray-900">{{ format_money($dep->montant) }}</span>
                     </td>
                     <td class="px-6 py-4 text-center text-gray-500 font-bold text-xs">
                         {{ \Carbon\Carbon::parse($dep->date_depense)->format('d/m/Y') }}
