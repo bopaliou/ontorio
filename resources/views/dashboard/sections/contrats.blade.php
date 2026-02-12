@@ -142,11 +142,10 @@
         </div>
     </div>
 
-    @push('modals')
     <!-- MODAL (ULTRA COMPACT GRID) -->
-    <div id="con-modal-wrapper" class="app-modal-root hidden" aria-labelledby="con-modal-title" role="dialog" aria-modal="true">
-        <div id="con-modal-overlay" class="app-modal-overlay opacity-0 z-[9998]"></div>
-        <div class="fixed inset-0 z-[9999] w-screen overflow-y-auto" onclick="if(event.target === this) conSection.closeModal()">
+    <div id="con-modal-wrapper" class="app-modal-root hidden" style="z-index: 10000;" aria-labelledby="con-modal-title" role="dialog" aria-modal="true">
+        <div id="con-modal-overlay" class="app-modal-overlay opacity-0" style="z-index: 10001;"></div>
+        <div class="fixed inset-0 w-screen overflow-y-auto" style="z-index: 10002;" onclick="if(event.target === this) conSection.closeModal()">
             <div class="flex min-h-full items-end justify-center p-0 text-center sm:items-center sm:p-0" onclick="if(event.target === this) conSection.closeModal()">
                 <div id="con-modal-container" class="app-modal-panel app-modal-panel-xl opacity-0 scale-95">
 
@@ -260,7 +259,6 @@
             </div>
         </div>
     </div>
-    @endpush
 </div>
 
 <script>

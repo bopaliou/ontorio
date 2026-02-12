@@ -48,7 +48,7 @@ class SenegalDataSeeder extends Seeder
                     'proprietaire_id' => $allProps[$index % 5]->id,
                     'surface' => rand(40, 300),
                     'nombre_pieces' => rand(1, 6),
-                    'statut' => 'libre'
+                    'statut' => 'libre',
                 ])
             );
         }
@@ -74,7 +74,7 @@ class SenegalDataSeeder extends Seeder
         for ($i = 0; $i < 5; $i++) {
             $bien = $allBiens[$i];
             $locataire = $allLocataires[$i];
-            
+
             $contrat = Contrat::updateOrCreate(
                 ['bien_id' => $bien->id, 'locataire_id' => $locataire->id],
                 [
@@ -111,7 +111,7 @@ class SenegalDataSeeder extends Seeder
                         'montant' => $loyer->montant,
                         'mode' => 'espèces',
                         'date_paiement' => $startDate->copy()->day(5),
-                        'reference' => 'PAY-' . strtoupper(Str::random(8)),
+                        'reference' => 'PAY-'.strtoupper(Str::random(8)),
                     ]);
                     $loyer->update(['statut' => 'payé']);
                 }
@@ -126,12 +126,12 @@ class SenegalDataSeeder extends Seeder
             $cat = $categories[rand(0, 4)];
             Depense::create([
                 'bien_id' => $allBiens[rand(0, 4)]->id,
-                'titre' => 'Intervention ' . ucfirst($cat),
+                'titre' => 'Intervention '.ucfirst($cat),
                 'montant' => rand(5000, 150000),
                 'date_depense' => Carbon::now()->subDays(rand(1, 30)),
                 'categorie' => $cat,
                 'description' => 'Facture électricien/plombier suite appel locataire.',
-                'statut' => 'payé'
+                'statut' => 'payé',
             ]);
         }
     }
