@@ -21,6 +21,8 @@ class ProprietaireController extends Controller
      */
     public function store(Request $request)
     {
+        $this->authorize('proprietaires.create');
+
         $validator = Validator::make($request->all(), [
             'nom' => 'required|string|max:255',
             'email' => 'nullable|email|unique:proprietaires,email',
@@ -46,6 +48,8 @@ class ProprietaireController extends Controller
      */
     public function update(Request $request, Proprietaire $proprietaire)
     {
+        $this->authorize('proprietaires.edit');
+
         $validator = Validator::make($request->all(), [
             'nom' => 'required|string|max:255',
             'email' => 'nullable|email|unique:proprietaires,email,'.$proprietaire->id,
@@ -71,6 +75,8 @@ class ProprietaireController extends Controller
      */
     public function destroy(Proprietaire $proprietaire)
     {
+        $this->authorize('proprietaires.delete');
+
         try {
             $this->proprietaireService->deleteProprietaire($proprietaire);
 
