@@ -40,7 +40,7 @@
         <!-- Grid -->
         <div id="bien-grid-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             @forelse($data['biens_list'] as $bien)
-            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm ontario-card-lift group overflow-hidden cursor-pointer" onclick="bienSection.showDetails({{ json_encode($bien) }})">
+            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm ontario-card-lift group overflow-hidden cursor-pointer" onclick="bienSection.showDetails({{ json_encode($bien->load('imagePrincipale', 'images')) }})">
                 <div class="h-48 bg-gray-50 relative overflow-hidden">
                     @if($bien->imagePrincipale)
                         <img src="{{ Storage::url($bien->imagePrincipale->chemin) }}" alt="Photo de {{ $bien->nom }}" class="w-full h-full object-cover transform group-hover:scale-105 transition duration-700">
@@ -299,6 +299,48 @@
 <script>
     window.bienSection = {
         deleteTargetId: null,
+
+        showView: function(viewName) {
+            document.querySelectorAll('.bien-sub-view').forEach(view => view.classList.add('hidden'));
+            const target = document.getElementById('bien-view-' + viewName);
+            if (target) target.classList.remove('hidden');
+        },
+
+        showDetails: function(bien) {
+            document.getElementById('det-bien-nom').textContent = bien.nom;
+            document.getElementById('det-bien-type').textContent = bien.type;
+            document.getElementById('det-bien-statut').textContent = bien.statut;
+            document.getElementById('det-bien-statut').className = "px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest " + 
+                (bien.statut === 'occupé' ? 'bg-blue-100 text-blue-700' : 'bg-green-100 text-green-700');
+            document.getElementById('det-bien-prix').textContent = new Intl.NumberFormat('fr-FR').format(bien.loyer_mensuel) + ' F';
+            document.getElementById('det-bien-adresse').textContent = bien.adresse || 'Aucune adresse renseignée';
+            document.getElementById('det-bien-pieces').textContent = bien.nombre_pieces || '-';
+            document.getElementById('det-bien-surface').textContent = (bien.surface || '-') + ' m²';
+            document.getElementById('det-bien-meuble').textContent = bien.meuble ? 'Oui' : 'Non';
+
+            const imgContainer = document.getElementById('det-bien-image-container');
+            if (imgContainer) {
+                const img = bien.images && bien.images.length > 0 ? '/storage/' + bien.images[0].chemin : '/images/real-estate-illustration.png';
+                imgContainer.innerHTML = `<img src="${img}" class="w-full h-full object-cover" alt="${bien.nom}">`;
+            }
+
+            // Bind Actions
+            const btnEdit = document.getElementById('btn-edit-bien');
+            if (btnEdit) btnEdit.onclick = () => this.openModal('edit', bien);
+
+            const btnDel = document.getElementById('btn-delete-bien');
+            if (btnDel) btnDel.onclick = () => this.confirmDelete(bien.id);
+
+            // Contrat info placeholder
+            const contactInfo = document.getElementById('det-bien-occupe-info');
+            if (contactInfo) {
+                contactInfo.innerHTML = bien.statut === 'occupé' ? 
+                    `<p class="text-sm text-gray-600">Bien actuellement sous contrat actif. Consultez la section Contrats pour plus de détails.</p>` :
+                    `<p class="text-sm text-gray-400 italic">Ce bien est actuellement libre de toute occupation.</p>`;
+            }
+
+            this.showView('details');
+        },
 
         openModal: function(mode, bien = null) {
             const wrapper = document.getElementById('bien-modal-wrapper');
