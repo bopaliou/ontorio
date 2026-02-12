@@ -10,6 +10,12 @@ class AdminAccessTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+        \Illuminate\Support\Facades\Artisan::call('app:setup-roles-and-permissions');
+    }
+
     public function test_admin_section_hidden_for_unauthorized_users()
     {
         // User without users.view permission (e.g. standard owner or simple employee)
@@ -20,6 +26,7 @@ class AdminAccessTest extends TestCase
         // Assuming 'comptable' doesn't have 'users.view'.
 
         $user = User::factory()->create(['role' => 'comptable']);
+        $user->assignRole('comptable');
 
         $response = $this->actingAs($user)->get(route('dashboard'));
 
@@ -34,6 +41,7 @@ class AdminAccessTest extends TestCase
     public function test_admin_section_visible_for_authorized_users()
     {
         $user = User::factory()->create(['role' => 'admin']);
+        $user->assignRole('admin');
 
         $response = $this->actingAs($user)->get(route('dashboard'));
 

@@ -4,10 +4,19 @@ namespace Tests\Unit;
 
 use App\Helpers\PermissionHelper;
 use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 
 class PermissionHelperTest extends TestCase
 {
+    use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        Artisan::call('app:setup-roles-and-permissions');
+    }
     public function test_admin_has_all_permissions()
     {
         $admin = User::factory()->make(['role' => 'admin']);

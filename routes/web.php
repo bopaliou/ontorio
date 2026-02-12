@@ -17,6 +17,13 @@ Route::get('/', function () {
     return auth()->check() ? redirect()->route('dashboard') : redirect()->route('login');
 });
 
+Route::middleware('auth')->group(function () {
+    $profileRoute = 'profile';
+    Route::get($profileRoute, [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch($profileRoute, [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete($profileRoute, [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
 // Dashboard - accessible to all authenticated users
 // ==============================================================================
 // GROUP 1: OPERATIONAL READ (Lecture Seule - Tout le monde)

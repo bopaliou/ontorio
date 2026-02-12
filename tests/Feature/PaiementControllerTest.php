@@ -27,8 +27,12 @@ class PaiementControllerTest extends TestCase
     {
         parent::setUp();
 
+        // Seed roles
+        \Illuminate\Support\Facades\Artisan::call('app:setup-roles-and-permissions');
+
         // Créer user authentifié
         $this->user = User::factory()->create(['role' => 'gestionnaire']);
+        $this->user->assignRole('gestionnaire');
 
         // Créer structure: Proprietaire -> Bien -> Contrat -> Loyer
         $proprio = Proprietaire::factory()->create();
