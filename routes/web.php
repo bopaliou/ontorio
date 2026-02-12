@@ -24,50 +24,62 @@ Route::middleware('auth')->group(function () {
     Route::delete($profileRoute, [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-// Dashboard - accessible to all authenticated users
+// Dashboard: accessible à tous les utilisateurs authentifiés
+Route::get('/dashboard', [DashboardController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard');
+
 // ==============================================================================
-// GROUP 1: OPERATIONAL READ (Lecture Seule - Tout le monde)
+// GROUP 1: OPERATIONAL READ
 // Accessible à : Admin, Direction, Gestionnaire, Comptable
 // ==============================================================================
 Route::middleware(['auth', 'role:admin|direction|gestionnaire|comptable', 'throttle:moderate-stats'])->group(function () {
-    // Dashboard & Stats
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/biens', [BienController::class, 'index'])
+        ->middleware('permission:biens.view')
+        ->name('biens.index');
 
-    // Listes & Détails (Read Only)
-    Route::get('/biens', [BienController::class, 'index'])->name('biens.index');
-    Route::get('/biens/{bien}', [BienController::class, 'show'])->name('biens.show'); // Si existe
+    Route::get('/proprietaires/{proprietaire}/bilan', [ProprietaireController::class, 'bilanPDF'])
+        ->middleware('permission:proprietaires.bilan')
+        ->name('proprietaires.bilan');
 
-    Route::get('/proprietaires', [ProprietaireController::class, 'index'])->name('proprietaires.index');
-    Route::get('/proprietaires/{proprietaire}', [ProprietaireController::class, 'show'])->name('proprietaires.show');
-    Route::get('/proprietaires/{proprietaire}/bilan', [ProprietaireController::class, 'bilanPDF'])->name('proprietaires.bilan');
+    Route::get('/locataires/{locataire}/documents', [DocumentController::class, 'getForLocataire'])
+        ->middleware('permission:documents.view')
+        ->name('locataires.documents.index');
 
-    Route::get('/locataires', [LocataireController::class, 'index'])->name('locataires.index');
-    Route::get('/locataires/{locataire}', [LocataireController::class, 'show'])->name('locataires.show');
-    Route::get('/locataires/{locataire}/documents', [DocumentController::class, 'getForLocataire'])->name('locataires.documents.index');
+    Route::get('contrats/{contrat}/print', [ContratController::class, 'print'])
+        ->middleware('permission:contrats.print')
+        ->name('contrats.print');
 
-    Route::get('/contrats', [ContratController::class, 'index'])->name('contrats.index');
-    Route::get('/contrats/{contrat}', [ContratController::class, 'show'])->name('contrats.show');
-    Route::get('contrats/{contrat}/print', [ContratController::class, 'print'])->name('contrats.print');
+    Route::resource('loyers', LoyerController::class)
+        ->only(['index', 'show'])
+        ->middleware('permission:loyers.view');
 
-    Route::get('/loyers', [LoyerController::class, 'index'])->name('loyers.index');
-    Route::get('/loyers/{loyer}', [LoyerController::class, 'show'])->name('loyers.show');
-    Route::get('/loyers/{loyer}/quittance', [LoyerController::class, 'exporterPDF'])->name('loyers.quittance');
+    Route::get('/loyers/{loyer}/quittance', [LoyerController::class, 'exporterPDF'])
+        ->middleware('permission:loyers.quittance')
+        ->name('loyers.quittance');
 
-    Route::get('/revisions', [RevisionLoyerController::class, 'index'])->name('revisions.index');
+    Route::resource('revisions', RevisionLoyerController::class)
+        ->only(['index'])
+        ->middleware('permission:loyers.view');
 
-    // Rapports (Lecture)
-    Route::get('/rapports/loyers', [RapportController::class, 'loyers'])->name('rapports.loyers');
-    Route::get('/rapports/impayees', [RapportController::class, 'impayees'])->name('rapports.impayees');
-    Route::get('/rapports/commissions', [RapportController::class, 'commissions'])->name('rapports.commissions');
-    Route::get('/rapports/mensuel/{mois?}', [DashboardController::class, 'exporterRapportMensuel'])->name('rapports.mensuel');
+    Route::get('/rapports/loyers', [RapportController::class, 'loyers'])
+        ->middleware('permission:rapports.view')
+        ->name('rapports.loyers');
+    Route::get('/rapports/impayees', [RapportController::class, 'impayees'])
+        ->middleware('permission:rapports.view')
+        ->name('rapports.impayees');
+    Route::get('/rapports/commissions', [RapportController::class, 'commissions'])
+        ->middleware('permission:rapports.view')
+        ->name('rapports.commissions');
+    Route::get('/rapports/mensuel/{mois?}', [DashboardController::class, 'exporterRapportMensuel'])
+        ->middleware('permission:rapports.mensuel')
+        ->name('rapports.mensuel');
 
-    Route::get('/depenses', [\App\Http\Controllers\DepenseController::class, 'index'])->name('depenses.index'); // Si index existe
+    Route::resource('paiements', PaiementController::class)
+        ->only(['index', 'show'])
+        ->middleware('permission:paiements.view');
 
-    // Paiements (Lecture seule pour tous)
-    Route::get('/paiements', [PaiementController::class, 'index'])->name('paiements.index');
-    Route::get('/paiements/{paiement}', [PaiementController::class, 'show'])->name('paiements.show');
-
-    // Stats API (Partagées)
+    // API Stats & Alerts (lecture dashboard)
     Route::prefix('api')->group(function () {
         Route::get('/stats/kpis', function () {
             return response()->json((new \App\Services\DashboardStatsService)->getFinancialKPIs());
@@ -94,57 +106,93 @@ Route::middleware(['auth', 'role:admin|direction|gestionnaire|comptable', 'throt
 // ==============================================================================
 Route::middleware(['auth', 'role:admin|gestionnaire', 'throttle:global-mutations'])->group(function () {
     // Propriétaires (Create/Edit/Delete)
-    Route::post('/dashboard/proprietaires', [ProprietaireController::class, 'store'])->name('dashboard.proprietaires.store');
-    Route::put('/dashboard/proprietaires/{proprietaire}', [ProprietaireController::class, 'update'])->name('dashboard.proprietaires.update');
+    Route::post('/dashboard/proprietaires', [ProprietaireController::class, 'store'])
+        ->middleware('permission:proprietaires.create')
+        ->name('dashboard.proprietaires.store');
+    Route::put('/dashboard/proprietaires/{proprietaire}', [ProprietaireController::class, 'update'])
+        ->middleware('permission:proprietaires.edit')
+        ->name('dashboard.proprietaires.update');
     // Resource parts excluding index/show which are in Read Group
-    Route::get('proprietaires/create', [ProprietaireController::class, 'create'])->name('proprietaires.create');
-    Route::post('proprietaires', [ProprietaireController::class, 'store'])->name('proprietaires.store');
-    Route::get('proprietaires/{proprietaire}/edit', [ProprietaireController::class, 'edit'])->name('proprietaires.edit');
-    Route::put('proprietaires/{proprietaire}', [ProprietaireController::class, 'update'])->name('proprietaires.update');
-    Route::delete('proprietaires/{proprietaire}', [ProprietaireController::class, 'destroy'])->name('proprietaires.destroy');
+    Route::post('proprietaires', [ProprietaireController::class, 'store'])
+        ->middleware('permission:proprietaires.create')
+        ->name('proprietaires.store');
+    Route::put('proprietaires/{proprietaire}', [ProprietaireController::class, 'update'])
+        ->middleware('permission:proprietaires.edit')
+        ->name('proprietaires.update');
+    Route::delete('proprietaires/{proprietaire}', [ProprietaireController::class, 'destroy'])
+        ->middleware('permission:proprietaires.delete')
+        ->name('proprietaires.destroy');
 
     // Biens (Create/Edit/Delete)
-    Route::post('/dashboard/biens', [BienController::class, 'store'])->name('dashboard.biens.store');
-    Route::put('/dashboard/biens/{bien}', [BienController::class, 'update'])->name('dashboard.biens.update');
-    Route::delete('/dashboard/biens/{bien}', [BienController::class, 'destroy'])->name('dashboard.biens.delete');
-    Route::delete('/dashboard/bien-images/{bienImage}', [BienController::class, 'deleteImage'])->name('dashboard.bien-images.delete');
+    Route::post('/dashboard/biens', [BienController::class, 'store'])
+        ->middleware('permission:biens.create')
+        ->name('dashboard.biens.store');
+    Route::put('/dashboard/biens/{bien}', [BienController::class, 'update'])
+        ->middleware('permission:biens.edit')
+        ->name('dashboard.biens.update');
+    Route::delete('/dashboard/biens/{bien}', [BienController::class, 'destroy'])
+        ->middleware('permission:biens.delete')
+        ->name('dashboard.biens.delete');
+    Route::delete('/dashboard/bien-images/{bienImage}', [BienController::class, 'deleteImage'])
+        ->middleware('permission:biens.edit')
+        ->name('dashboard.bien-images.delete');
 
     // Locataires (Write)
-    Route::get('locataires/create', [LocataireController::class, 'create'])->name('locataires.create');
-    Route::post('locataires', [LocataireController::class, 'store'])->name('locataires.store');
-    Route::get('locataires/{locataire}/edit', [LocataireController::class, 'edit'])->name('locataires.edit');
-    Route::put('locataires/{locataire}', [LocataireController::class, 'update'])->name('locataires.update');
-    Route::delete('locataires/{locataire}', [LocataireController::class, 'destroy'])->name('locataires.destroy');
+    Route::post('locataires', [LocataireController::class, 'store'])
+        ->middleware('permission:locataires.create')
+        ->name('locataires.store');
+    Route::put('locataires/{locataire}', [LocataireController::class, 'update'])
+        ->middleware('permission:locataires.edit')
+        ->name('locataires.update');
+    Route::delete('locataires/{locataire}', [LocataireController::class, 'destroy'])
+        ->middleware('permission:locataires.delete')
+        ->name('locataires.destroy');
 
     // Documents Locataire (Write)
-    Route::post('/locataires/{locataire}/documents', [DocumentController::class, 'storeForLocataire'])->name('locataires.documents.store');
-    Route::delete('/documents/{document}', [DocumentController::class, 'destroy'])->name('documents.destroy');
+    Route::post('/locataires/{locataire}/documents', [DocumentController::class, 'storeForLocataire'])
+        ->middleware('permission:documents.upload')
+        ->name('locataires.documents.store');
+    Route::delete('/documents/{document}', [DocumentController::class, 'destroy'])
+        ->middleware('permission:documents.delete')
+        ->name('documents.destroy');
 
     // Contrats (Write)
-    Route::get('contrats/create', [ContratController::class, 'create'])->name('contrats.create');
-    Route::post('contrats', [ContratController::class, 'store'])->name('contrats.store');
-    Route::get('contrats/{contrat}/edit', [ContratController::class, 'edit'])->name('contrats.edit');
-    Route::put('contrats/{contrat}', [ContratController::class, 'update'])->name('contrats.update');
-    Route::delete('contrats/{contrat}', [ContratController::class, 'destroy'])->name('contrats.destroy');
+    Route::post('contrats', [ContratController::class, 'store'])
+        ->middleware('permission:contrats.create')
+        ->name('contrats.store');
+    Route::put('contrats/{contrat}', [ContratController::class, 'update'])
+        ->middleware('permission:contrats.edit')
+        ->name('contrats.update');
+    Route::delete('contrats/{contrat}', [ContratController::class, 'destroy'])
+        ->middleware('permission:contrats.delete')
+        ->name('contrats.destroy');
 
     // Loyers (Generation & Write)
     // Note: LoyerController resource often implies viewing, but we put 'index'/'show' in Read group.
     // If resource() is used, we must be careful not to duplicate names or routes.
     // Ideally use explicit routes for clarity here or 'except' index/show.
-    Route::get('loyers/create', [LoyerController::class, 'create'])->name('loyers.create');
-    Route::post('loyers', [LoyerController::class, 'store'])->name('loyers.store');
-    Route::get('loyers/{loyer}/edit', [LoyerController::class, 'edit'])->name('loyers.edit');
-    Route::put('loyers/{loyer}', [LoyerController::class, 'update'])->name('loyers.update');
-    Route::delete('loyers/{loyer}', [LoyerController::class, 'destroy'])->name('loyers.destroy');
-    Route::post('/loyers/generer-mois', [LoyerController::class, 'genererMois'])->name('loyers.genererMois');
+    Route::resource('loyers', LoyerController::class)
+        ->only(['create', 'store', 'edit', 'update', 'destroy'])
+        ->middleware('permission:loyers.generate');
+    Route::post('/loyers/generer-mois', [LoyerController::class, 'genererMois'])
+        ->middleware('permission:loyers.generate')
+        ->name('loyers.genererMois');
 
     // Révisions
-    Route::post('revisions', [RevisionLoyerController::class, 'store'])->name('revisions.store');
+    Route::post('revisions', [RevisionLoyerController::class, 'store'])
+        ->middleware('permission:loyers.generate')
+        ->name('revisions.store');
 
-    // Dépenses (Request/Creation only)
-    // Gestionnaire can CREATE a request, but maybe not PAY it?
-    // For now assuming full CRUD on depenses except maybe 'pay' status if that existed.
-    Route::resource('depenses', \App\Http\Controllers\DepenseController::class)->only(['store', 'update', 'destroy']);
+    // Dépenses (Write)
+    Route::post('depenses', [\App\Http\Controllers\DepenseController::class, 'store'])
+        ->middleware('permission:depenses.create')
+        ->name('depenses.store');
+    Route::put('depenses/{depense}', [\App\Http\Controllers\DepenseController::class, 'update'])
+        ->middleware('permission:depenses.edit')
+        ->name('depenses.update');
+    Route::delete('depenses/{depense}', [\App\Http\Controllers\DepenseController::class, 'destroy'])
+        ->middleware('permission:depenses.delete')
+        ->name('depenses.destroy');
 });
 
 // ==============================================================================
@@ -154,11 +202,12 @@ Route::middleware(['auth', 'role:admin|gestionnaire', 'throttle:global-mutations
 // ==============================================================================
 Route::middleware(['auth', 'role:admin|comptable', 'throttle:global-mutations'])->group(function () {
     // Paiements (Create/Edit/Delete) - STRICTEMENT RÉSERVÉ FINANCES
-    Route::get('paiements/create', [PaiementController::class, 'create'])->name('paiements.create');
-    Route::post('paiements', [PaiementController::class, 'store'])->name('paiements.store');
-    Route::get('paiements/{paiement}/edit', [PaiementController::class, 'edit'])->name('paiements.edit'); // Si existe
-    // Route::put('paiements/{paiement}', [PaiementController::class, 'update'])->name('paiements.update'); // Si existe
-    Route::delete('/dashboard/paiements/{paiement}', [PaiementController::class, 'destroy'])->name('paiements.destroy');
+    Route::post('paiements', [PaiementController::class, 'store'])
+        ->middleware('permission:paiements.create')
+        ->name('paiements.store');
+    Route::delete('/dashboard/paiements/{paiement}', [PaiementController::class, 'destroy'])
+        ->middleware('permission:paiements.delete')
+        ->name('paiements.destroy');
 });
 
 // ==============================================================================
@@ -167,10 +216,12 @@ Route::middleware(['auth', 'role:admin|comptable', 'throttle:global-mutations'])
 // ==============================================================================
 Route::middleware(['auth', 'role:admin', 'throttle:global-mutations'])->group(function () {
     // Documents (Admin Global)
-    Route::resource('documents', DocumentController::class)->except(['destroy', 'store', 'index']); // Adjust as needed
+    Route::resource('documents', DocumentController::class)
+        ->only(['index', 'show'])
+        ->middleware('permission:documents.view');
 
     // Gestion Utilisateurs
-    Route::resource('users', \App\Http\Controllers\UserController::class);
+    Route::resource('users', \App\Http\Controllers\UserController::class)->only(['index', 'store', 'update', 'destroy']);
 
     // Gestion Rôles
     Route::get('/settings/roles', [\App\Http\Controllers\RoleController::class, 'index'])->name('settings.roles');
