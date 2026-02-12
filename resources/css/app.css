@@ -89,7 +89,7 @@
 
     /* Transitions fluides et optimisées - ONTARIO SPA ENGINE */
     .section-pane {
-        will-change: opacity, transform;
+        /* will-change removed to prevent stacking context trapping fixed modals */
         transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
     }
 

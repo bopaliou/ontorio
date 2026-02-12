@@ -396,25 +396,8 @@
 </div>
 
 <script>
-
-    // Fonction globale pour l'aperçu des documents
-    window.previewDoc = function(doc) {
-        if (doc && doc.url) {
-            window.open(doc.url, '_blank');
-        } else {
-            showToast('Impossible d\'ouvrir le document', 'error');
-        }
-    };
-
     window.locSection = {
         deleteTargetId: null,
-        currentLocataireId: null,
-        deleteDocId: null,
-
-        showView: function(viewId) {
-            document.querySelectorAll('.loc-sub-view').forEach(el => el.classList.add('hidden'));
-            document.getElementById('loc-view-' + viewId).classList.remove('hidden');
-        },
 
         openModal: function(mode, loc = null) {
             const wrapper = document.getElementById('loc-modal-wrapper');
@@ -422,33 +405,29 @@
             const container = document.getElementById('loc-modal-container');
             const form = document.getElementById('loc-main-form');
             const title = document.getElementById('loc-modal-title');
-            const btn = document.getElementById('loc-submit-btn');
 
+            if (!wrapper) return;
             wrapper.classList.remove('hidden');
             window.modalUX?.activate(wrapper, container);
             setTimeout(() => {
-                overlay.classList.remove('opacity-0');
-                container.classList.remove('opacity-0', 'scale-95');
-                container.classList.add('opacity-100', 'scale-100');
+                overlay?.classList.remove('opacity-0');
+                container?.classList.remove('scale-95', 'opacity-0');
             }, 10);
 
-            form.reset();
+            if (form) form.reset();
             document.getElementById('loc-input-id').value = '';
 
-            if(mode === 'create') {
-                title.innerText = 'Nouveau Dossier Locataire';
-                btn.innerHTML = '<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg> Créer le dossier';
-            } else {
-                title.innerText = 'Modifier Locataire';
-                btn.innerHTML = '<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg> Mettre à jour';
+            if(mode === 'edit' && loc) {
+                title.innerText = 'Modifier le Locataire';
                 document.getElementById('loc-input-id').value = loc.id;
                 document.getElementById('loc-input-nom').value = loc.nom;
-                document.getElementById('loc-input-email').value = loc.email;
-                document.getElementById('loc-input-tel').value = loc.telephone;
+                document.getElementById('loc-input-email').value = loc.email || '';
+                document.getElementById('loc-input-tel').value = loc.telephone || '';
                 document.getElementById('loc-input-cni').value = loc.cni || '';
                 document.getElementById('loc-input-adresse').value = loc.adresse || '';
+            } else {
+                title.innerText = 'Nouveau Locataire';
             }
-            btn.disabled = false;
         },
 
         closeModal: function() {
@@ -464,313 +443,119 @@
             setTimeout(() => { wrapper.classList.add('hidden'); }, 300);
         },
 
-        showDetails: function(loc) {
-            this.currentLocataireId = loc.id;
-            document.getElementById('det-loc-nom').innerText = loc.nom;
-            document.getElementById('det-loc-initials').innerText = loc.nom.substring(0,1).toUpperCase();
-            document.getElementById('det-loc-tel').innerText = loc.telephone || '--';
-            document.getElementById('det-loc-email').innerText = loc.email || '--';
-            document.getElementById('det-loc-cni').innerText = loc.cni ? 'CNI/Pass: ' + loc.cni : 'CNI non renseignée';
+        submitForm: async function(e) {
+            e.preventDefault();
+            const form = e.target;
+            const btn = document.getElementById('loc-submit-btn');
+            if (!btn || btn.disabled) return;
 
-            const container = document.getElementById('det-loc-contract-container');
-            if(loc.contrats && loc.contrats.length > 0) {
-                const con = loc.contrats[0];
-                container.innerHTML = `
-                    <div class="flex flex-col gap-4">
-                        <div class="bg-gray-50 rounded-2xl p-5 flex items-center gap-5 border border-gray-100">
-                             <div class="w-12 h-12 bg-white rounded-xl shadow-sm flex items-center justify-center text-gray-400">
-                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
-                             </div>
-                             <div>
-                                 <p class="text-xs font-bold text-gray-400 uppercase mb-0.5">Logement loué</p>
-                                 <p class="font-bold text-gray-900 text-lg">${con.bien ? con.bien.nom : 'Bien supprimé'}</p>
-                             </div>
-                        </div>
-                        <div class="grid grid-cols-2 gap-4">
-                             <div class="bg-blue-50 rounded-2xl p-5 border border-blue-100">
-                                 <p class="text-[11px] font-black text-blue-400 uppercase tracking-widest leading-none mb-2">Loyer Actuel</p>
-                                 <p class="font-black text-blue-900 text-2xl">${new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 0 }).format(con.loyer_montant)} F</p>
-                             </div>
-                             <div class="bg-green-50 rounded-2xl p-5 border border-green-100">
-                                 <p class="text-[11px] font-black text-green-400 uppercase tracking-widest leading-none mb-2">Statut</p>
-                                 <p class="font-black text-green-700 text-lg uppercase">Actif</p>
-                             </div>
-                        </div>
-                    </div>
-                `;
-            } else {
-                container.innerHTML = `<p class="text-sm text-gray-400 italic text-center py-6 bg-gray-50 rounded-2xl">Aucun contrat actif pour ce locataire.</p>`;
-            }
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<svg class="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Patientez...';
+            btn.disabled = true;
 
-            // Charger les documents du locataire
-            this.loadDocuments(loc.id);
-
-            this.showView('details');
-        },
-
-        // =====================
-        // DOCUMENTS MANAGEMENT
-        // =====================
-
-        loadDocuments: async function(locataireId) {
-            const listContainer = document.getElementById('det-loc-documents-list');
-            const emptyState = document.getElementById('det-loc-documents-empty');
-
-            listContainer.innerHTML = '<div class="text-center py-6"><div class="animate-spin w-6 h-6 border-2 border-gray-300 border-t-[#cb2d2d] rounded-full mx-auto"></div><p class="text-xs text-gray-400 mt-2">Chargement...</p></div>';
-            emptyState.classList.add('hidden');
+            const formData = new FormData(form);
+            const id = document.getElementById('loc-input-id').value;
+            const url = id ? `/locataires/${id}` : '{{ route('locataires.store') }}';
 
             try {
-                const response = await fetch(`/locataires/${locataireId}/documents`, {
+                const response = await fetch(url, {
+                    method: id ? 'PUT' : 'POST',
                     headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                         'Accept': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                    }
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(Object.fromEntries(formData))
                 });
+
                 const data = await response.json();
 
-                if(data.success && data.documents.length > 0) {
-                    listContainer.innerHTML = data.documents.map(doc => this.renderDocumentItem(doc)).join('');
-                    emptyState.classList.add('hidden');
+                if(response.ok) {
+                    showToast('Locataire enregistré', 'success');
+                    this.closeModal();
+                    if(window.dashboard) window.dashboard.refresh();
+                    else window.location.reload();
                 } else {
-                    listContainer.innerHTML = '';
-                    emptyState.classList.remove('hidden');
+                    showToast(data.message || 'Erreur lors de l\'enregistrement', 'error');
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
                 }
             } catch(e) {
-                console.error('Erreur chargement documents:', e);
-                listContainer.innerHTML = '';
-                emptyState.classList.remove('hidden');
+                console.error(e);
+                showToast('Erreur serveur', 'error');
+                btn.innerHTML = originalText;
+                btn.disabled = false;
             }
         },
 
-        renderDocumentItem: function(doc) {
-            const iconMap = {
-                'cni': '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0v1m0 0v1m0 1a1 1 0 011 1v1a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a1 1 0 011-1h3m2 0h1a1 1 0 011 1v1a1 1 0 01-1 1h-1a1 1 0 01-1-1v-1a1 1 0 011-1z"/>',
-                'contrat_signe': '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>',
-                'attestation': '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>',
-                'justificatif': '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>',
-                'autre': '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>'
-            };
-
-            const colorMap = {
-                'cni': 'bg-blue-50 text-blue-500 border-blue-100',
-                'contrat_signe': 'bg-green-50 text-green-500 border-green-100',
-                'attestation': 'bg-purple-50 text-purple-500 border-purple-100',
-                'justificatif': 'bg-amber-50 text-amber-500 border-amber-100',
-                'autre': 'bg-gray-50 text-gray-500 border-gray-100'
-            };
-
-            const icon = iconMap[doc.type] || iconMap['autre'];
-            const color = colorMap[doc.type] || colorMap['autre'];
-
-            return `
-                <div class="flex items-center gap-4 p-4 bg-gray-50 rounded-xl border border-gray-100 hover:bg-gray-100 transition group">
-                    <div class="w-10 h-10 ${color} border rounded-xl flex items-center justify-center flex-shrink-0">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">${icon}</svg>
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <p class="text-sm font-bold text-gray-900 truncate">${doc.nom_original}</p>
-                        <p class="text-xs text-gray-400">${doc.type_label} • ${doc.created_at}</p>
-                    </div>
-                    <div class="flex items-center gap-1">
-                        <button onclick="window.previewDoc(${JSON.stringify(doc).replace(/"/g, '&quot;')})" class="p-2 text-[#cb2d2d] hover:bg-red-50 rounded-lg transition" title="Aperçu">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
-                        </button>
-                        <button onclick="locSection.requestDocDelete(${doc.id})" class="p-2 text-gray-400 hover:text-red-600 hover:bg-white rounded-lg transition" title="Supprimer">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-                        </button>
-                    </div>
-                </div>
-            `;
-        },
-
-        openDocumentModal: function() {
-            if (!this.currentLocataireId) {
-                console.error('Aucun locataire sélectionné');
-                return;
-            }
-
+        openDocumentModal: function(id) {
+            this.currentLocId = id;
+            document.getElementById('doc-locataire-id').value = id;
             const modal = document.getElementById('loc-doc-modal');
-            const container = document.getElementById('loc-doc-container');
-            const form = document.getElementById('loc-doc-form');
-
-            form.reset();
-            this.clearFilePreview();
-            document.getElementById('doc-locataire-id').value = this.currentLocataireId;
-
+            if (!modal) return;
             modal.classList.remove('hidden');
-            setTimeout(() => {
-                modal.classList.remove('opacity-0');
-                container.classList.remove('scale-95');
-                container.classList.add('scale-100');
-            }, 10);
+            setTimeout(() => { modal.classList.remove('opacity-0'); }, 10);
         },
 
         closeDocumentModal: function() {
             const modal = document.getElementById('loc-doc-modal');
-            const container = document.getElementById('loc-doc-container');
-
+            if (!modal) return;
             modal.classList.add('opacity-0');
-            container.classList.remove('scale-100');
-            container.classList.add('scale-95');
-
-            setTimeout(() => {
-                modal.classList.add('hidden');
-            }, 300);
+            setTimeout(() => { modal.classList.add('hidden'); }, 300);
         },
 
-        clearFile: function(event) {
-            event.preventDefault();
-            event.stopPropagation();
-            document.getElementById('doc-file-input').value = '';
-            this.clearFilePreview();
-        },
+        submitDocForm: async function(e) {
+            e.preventDefault();
+            const form = e.target;
+            const btn = form.querySelector('button[type="submit"]');
+            if (!btn || btn.disabled) return;
 
-        clearFilePreview: function() {
-            document.getElementById('doc-drop-content').classList.remove('hidden');
-            document.getElementById('doc-file-preview').classList.add('hidden');
-        },
-
-        showFilePreview: function(file) {
-            document.getElementById('doc-drop-content').classList.add('hidden');
-            document.getElementById('doc-file-preview').classList.remove('hidden');
-            document.getElementById('doc-file-name').textContent = file.name;
-            document.getElementById('doc-file-size').textContent = this.formatFileSize(file.size);
-        },
-
-        formatFileSize: function(bytes) {
-            if (bytes === 0) return '0 octets';
-            const k = 1024;
-            const sizes = ['octets', 'Ko', 'Mo', 'Go'];
-            const i = Math.floor(Math.log(bytes) / Math.log(k));
-            return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
-        },
-
-        uploadDocument: async function() {
-            const form = document.getElementById('loc-doc-form');
-            const btn = document.getElementById('doc-submit-btn');
-            const originalHtml = btn.innerHTML;
-            const locataireId = document.getElementById('doc-locataire-id').value;
-
-            btn.innerHTML = '<svg class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Téléversement...';
+            const originalText = btn.innerHTML;
             btn.disabled = true;
+            btn.innerHTML = 'Envoi...';
 
             const formData = new FormData(form);
+            const url = `/locataires/${this.currentLocId}/documents`;
 
             try {
-                const response = await fetch(`/locataires/${locataireId}/documents`, {
+                const response = await fetch(url, {
                     method: 'POST',
-                    headers: {
-                        'Accept': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                    },
+                    headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content },
                     body: formData
                 });
 
                 const data = await response.json();
 
-                if (data.success) {
-                    showToast(data.message || 'Document ajouté avec succès', 'success');
+                if(response.ok) {
+                    showToast('Document ajouté', 'success');
                     this.closeDocumentModal();
-                    this.loadDocuments(locataireId);
+                    if(window.dashboard) window.dashboard.refresh();
+                    else window.location.reload();
                 } else {
-                    showToast(data.message || 'Erreur lors de l\'upload', 'error');
+                    showToast(data.message || 'Erreur', 'error');
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
                 }
-            } catch (e) {
-                console.error('Erreur upload:', e);
-                showToast('Erreur serveur lors de l\'upload', 'error');
-            } finally {
-                btn.innerHTML = originalHtml;
-                btn.disabled = false;
-            }
-        },
-
-        requestDocDelete: function(docId) {
-            this.deleteDocId = docId;
-            const modal = document.getElementById('loc-doc-delete-modal');
-            const container = document.getElementById('loc-doc-delete-container');
-
-            modal.classList.remove('hidden');
-            setTimeout(() => {
-                modal.classList.remove('opacity-0');
-                container.classList.remove('scale-95');
-                container.classList.add('scale-100');
-            }, 10);
-        },
-
-        closeDocDeleteModal: function() {
-            const modal = document.getElementById('loc-doc-delete-modal');
-            const container = document.getElementById('loc-doc-delete-container');
-
-            modal.classList.add('opacity-0');
-            container.classList.remove('scale-100');
-            container.classList.add('scale-95');
-
-            setTimeout(() => {
-                modal.classList.add('hidden');
-                this.deleteDocId = null;
-            }, 300);
-        },
-
-        executeDocDelete: async function() {
-            if (!this.deleteDocId) return;
-
-            const btn = document.getElementById('loc-confirm-doc-delete-btn');
-            const originalText = btn.innerText;
-            btn.innerText = 'Suppression...';
-            btn.disabled = true;
-
-            try {
-                const response = await fetch(`/documents/${this.deleteDocId}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Accept': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                    }
-                });
-
-                const data = await response.json();
-
-                if (data.success) {
-                    showToast('Document supprimé', 'success');
-                    this.loadDocuments(this.currentLocataireId);
-                } else {
-                    showToast(data.message || 'Erreur lors de la suppression', 'error');
-                }
-            } catch (e) {
-                console.error('Erreur suppression:', e);
+            } catch(e) {
                 showToast('Erreur serveur', 'error');
-            } finally {
-                btn.innerText = originalText;
+                btn.innerHTML = originalText;
                 btn.disabled = false;
-                this.closeDocDeleteModal();
             }
         },
 
-        // =====================
-        // LOCATAIRE DELETE
-        // =====================
-
-        requestDelete: function(id) {
+        confirmDelete: function(id) {
             this.deleteTargetId = id;
             const modal = document.getElementById('loc-delete-modal');
-            const container = document.getElementById('loc-delete-container');
+            if (!modal) return;
             modal.classList.remove('hidden');
-            setTimeout(() => {
-                modal.classList.remove('opacity-0');
-                container.classList.remove('scale-95');
-                container.classList.add('scale-100');
-            }, 10);
+            setTimeout(() => { modal.classList.remove('opacity-0'); }, 10);
         },
 
         closeDeleteModal: function() {
             const modal = document.getElementById('loc-delete-modal');
-            const container = document.getElementById('loc-delete-container');
-
+            if (!modal) return;
             modal.classList.add('opacity-0');
-            container.classList.remove('scale-100');
-            container.classList.add('scale-95');
-
-            setTimeout(() => {
+            setTimeout(() => { 
                 modal.classList.add('hidden');
                 this.deleteTargetId = null;
             }, 300);
@@ -779,8 +564,9 @@
         executeDelete: async function() {
             if(!this.deleteTargetId) return;
             const btn = document.getElementById('loc-confirm-delete-btn');
+            if (!btn) return;
             const originalText = btn.innerText;
-            btn.innerText = 'Traitement...';
+            btn.innerText = 'Suppression...';
             btn.disabled = true;
 
             try {
@@ -791,85 +577,24 @@
                         'Accept': 'application/json'
                     }
                 });
+
                 const data = await response.json();
+
                 if(data.success) {
                     showToast('Locataire supprimé', 'success');
+                    this.closeDeleteModal();
                     if(window.dashboard) window.dashboard.refresh();
                     else window.location.reload();
                 } else {
                     showToast(data.message || 'Erreur', 'error');
+                    btn.innerText = originalText;
+                    btn.disabled = false;
                 }
             } catch(e) {
                 showToast('Erreur serveur', 'error');
-            } finally {
                 btn.innerText = originalText;
                 btn.disabled = false;
-                this.closeDeleteModal();
             }
         }
     };
-
-    // Event Listeners
-    document.getElementById('loc-confirm-delete-btn').addEventListener('click', function() {
-        locSection.executeDelete();
-    });
-
-    document.getElementById('loc-confirm-doc-delete-btn').addEventListener('click', function() {
-        locSection.executeDocDelete();
-    });
-
-    document.getElementById('doc-file-input').addEventListener('change', function(e) {
-        if (this.files && this.files[0]) {
-            locSection.showFilePreview(this.files[0]);
-        }
-    });
-
-    document.getElementById('loc-doc-form').addEventListener('submit', function(e) {
-        e.preventDefault();
-        locSection.uploadDocument();
-    });
-
-    document.getElementById('loc-main-form').addEventListener('submit', async function(e) {
-        e.preventDefault();
-        const btn = document.getElementById('loc-submit-btn');
-        const originalText = btn.innerHTML;
-        btn.innerHTML = '<svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Traitement...';
-        btn.disabled = true;
-
-        const formData = new FormData(this);
-        const id = document.getElementById('loc-input-id').value;
-        const method = id ? 'PUT' : 'POST';
-        const url = id ? `/dashboard/locataires/${id}` : `{{ route('locataires.store') }}`;
-
-        const jsonData = Object.fromEntries(formData.entries());
-
-        try {
-            const response = await fetch(url, {
-                method: method,
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                    'Accept': 'application/json'
-                },
-                body: JSON.stringify(jsonData)
-            });
-
-            const data = await response.json();
-
-                if(response.ok && data.success) {
-                    showToast(data.message || 'Succès', 'success');
-                    locSection.closeModal();
-                    if(window.dashboard) window.dashboard.refresh();
-                    else window.location.reload();
-                } else {
-                showToast(data.message || 'Erreur de validation', 'error');
-            }
-        } catch(e) {
-            console.error(e);
-            showToast('Erreur serveur', 'error');
-        } finally {
-            btn.innerHTML = originalText;
-            btn.disabled = false;
-        }
-    });
 </script>

@@ -38,6 +38,8 @@ class PaiementController extends Controller
      */
     public function store(\App\Http\Requests\StorePaiementRequest $request)
     {
+        $this->authorize('paiements.create');
+
         $response = null;
 
         try {
@@ -64,6 +66,8 @@ class PaiementController extends Controller
      */
     public function destroy(Paiement $paiement)
     {
+        $this->authorize('paiements.delete');
+
         try {
             $this->paymentService->deletePayment($paiement);
 

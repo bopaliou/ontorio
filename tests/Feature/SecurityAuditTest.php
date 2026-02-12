@@ -13,12 +13,19 @@ class SecurityAuditTest extends TestCase
 
     use RefreshDatabase;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+        \Illuminate\Support\Facades\Artisan::call('app:setup-roles-permissions');
+    }
+
     /**
      * Test Task 1.1: Route /system/migrate/ is protected and requires secret
      */
     public function test_system_migrate_is_protected_and_requires_valid_secret()
     {
         $admin = User::factory()->create(['role' => 'admin']);
+        $admin->assignRole('admin');
         $secret = 'test_secret_123';
         Config::set('deploy.token', $secret);
         Config::set('deploy.allow_web_migrate', true);
@@ -28,6 +35,7 @@ class SecurityAuditTest extends TestCase
 
         // 2. Forbidden for Non-admin
         $gestionnaire = User::factory()->create(['role' => 'gestionnaire']);
+        $gestionnaire->assignRole('gestionnaire');
         $this->actingAs($gestionnaire)->post(self::MIGRATE_URI, ['token' => $secret])->assertStatus(403);
 
         // 3. Valid secret for Admin
@@ -50,16 +58,18 @@ class SecurityAuditTest extends TestCase
      */
     public function test_api_stats_restricted_to_authorized_roles()
     {
-        $authorizedRoles = ['admin', 'direction', 'gestionnaire'];
-        $unauthorizedRoles = ['comptable'];
+        $authorizedRoles = ['admin', 'direction', 'gestionnaire', 'comptable'];
+        $unauthorizedRoles = ['proprietaire'];
 
         foreach ($authorizedRoles as $role) {
             $user = User::factory()->create(['role' => $role]);
+            $user->assignRole($role);
             $this->actingAs($user)->get('/api/stats/kpis')->assertStatus(200);
         }
 
         foreach ($unauthorizedRoles as $role) {
             $user = User::factory()->create(['role' => $role]);
+            $user->assignRole($role);
             $this->actingAs($user)->get('/api/stats/kpis')->assertStatus(403);
         }
     }

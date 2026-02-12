@@ -22,19 +22,19 @@
         <!-- Loyers Émis -->
         <div data-show-section="loyers" class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 cursor-pointer ontario-card-lift">
             <h3 class="text-gray-500 text-sm font-medium">Facturé ce mois</h3>
-            <p class="text-2xl font-bold text-[#274256] mt-1">{{ number_format($data['kpis']['loyers_emis'], 0, ',', ' ') }} F CFA</p>
+            <p class="text-2xl font-bold text-[#274256] mt-1">{{ format_money($data['kpis']['loyers_emis']) }}</p>
         </div>
 
         <!-- Loyers Payés -->
         <div data-show-section="paiements" class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 cursor-pointer ontario-card-lift">
             <h3 class="text-gray-500 text-sm font-medium">Encaissé ce mois</h3>
-            <p class="text-2xl font-bold text-green-600 mt-1">{{ number_format($data['kpis']['loyers_payes'], 0, ',', ' ') }} F CFA</p>
+            <p class="text-2xl font-bold text-green-600 mt-1">{{ format_money($data['kpis']['loyers_payes']) }}</p>
         </div>
 
         <!-- Impayés -->
         <div data-show-section="loyers" class="bg-white p-6 rounded-2xl shadow-sm border border-red-100 ring-2 ring-red-50 cursor-pointer ontario-card-lift">
             <h3 class="text-red-600 text-sm font-medium">Impayés Global</h3>
-            <p class="text-2xl font-bold text-red-600 mt-1">{{ number_format($data['kpis']['total_impaye'], 0, ',', ' ') }} F CFA</p>
+            <p class="text-2xl font-bold text-red-600 mt-1">{{ format_money($data['kpis']['total_impaye']) }}</p>
         </div>
 
          <!-- Taux Recouvrement -->
@@ -62,7 +62,7 @@
                                 <p class="font-medium text-gray-900">{{ $loyer->contrat->locataire->nom ?? 'Inconnu' }}</p>
                                 <p class="text-xs text-gray-500">{{ $loyer->contrat->bien->nom ?? '' }}</p>
                             </td>
-                            <td class="px-6 py-4 font-bold text-[#274256]">{{ number_format($loyer->montant, 0, ',', ' ') }} F CFA</td>
+                            <td class="px-6 py-4 font-bold text-[#274256]">{{ format_money($loyer->montant) }}</td>
                             <td class="px-6 py-4 text-right">
                                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
                                     {{ ucfirst($loyer->statut) }}
@@ -93,7 +93,7 @@
                                 <p class="font-medium text-gray-900">{{ $paiement->loyer->contrat->locataire->nom ?? 'Inconnu' }}</p>
                                 <p class="text-[10px] text-gray-400 uppercase">{{ \Carbon\Carbon::parse($paiement->date_paiement)->format('d F Y') }}</p>
                             </td>
-                            <td class="px-6 py-4 text-right font-bold text-green-600">+ {{ number_format($paiement->montant, 0, ',', ' ') }} F CFA</td>
+                            <td class="px-6 py-4 text-right font-bold text-green-600">+ {{ format_money($paiement->montant) }}</td>
                         </tr>
                          @empty
                         <tr>

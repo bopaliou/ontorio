@@ -18,6 +18,8 @@ class DepenseController extends Controller
 
     public function store(Request $request)
     {
+        $this->authorize('depenses.create');
+
         $validator = Validator::make($request->all(), [
             'bien_id' => 'required|exists:biens,id',
             'titre' => 'required|string|max:255',
@@ -48,6 +50,8 @@ class DepenseController extends Controller
 
     public function update(Request $request, Depense $depense)
     {
+        $this->authorize('depenses.edit');
+
         $validator = Validator::make($request->all(), [
             'titre' => 'required|string|max:255',
             'montant' => 'required|numeric|min:0',
@@ -78,6 +82,8 @@ class DepenseController extends Controller
 
     public function destroy(Depense $depense)
     {
+        $this->authorize('depenses.delete');
+
         try {
             $this->depenseService->deleteDepense($depense);
 

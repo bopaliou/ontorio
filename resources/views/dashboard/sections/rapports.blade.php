@@ -98,7 +98,7 @@
 
                             <!-- Tooltip -->
                             <div class="absolute -top-10 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-[11px] font-bold py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
-                                {{ number_format($point['montant'], 0, ',', ' ') }} F
+                                {{ format_money($point['montant']) }}
                             </div>
                         </div>
                         <p class="text-[11px] font-bold text-gray-400 uppercase">{{ $point['mois'] }}</p>

@@ -300,44 +300,37 @@
     window.bienSection = {
         deleteTargetId: null,
 
-        showView: function(viewId) {
-            document.querySelectorAll('.bien-sub-view').forEach(el => el.classList.add('hidden'));
-            document.getElementById('bien-view-' + viewId).classList.remove('hidden');
-        },
-
         openModal: function(mode, bien = null) {
             const wrapper = document.getElementById('bien-modal-wrapper');
             const overlay = document.getElementById('bien-modal-overlay');
             const container = document.getElementById('bien-modal-container');
             const form = document.getElementById('bien-main-form');
             const title = document.getElementById('bien-modal-title');
-            const btn = document.getElementById('bien-submit-btn');
 
+            if (!wrapper) return;
             wrapper.classList.remove('hidden');
             window.modalUX?.activate(wrapper, container);
             setTimeout(() => {
-                overlay.classList.remove('opacity-0');
-                container.classList.remove('opacity-0', 'scale-95');
-                container.classList.add('opacity-100', 'scale-100');
+                overlay?.classList.remove('opacity-0');
+                container?.classList.remove('scale-95', 'opacity-0');
             }, 10);
 
-            form.reset();
+            if (form) form.reset();
             document.getElementById('bien-input-id').value = '';
-            document.getElementById('file-name-display').classList.add('hidden');
+            const display = document.getElementById('file-name-display');
+            if (display) display.textContent = '';
 
             if(mode === 'edit' && bien) {
-                title.innerText = 'Modifier Bien';
-                btn.innerHTML = '<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg> Mettre à jour';
+                title.innerText = 'Modifier le Bien';
                 document.getElementById('bien-input-id').value = bien.id;
                 document.getElementById('bien-input-nom').value = bien.nom;
                 document.getElementById('bien-input-type').value = bien.type;
-                document.getElementById('bien-input-loyer').value = Math.floor(bien.loyer_mensuel);
+                document.getElementById('bien-input-loyer').value = bien.loyer_mensuel;
                 document.getElementById('bien-input-adresse').value = bien.adresse || '';
                 document.getElementById('bien-input-pieces').value = bien.nombre_pieces || '';
-                document.getElementById('bien-input-meuble').checked = bien.meuble == 1;
+                document.getElementById('bien-input-meuble').checked = !!bien.meuble;
             } else {
                 title.innerText = 'Nouveau Bien';
-                btn.innerHTML = '<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg> Enregistrer';
             }
         },
 
@@ -354,80 +347,67 @@
             setTimeout(() => { wrapper.classList.add('hidden'); }, 300);
         },
 
-        showDetails: function(bien) {
-            document.getElementById('det-bien-nom').innerText = bien.nom;
-            document.getElementById('det-bien-type').innerText = bien.type;
-            document.getElementById('det-bien-prix').innerText = new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 0 }).format(bien.loyer_mensuel) + ' F';
-            document.getElementById('det-bien-adresse').innerText = bien.adresse || (bien.nom + ' - ' + bien.type);
-            document.getElementById('det-bien-pieces').innerText = bien.nombre_pieces ? bien.nombre_pieces + ' Pièce(s)' : 'Non spécifié';
-            document.getElementById('det-bien-meuble').innerText = bien.meuble ? 'Meublé' : 'Non meublé';
+        submitForm: async function(e) {
+            e.preventDefault();
+            const form = e.target;
+            const btn = document.getElementById('bien-submit-btn');
+            if (!btn || btn.disabled) return;
 
-            const statutEl = document.getElementById('det-bien-statut');
-            statutEl.innerText = bien.statut;
-            statutEl.className = `px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest ${bien.statut === 'occupé' ? 'bg-blue-100 text-blue-700' : 'bg-green-100 text-green-700'}`;
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Traitement...';
+            btn.disabled = true;
 
-            // Image
-            const imgContainer = document.getElementById('det-bien-image-container');
-            if(bien.image_principale || (bien.images && bien.images.length > 0)) {
-                const imgPath = bien.image_principale ? bien.image_principale.chemin : bien.images[0].chemin;
-                const src = imgPath.startsWith('http') ? imgPath : '/storage/' + imgPath;
-                imgContainer.innerHTML = `<img src="${src}" alt="Photo de ${bien.nom}" class="w-full h-full object-cover cursor-pointer hover:scale-105 transition-transform duration-500" onclick="window.previewDoc({url: '${src}', nom_original: '${bien.nom}.jpg', type_label: 'Photo du Bien'})">`;
-            } else {
-                imgContainer.innerHTML = `<div class="w-full h-full flex items-center justify-center text-gray-300 bg-gray-50"><svg class="w-12 h-12 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"></path></svg></div>`;
+            const formData = new FormData(form);
+            const id = document.getElementById('bien-input-id').value;
+            const url = id ? `/dashboard/biens/${id}` : `{{ route('dashboard.biens.store') }}`;
+            
+            if (id) {
+                formData.append('_method', 'PUT');
             }
 
-            // Occupant Info
-            const occBox = document.getElementById('det-bien-occupe-info');
-            if(bien.statut === 'occupé' && bien.contrats && bien.contrats.length > 0) {
-                const contrat = bien.contrats.find(c => c.statut === 'actif' || c.statut === 'encours');
-                if(contrat && contrat.locataire) {
-                    const loc = contrat.locataire;
-                    occBox.innerHTML = `
-                        <div class="flex items-center gap-4">
-                            <div class="w-12 h-12 bg-gray-900 text-white rounded-xl flex items-center justify-center font-bold text-lg">
-                                ${loc.nom.substring(0,1).toUpperCase()}
-                            </div>
-                            <div>
-                                <p class="text-[11px] font-bold text-gray-400 uppercase">Locataire Actuel</p>
-                                <p class="font-bold text-gray-900">${loc.nom}</p>
-                                <p class="text-xs text-gray-500">${loc.telephone || ''}</p>
-                            </div>
-                        </div>
-                    `;
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        'Accept': 'application/json'
+                    },
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if(response.ok && data.success) {
+                    showToast(data.message || 'Succès', 'success');
+                    this.closeModal();
+                    if(window.dashboard) window.dashboard.refresh();
+                    else window.location.reload();
                 } else {
-                     occBox.innerHTML = `<p class="text-xs text-gray-400 italic">Occupé maïs aucun contrat actif trouvé.</p>`;
+                    showToast(data.message || 'Erreur de validation', 'error');
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
                 }
-            } else {
-                occBox.innerHTML = `<div class="text-center py-4"><span class="inline-block px-3 py-1 bg-green-50 text-green-600 rounded-full text-xs font-bold">Actuellement Libre</span></div>`;
+            } catch(e) {
+                console.error(e);
+                showToast('Erreur serveur', 'error');
+                btn.innerHTML = originalText;
+                btn.disabled = false;
             }
-
-            document.getElementById('btn-edit-bien').onclick = () => this.openModal('edit', bien);
-            document.getElementById('btn-delete-bien').onclick = () => this.requestDelete(bien.id);
-
-            this.showView('details');
         },
 
-        requestDelete: function(id) {
+        confirmDelete: function(id) {
             this.deleteTargetId = id;
             const modal = document.getElementById('bien-delete-modal');
-            const container = document.getElementById('bien-delete-container');
+            if (!modal) return;
             modal.classList.remove('hidden');
-            setTimeout(() => {
-                modal.classList.remove('opacity-0');
-                container.classList.remove('scale-95');
-                container.classList.add('scale-100');
-            }, 10);
+            setTimeout(() => { modal.classList.remove('opacity-0'); }, 10);
         },
 
         closeDeleteModal: function() {
             const modal = document.getElementById('bien-delete-modal');
-            const container = document.getElementById('bien-delete-container');
-
+            if (!modal) return;
             modal.classList.add('opacity-0');
-            container.classList.remove('scale-100');
-            container.classList.add('scale-95');
-
-            setTimeout(() => {
+            setTimeout(() => { 
                 modal.classList.add('hidden');
                 this.deleteTargetId = null;
             }, 300);
@@ -437,7 +417,7 @@
             if(!this.deleteTargetId) return;
             const btn = document.getElementById('bien-confirm-delete-btn');
             const originalText = btn.innerText;
-            btn.innerText = 'Traitement...';
+            btn.innerText = 'Suppression...';
             btn.disabled = true;
 
             try {
@@ -450,8 +430,9 @@
                 });
                 const data = await response.json();
                 if(data.success) {
-                    showToast('Bien supprimé par Ontario Group', 'success');
-                    window.location.reload();
+                    showToast('Bien supprimé avec succès', 'success');
+                    if(window.dashboard) window.dashboard.refresh();
+                    else window.location.reload();
                 } else {
                     showToast(data.message || 'Erreur lors de la suppression', 'error');
                 }
@@ -462,145 +443,23 @@
                  btn.disabled = false;
                  this.closeDeleteModal();
             }
-        },
-
-        // File Input UX
-        setupFileInput: function() {
-            const fileInput = document.getElementById('bien-input-images');
-             if(fileInput) {
-                 fileInput.addEventListener('change', function() {
-                    const display = document.getElementById('file-name-display');
-                    if(this.files && this.files.length > 0) {
-                        display.innerText = this.files.length > 1
-                            ? this.files.length + ' photos sélectionnées'
-                            : this.files[0].name;
-                        display.classList.remove('hidden');
-                    } else {
-                        display.classList.add('hidden');
-                    }
-                });
-             }
         }
     };
 
-    // Init
-    window.bienSection.setupFileInput();
-
-    document.getElementById('bien-confirm-delete-btn').addEventListener('click', function() {
-        bienSection.executeDelete();
-    });
-
-    // Dynamic Refresher for Biens (similar to Loyers)
-    window.bienRefresher = {
-        triggerRefresh: function() {
-            // Create or get iframe
-            let refreshIframe = document.getElementById('bien_refresh_iframe');
-            if(!refreshIframe) {
-                refreshIframe = document.createElement('iframe');
-                refreshIframe.id = 'bien_refresh_iframe';
-                refreshIframe.style.display = 'none';
-                document.body.appendChild(refreshIframe);
-            }
-
-            refreshIframe.src = '{{ route('dashboard') }}?t=' + new Date().getTime();
-            refreshIframe.onload = () => {
-                const iframeDoc = refreshIframe.contentDocument || refreshIframe.contentWindow.document;
-
-                // 1. Refresh Global Dashboard KPIs (Direction / Comptable / Gestionnaire)
-                const newGlobalGrid = iframeDoc.getElementById('dashboard-kpi-grid');
-                const oldGlobalGrid = document.getElementById('dashboard-kpi-grid');
-
-                if (newGlobalGrid && oldGlobalGrid) {
-                    oldGlobalGrid.innerHTML = newGlobalGrid.innerHTML;
-                    // Optional: Highlight effect to show update
-                    oldGlobalGrid.style.transition = 'opacity 0.3s';
-                    oldGlobalGrid.style.opacity = '0.5';
-                    setTimeout(() => { oldGlobalGrid.style.opacity = '1'; }, 300);
-                }
-
-                // 2. Refresh the Biens LIST if we are in list view
-                // We might need to re-fetch the list HTML or reload just the list container.
-                // Since Biens list is large, parsing from iframe dashboard might work if the dashboard view contains the list.
-                // However, the dashboard index loads specific sections.
-
-                // For simplicity and robustness given user request about "Dashboard Stats", simply reloading the page IS safer for the Property list itself,
-                // BUT the user specifically complained about "Comptabilite" stats not updating.
-
-                // Compromise: We refresh the Global Stats via Iframe, AND then we update the local list if possible.
-                // Actually, since updating a Bien affects many things, a reload is fine, BUT user said "donnees mis a jour" not taken into account.
-                // This implies caching or lack of propagation.
-
-                // Let's STICK to the reload for the Bien itself (to show new price in list),
-                // BUT PRE-FETCH the Global Stats or let the reload handle it?
-                // If the user says "it doesn't update", maybe the reload is too fast or hits cache?
-                // Or maybe the Controller didn't update the stats?
-
-                // My update in DashboardController updates the underlying data.
-                // If I reload, it SHOULD show.
-                // Why did the user complain? "on dirait que y'a des donnees toujours codes en dur" -> I fixed that (70%).
-                // "Montant Encaissé ne prends pas en compte..."
-
-                // The most likely reason is: The underlying update logic I added takes place,
-                // then the page reloads. DOM should be fresh.
-
-                // JUST IN CASE: I will execute the iframe refresh logic BEFORE the reload, or instead of it if I can fully swap the content.
-                // Actually, simply adding the iframe method allows us to refresh "Other" tabs/sections if we were using a single-page app approach.
-                // But here we are refreshing.
-
-                // WAIT. If I reload the page, `loyers.blade.php`'s refresh logic is lost.
-                // The User might be looking at the KPI cards at the top of the page.
-
-                window.location.reload();
-            };
-        }
-    };
-
-    document.getElementById('bien-main-form').addEventListener('submit', async function(e) {
-        e.preventDefault();
-        const btn = document.getElementById('bien-submit-btn');
-        const originalText = btn.innerHTML;
-        btn.innerHTML = '<svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Traitement...';
-        btn.disabled = true;
-
-        const formData = new FormData(this);
-        const id = document.getElementById('bien-input-id').value;
-        const url = id ? `/dashboard/biens/${id}` : `{{ route('dashboard.biens.store') }}`;
-
-        if (id) {
-            formData.append('_method', 'PUT');
-        }
-
-        try {
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                    'Accept': 'application/json'
-                },
-                body: formData
-            });
-
-            const data = await response.json();
-
-            if(response.ok && data.success) {
-                showToast(data.message || 'Succès', 'success');
-                bienSection.closeModal();
-
-                if(window.dashboard) {
-                    window.dashboard.refresh();
-                } else {
-                    window.location.reload();
-                }
-
+    // File Input UX (Using delegation for SPA)
+    document.addEventListener('change', function(e) {
+        if (e.target && e.target.id === 'bien-input-images') {
+            const display = document.getElementById('file-name-display');
+            if (!display) return;
+            const files = e.target.files;
+            if(files && files.length > 0) {
+                display.innerText = files.length > 1
+                    ? files.length + ' photos sélectionnées'
+                    : files[0].name;
+                display.classList.remove('hidden');
             } else {
-                showToast(data.message || 'Erreur de validation', 'error');
+                display.classList.add('hidden');
             }
-        } catch(e) {
-            console.error(e);
-            showToast('Erreur serveur', 'error');
-        } finally {
-            btn.innerHTML = originalText;
-            btn.disabled = false;
         }
     });
 </script>

@@ -55,7 +55,38 @@
             ])
         </div>
 
-        <!-- Table -->
+        <!-- Toolbar: Filters & Search -->
+        <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-200 flex flex-col sm:flex-row gap-4 justify-between items-center">
+            <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+                <!-- Search -->
+                <div class="relative w-full sm:w-64">
+                    <input type="text" id="dep-search-input" placeholder="Rechercher..." class="w-full pl-10 pr-4 py-2 bg-gray-50 border-none rounded-xl text-sm font-semibold focus:ring-2 focus:ring-[#cb2d2d]/20 transition-all placeholder-gray-400">
+                    <svg class="w-4 h-4 text-gray-400 absolute left-3.5 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                </div>
+
+                <!-- Category Filter -->
+                <div class="relative w-full sm:w-48">
+                    <select id="dep-filter-cat" class="w-full pl-3 pr-8 py-2 bg-gray-50 border-none rounded-xl text-sm font-semibold focus:ring-2 focus:ring-[#cb2d2d]/20 transition-all cursor-pointer appearance-none text-gray-700">
+                        <option value="">Toutes Catégories</option>
+                        <option value="maintenance">Maintenance</option>
+                        <option value="travaux">Travaux</option>
+                        <option value="taxe">Taxe</option>
+                        <option value="assurance">Assurance</option>
+                        <option value="autre">Autre</option>
+                    </select>
+                    <svg class="w-4 h-4 text-gray-500 absolute right-3 top-3 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                </div>
+            </div>
+
+            <!-- Export Actions -->
+            <div class="flex gap-2">
+                 <button onclick="depSection.exportData()" class="px-4 py-2 bg-gray-50 text-gray-600 rounded-xl text-xs font-bold uppercase tracking-wide hover:bg-gray-100 transition flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                    Export
+                </button>
+            </div>
+        </div>
+
         <!-- Table -->
         <div id="dep-table-container">
             <x-data-table :headers="[
@@ -65,10 +96,16 @@
                 ['label' => 'Montant', 'classes' => 'text-right text-white'],
                 ['label' => 'Date', 'classes' => 'text-center text-white'],
                 ['label' => 'Actions', 'classes' => 'text-right text-white']
-            ]" emptyMessage="Aucune dépense enregistrée.">
-
+            ]" emptyMessage="Aucune dépense trouvée.">
+                
+                <tbody id="dep-table-body">
                 @forelse($data['depenses_list'] as $dep)
-                <tr class="hover:bg-gray-50/80 transition-all duration-300 group">
+                <tr class="hover:bg-gray-50/80 transition-all duration-300 group dep-row" 
+                    data-titre="{{ strtolower($dep->titre) }}"
+                    data-desc="{{ strtolower($dep->description ?? '') }}"
+                    data-cat="{{ $dep->categorie }}"
+                    data-bien="{{ strtolower($dep->bien->nom ?? '') }}"
+                >
                     <td class="px-6 py-4">
                         <div class="font-bold text-gray-900">{{ $dep->titre }}</div>
                         <div class="text-xs text-gray-400 truncate max-w-xs">{{ $dep->description ?? '' }}</div>
@@ -87,7 +124,7 @@
                         {{ $dep->bien->nom ?? 'Bien supprimé' }}
                     </td>
                     <td class="px-6 py-4 text-right">
-                        <span class="font-extrabold text-gray-900">{{ number_format($dep->montant, 0, ',', ' ') }} F</span>
+                        <span class="font-extrabold text-gray-900">{{ format_money($dep->montant) }}</span>
                     </td>
                     <td class="px-6 py-4 text-center text-gray-500 font-bold text-xs">
                         {{ \Carbon\Carbon::parse($dep->date_depense)->format('d/m/Y') }}
@@ -108,12 +145,18 @@
                     </td>
                 </tr>
                 @empty
-                    <!-- Géré par le composant -->
+                    <tr><td colspan="6" class="p-8 text-center text-gray-400">Aucune dépense enregistrée.</td></tr>
                 @endforelse
+                </tbody>
 
                 <x-slot name="mobile">
+                    <div id="dep-mobile-list">
                     @if(count($data['depenses_list']) > 0)
                         @foreach($data['depenses_list'] as $dep)
+                            <div class="dep-row-mobile"
+                                data-titre="{{ strtolower($dep->titre) }}"
+                                data-cat="{{ $dep->categorie }}"
+                            >
                             <x-data-card
                                 title="{{ $dep->titre }}"
                                 status="{{ $dep->categorie }}"
@@ -143,8 +186,12 @@
                                     @endif
                                 </x-slot>
                             </x-data-card>
+                            </div>
                         @endforeach
+                    @else
+                        <div class="text-center p-8 text-gray-500">Aucune dépense.</div>
                     @endif
+                    </div>
                 </x-slot>
             </x-data-table>
         </div>
@@ -235,19 +282,24 @@
     </div>
 
     <!-- DELETE MODAL -->
-    <div id="dep-delete-modal" role="dialog" aria-modal="true" aria-labelledby="dep-delete-modal-title" onclick="if(event.target === this) depSection.closeDeleteModal()" class="fixed inset-0 z-[120] hidden bg-gray-900/60 backdrop-blur-sm flex items-center justify-center p-4 transition-opacity opacity-0 duration-300">
+    <div id="dep-delete-modal" role="dialog" aria-modal="true" aria-labelledby="dep-delete-modal-title" onclick="if(event.target === this) depSection.closeDeleteModal()" class="fixed inset-0 z-[10000] hidden bg-gray-900/60 backdrop-blur-sm flex items-center justify-center p-4 transition-opacity opacity-0 duration-300">
         <div id="dep-delete-container" class="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-8 text-center transform scale-95 transition-all duration-300">
-            <div class="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm">
+             <div class="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm">
                 <svg class="w-10 h-10 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
             </div>
-            <h3 id="dep-delete-modal-title" class="text-xl font-bold text-gray-900 mb-2">Supprimer la dépense ?</h3>
-            <p class="text-sm text-gray-500 mb-8 leading-relaxed">Cette opération annulera le débit associé dans le bilan propriétaire. Action irréversible.</p>
+            <h3 id="dep-delete-modal-title" class="text-xl font-bold text-gray-900 mb-2">Confirmer la suppression ?</h3>
+            <p class="text-sm text-gray-500 mb-8 leading-relaxed">Cette dépense sera retirée de l'historique comptable. Cette action est irréversible.</p>
             <div class="flex flex-col gap-3">
-                <button id="dep-confirm-delete-btn" class="w-full px-6 py-3.5 bg-red-600 text-white font-bold rounded-xl hover:bg-red-700 transition shadow-lg shadow-red-900/20 text-sm tracking-wide">Confirmer la suppression</button>
-                <button onclick="depSection.closeDeleteModal()" class="w-full px-6 py-3.5 bg-white border border-gray-200 text-gray-700 font-bold rounded-xl hover:bg-gray-50 transition text-sm">Annuler</button>
+                <button id="dep-confirm-delete-btn" class="w-full px-6 py-3.5 bg-red-600 text-white font-bold rounded-xl hover:bg-red-700 transition shadow-lg shadow-red-900/20 text-sm tracking-wide">
+                    Oui, Supprimer
+                </button>
+                <button onclick="depSection.closeDeleteModal()" class="w-full px-6 py-3.5 bg-white border border-gray-200 text-gray-700 font-bold rounded-xl hover:bg-gray-50 transition text-sm">
+                    Non, Annuler
+                </button>
             </div>
         </div>
     </div>
+@endpush
 </div>
 
 <script>
@@ -394,6 +446,81 @@ window.depSection = {
                 nameEl.classList.add('hidden');
             }
         });
+
+        // Filters Logic
+        const searchInput = document.getElementById('dep-search-input');
+        const catFilter = document.getElementById('dep-filter-cat');
+
+        const filterData = () => {
+            const search = searchInput.value.toLowerCase();
+            const cat = catFilter.value.toLowerCase();
+
+            // Desktop Rows
+            document.querySelectorAll('.dep-row').forEach(row => {
+                const titre = row.getAttribute('data-titre') || '';
+                const desc = row.getAttribute('data-desc') || '';
+                const rowCat = (row.getAttribute('data-cat') || '').toLowerCase();
+                const bien = row.getAttribute('data-bien') || '';
+
+                const matchesSearch = titre.includes(search) || desc.includes(search) || bien.includes(search);
+                const matchesCat = !cat || rowCat === cat;
+
+                if (matchesSearch && matchesCat) {
+                    row.classList.remove('hidden');
+                } else {
+                    row.classList.add('hidden');
+                }
+            });
+
+            // Mobile Rows
+            document.querySelectorAll('.dep-row-mobile').forEach(row => {
+               const titre = row.getAttribute('data-titre') || '';
+               const rowCat = (row.getAttribute('data-cat') || '').toLowerCase();
+               
+               const matchesSearch = titre.includes(search);
+               const matchesCat = !cat || rowCat === cat;
+
+               if (matchesSearch && matchesCat) {
+                   row.classList.remove('hidden');
+               } else {
+                   row.classList.add('hidden');
+               }
+            });
+        };
+
+        searchInput?.addEventListener('input', filterData);
+        catFilter?.addEventListener('change', filterData);
+    },
+
+    exportData: function() {
+        const rows = Array.from(document.querySelectorAll('.dep-row:not(.hidden)'));
+        if(rows.length === 0) {
+            showToast('Aucune donnée à exporter', 'info');
+            return;
+        }
+
+        let csvContent = "data:text/csv;charset=utf-8,";
+        csvContent += "Titre,Description,Categorie,Bien,Montant,Date\r\n";
+
+        rows.forEach(row => {
+            const cols = row.querySelectorAll('td');
+            const titre = cols[0].querySelector('div.font-bold').innerText.replace(/,/g, '');
+            const desc = cols[0].querySelector('div.text-xs').innerText.replace(/,/g, '');
+            const cat = cols[1].innerText.trim();
+            const bien = cols[2].innerText.trim();
+            const montant = cols[3].innerText.replace(/[^0-9]/g, '');
+            const date = cols[4].innerText.trim();
+
+            csvContent += `${titre},"${desc}",${cat},${bien},${montant},${date}\r\n`;
+        });
+
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", `export_depenses_${new Date().toISOString().slice(0,10)}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
     }
 };
 

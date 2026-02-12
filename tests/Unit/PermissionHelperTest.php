@@ -4,13 +4,24 @@ namespace Tests\Unit;
 
 use App\Helpers\PermissionHelper;
 use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 
 class PermissionHelperTest extends TestCase
 {
+    use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        Artisan::call('app:setup-roles-permissions');
+    }
+
     public function test_admin_has_all_permissions()
     {
-        $admin = User::factory()->make(['role' => 'admin']);
+        $admin = User::factory()->create(['role' => 'admin']);
+        $admin->assignRole('admin');
         $this->actingAs($admin);
 
         $this->assertTrue(PermissionHelper::can('users.view'));
@@ -19,7 +30,8 @@ class PermissionHelperTest extends TestCase
 
     public function test_comptable_permissions()
     {
-        $comptable = User::factory()->make(['role' => 'comptable']);
+        $comptable = User::factory()->create(['role' => 'comptable']);
+        $comptable->assignRole('comptable');
         $this->actingAs($comptable);
 
         $this->assertTrue(PermissionHelper::can('loyers.view'));

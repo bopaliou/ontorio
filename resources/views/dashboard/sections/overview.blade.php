@@ -174,7 +174,7 @@
                             </p>
                         </div>
                         <div class="text-right">
-                            <p class="text-sm font-extrabold text-[#274256]">{{ number_format($contrat->loyer_montant, 0, ',', ' ') }} F</p>
+                            <p class="text-sm font-extrabold text-[#274256]">{{ format_money($contrat->loyer_montant) }}</p>
                             <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-green-100 text-green-800">
                                 Actif
                             </span>

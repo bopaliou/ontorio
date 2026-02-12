@@ -7,26 +7,32 @@
             icon="calculator"
         >
             <x-slot name="actions">
-                <x-report-print-button />
+                <div class="flex items-center gap-3">
+                    <form action="{{ route('rapports.commissions') }}" method="GET" class="flex items-center gap-2">
+                        <input type="month" name="mois" value="{{ $mois }}" onchange="this.form.submit()" class="bg-white border-gray-200 rounded-xl text-xs font-bold text-gray-700 px-4 py-2 focus:ring-[#cb2d2d] focus:border-[#cb2d2d] transition-all shadow-sm">
+                    </form>
+                    <button type="button" onclick="window.print()" class="bg-gray-900 text-white px-5 py-2.5 rounded-xl font-black hover:bg-black transition shadow-lg shadow-gray-900/20 text-[11px] uppercase tracking-widest flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 00-2 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+                        Imprimer
+                    </button>
+                </div>
             </x-slot>
         </x-section-header>
-
-        <x-report-month-filter id="mois" name="mois" label="Mois" :value="$mois" />
 
         {{-- KPIs --}}
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <x-kpi-card
                 label="Base Commissionnable"
-                :value="number_format($baseCommissionnable, 0, ',', ' ')"
-                suffix="FCFA"
+                :value="format_money($baseCommissionnable)"
+                suffix=""
                 icon="money"
                 color="blue"
                 subtext="Total des loyers encaissés"
             />
             <x-kpi-card
                 label="Honoraires de Gestion"
-                :value="number_format($commissionHonoraires, 0, ',', ' ')"
-                suffix="FCFA"
+                :value="format_money($commissionHonoraires)"
+                suffix=""
                 icon="calculator"
                 color="green"
                 trend="+{{ (int) ($tauxCommission * 100) }}%"
@@ -59,12 +65,12 @@
                     <tbody>
                         @forelse($encaissements as $loyer)
                             @php($encaisse = min($loyer->montant, (float) ($loyer->paiements_sum_montant ?? 0)))
-                            <tr class="border-t border-slate-100">
-                                <td class="px-4 py-2">{{ $loyer->contrat->bien->nom ?? '—' }}</td>
-                                <td class="px-4 py-2">{{ $loyer->contrat->locataire->nom ?? '—' }}</td>
-                                <td class="px-4 py-2 text-right">{{ number_format($loyer->montant, 0, ',', ' ') }}</td>
-                                <td class="px-4 py-2 text-right">{{ number_format($encaisse, 0, ',', ' ') }}</td>
-                                <td class="px-4 py-2 text-right">{{ number_format($encaisse * $tauxCommission, 0, ',', ' ') }}</td>
+                            <tr class="border-t border-slate-100 hover:bg-gray-50/50 transition-colors">
+                                <td class="px-4 py-3 font-bold text-gray-900">{{ $loyer->contrat->bien->nom ?? '—' }}</td>
+                                <td class="px-4 py-3">{{ $loyer->contrat->locataire->nom ?? '—' }}</td>
+                                <td class="px-4 py-3 text-right font-medium text-gray-500">{{ format_money($loyer->montant, '') }}</td>
+                                <td class="px-4 py-3 text-right font-bold text-gray-900">{{ format_money($encaisse, '') }}</td>
+                                <td class="px-4 py-3 text-right font-black text-[#274256]">{{ format_money($encaisse * $tauxCommission, '') }}</td>
                             </tr>
                         @empty
                             <tr>

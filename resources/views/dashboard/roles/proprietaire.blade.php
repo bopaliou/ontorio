@@ -68,7 +68,11 @@
             </div>
 
             <div class="h-72 flex items-end justify-between gap-4 px-2">
-                @php $maxValTrend = max(array_column($data['revenus_par_mois'], 'montant')) ?: 1; @endphp
+                @php
+                    $montantsTrend = array_column($data['revenus_par_mois'], 'montant');
+                    $maxValTrend = !empty($montantsTrend) ? max($montantsTrend) : 0;
+                    $maxValTrend = $maxValTrend ?: 1;
+                @endphp
                 @foreach($data['revenus_par_mois'] as $revData)
                     @php $hTrend = ($revData['montant'] / $maxValTrend) * 90; @endphp
                     <div class="flex-1 flex flex-col items-center group">
@@ -88,7 +92,7 @@
              <div class="flex-1 flex flex-col justify-center gap-8">
                 <div class="p-6 bg-gray-50 rounded-3xl border border-gray-100">
                     <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Commissions Gestion (10%)</p>
-                    <p class="text-2xl font-black text-[#274256]">{{ number_format($data['kpis']['commissions_mensuelles'], 0, ',', ' ') }} F</p>
+                    <p class="text-2xl font-black text-[#274256]">{{ format_money($data['kpis']['commissions_mensuelles']) }}</p>
                 </div>
                 <div class="space-y-4">
                     <p class="text-xs text-gray-500 font-medium leading-relaxed italic border-l-4 border-blue-200 pl-4">
@@ -139,10 +143,10 @@
                             @endif
                         </td>
                         <td class="px-10 py-6 text-right font-bold text-[#274256] text-sm">
-                            {{ number_format($bien->revenus_cumules ?? 0, 0, ',', ' ') }} F
+                            {{ format_money($bien->revenus_cumules ?? 0) }}
                         </td>
                         <td class="px-10 py-6 text-right">
-                             <span class="text-sm font-black text-emerald-600">{{ number_format(($bien->revenus_cumules ?? 0) * 0.9 - ($bien->charges_cumulees ?? 0), 0, ',', ' ') }} F</span>
+                             <span class="text-sm font-black text-emerald-600">{{ format_money(($bien->revenus_cumules ?? 0) * 0.9 - ($bien->charges_cumulees ?? 0)) }}</span>
                         </td>
                     </tr>
                     @empty

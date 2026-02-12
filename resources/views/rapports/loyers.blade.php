@@ -11,6 +11,11 @@
                     <input type="month" name="mois" value="{{ $mois }}" onchange="this.form.submit()"
                            class="bg-white border-gray-200 rounded-xl text-sm font-bold text-gray-700 focus:ring-[#cb2d2d] focus:border-[#cb2d2d] shadow-sm">
 
+                    <a href="{{ route('rapports.loyers.csv', ['mois' => $mois]) }}" class="bg-emerald-600 text-white px-5 py-2.5 rounded-xl font-black hover:bg-emerald-700 transition shadow-lg shadow-emerald-900/20 text-[11px] uppercase tracking-widest flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                        CSV
+                    </a>
+
                     <button type="button" onclick="window.print()" class="bg-gray-900 text-white px-5 py-2.5 rounded-xl font-black hover:bg-black transition shadow-lg shadow-gray-900/20 text-[11px] uppercase tracking-widest flex items-center gap-2">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
                         Imprimer
@@ -22,8 +27,8 @@
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <x-kpi-card
                 label="Total Encaissé"
-                :value="number_format($data['loyers_encaisses'], 0, ',', ' ')"
-                suffix="FCFA"
+                :value="format_money($data['loyers_encaisses'])"
+                suffix=""
                 icon="money"
                 color="green"
                 trend="+8.2%"
@@ -40,8 +45,8 @@
             />
             <x-kpi-card
                 label="Loyers Impayés"
-                :value="number_format($data['arrieres_total'], 0, ',', ' ')"
-                suffix="FCFA"
+                :value="format_money($data['arrieres_total'])"
+                suffix=""
                 icon="clock"
                 color="red"
                 trend="-5%"
@@ -101,7 +106,7 @@
                                     <div class="text-[10px] text-gray-500 font-medium">Contrat #{{ $loyer->contrat->id }}</div>
                                 </td>
                                 <td class="px-8 py-5 text-right font-black text-gray-900 text-sm">
-                                    {{ number_format($loyer->montant, 0, ',', ' ') }} <span class="text-[10px] text-gray-400 font-bold ml-0.5">F</span>
+                                    {{ format_money($loyer->montant) }}
                                 </td>
                                 <td class="px-8 py-5">
                                     @php

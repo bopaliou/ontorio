@@ -1,0 +1,59 @@
+﻿
+   FAIL  Tests\Feature\PaiementControllerTest
+  Ô¿» enregistrÔÇª 0.73s  
+  Ô£ô enregistrÔÇª 0.16s  
+  Ô¿» paiementÔÇª  0.16s  
+  Ô¿» paiementÔÇª  0.15s  
+  Ô£ô paiementÔÇª  0.15s  
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\FÔÇª   
+  Expected response status code [201] but received 403.
+Failed asserting that 403 is identical to 201.
+
+  at tests\Feature\PaiementControllerTest.php:67
+     63Ôûò             'date_paiement' => now()->toDateString(),
+     64Ôûò             'reference' => 'REF123',
+     65Ôûò         ]);
+     66Ôûò 
+  Ô×£  67Ôûò         $response->assertStatus(201);
+     68Ôûò         $this->assertDatabaseHas('paiements', [
+     69Ôûò             'loyer_id' => $this->loyer->id,
+     70Ôûò             'montant' => 50000,
+     71Ôûò         ]);
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\FÔÇª   
+  Expected response status code [422] but received 403.
+Failed asserting that 403 is identical to 422.
+
+  at tests\Feature\PaiementControllerTest.php:101
+     97Ôûò             'mode' => 'virement',
+     98Ôûò             'date_paiement' => now()->toDateString(),
+     99Ôûò         ]);
+    100Ôûò 
+  Ô×£ 101Ôûò         $response->assertStatus(422); // Validation error
+    102Ôûò         $response->assertJsonValidationErrors('montant');
+    103Ôûò     }
+    104Ôûò 
+    105Ôûò     /**
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\FÔÇª   
+  Expected response status code [422] but received 403.
+Failed asserting that 403 is identical to 422.
+
+  at tests\Feature\PaiementControllerTest.php:117
+    113Ôûò             'mode' => 'bitcoin', // Mode inexistant
+    114Ôûò             'date_paiement' => now()->toDateString(),
+    115Ôûò         ]);
+    116Ôûò 
+  Ô×£ 117Ôûò         $response->assertStatus(422);
+    118Ôûò         $response->assertJsonValidationErrors('mode');
+    119Ôûò     }
+    120Ôûò 
+    121Ôûò     /**
+
+
+  Tests:    3 failed, 2 passed (5 assertions)
+  Duration: 1.60s
+

@@ -34,6 +34,8 @@ class BienController extends Controller
      */
     public function store(\App\Http\Requests\StoreBienRequest $request)
     {
+        $this->authorize('biens.create');
+
         try {
             // Ontario Group est le seul propriétaire par défaut si non spécifié
             $proprietaire = \App\Models\Proprietaire::firstOrCreate(
@@ -77,6 +79,8 @@ class BienController extends Controller
      */
     public function update(\App\Http\Requests\StoreBienRequest $request, Bien $bien)
     {
+        $this->authorize('biens.edit');
+
         try {
             $oldLoyer = $bien->loyer_mensuel;
             $newLoyer = $request->loyer_mensuel;
@@ -123,6 +127,8 @@ class BienController extends Controller
      */
     public function destroy(Bien $bien)
     {
+        $this->authorize('biens.delete');
+
         try {
             // Task 3.2: Vérifier s'il a des contrats actifs
             if ($bien->contrats()->whereIn('statut', ['actif', 'en_attente'])->exists()) {
@@ -144,6 +150,8 @@ class BienController extends Controller
      */
     public function deleteImage(BienImage $bienImage)
     {
+        $this->authorize('biens.edit');
+
         try {
             if (Storage::disk('public')->exists($bienImage->chemin)) {
                 Storage::disk('public')->delete($bienImage->chemin);
