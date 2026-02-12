@@ -78,6 +78,25 @@ Route::middleware(['auth', 'role:admin|direction|gestionnaire|comptable', 'throt
     Route::resource('paiements', PaiementController::class)
         ->only(['index', 'show'])
         ->middleware('permission:paiements.view');
+
+    // API Stats & Alerts (lecture dashboard)
+    Route::prefix('api')->group(function () {
+        Route::get('/stats/kpis', function () {
+            return response()->json((new \App\Services\DashboardStatsService)->getFinancialKPIs());
+        })->name('api.stats.kpis');
+
+        Route::get('/stats/parc', function () {
+            return response()->json((new \App\Services\DashboardStatsService)->getParcStats());
+        })->name('api.stats.parc');
+
+        Route::get('/stats/charts', function () {
+            return response()->json((new \App\Services\DashboardStatsService)->getChartData());
+        })->name('api.stats.charts');
+
+        Route::get('/alerts', function () {
+            return response()->json((new \App\Services\DashboardStatsService)->getAlerts());
+        })->name('api.alerts');
+    });
 });
 
 // ==============================================================================
