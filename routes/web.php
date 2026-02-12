@@ -32,11 +32,11 @@ Route::middleware('auth')->group(function () {
 Route::middleware(['auth', 'role:admin|direction|gestionnaire|comptable', 'throttle:moderate-stats'])->group(function () {
     // Dashboard & Stats
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    
+
     // Listes & Détails (Read Only)
     Route::get('/biens', [BienController::class, 'index'])->name('biens.index');
     Route::get('/biens/{bien}', [BienController::class, 'show'])->name('biens.show'); // Si existe
-    
+
     Route::get('/proprietaires', [ProprietaireController::class, 'index'])->name('proprietaires.index');
     Route::get('/proprietaires/{proprietaire}', [ProprietaireController::class, 'show'])->name('proprietaires.show');
     Route::get('/proprietaires/{proprietaire}/bilan', [ProprietaireController::class, 'bilanPDF'])->name('proprietaires.bilan');
@@ -108,7 +108,7 @@ Route::middleware(['auth', 'role:admin|gestionnaire', 'throttle:global-mutations
     Route::put('/dashboard/biens/{bien}', [BienController::class, 'update'])->name('dashboard.biens.update');
     Route::delete('/dashboard/biens/{bien}', [BienController::class, 'destroy'])->name('dashboard.biens.delete');
     Route::delete('/dashboard/bien-images/{bienImage}', [BienController::class, 'deleteImage'])->name('dashboard.bien-images.delete');
-    
+
     // Locataires (Write)
     Route::get('locataires/create', [LocataireController::class, 'create'])->name('locataires.create');
     Route::post('locataires', [LocataireController::class, 'store'])->name('locataires.store');
@@ -142,7 +142,7 @@ Route::middleware(['auth', 'role:admin|gestionnaire', 'throttle:global-mutations
     Route::post('revisions', [RevisionLoyerController::class, 'store'])->name('revisions.store');
 
     // Dépenses (Request/Creation only)
-    // Gestionnaire can CREATE a request, but maybe not PAY it? 
+    // Gestionnaire can CREATE a request, but maybe not PAY it?
     // For now assuming full CRUD on depenses except maybe 'pay' status if that existed.
     Route::resource('depenses', \App\Http\Controllers\DepenseController::class)->only(['store', 'update', 'destroy']);
 });
@@ -168,10 +168,10 @@ Route::middleware(['auth', 'role:admin|comptable', 'throttle:global-mutations'])
 Route::middleware(['auth', 'role:admin', 'throttle:global-mutations'])->group(function () {
     // Documents (Admin Global)
     Route::resource('documents', DocumentController::class)->except(['destroy', 'store', 'index']); // Adjust as needed
-    
+
     // Gestion Utilisateurs
     Route::resource('users', \App\Http\Controllers\UserController::class);
-    
+
     // Gestion Rôles
     Route::get('/settings/roles', [\App\Http\Controllers\RoleController::class, 'index'])->name('settings.roles');
     Route::get('/roles', [\App\Http\Controllers\RoleController::class, 'index'])->name('roles.index');

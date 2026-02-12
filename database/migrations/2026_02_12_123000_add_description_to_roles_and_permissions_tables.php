@@ -18,13 +18,13 @@ return new class extends Migration
         }
 
         Schema::table($tableNames['roles'], function (Blueprint $table) {
-            if (!Schema::hasColumn($table->getTable(), 'description')) {
+            if (! Schema::hasColumn($table->getTable(), 'description')) {
                 $table->string('description')->nullable()->after('guard_name');
             }
         });
 
         Schema::table($tableNames['permissions'], function (Blueprint $table) {
-            if (!Schema::hasColumn($table->getTable(), 'description')) {
+            if (! Schema::hasColumn($table->getTable(), 'description')) {
                 $table->string('description')->nullable()->after('guard_name');
             }
         });

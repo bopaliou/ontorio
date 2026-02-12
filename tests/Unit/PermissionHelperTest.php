@@ -17,6 +17,7 @@ class PermissionHelperTest extends TestCase
         parent::setUp();
         Artisan::call('app:setup-roles-permissions');
     }
+
     public function test_admin_has_all_permissions()
     {
         $admin = User::factory()->create(['role' => 'admin']);

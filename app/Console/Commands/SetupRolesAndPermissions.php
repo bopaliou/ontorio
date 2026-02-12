@@ -38,7 +38,7 @@ class SetupRolesAndPermissions extends Command
             Role::truncate();
             Permission::truncate();
             Schema::enableForeignKeyConstraints();
-            
+
             $this->line('🗑️  Rôles et permissions supprimés');
         }
 
@@ -143,11 +143,11 @@ class SetupRolesAndPermissions extends Command
                     'contrats.view',
                     'loyers.view',
                     'revisions.view',
-                    
+
                     // Lecture Globale Financière
                     'paiements.view',
                     'depenses.view',
-                    
+
                     // Rapports & Documents
                     'rapports.view', 'rapports.export', 'rapports.mensuel',
                     'documents.view',
@@ -176,7 +176,7 @@ class SetupRolesAndPermissions extends Command
                     // RAPPORTS (Opérationnels)
                     'rapports.view', 'rapports.export',
                     // FINANCE (Lecture seule stricte)
-                    'paiements.view', 
+                    'paiements.view',
                 ],
             ],
             'comptable' => [
@@ -185,7 +185,7 @@ class SetupRolesAndPermissions extends Command
                     // FINANCE: Full CRUD
                     'paiements.view', 'paiements.create', 'paiements.edit', 'paiements.delete',
                     'depenses.view', 'depenses.edit', // Peut marquer payé
-                    
+
                     // LOYERS: Lecture + Quittances
                     'loyers.view', 'loyers.quittance',
 

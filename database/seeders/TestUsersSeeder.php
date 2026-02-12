@@ -45,7 +45,7 @@ class TestUsersSeeder extends Seeder
                 ['email' => $userData['email']],
                 $userData
             );
-            
+
             // Assigner le rôle Spatie correspondant
             if (isset($userData['role'])) {
                 $user->assignRole($userData['role']);

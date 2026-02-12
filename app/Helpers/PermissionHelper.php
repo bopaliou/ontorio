@@ -32,6 +32,7 @@ class PermissionHelper
     public static function getRolePermissions(string $roleName): array
     {
         $role = Role::findByName($roleName);
+
         return $role ? $role->permissions->pluck('name')->toArray() : [];
     }
 
