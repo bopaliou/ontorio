@@ -80,8 +80,8 @@ class SetupRolesAndPermissions extends Command
         $rolesMatrix = [
             'admin' => $permissionNames,
             'direction' => [
-                'biens.view', 'locataires.view', 'contrats.view', 'loyers.view', 
-                'revisions.view', 'paiements.view', 'depenses.view', 
+                'biens.view', 'locataires.view', 'contrats.view', 'loyers.view',
+                'revisions.view', 'paiements.view', 'depenses.view',
                 'rapports.view', 'rapports.export', 'rapports.mensuel',
                 'documents.view', 'proprietaires.view', 'proprietaires.bilan',
             ],
@@ -102,12 +102,12 @@ class SetupRolesAndPermissions extends Command
                 'depenses.view', 'depenses.edit',
                 'loyers.view', 'loyers.quittance',
                 'rapports.view', 'rapports.export', 'rapports.mensuel',
-                'biens.view', 'locataires.view', 'contrats.view', 
+                'biens.view', 'locataires.view', 'contrats.view',
                 'proprietaires.view', 'proprietaires.bilan', 'documents.view',
             ],
             'proprietaire' => [
                 'biens.view', 'locataires.view', 'contrats.view', 'loyers.view',
-                'paiements.view', 'depenses.view', 'documents.view', 
+                'paiements.view', 'depenses.view', 'documents.view',
                 'rapports.view', 'proprietaires.view',
             ],
         ];
@@ -135,7 +135,7 @@ class SetupRolesAndPermissions extends Command
         DB::table('role_has_permissions')->insert($rolePivotData);
 
         // User sync (skipped in tests)
-        if (!app()->environment('testing')) {
+        if (! app()->environment('testing')) {
             $users = \App\Models\User::all();
             foreach ($users as $user) {
                 if ($user->role) {

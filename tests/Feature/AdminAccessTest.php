@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-error_log("AdminAccessTest.php LOADED");
+error_log('AdminAccessTest.php LOADED');
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -15,7 +15,7 @@ class AdminAccessTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         // Initialisation complète des rôles et permissions Spatie
         \Illuminate\Support\Facades\Artisan::call('app:setup-roles-permissions');
     }
@@ -24,7 +24,7 @@ class AdminAccessTest extends TestCase
     {
         $user = User::factory()->create(['role' => 'comptable']);
         $user->assignRole('comptable');
-        
+
         $response = $this->actingAs($user)->get(route('dashboard'));
 
         $response->assertStatus(200);
