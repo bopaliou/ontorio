@@ -156,9 +156,9 @@
     </div>
 
     <!-- MODAL: CONFIGURATION AGENCE (Refined) -->
-    <div id="prop-modal-wrapper" class="app-modal-root hidden" style="z-index: 10000;" aria-labelledby="prop-modal-title" role="dialog" aria-modal="true">
-        <div id="prop-modal-overlay" class="app-modal-overlay opacity-0" style="z-index: 10001;"></div>
-        <div class="fixed inset-0 w-screen overflow-y-auto" style="z-index: 10002;" onclick="if(event.target === this) propSection.closeModal()">
+    <div id="prop-modal-wrapper" class="app-modal-root hidden" aria-labelledby="prop-modal-title" role="dialog" aria-modal="true">
+        <div id="prop-modal-overlay" class="app-modal-overlay opacity-0"></div>
+        <div class="fixed inset-0 z-10 w-screen overflow-y-auto" onclick="if(event.target === this) propSection.closeModal()">
             <div class="flex min-h-full items-end justify-center p-0 text-center sm:items-center sm:p-0" onclick="if(event.target === this) propSection.closeModal()">
                 <div id="prop-modal-container" class="app-modal-panel app-modal-panel-2xl app-modal-panel-soft opacity-0 scale-95">
 

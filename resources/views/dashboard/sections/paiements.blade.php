@@ -174,8 +174,9 @@
         </div>
     </div>
 
-    <!-- Refresh iframe remains for background updates if needed, but not for form POST -->
-    <iframe id="pai_refresh_iframe" class="hidden"></iframe>
+    <!-- MODAL (ULTRA COMPACT GRID) -->
+    <div id="pai-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="pai-modal-title" onclick="if(event.target === this) paiSection.closeModal()" class="fixed inset-0 z-[60] hidden bg-slate-900/55 backdrop-blur-[2px] transition-all duration-300 flex items-end sm:items-center justify-center p-0 sm:p-4">
+        <div id="pai-modal-container" class="app-modal-panel app-modal-panel-xl scale-95 opacity-0">
 
     <!-- MODAL: ENREGISTREMENT PAIEMENT (DESIGN PREMIUM) -->
     <div id="pai-modal-wrapper" class="app-modal-root hidden" style="z-index: 10000;" aria-labelledby="pai-modal-title" role="dialog" aria-modal="true">
@@ -209,8 +210,35 @@
                         </div>
                     </div>
 
-                    <form id="pai-main-form" onsubmit="paiSection.submitForm(event)" action="{{ route('paiements.store') }}" method="POST" enctype="multipart/form-data" class="p-8 space-y-8 bg-white">
-                        @csrf
+            <form id="pai-main-form" action="{{ route('paiements.store') }}" method="POST" enctype="multipart/form-data" class="p-6 form-stack field-gap">
+                @csrf
+
+                <!-- Sélection Loyer -->
+                <div class="relative bg-gray-50 rounded-2xl border-2 border-gray-100 px-4 py-3 focus-within:ring-4 focus-within:ring-[#274256]/5 focus-within:border-[#274256] transition-all duration-300">
+                    <label for="pai-select-loyer" class="block text-[10px] font-black text-gray-400 uppercase tracking-[2px] mb-1">Loyer à solder</label>
+                    <select name="loyer_id" id="pai-select-loyer" required class="block w-full bg-transparent border-none p-0 text-base sm:text-sm font-bold text-gray-900 focus:ring-0 appearance-none cursor-pointer">
+                        @php
+                            $unpaidLoyers = $data['loyers_list']->filter(fn($l) => strtolower(trim($l->statut)) !== 'payé');
+                        @endphp
+                            $unpaidLoyers = $data['loyers_list']->filter(fn($l) => strtolower(trim($l->statut)) !== 'payé');
+                        @endphp
+
+                        @if($unpaidLoyers->count() > 0)
+                            <option value="">-- Sélectionner un loyer --</option>
+                            @foreach($unpaidLoyers as $l)
+                                <option value="{{ $l->id }}"
+                                        data-montant="{{ $l->montant }}"
+                                        data-reste="{{ $l->reste_a_payer }}"
+                                        data-locataire="{{ $l->contrat->locataire->nom }}"
+                                        data-mois="{{ \Carbon\Carbon::parse($l->mois)->translatedFormat('F Y') }}">
+                                    {{ $l->contrat->locataire->nom }} — {{ \Carbon\Carbon::parse($l->mois)->translatedFormat('F Y') }} — {{ number_format($l->reste_a_payer,0,',',' ') }} F (Restant)
+                                </option>
+                            @endforeach
+                        @else
+                            <option value="" disabled selected>Aucun loyer impayé trouvé</option>
+                        @endif
+                    </select>
+                </div>
 
                         <!-- Étape 1: Identification -->
                         <div class="space-y-4">
@@ -354,18 +382,13 @@
                             </div>
                         </div>
 
-                        <!-- Footer Actions Premium -->
-                        <div class="pt-8 flex items-center justify-end gap-4 border-t border-gray-100">
-                            <button type="button" onclick="paiSection.closeModal()" class="px-6 py-3 text-gray-400 font-black hover:text-gray-900 transition-colors text-[10px] uppercase tracking-[0.2em]">Annuler</button>
-                            <button type="submit" id="pai-submit-btn" class="relative overflow-hidden bg-gradient-to-r from-[#cb2d2d] to-[#ef4444] text-white px-10 py-4 rounded-2xl font-black shadow-xl shadow-red-900/20 hover:shadow-red-900/30 transition-all hover:-translate-y-1 text-[11px] uppercase tracking-[0.2em] flex items-center gap-3">
-                                <span class="relative z-10 flex items-center gap-3">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
-                                    Valider l'Encaissement
-                                </span>
-                                <div class="absolute inset-0 bg-white/20 transform translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
-                            </button>
-                        </div>
-                    </form>
+                <!-- Footer Actions -->
+                <div class="app-modal-footer pt-4 flex items-center justify-end gap-3 border-t border-gray-100">
+                    <button type="button" onclick="paiSection.closeModal()" class="px-4 py-2 text-gray-500 font-bold hover:bg-gray-50 rounded-xl transition text-[11px] uppercase tracking-widest">Annuler</button>
+                    <button type="submit" id="pai-submit-btn" class="bg-[#cb2d2d] text-white px-6 py-2.5 rounded-xl font-black hover:bg-[#a82020] transition shadow-lg shadow-red-900/20 text-[11px] uppercase tracking-widest flex items-center gap-2">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                        Valider
+                    </button>
                 </div>
             </div>
         </div>
@@ -402,21 +425,29 @@
             const wrapper = document.getElementById('pai-modal-wrapper');
             const overlay = document.getElementById('pai-modal-overlay');
             const container = document.getElementById('pai-modal-container');
-
-            if (!wrapper) return;
-            wrapper.classList.remove('hidden');
-            window.modalUX?.activate(wrapper, container);
-            
-            setTimeout(() => { 
-                overlay?.classList.remove('opacity-0');
-                container?.classList.remove('scale-95', 'opacity-0'); 
-            }, 10);
+            overlay.classList.remove('hidden');
+            window.modalUX?.activate(overlay, container);
+            setTimeout(() => { container.classList.remove('scale-95', 'opacity-0'); }, 10);
         },
 
         closeModal: function() {
             const wrapper = document.getElementById('pai-modal-wrapper');
             const overlay = document.getElementById('pai-modal-overlay');
             const container = document.getElementById('pai-modal-container');
+            container.classList.add('scale-95', 'opacity-0');
+            window.modalUX?.deactivate(overlay);
+            setTimeout(() => { overlay.classList.add('hidden'); }, 300);
+        }
+    };
+
+    // Feedback de chargement et soumission AJAX
+    document.getElementById('pai-main-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const btn = document.getElementById('pai-submit-btn');
+        const originalText = btn.innerHTML;
+
+        btn.innerHTML = '<svg class="animate-spin h-3 w-3 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Envoi...';
+        btn.disabled = true;
 
             if (!wrapper) return;
             overlay?.classList.add('opacity-0');

@@ -198,12 +198,10 @@
     </div>
 
     <!-- MODAL FORM -->
-@push('modals')
-    <!-- MODAL FORM -->
     <div id="dep-modal-wrapper" class="app-modal-root hidden" aria-labelledby="dep-modal-title" role="dialog" aria-modal="true">
-        <div id="dep-modal-overlay" class="app-modal-overlay opacity-0 z-[9998]"></div>
-        <div class="fixed inset-0 z-[9999] w-screen overflow-y-auto" onclick="if(event.target === this) depSection.closeModal()">
-            <div class="flex min-h-full items-end justify-center p-0 text-center sm:items-center sm:p-0" onclick="if(event.target === this) depSection.closeModal()">
+        <div id="dep-modal-overlay" class="app-modal-overlay opacity-0"></div>
+        <div class="fixed inset-0 z-10 w-screen overflow-y-auto" onclick="if(event.target === this) depSection.closeModal()">
+            <div class="flex min-h-full items-end justify-center p-0 text-center sm:items-center sm:p-0">
                 <div id="dep-modal-container" class="app-modal-panel app-modal-panel-xl opacity-0 scale-95">
 
                     <div class="app-modal-header px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-white">

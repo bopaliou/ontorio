@@ -259,6 +259,7 @@
             })();
 
             // Validation inline uniforme pour formulaires modaux
+            // IMPORTANT: ne pas bloquer le flux des submit handlers métier existants
             document.addEventListener('submit', function(event) {
                 const form = event.target;
                 if (!(form instanceof HTMLFormElement)) return;
@@ -266,26 +267,27 @@
 
                 form.querySelectorAll('.field-invalid').forEach(el => el.classList.remove('field-invalid'));
                 form.querySelectorAll('.form-error-message').forEach(el => el.remove());
-
-                if (form.checkValidity()) return;
-
-                event.preventDefault();
-                const invalidFields = Array.from(form.querySelectorAll('input, select, textarea')).filter(el => !el.checkValidity());
-
-                invalidFields.forEach((field) => {
-                    field.classList.add('field-invalid');
-                    field.setAttribute('aria-invalid', 'true');
-
-                    if (!field.nextElementSibling || !field.nextElementSibling.classList.contains('form-error-message')) {
-                        const hint = document.createElement('p');
-                        hint.className = 'form-error-message';
-                        hint.innerHTML = '<span aria-hidden="true">⚠️</span><span>' + (field.validationMessage || 'Champ invalide.') + '</span>';
-                        field.insertAdjacentElement('afterend', hint);
-                    }
-                });
-
-                invalidFields[0]?.focus();
             });
+
+            document.addEventListener('invalid', function(event) {
+                const field = event.target;
+                if (!(field instanceof HTMLInputElement || field instanceof HTMLSelectElement || field instanceof HTMLTextAreaElement)) {
+                    return;
+                }
+
+                const form = field.form;
+                if (!form || !form.id || !form.id.endsWith('-main-form')) return;
+
+                field.classList.add('field-invalid');
+                field.setAttribute('aria-invalid', 'true');
+
+                if (!field.nextElementSibling || !field.nextElementSibling.classList.contains('form-error-message')) {
+                    const hint = document.createElement('p');
+                    hint.className = 'form-error-message';
+                    hint.innerHTML = '<span aria-hidden="true">⚠️</span><span>' + (field.validationMessage || 'Champ invalide.') + '</span>';
+                    field.insertAdjacentElement('afterend', hint);
+                }
+            }, true);
 
             document.addEventListener('input', function(event) {
                 const field = event.target;

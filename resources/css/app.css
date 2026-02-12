@@ -207,7 +207,7 @@
 
 @layer components {
     .app-modal-root {
-        /* Removed relative and z-[100] to let fixed children escape; no opacity: 0 or hidden here */
+        @apply relative z-[100];
     }
 
     .app-modal-overlay {
