@@ -142,6 +142,7 @@
         </div>
     </div>
 
+    @push('modals')
     <!-- MODAL (ULTRA COMPACT GRID) -->
     <div id="con-modal-wrapper" class="app-modal-root hidden" aria-labelledby="con-modal-title" role="dialog" aria-modal="true">
         <div id="con-modal-overlay" class="app-modal-overlay opacity-0 z-[9998]"></div>

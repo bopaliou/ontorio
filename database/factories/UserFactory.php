@@ -48,6 +48,19 @@ class UserFactory extends Factory
      */
     public function configure(): static
     {
-        return $this;
+        return $this->afterCreating(function (\App\Models\User $user) {
+            // Synchronisation automatique du rôle Spatie avec la colonne legacy 'role'
+            // Utile pour la compatibilité des tests existants
+            try {
+                if (! empty($user->role)) {
+                    // On vérifie si les rôles sont seedés avant d'assigner
+                    if (\Spatie\Permission\Models\Role::where('name', $user->role)->exists()) {
+                        $user->assignRole($user->role);
+                    }
+                }
+            } catch (\Throwable $e) {
+                // On échoue silencieusement pour ne pas bloquer les tests sans DB
+            }
+        });
     }
 }
