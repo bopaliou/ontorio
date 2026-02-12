@@ -367,7 +367,11 @@
             container.classList.add('scale-95', 'opacity-0');
             
             window.modalUX?.deactivate(wrapper);
-            setTimeout(() => { wrapper.classList.add('hidden'); }, 300);
+            setTimeout(() => { 
+                wrapper.classList.add('hidden'); 
+                // Reset card on close
+                document.getElementById('pai-locataire-card').classList.add('hidden', 'opacity-0', 'translate-y-4');
+            }, 300);
         }
     };
 
@@ -377,7 +381,7 @@
         const btn = document.getElementById('pai-submit-btn');
         const originalText = btn.innerHTML;
 
-        btn.innerHTML = '<svg class="animate-spin h-3 w-3 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Envoi...';
+        btn.innerHTML = '<svg class="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Traitement...';
         btn.disabled = true;
 
         const formData = new FormData(this);
@@ -396,29 +400,27 @@
             const data = await response.json();
 
             if(response.ok) {
-                btn.innerHTML = '✅ Encaissé !';
+                btn.innerHTML = '✅ Transaction Réussie';
                 showToast(data.message || 'Paiement enregistré avec succès', 'success');
 
                 setTimeout(() => {
                     window.paiSection.closeModal();
                     if(window.dashboard) window.dashboard.refresh();
                     else window.location.reload();
-                }, 800);
+                }, 1000);
             } else {
-                btn.innerHTML = '<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg> Erreur';
+                btn.innerHTML = '⚠️ Erreur';
                 showToast(data.message || 'Erreur lors de l\'enregistrement', 'error');
-                setTimeout(() => { btn.innerHTML = originalText; }, 3000);
+                setTimeout(() => { 
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                }, 2000);
             }
         } catch(e) {
             console.error(e);
             showToast('Erreur de connexion au serveur', 'error');
             btn.innerHTML = originalText;
-        } finally {
-            // Re-enable button after 3s if there was an error, or immediately if we want to allow retry
-            // If success, the page reloads/refreshes anyway.
-            setTimeout(() => {
-                if (btn.disabled) btn.disabled = false;
-            }, 3000);
+            btn.disabled = false;
         }
     });
 
@@ -430,34 +432,38 @@
         const liveBalance = document.getElementById('pai-live-balance');
 
         if (this.value) {
-            const montantTotal = selected.dataset.montant;
             const reste = selected.dataset.reste;
             const locataire = selected.dataset.locataire;
             const mois = selected.dataset.mois;
 
             document.getElementById('pai-card-locataire').textContent = locataire;
-            document.getElementById('pai-card-mois').textContent = 'Période: ' + mois;
+            document.getElementById('pai-card-mois').textContent = 'Période : ' + mois;
             document.getElementById('pai-card-montant').textContent = new Intl.NumberFormat('fr-FR').format(reste) + ' F';
 
-            // On pré-remplit avec le reste à payer
             inputMontant.value = reste;
             inputMontant.dataset.target = reste;
 
             card.classList.remove('hidden');
-            card.classList.add('animate-fade-in');
-            liveBalance.classList.add('hidden');
+            setTimeout(() => {
+                card.classList.remove('opacity-0', 'translate-y-4');
+            }, 50);
+            
+            // Trigger input event to calculate balance immediately
+            inputMontant.dispatchEvent(new Event('input'));
         } else {
-            card.classList.add('hidden');
+            card.classList.add('opacity-0', 'translate-y-4');
+            setTimeout(() => card.classList.add('hidden'), 500);
             inputMontant.value = '';
+            liveBalance.classList.add('hidden');
         }
     });
 
-    // Calcul en temps réel du restant
+    // Calcul en temps réel du restant (Premium UI)
     document.getElementById('pai-input-montant').addEventListener('input', function() {
         const val = parseFloat(this.value) || 0;
         const target = parseFloat(this.dataset.target) || 0;
         const liveBalance = document.getElementById('pai-live-balance');
-        const liveVal = document.getElementById('pai-live-val');
+        const liveText = document.getElementById('pai-live-text');
         const cardMontant = document.getElementById('pai-card-montant');
 
         if (target > 0) {
@@ -465,20 +471,17 @@
             liveBalance.classList.remove('hidden');
 
             if (diff > 0) {
-                liveBalance.className = "text-[10px] font-bold mt-1 text-orange-600";
-                liveBalance.innerHTML = `Reliquat : <span>${new Intl.NumberFormat('fr-FR').format(diff)}</span> F`;
-                cardMontant.classList.add('text-orange-600');
-                cardMontant.classList.remove('text-[#274256]', 'text-emerald-600');
+                liveBalance.className = "mt-2 px-2 flex items-center gap-2 text-amber-600 animate-pulse";
+                liveText.textContent = `Reliquat à percevoir : ${new Intl.NumberFormat('fr-FR').format(diff)} F`;
+                cardMontant.className = "text-xl font-black text-amber-600 transition-colors duration-300";
             } else if (diff === 0) {
-                liveBalance.className = "text-[10px] font-bold mt-1 text-emerald-600";
-                liveBalance.innerHTML = "Solde complet ✅";
-                cardMontant.classList.add('text-emerald-600');
-                cardMontant.classList.remove('text-[#274256]', 'text-orange-600');
+                liveBalance.className = "mt-2 px-2 flex items-center gap-2 text-emerald-600";
+                liveText.textContent = "Solde complet de la quittance ✅";
+                cardMontant.className = "text-xl font-black text-emerald-600 transition-colors duration-300";
             } else {
-                liveBalance.className = "text-[10px] font-bold mt-1 text-blue-600";
-                liveBalance.innerHTML = `Trop-perçu : <span>${new Intl.NumberFormat('fr-FR').format(Math.abs(diff))}</span> F`;
-                cardMontant.classList.add('text-blue-600');
-                cardMontant.classList.remove('text-[#274256]', 'text-orange-600', 'text-emerald-600');
+                liveBalance.className = "mt-2 px-2 flex items-center gap-2 text-blue-600";
+                liveText.textContent = `Trop-perçu (Crédit) : ${new Intl.NumberFormat('fr-FR').format(Math.abs(diff))} F`;
+                cardMontant.className = "text-xl font-black text-blue-600 transition-colors duration-300";
             }
         }
     });
