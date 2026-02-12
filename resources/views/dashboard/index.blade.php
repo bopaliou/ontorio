@@ -409,8 +409,12 @@
                 }
 
                 try {
-                    // 2. Récupérer la page complète en tâche de fond
-                    const response = await fetch(window.location.href);
+                    // 2. Récupérer la page complète en tâche de fond (Cache-busting enabled)
+                    const url = new URL(window.location.href);
+                    url.searchParams.set('t', Date.now());
+                    const response = await fetch(url.toString(), {
+                        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                    });
                     const html = await response.text();
 
                     // 3. Parser et extraire le nouveau contenu

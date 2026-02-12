@@ -41,10 +41,18 @@ class TestUsersSeeder extends Seeder
         ];
 
         foreach ($users as $userData) {
-            User::create($userData);
+            $user = User::firstOrCreate(
+                ['email' => $userData['email']],
+                $userData
+            );
+            
+            // Assigner le rôle Spatie correspondant
+            if (isset($userData['role'])) {
+                $user->assignRole($userData['role']);
+            }
         }
 
-        $this->command->info('✅ 4 comptes de test créés avec succès !');
+        $this->command->info('✅ Comptes de test vérifiés/créés et rôles assignés !');
         $this->command->info('📧 Mot de passe pour tous : password');
     }
 }

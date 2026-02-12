@@ -172,10 +172,11 @@
         </div>
     </div>
 
+@push('modals')
     <!-- MODAL FORM (ULTRA COMPACT GRID) -->
     <div id="bien-modal-wrapper" class="app-modal-root hidden" aria-labelledby="bien-modal-title" role="dialog" aria-modal="true">
-        <div id="bien-modal-overlay" class="app-modal-overlay opacity-0"></div>
-        <div class="fixed inset-0 z-10 w-screen overflow-y-auto" onclick="if(event.target === this) bienSection.closeModal()">
+        <div id="bien-modal-overlay" class="app-modal-overlay opacity-0 z-[9998]"></div>
+        <div class="fixed inset-0 z-[9999] w-screen overflow-y-auto" onclick="if(event.target === this) bienSection.closeModal()">
             <div class="flex min-h-full items-end justify-center p-0 text-center sm:items-center sm:p-0" onclick="if(event.target === this) bienSection.closeModal()">
                 <div id="bien-modal-container" class="app-modal-panel app-modal-panel-xl opacity-0 scale-95">
 
@@ -277,7 +278,7 @@
     </div>
 
     <!-- DELETE MODAL (UNCHANGED) -->
-    <div id="bien-delete-modal" role="dialog" aria-modal="true" aria-labelledby="bien-delete-modal-title" onclick="if(event.target === this) bienSection.closeDeleteModal()" class="fixed inset-0 z-[120] hidden bg-gray-900/60 backdrop-blur-sm flex items-center justify-center p-4 transition-opacity opacity-0 duration-300">
+    <div id="bien-delete-modal" role="dialog" aria-modal="true" aria-labelledby="bien-delete-modal-title" onclick="if(event.target === this) bienSection.closeDeleteModal()" class="fixed inset-0 z-[10000] hidden bg-gray-900/60 backdrop-blur-sm flex items-center justify-center p-4 transition-opacity opacity-0 duration-300">
         <div id="bien-delete-container" class="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-8 text-center transform scale-95 transition-all duration-300">
              <div class="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm">
                 <svg class="w-10 h-10 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
@@ -294,6 +295,7 @@
             </div>
         </div>
     </div>
+@endpush
 </div>
 
 <script>

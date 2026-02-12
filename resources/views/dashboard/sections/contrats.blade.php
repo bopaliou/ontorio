@@ -144,8 +144,8 @@
 
     <!-- MODAL (ULTRA COMPACT GRID) -->
     <div id="con-modal-wrapper" class="app-modal-root hidden" aria-labelledby="con-modal-title" role="dialog" aria-modal="true">
-        <div id="con-modal-overlay" class="app-modal-overlay opacity-0"></div>
-        <div class="fixed inset-0 z-10 w-screen overflow-y-auto" onclick="if(event.target === this) conSection.closeModal()">
+        <div id="con-modal-overlay" class="app-modal-overlay opacity-0 z-[9998]"></div>
+        <div class="fixed inset-0 z-[9999] w-screen overflow-y-auto" onclick="if(event.target === this) conSection.closeModal()">
             <div class="flex min-h-full items-end justify-center p-0 text-center sm:items-center sm:p-0" onclick="if(event.target === this) conSection.closeModal()">
                 <div id="con-modal-container" class="app-modal-panel app-modal-panel-xl opacity-0 scale-95">
 
@@ -165,9 +165,9 @@
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <!-- Bien -->
-                            <div class="col-span-1 md:col-span-2 relative bg-gray-50 rounded-2xl border-2 border-gray-100 px-4 py-3 focus-within:ring-4 focus-within:ring-[#cb2d2d]/5 focus-within:border-[#cb2d2d] transition-all duration-300">
+                            <div class="col-span-1 md:col-span-2 relative">
                                 <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[2px] mb-1">Bien Immobilier (Libre)</label>
-                                <select name="bien_id" id="con-input-bien" class="block w-full bg-transparent border-none p-0 text-base sm:text-sm font-bold text-gray-900 focus:ring-0 appearance-none cursor-pointer">
+                                <select name="bien_id" id="con-input-bien" class="input-focus block w-full bg-gray-50 border-none px-4 py-4 rounded-2xl text-base sm:text-sm font-bold text-gray-900 focus:ring-4 focus:ring-red-500/5 transition-all appearance-none cursor-pointer">
                                     <option value="">Sélectionner un bien...</option>
                                     @foreach($data['biens_list']->whereIn('statut', ['libre', 'disponible']) as $bien)
                                         <option value="{{ $bien->id }}" data-loyer="{{ $bien->loyer_mensuel }}">{{ $bien->nom }} — {{ number_format($bien->loyer_mensuel, 0, ',', ' ') }} F</option>
@@ -176,9 +176,9 @@
                             </div>
 
                             <!-- Locataire -->
-                            <div class="col-span-1 md:col-span-2 relative bg-gray-50 rounded-2xl border-2 border-gray-100 px-4 py-3 focus-within:ring-4 focus-within:ring-[#cb2d2d]/5 focus-within:border-[#cb2d2d] transition-all duration-300">
+                            <div class="col-span-1 md:col-span-2 relative">
                                 <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[2px] mb-1">Locataire</label>
-                                <select name="locataire_id" id="con-input-locataire" class="block w-full bg-transparent border-none p-0 text-base sm:text-sm font-bold text-gray-900 focus:ring-0 appearance-none cursor-pointer">
+                                <select name="locataire_id" id="con-input-locataire" class="input-focus block w-full bg-gray-50 border-none px-4 py-4 rounded-2xl text-base sm:text-sm font-bold text-gray-900 focus:ring-4 focus:ring-red-500/5 transition-all appearance-none cursor-pointer">
                                     <option value="">Choisir un locataire...</option>
                                     @foreach($data['locataires_list'] as $loc)
                                         <option value="{{ $loc->id }}">{{ $loc->nom }}</option>
@@ -187,27 +187,27 @@
                             </div>
 
                             <!-- Loyer -->
-                            <div class="relative bg-gray-50 rounded-2xl border-2 border-gray-100 px-4 py-3 focus-within:ring-4 focus-within:ring-[#cb2d2d]/5 focus-within:border-[#cb2d2d] transition-all duration-300">
+                            <div class="relative">
                                 <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[2px] mb-1">Loyer Mensuel (F)</label>
-                                <input type="number" name="loyer_montant" id="con-input-loyer" required class="block w-full bg-transparent border-none p-0 text-base sm:text-sm font-bold text-gray-900 focus:ring-0 text-right font-mono" placeholder="0">
+                                <input type="number" name="loyer_montant" id="con-input-loyer" required class="input-focus block w-full bg-gray-50 border-none px-4 py-4 rounded-2xl text-base sm:text-sm font-bold text-gray-900 focus:ring-4 focus:ring-red-500/5 transition-all text-right font-mono" placeholder="0">
                             </div>
 
                             <!-- Date Début -->
-                            <div class="relative bg-gray-50 rounded-2xl border-2 border-gray-100 px-4 py-3 focus-within:ring-4 focus-within:ring-[#cb2d2d]/5 focus-within:border-[#cb2d2d] transition-all duration-300">
+                            <div class="relative">
                                 <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[2px] mb-1">Date d'entrée</label>
-                                <input type="date" name="date_debut" id="con-input-date" required value="{{ date('Y-m-d') }}" class="block w-full bg-transparent border-none p-0 text-base sm:text-sm font-bold text-gray-900 focus:ring-0">
+                                <input type="date" name="date_debut" id="con-input-date" required value="{{ date('Y-m-d') }}" class="input-focus block w-full bg-gray-50 border-none px-4 py-4 rounded-2xl text-base sm:text-sm font-bold text-gray-900 focus:ring-4 focus:ring-red-500/5 transition-all">
                             </div>
 
                             <!-- Date Fin -->
-                            <div class="relative bg-gray-50 rounded-2xl border-2 border-gray-100 px-4 py-3 focus-within:ring-4 focus-within:ring-[#cb2d2d]/5 focus-within:border-[#cb2d2d] transition-all duration-300">
+                            <div class="relative">
                                 <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[2px] mb-1">Date de Fin</label>
-                                <input type="date" name="date_fin" id="con-input-date-fin" class="block w-full bg-transparent border-none p-0 text-base sm:text-sm font-bold text-gray-900 focus:ring-0">
+                                <input type="date" name="date_fin" id="con-input-date-fin" class="input-focus block w-full bg-gray-50 border-none px-4 py-4 rounded-2xl text-base sm:text-sm font-bold text-gray-900 focus:ring-4 focus:ring-red-500/5 transition-all">
                             </div>
 
                             <!-- Type de Bail -->
-                            <div class="relative bg-gray-50 rounded-2xl border-2 border-gray-100 px-4 py-3 focus-within:ring-4 focus-within:ring-[#cb2d2d]/5 focus-within:border-[#cb2d2d] transition-all duration-300">
+                            <div class="relative">
                                 <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[2px] mb-1">Type de Bail</label>
-                                <select name="type_bail" id="con-input-type-bail" class="block w-full bg-transparent border-none p-0 text-base sm:text-sm font-bold text-gray-900 focus:ring-0 appearance-none cursor-pointer">
+                                <select name="type_bail" id="con-input-type-bail" class="input-focus block w-full bg-gray-50 border-none px-4 py-4 rounded-2xl text-base sm:text-sm font-bold text-gray-900 focus:ring-4 focus:ring-red-500/5 transition-all appearance-none cursor-pointer">
                                     <option value="habitation">Habitation</option>
                                     <option value="commercial">Commercial</option>
                                     <option value="professionnel">Professionnel</option>
@@ -215,15 +215,15 @@
                             </div>
 
                             <!-- Caution -->
-                            <div class="relative bg-gray-50 rounded-2xl border-2 border-gray-100 px-4 py-3 focus-within:ring-4 focus-within:ring-[#cb2d2d]/5 focus-within:border-[#cb2d2d] transition-all duration-300">
+                            <div class="relative">
                                 <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[2px] mb-1">Caution (F)</label>
-                                <input type="number" name="caution" id="con-input-caution" class="block w-full bg-transparent border-none p-0 text-base sm:text-sm font-bold text-gray-900 focus:ring-0 text-right font-mono" placeholder="0">
+                                <input type="number" name="caution" id="con-input-caution" class="input-focus block w-full bg-gray-50 border-none px-4 py-4 rounded-2xl text-base sm:text-sm font-bold text-gray-900 focus:ring-4 focus:ring-red-500/5 transition-all text-right font-mono" placeholder="0">
                             </div>
 
                             <!-- Frais de Dossier -->
-                            <div class="relative bg-gray-50 rounded-2xl border-2 border-gray-100 px-4 py-3 focus-within:ring-4 focus-within:ring-[#cb2d2d]/5 focus-within:border-[#cb2d2d] transition-all duration-300">
+                            <div class="relative">
                                 <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[2px] mb-1">Frais Dossier (F)</label>
-                                <input type="number" name="frais_dossier" id="con-input-frais" class="block w-full bg-transparent border-none p-0 text-base sm:text-sm font-bold text-gray-900 focus:ring-0 text-right font-mono" placeholder="0">
+                                <input type="number" name="frais_dossier" id="con-input-frais" class="input-focus block w-full bg-gray-50 border-none px-4 py-4 rounded-2xl text-base sm:text-sm font-bold text-gray-900 focus:ring-4 focus:ring-red-500/5 transition-all text-right font-mono" placeholder="0">
                             </div>
                         </div>
 
@@ -242,7 +242,7 @@
     </div>
 
     <!-- DELETE CONFIRMATION MODAL (UNCHANGED) -->
-    <div id="con-delete-modal" role="dialog" aria-modal="true" aria-labelledby="con-delete-modal-title" onclick="if(event.target === this) conSection.closeDeleteModal()" class="fixed inset-0 z-[120] hidden bg-gray-900/60 backdrop-blur-sm flex items-center justify-center p-4 transition-opacity opacity-0 duration-300">
+    <div id="con-delete-modal" role="dialog" aria-modal="true" aria-labelledby="con-delete-modal-title" onclick="if(event.target === this) conSection.closeDeleteModal()" class="fixed inset-0 z-[10000] hidden bg-gray-900/60 backdrop-blur-sm flex items-center justify-center p-4 transition-opacity opacity-0 duration-300">
         <div id="con-delete-container" class="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-8 text-center transform scale-95 transition-all duration-300">
             <div class="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm">
                 <svg class="w-10 h-10 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>

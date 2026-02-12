@@ -175,144 +175,147 @@
     </div>
 
     <!-- MODAL (ULTRA COMPACT GRID) -->
-    <div id="pai-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="pai-modal-title" onclick="if(event.target === this) paiSection.closeModal()" class="fixed inset-0 z-[60] hidden bg-slate-900/55 backdrop-blur-[2px] transition-all duration-300 flex items-end sm:items-center justify-center p-0 sm:p-4">
-        <div id="pai-modal-container" class="app-modal-panel app-modal-panel-xl scale-95 opacity-0">
+    <div id="pai-modal-wrapper" class="app-modal-root hidden" aria-labelledby="pai-modal-title" role="dialog" aria-modal="true">
+        <div id="pai-modal-overlay" class="app-modal-overlay opacity-0 z-[9998]"></div>
+        <div class="fixed inset-0 z-[9999] w-screen overflow-y-auto" onclick="if(event.target === this) paiSection.closeModal()">
+            <div class="flex min-h-full items-end justify-center p-0 text-center sm:items-center sm:p-0" onclick="if(event.target === this) paiSection.closeModal()">
+                <div id="pai-modal-container" class="app-modal-panel app-modal-panel-xl bg-white opacity-0 scale-95">
 
-            <!-- Header Compact -->
-            <div class="bg-[#274256] px-6 py-4 flex items-center justify-between">
-                <div>
-                    <h3 id="pai-modal-title" class="text-base font-bold text-white">Nouvel Encaissement</h3>
-                    <p class="text-blue-100/60 text-[11px] uppercase font-black tracking-widest mt-0.5">Enregistrer un paiement</p>
-                </div>
-                <button onclick="paiSection.closeModal()" class="text-white/60 hover:text-white p-1.5 rounded-full hover:bg-white/10 transition" aria-label="Fermer">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-                </button>
-            </div>
-
-            <form id="pai-main-form" action="{{ route('paiements.store') }}" method="POST" enctype="multipart/form-data" class="p-6 form-stack field-gap">
-                @csrf
-
-                <!-- Sélection Loyer -->
-                <div class="relative bg-gray-50 rounded-2xl border-2 border-gray-100 px-4 py-3 focus-within:ring-4 focus-within:ring-[#274256]/5 focus-within:border-[#274256] transition-all duration-300">
-                    <label for="pai-select-loyer" class="block text-[10px] font-black text-gray-400 uppercase tracking-[2px] mb-1">Loyer à solder</label>
-                    <select name="loyer_id" id="pai-select-loyer" required class="block w-full bg-transparent border-none p-0 text-base sm:text-sm font-bold text-gray-900 focus:ring-0 appearance-none cursor-pointer">
-                        @php
-                            $unpaidLoyers = $data['loyers_list']->filter(fn($l) => strtolower(trim($l->statut)) !== 'payé');
-                        @endphp
-                            $unpaidLoyers = $data['loyers_list']->filter(fn($l) => strtolower(trim($l->statut)) !== 'payé');
-                        @endphp
-
-                        @if($unpaidLoyers->count() > 0)
-                            <option value="">-- Sélectionner un loyer --</option>
-                            @foreach($unpaidLoyers as $l)
-                                <option value="{{ $l->id }}"
-                                        data-montant="{{ $l->montant }}"
-                                        data-reste="{{ $l->reste_a_payer }}"
-                                        data-locataire="{{ $l->contrat->locataire->nom }}"
-                                        data-mois="{{ \Carbon\Carbon::parse($l->mois)->translatedFormat('F Y') }}">
-                                    {{ $l->contrat->locataire->nom }} — {{ \Carbon\Carbon::parse($l->mois)->translatedFormat('F Y') }} — {{ number_format($l->reste_a_payer,0,',',' ') }} F (Restant)
-                                </option>
-                            @endforeach
-                        @else
-                            <option value="" disabled selected>Aucun loyer impayé trouvé</option>
-                        @endif
-                    </select>
-                </div>
-
-                <!-- Info Card Compact -->
-                <div id="pai-locataire-card" class="hidden bg-blue-50/50 rounded-xl p-3 border border-blue-100 flex items-center justify-between">
-                    <div class="flex-1">
-                        <p class="text-[11px] font-black text-[#274256] uppercase tracking-widest opacity-60">Détails Locataire</p>
-                        <p id="pai-card-locataire" class="text-xs font-bold text-gray-900 leading-tight">--</p>
-                        <p id="pai-card-mois" class="text-[11px] text-gray-500 mt-0.5 font-medium">--</p>
-                    </div>
-                    <div class="text-right flex flex-col items-end">
-                        <p class="text-[11px] font-black text-[#cb2d2d] uppercase tracking-widest opacity-60">Solde Restant</p>
-                        <p id="pai-card-montant" class="text-sm font-black text-[#274256] leading-tight transition-all">0 F</p>
-                        <div id="pai-live-balance" class="text-[10px] font-bold mt-1 text-emerald-600 hidden">
-                             Vers le solde : <span id="pai-live-val">0</span> F
+                    <!-- Header Compact -->
+                    <div class="app-modal-header bg-[#274256] px-6 py-4 flex items-center justify-between">
+                        <div>
+                            <h3 id="pai-modal-title" class="text-base font-bold text-white">Nouvel Encaissement</h3>
+                            <p class="text-blue-100/60 text-[11px] uppercase font-black tracking-widest mt-0.5">Enregistrer un paiement</p>
                         </div>
+                        <button onclick="paiSection.closeModal()" class="text-white/60 hover:text-white p-1.5 rounded-full hover:bg-white/10 transition" aria-label="Fermer">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                        </button>
                     </div>
-                </div>
 
-                <!-- Grid Montant / Date -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="relative bg-gray-50 rounded-2xl border-2 border-gray-100 px-4 py-3 focus-within:ring-4 focus-within:ring-[#274256]/5 focus-within:border-[#274256] transition-all duration-300">
-                        <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[2px] mb-1" for="pai-input-montant">Montant Encaissé (F)</label>
-                        <input type="number" name="montant" id="pai-input-montant" required class="block w-full bg-transparent border-none p-0 text-base sm:text-sm font-bold text-gray-900 focus:ring-0 text-right font-mono" placeholder="0">
-                    </div>
-                    <div class="relative bg-gray-50 rounded-2xl border-2 border-gray-100 px-4 py-3 focus-within:ring-4 focus-within:ring-[#274256]/5 focus-within:border-[#274256] transition-all duration-300">
-                        <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[2px] mb-1" for="pai-input-date">Date Paiement</label>
-                        <input type="date" name="date_paiement" id="pai-input-date" value="{{ date('Y-m-d') }}" required class="block w-full bg-transparent border-none p-0 text-base sm:text-sm font-bold text-gray-900 focus:ring-0">
-                    </div>
-                </div>
-                <!-- Mode de Règlement Compact -->
-                <div>
-                     <label class="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Mode de Règlement</label>
-                     <div class="grid grid-cols-3 gap-3">
-                        <label class="cursor-pointer group">
-                            <input type="radio" name="mode" value="espèces" checked class="hidden peer">
-                            <div class="peer-checked:border-[#cb2d2d] peer-checked:bg-red-50 peer-checked:text-[#cb2d2d] border border-gray-200 rounded-xl p-2 flex flex-col items-center justify-center transition-all bg-white hover:border-gray-300 h-14">
-                                <span class="text-lg">💵</span>
-                                <span class="text-[8px] font-black uppercase tracking-tighter">Espèces</span>
-                            </div>
-                        </label>
-                        <label class="cursor-pointer group">
-                            <input type="radio" name="mode" value="virement" class="hidden peer">
-                            <div class="peer-checked:border-[#cb2d2d] peer-checked:bg-red-50 peer-checked:text-[#cb2d2d] border border-gray-200 rounded-xl p-2 flex flex-col items-center justify-center transition-all bg-white hover:border-gray-300 h-14">
-                                <span class="text-lg">🏦</span>
-                                <span class="text-[8px] font-black uppercase tracking-tighter">Virement</span>
-                            </div>
-                        </label>
-                        <label class="cursor-pointer group">
-                            <input type="radio" name="mode" value="mobile" class="hidden peer">
-                            <div class="peer-checked:border-[#cb2d2d] peer-checked:bg-red-50 peer-checked:text-[#cb2d2d] border border-gray-200 rounded-xl p-2 flex flex-col items-center justify-center transition-all bg-white hover:border-gray-300 h-14">
-                                <span class="text-lg">📱</span>
-                                <span class="text-[8px] font-black uppercase tracking-tighter">Mobile</span>
-                            </div>
-                        </label>
-                     </div>
-                </div>
+                    <form id="pai-main-form" action="{{ route('paiements.store') }}" method="POST" enctype="multipart/form-data" class="p-6 form-stack field-gap">
+                        @csrf
 
-                <!-- Preuve de Paiement (Upload) -->
-                <div>
-                    <label class="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Preuve de Paiement (Optionnel)</label>
-                    <div class="relative bg-gray-50 rounded-xl border-2 border-dashed border-gray-200 hover:border-amber-400 transition-all cursor-pointer group" onclick="document.getElementById('pai-preuve-input').click()">
-                        <input type="file" name="preuve" id="pai-preuve-input" accept="image/*,.pdf" class="hidden" onchange="paiSection.updatePreuvePreview(this)">
-                        <div id="pai-preuve-placeholder" class="p-4 flex flex-col items-center justify-center text-center">
-                            <svg class="w-8 h-8 text-gray-300 group-hover:text-amber-500 transition mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/></svg>
-                            <p class="text-xs font-bold text-gray-500 group-hover:text-amber-600 transition">Cliquez pour joindre une preuve</p>
-                            <p class="text-[10px] text-gray-400 mt-1">Image ou PDF (Max 5 Mo)</p>
+                        <!-- Sélection Loyer -->
+                        <div class="relative bg-gray-50 rounded-2xl border-2 border-gray-100 px-4 py-3 focus-within:ring-4 focus-within:ring-[#274256]/5 focus-within:border-[#274256] transition-all duration-300">
+                            <label for="pai-select-loyer" class="block text-[10px] font-black text-gray-400 uppercase tracking-[2px] mb-1">Loyer à solder</label>
+                            <select name="loyer_id" id="pai-select-loyer" required class="block w-full bg-transparent border-none p-0 text-base sm:text-sm font-bold text-gray-900 focus:ring-0 appearance-none cursor-pointer">
+                                @php
+                                    $unpaidLoyers = $data['loyers_list']->filter(fn($l) => strtolower(trim($l->statut)) !== 'payé');
+                                @endphp
+
+                                @if($unpaidLoyers->count() > 0)
+                                    <option value="">-- Sélectionner un loyer --</option>
+                                    @foreach($unpaidLoyers as $l)
+                                        <option value="{{ $l->id }}"
+                                                data-montant="{{ $l->montant }}"
+                                                data-reste="{{ $l->reste_a_payer }}"
+                                                data-locataire="{{ $l->contrat->locataire->nom }}"
+                                                data-mois="{{ \Carbon\Carbon::parse($l->mois)->translatedFormat('F Y') }}">
+                                            {{ $l->contrat->locataire->nom }} — {{ \Carbon\Carbon::parse($l->mois)->translatedFormat('F Y') }} — {{ number_format($l->reste_a_payer,0,',',' ') }} F (Restant)
+                                        </option>
+                                    @endforeach
+                                @else
+                                    <option value="" disabled selected>Aucun loyer impayé trouvé</option>
+                                @endif
+                            </select>
                         </div>
-                        <div id="pai-preuve-preview" class="hidden p-3 flex items-center gap-3">
-                            <div class="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center text-amber-600">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+
+                        <!-- Info Card Compact -->
+                        <div id="pai-locataire-card" class="hidden bg-blue-50/50 rounded-xl p-3 border border-blue-100 flex items-center justify-between">
+                            <div class="flex-1">
+                                <p class="text-[11px] font-black text-[#274256] uppercase tracking-widest opacity-60">Détails Locataire</p>
+                                <p id="pai-card-locataire" class="text-xs font-bold text-gray-900 leading-tight">--</p>
+                                <p id="pai-card-mois" class="text-[11px] text-gray-500 mt-0.5 font-medium">--</p>
                             </div>
-                            <div class="flex-1 min-w-0">
-                                <p id="pai-preuve-name" class="text-xs font-bold text-gray-900 truncate">fichier.pdf</p>
-                                <p id="pai-preuve-size" class="text-[10px] text-gray-400">0 Ko</p>
+                            <div class="text-right flex flex-col items-end">
+                                <p class="text-[11px] font-black text-[#cb2d2d] uppercase tracking-widest opacity-60">Solde Restant</p>
+                                <p id="pai-card-montant" class="text-sm font-black text-[#274256] leading-tight transition-all">0 F</p>
+                                <div id="pai-live-balance" class="text-[10px] font-bold mt-1 text-emerald-600 hidden">
+                                     Vers le solde : <span id="pai-live-val">0</span> F
+                                </div>
                             </div>
-                            <button type="button" onclick="event.stopPropagation(); paiSection.clearPreuve();" class="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                        </div>
+
+                        <!-- Grid Montant / Date -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="relative bg-gray-50 rounded-2xl border-2 border-gray-100 px-4 py-3 focus-within:ring-4 focus-within:ring-[#274256]/5 focus-within:border-[#274256] transition-all duration-300">
+                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[2px] mb-1" for="pai-input-montant">Montant Encaissé (F)</label>
+                                <input type="number" name="montant" id="pai-input-montant" required class="block w-full bg-transparent border-none p-0 text-base sm:text-sm font-bold text-gray-900 focus:ring-0 text-right font-mono" placeholder="0">
+                            </div>
+                            <div class="relative bg-gray-50 rounded-2xl border-2 border-gray-100 px-4 py-3 focus-within:ring-4 focus-within:ring-[#274256]/5 focus-within:border-[#274256] transition-all duration-300">
+                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[2px] mb-1" for="pai-input-date">Date Paiement</label>
+                                <input type="date" name="date_paiement" id="pai-input-date" value="{{ date('Y-m-d') }}" required class="block w-full bg-transparent border-none p-0 text-base sm:text-sm font-bold text-gray-900 focus:ring-0">
+                            </div>
+                        </div>
+                        <!-- Mode de Règlement Compact -->
+                        <div>
+                             <label class="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Mode de Règlement</label>
+                             <div class="grid grid-cols-3 gap-3">
+                                <label class="cursor-pointer group">
+                                    <input type="radio" name="mode" value="espèces" checked class="hidden peer">
+                                    <div class="peer-checked:border-[#cb2d2d] peer-checked:bg-red-50 peer-checked:text-[#cb2d2d] border border-gray-200 rounded-xl p-2 flex flex-col items-center justify-center transition-all bg-white hover:border-gray-300 h-14">
+                                        <span class="text-lg">💵</span>
+                                        <span class="text-[8px] font-black uppercase tracking-tighter">Espèces</span>
+                                    </div>
+                                </label>
+                                <label class="cursor-pointer group">
+                                    <input type="radio" name="mode" value="virement" class="hidden peer">
+                                    <div class="peer-checked:border-[#cb2d2d] peer-checked:bg-red-50 peer-checked:text-[#cb2d2d] border border-gray-200 rounded-xl p-2 flex flex-col items-center justify-center transition-all bg-white hover:border-gray-300 h-14">
+                                        <span class="text-lg">🏦</span>
+                                        <span class="text-[8px] font-black uppercase tracking-tighter">Virement</span>
+                                    </div>
+                                </label>
+                                <label class="cursor-pointer group">
+                                    <input type="radio" name="mode" value="mobile" class="hidden peer">
+                                    <div class="peer-checked:border-[#cb2d2d] peer-checked:bg-red-50 peer-checked:text-[#cb2d2d] border border-gray-200 rounded-xl p-2 flex flex-col items-center justify-center transition-all bg-white hover:border-gray-300 h-14">
+                                        <span class="text-lg">📱</span>
+                                        <span class="text-[8px] font-black uppercase tracking-tighter">Mobile</span>
+                                    </div>
+                                </label>
+                             </div>
+                        </div>
+
+                        <!-- Preuve de Paiement (Upload) -->
+                        <div>
+                            <label class="block text-[11px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Preuve de Paiement (Optionnel)</label>
+                            <div class="relative bg-gray-50 rounded-xl border-2 border-dashed border-gray-200 hover:border-amber-400 transition-all cursor-pointer group" onclick="document.getElementById('pai-preuve-input').click()">
+                                <input type="file" name="preuve" id="pai-preuve-input" accept="image/*,.pdf" class="hidden" onchange="paiSection.updatePreuvePreview(this)">
+                                <div id="pai-preuve-placeholder" class="p-4 flex flex-col items-center justify-center text-center">
+                                    <svg class="w-8 h-8 text-gray-300 group-hover:text-amber-500 transition mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/></svg>
+                                    <p class="text-xs font-bold text-gray-500 group-hover:text-amber-600 transition">Cliquez pour joindre une preuve</p>
+                                    <p class="text-[10px] text-gray-400 mt-1">Image ou PDF (Max 5 Mo)</p>
+                                </div>
+                                <div id="pai-preuve-preview" class="hidden p-3 flex items-center gap-3">
+                                    <div class="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center text-amber-600">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <p id="pai-preuve-name" class="text-xs font-bold text-gray-900 truncate">fichier.pdf</p>
+                                        <p id="pai-preuve-size" class="text-[10px] text-gray-400">0 Ko</p>
+                                    </div>
+                                    <button type="button" onclick="event.stopPropagation(); paiSection.clearPreuve();" class="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Footer Actions -->
+                        <div class="app-modal-footer pt-4 flex items-center justify-end gap-3 border-t border-gray-100">
+                            <button type="button" onclick="paiSection.closeModal()" class="px-4 py-2 text-gray-500 font-bold hover:bg-gray-50 rounded-xl transition text-[11px] uppercase tracking-widest">Annuler</button>
+                            <button type="submit" id="pai-submit-btn" class="bg-[#cb2d2d] text-white px-6 py-2.5 rounded-xl font-black hover:bg-[#a82020] transition shadow-lg shadow-red-900/20 text-[11px] uppercase tracking-widest flex items-center gap-2">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                                Valider
                             </button>
                         </div>
-                    </div>
+                    </form>
                 </div>
-
-                <!-- Footer Actions -->
-                <div class="app-modal-footer pt-4 flex items-center justify-end gap-3 border-t border-gray-100">
-                    <button type="button" onclick="paiSection.closeModal()" class="px-4 py-2 text-gray-500 font-bold hover:bg-gray-50 rounded-xl transition text-[11px] uppercase tracking-widest">Annuler</button>
-                    <button type="submit" id="pai-submit-btn" class="bg-[#cb2d2d] text-white px-6 py-2.5 rounded-xl font-black hover:bg-[#a82020] transition shadow-lg shadow-red-900/20 text-[11px] uppercase tracking-widest flex items-center gap-2">
-                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                        Valider
-                    </button>
-                </div>
-            </form>
+            </div>
         </div>
     </div>
 
     <!-- MODAL DELETE CONFIRMATION -->
-    <div id="pai-delete-modal" role="dialog" aria-modal="true" aria-labelledby="pai-delete-modal-title" onclick="if(event.target === this) paiSection.closeDeleteModal()" class="fixed inset-0 z-[120] hidden bg-gray-900/60 backdrop-blur-sm flex items-center justify-center p-4 transition-opacity opacity-0 duration-300">
+    <div id="pai-delete-modal" role="dialog" aria-modal="true" aria-labelledby="pai-delete-modal-title" onclick="if(event.target === this) paiSection.closeDeleteModal()" class="fixed inset-0 z-[10000] hidden bg-gray-900/60 backdrop-blur-sm flex items-center justify-center p-4 transition-opacity opacity-0 duration-300">
         <div id="pai-delete-container" class="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-8 text-center transform scale-95 transition-all duration-300">
              <div class="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm">
                 <svg class="w-10 h-10 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
@@ -339,19 +342,29 @@
 <script>
     window.paiSection = {
         openModal: function(mode) {
+            const wrapper = document.getElementById('pai-modal-wrapper');
             const overlay = document.getElementById('pai-modal-overlay');
             const container = document.getElementById('pai-modal-container');
-            overlay.classList.remove('hidden');
-            window.modalUX?.activate(overlay, container);
-            setTimeout(() => { container.classList.remove('scale-95', 'opacity-0'); }, 10);
+
+            wrapper.classList.remove('hidden');
+            window.modalUX?.activate(wrapper, container);
+            
+            setTimeout(() => { 
+                overlay.classList.remove('opacity-0');
+                container.classList.remove('scale-95', 'opacity-0'); 
+            }, 10);
         },
 
         closeModal: function() {
+            const wrapper = document.getElementById('pai-modal-wrapper');
             const overlay = document.getElementById('pai-modal-overlay');
             const container = document.getElementById('pai-modal-container');
+
+            overlay.classList.add('opacity-0');
             container.classList.add('scale-95', 'opacity-0');
-            window.modalUX?.deactivate(overlay);
-            setTimeout(() => { overlay.classList.add('hidden'); }, 300);
+            
+            window.modalUX?.deactivate(wrapper);
+            setTimeout(() => { wrapper.classList.add('hidden'); }, 300);
         }
     };
 

@@ -215,10 +215,11 @@
         </div>
     </div>
 
+@push('modals')
     <!-- MODAL (ULTRA COMPACT GRID) -->
     <div id="loc-modal-wrapper" class="app-modal-root hidden" aria-labelledby="loc-modal-title" role="dialog" aria-modal="true">
-        <div id="loc-modal-overlay" class="app-modal-overlay opacity-0"></div>
-        <div class="fixed inset-0 z-10 w-screen overflow-y-auto" onclick="if(event.target === this) locSection.closeModal()">
+        <div id="loc-modal-overlay" class="app-modal-overlay opacity-0 z-[9998]"></div>
+        <div class="fixed inset-0 z-[9999] w-screen overflow-y-auto" onclick="if(event.target === this) locSection.closeModal()">
             <div class="flex min-h-full items-end justify-center p-0 text-center sm:items-center sm:p-0" onclick="if(event.target === this) locSection.closeModal()">
                 <div id="loc-modal-container" class="app-modal-panel app-modal-panel-xl opacity-0 scale-95">
 
@@ -283,7 +284,7 @@
     </div>
 
     <!-- DELETE CONFIRMATION MODAL (UNCHANGED) -->
-    <div id="loc-delete-modal" role="dialog" aria-modal="true" aria-labelledby="loc-delete-modal-title" onclick="if(event.target === this) locSection.closeDeleteModal()" class="fixed inset-0 z-[120] hidden bg-gray-900/60 backdrop-blur-sm flex items-center justify-center p-4 transition-opacity opacity-0 duration-300">
+    <div id="loc-delete-modal" role="dialog" aria-modal="true" aria-labelledby="loc-delete-modal-title" onclick="if(event.target === this) locSection.closeDeleteModal()" class="fixed inset-0 z-[10000] hidden bg-gray-900/60 backdrop-blur-sm flex items-center justify-center p-4 transition-opacity opacity-0 duration-300">
         <div id="loc-delete-container" class="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-8 text-center transform scale-95 transition-all duration-300">
             <div class="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm">
                  <svg class="w-10 h-10 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7a4 4 0 11-8 0 4 4 0 018 0zM9 14a6 6 0 00-6 6v1h12v-1a6 6 0 00-6-6zM21 12h-6"/></svg>
@@ -302,7 +303,7 @@
     </div>
 
     <!-- DOCUMENT UPLOAD MODAL (ULTRA COMPACT) -->
-    <div id="loc-doc-modal" role="dialog" aria-modal="true" aria-labelledby="loc-doc-modal-title" onclick="if(event.target === this) locSection.closeDocumentModal()" class="fixed inset-0 z-[130] hidden bg-gray-900/60 backdrop-blur-sm flex items-center justify-center p-4 transition-opacity opacity-0 duration-300">
+    <div id="loc-doc-modal" role="dialog" aria-modal="true" aria-labelledby="loc-doc-modal-title" onclick="if(event.target === this) locSection.closeDocumentModal()" class="fixed inset-0 z-[10000] hidden bg-black/90 backdrop-blur-md flex items-center justify-center p-0 transition-opacity opacity-0 duration-300">
         <div id="loc-doc-container" class="bg-white rounded-2xl shadow-2xl max-w-lg w-full transform scale-95 transition-all duration-300 overflow-hidden border border-gray-100">
             <!-- Header -->
             <div class="app-modal-header px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-white">
@@ -375,7 +376,7 @@
     </div>
 
     <!-- DELETE DOCUMENT CONFIRMATION MODAL -->
-    <div id="loc-doc-delete-modal" role="dialog" aria-modal="true" aria-labelledby="loc-doc-delete-modal-title" onclick="if(event.target === this) locSection.closeDocDeleteModal()" class="fixed inset-0 z-[140] hidden bg-gray-900/60 backdrop-blur-sm flex items-center justify-center p-4 transition-opacity opacity-0 duration-300">
+    <div id="loc-doc-delete-modal" role="dialog" aria-modal="true" aria-labelledby="loc-doc-delete-modal-title" onclick="{if(event.target === this) locSection.closeDocDeleteModal()}" class="fixed inset-0 z-[10001] hidden bg-gray-900/60 backdrop-blur-sm flex items-center justify-center p-4 transition-opacity opacity-0 duration-300">
         <div id="loc-doc-delete-container" class="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-8 text-center transform scale-95 transition-all duration-300">
             <div class="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-5 shadow-sm">
                  <svg class="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
@@ -392,6 +393,7 @@
             </div>
         </div>
     </div>
+@endpush
 
 </div>
 

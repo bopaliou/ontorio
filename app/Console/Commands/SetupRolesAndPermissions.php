@@ -3,6 +3,8 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
@@ -29,8 +31,14 @@ class SetupRolesAndPermissions extends Command
 
         // Supprimer ancien data si force
         if ($this->option('force')) {
+            Schema::disableForeignKeyConstraints();
+            DB::table('model_has_roles')->truncate();
+            DB::table('model_has_permissions')->truncate();
+            DB::table('role_has_permissions')->truncate();
             Role::truncate();
             Permission::truncate();
+            Schema::enableForeignKeyConstraints();
+            
             $this->line('🗑️  Rôles et permissions supprimés');
         }
 
@@ -60,7 +68,13 @@ class SetupRolesAndPermissions extends Command
             // Module Loyers
             'loyers.view' => 'Voir les loyers',
             'loyers.generate' => 'Générer les loyers du mois',
+            'loyers.edit' => 'Modifier un loyer (Correction)',
+            'loyers.delete' => 'Supprimer un loyer',
             'loyers.quittance' => 'Générer les quittances',
+
+            // Module Révisions
+            'revisions.view' => 'Voir les révisions',
+            'revisions.create' => 'Créer une révision',
 
             // Module Paiements
             'paiements.view' => 'Voir les paiements',
@@ -112,42 +126,94 @@ class SetupRolesAndPermissions extends Command
         // ===============================================
         // DÉFINITION DES RÔLES
         // ===============================================
+        // ===============================================
+        // DÉFINITION DES RÔLES
+        // ===============================================
         $roles = [
             'admin' => [
-                'description' => 'Administrateur système complet',
+                'description' => 'Administrateur Système - Accès complet',
                 'permissions' => array_keys($permissions), // Tous les droits
             ],
             'direction' => [
-                'description' => 'Direction de l\'agence - Lecture et rapports',
+                'description' => 'Direction - Vision stratégique (Lecture Seule)',
                 'permissions' => [
-                    'biens.view', 'locataires.view', 'contrats.view', 'loyers.view',
-                    'paiements.view', 'depenses.view', 'proprietaires.view', 'proprietaires.bilan',
-                    'rapports.view', 'rapports.export', 'rapports.mensuel', 'documents.view',
+                    // Lecture Globale Opérationnelle
+                    'biens.view',
+                    'locataires.view',
+                    'contrats.view',
+                    'loyers.view',
+                    'revisions.view',
+                    
+                    // Lecture Globale Financière
+                    'paiements.view',
+                    'depenses.view',
+                    
+                    // Rapports & Documents
+                    'rapports.view', 'rapports.export', 'rapports.mensuel',
+                    'documents.view',
+                    'proprietaires.view', 'proprietaires.bilan',
                 ],
             ],
             'gestionnaire' => [
-                'description' => 'Gestionnaire de biens - CRUD complet patrimoine',
+                'description' => 'Gestionnaire - Opérations (Patrimoine & Locataires)',
                 'permissions' => [
+                    // BIENS: Full CRUD
                     'biens.view', 'biens.create', 'biens.edit', 'biens.delete',
+                    // LOCATAIRES: Full CRUD
                     'locataires.view', 'locataires.create', 'locataires.edit', 'locataires.delete',
+                    // CONTRATS: Full CRUD + Print
                     'contrats.view', 'contrats.create', 'contrats.edit', 'contrats.delete', 'contrats.print',
-                    'loyers.view', 'loyers.generate',
-                    'paiements.view', 'paiements.create', 'paiements.edit',
+                    // LOYERS: Generation & Gestion
+                    'loyers.view', 'loyers.generate', 'loyers.edit', 'loyers.delete', // Peut corriger un loyer généré par erreur
+                    // REVISIONS
+                    'revisions.view', 'revisions.create',
+                    // DEPENSES: Demande (Create) mais pas Paiement
                     'depenses.view', 'depenses.create', 'depenses.edit', 'depenses.delete',
-                    'proprietaires.view', 'proprietaires.bilan',
+                    // PROPRIETAIRES
+                    'proprietaires.view', 'proprietaires.create', 'proprietaires.edit', 'proprietaires.bilan',
+                    // DOCUMENTS
                     'documents.view', 'documents.upload',
+                    // RAPPORTS (Opérationnels)
+                    'rapports.view', 'rapports.export',
+                    // FINANCE (Lecture seule stricte)
+                    'paiements.view', 
                 ],
             ],
             'comptable' => [
-                'description' => 'Comptable - Gestion financière',
+                'description' => 'Comptable - Finance & Trésorerie',
                 'permissions' => [
-                    'biens.view', 'locataires.view', 'contrats.view',
-                    'loyers.view', 'loyers.generate', 'loyers.quittance',
+                    // FINANCE: Full CRUD
                     'paiements.view', 'paiements.create', 'paiements.edit', 'paiements.delete',
-                    'depenses.view', 'depenses.create', 'depenses.edit',
-                    'proprietaires.view', 'proprietaires.bilan',
+                    'depenses.view', 'depenses.edit', // Peut marquer payé
+                    
+                    // LOYERS: Lecture + Quittances
+                    'loyers.view', 'loyers.quittance',
+
+                    // RAPPORTS
                     'rapports.view', 'rapports.export', 'rapports.mensuel',
+
+                    // CONTEXTE OPERATIONNEL (Lecture Seule)
+                    'biens.view',
+                    'locataires.view',
+                    'contrats.view',
+                    'proprietaires.view', 'proprietaires.bilan',
                     'documents.view',
+                ],
+            ],
+            'proprietaire' => [
+                'description' => 'Propriétaire - Consultation (Biens & Finances)',
+                'permissions' => [
+                    // Vision limitée à ses propres données (géré par Policy/Scopes, pas Permission)
+                    // Mais on donne les droits de "view" génériques
+                    'biens.view',
+                    'locataires.view',
+                    'contrats.view',
+                    'loyers.view',
+                    'paiements.view',
+                    'depenses.view',
+                    'documents.view',
+                    'rapports.view',
+                    'proprietaires.view', // Voir son propre profil
                 ],
             ],
         ];
@@ -162,6 +228,18 @@ class SetupRolesAndPermissions extends Command
             $this->line("✅ Rôle '{$roleName}' créé avec ".count($roleData['permissions']).' permissions');
         }
 
-        $this->info('✨ Rôles et permissions initialisés avec succès !');
+        // ===============================================
+        // SYNCHRONISATION UTILISATEURS EXISTANTS
+        // ===============================================
+        $this->info('🔄 Synchronisation des rôles utilisateurs...');
+        $users = \App\Models\User::all();
+        foreach ($users as $user) {
+            if ($user->role && Role::where('name', $user->role)->exists()) {
+                $user->assignRole($user->role);
+            }
+        }
+        $this->line('✅ '.count($users).' utilisateurs synchronisés');
+
+        $this->info('✨ Rôles et permissions initialisés et appliqués avec succès !');
     }
 }

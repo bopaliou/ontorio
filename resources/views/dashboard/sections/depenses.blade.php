@@ -198,10 +198,12 @@
     </div>
 
     <!-- MODAL FORM -->
+@push('modals')
+    <!-- MODAL FORM -->
     <div id="dep-modal-wrapper" class="app-modal-root hidden" aria-labelledby="dep-modal-title" role="dialog" aria-modal="true">
-        <div id="dep-modal-overlay" class="app-modal-overlay opacity-0"></div>
-        <div class="fixed inset-0 z-10 w-screen overflow-y-auto" onclick="if(event.target === this) depSection.closeModal()">
-            <div class="flex min-h-full items-end justify-center p-0 text-center sm:items-center sm:p-0">
+        <div id="dep-modal-overlay" class="app-modal-overlay opacity-0 z-[9998]"></div>
+        <div class="fixed inset-0 z-[9999] w-screen overflow-y-auto" onclick="if(event.target === this) depSection.closeModal()">
+            <div class="flex min-h-full items-end justify-center p-0 text-center sm:items-center sm:p-0" onclick="if(event.target === this) depSection.closeModal()">
                 <div id="dep-modal-container" class="app-modal-panel app-modal-panel-xl opacity-0 scale-95">
 
                     <div class="app-modal-header px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-white">
@@ -282,19 +284,24 @@
     </div>
 
     <!-- DELETE MODAL -->
-    <div id="dep-delete-modal" role="dialog" aria-modal="true" aria-labelledby="dep-delete-modal-title" onclick="if(event.target === this) depSection.closeDeleteModal()" class="fixed inset-0 z-[120] hidden bg-gray-900/60 backdrop-blur-sm flex items-center justify-center p-4 transition-opacity opacity-0 duration-300">
+    <div id="dep-delete-modal" role="dialog" aria-modal="true" aria-labelledby="dep-delete-modal-title" onclick="if(event.target === this) depSection.closeDeleteModal()" class="fixed inset-0 z-[10000] hidden bg-gray-900/60 backdrop-blur-sm flex items-center justify-center p-4 transition-opacity opacity-0 duration-300">
         <div id="dep-delete-container" class="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-8 text-center transform scale-95 transition-all duration-300">
-            <div class="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm">
+             <div class="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm">
                 <svg class="w-10 h-10 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
             </div>
-            <h3 id="dep-delete-modal-title" class="text-xl font-bold text-gray-900 mb-2">Supprimer la dépense ?</h3>
-            <p class="text-sm text-gray-500 mb-8 leading-relaxed">Cette opération annulera le débit associé dans le bilan propriétaire. Action irréversible.</p>
+            <h3 id="dep-delete-modal-title" class="text-xl font-bold text-gray-900 mb-2">Confirmer la suppression ?</h3>
+            <p class="text-sm text-gray-500 mb-8 leading-relaxed">Cette dépense sera retirée de l'historique comptable. Cette action est irréversible.</p>
             <div class="flex flex-col gap-3">
-                <button id="dep-confirm-delete-btn" class="w-full px-6 py-3.5 bg-red-600 text-white font-bold rounded-xl hover:bg-red-700 transition shadow-lg shadow-red-900/20 text-sm tracking-wide">Confirmer la suppression</button>
-                <button onclick="depSection.closeDeleteModal()" class="w-full px-6 py-3.5 bg-white border border-gray-200 text-gray-700 font-bold rounded-xl hover:bg-gray-50 transition text-sm">Annuler</button>
+                <button id="dep-confirm-delete-btn" class="w-full px-6 py-3.5 bg-red-600 text-white font-bold rounded-xl hover:bg-red-700 transition shadow-lg shadow-red-900/20 text-sm tracking-wide">
+                    Oui, Supprimer
+                </button>
+                <button onclick="depSection.closeDeleteModal()" class="w-full px-6 py-3.5 bg-white border border-gray-200 text-gray-700 font-bold rounded-xl hover:bg-gray-50 transition text-sm">
+                    Non, Annuler
+                </button>
             </div>
         </div>
     </div>
+@endpush
 </div>
 
 <script>

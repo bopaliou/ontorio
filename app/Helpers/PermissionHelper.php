@@ -2,10 +2,13 @@
 
 namespace App\Helpers;
 
+use Spatie\Permission\Models\Role;
+
 class PermissionHelper
 {
     /**
      * Vérifier si l'utilisateur a une permission
+     * Utilise le système de permissions Spatie (base de données)
      */
     public static function can(string $permission): bool
     {
@@ -15,108 +18,21 @@ class PermissionHelper
             return false;
         }
 
-        // Admin a tous les droits
-        if ($user->role === 'admin') {
+        // Admin a tous les droits (Super Admin)
+        if ($user->role === 'admin' || ($user->hasRole('admin'))) {
             return true;
         }
 
-        return self::hasPermission($user, $permission);
+        return $user->can($permission);
     }
 
     /**
-     * Matrice de permissions par rôle (Meilleures pratiques immobilières)
+     * Obtenir toutes les permissions d'un rôle (Depuis la DB)
      */
-    private static function hasPermission($user, string $permission): bool
+    public static function getRolePermissions(string $roleName): array
     {
-        $permissions = [
-            'gestionnaire' => [
-                // Gestion complète du patrimoine
-                'biens.view', 'biens.create', 'biens.edit', 'biens.delete',
-                'locataires.view', 'locataires.create', 'locataires.edit', 'locataires.delete',
-                'contrats.view', 'contrats.create', 'contrats.edit', 'contrats.delete',
-
-                // Gestion locative
-                'loyers.view', 'loyers.generate',
-
-                // Rapports opérationnels
-                'rapports.view', 'rapports.export',
-
-                // Dépenses
-                'depenses.view', 'depenses.create', 'depenses.edit', 'depenses.delete',
-            ],
-
-            'comptable' => [
-                // Finance et comptabilité
-                'loyers.view',
-                'paiements.view', 'paiements.create', 'paiements.edit',
-
-                // Rapports financiers
-                'rapports.view', 'rapports.export',
-
-                // Lecture seule sur le reste (pour contexte)
-                'biens.view',
-                'locataires.view',
-                'contrats.view',
-                'depenses.view',
-            ],
-
-            'direction' => [
-                // Lecture seule sur tout (vision globale)
-                'biens.view',
-                'locataires.view',
-                'contrats.view',
-                'loyers.view',
-                'paiements.view',
-                'depenses.view',
-
-                // Rapports stratégiques complets
-                'rapports.view', 'rapports.export',
-            ],
-        ];
-
-        return in_array($permission, $permissions[$user->role] ?? []);
-    }
-
-    /**
-     * Obtenir toutes les permissions d'un rôle
-     */
-    public static function getRolePermissions(string $role): array
-    {
-        $allPermissions = [
-            'admin' => [
-                'biens.view', 'biens.create', 'biens.edit', 'biens.delete',
-                'locataires.view', 'locataires.create', 'locataires.edit', 'locataires.delete',
-                'contrats.view', 'contrats.create', 'contrats.edit', 'contrats.delete',
-                'loyers.view', 'loyers.generate',
-                'paiements.view', 'paiements.create', 'paiements.edit',
-                'rapports.view', 'rapports.export',
-                'users.view', 'users.create', 'users.edit', 'users.delete',
-                'logs.view',
-            ],
-
-            'gestionnaire' => [
-                'biens.view', 'biens.create', 'biens.edit', 'biens.delete',
-                'locataires.view', 'locataires.create', 'locataires.edit', 'locataires.delete',
-                'contrats.view', 'contrats.create', 'contrats.edit', 'contrats.delete',
-                'loyers.view', 'loyers.generate',
-                'rapports.view', 'rapports.export',
-            ],
-
-            'comptable' => [
-                'loyers.view',
-                'paiements.view', 'paiements.create', 'paiements.edit',
-                'rapports.view', 'rapports.export',
-                'biens.view', 'locataires.view', 'contrats.view',
-            ],
-
-            'direction' => [
-                'biens.view', 'locataires.view', 'contrats.view',
-                'loyers.view', 'paiements.view',
-                'rapports.view', 'rapports.export',
-            ],
-        ];
-
-        return $allPermissions[$role] ?? [];
+        $role = Role::findByName($roleName);
+        return $role ? $role->permissions->pluck('name')->toArray() : [];
     }
 
     /**
@@ -126,9 +42,9 @@ class PermissionHelper
     {
         $descriptions = [
             'admin' => 'Administrateur Système - Accès complet à toutes les fonctionnalités',
-            'gestionnaire' => 'Gestionnaire Immobilier - Gestion opérationnelle du patrimoine et des locataires',
-            'comptable' => 'Comptable - Gestion financière, encaissements et rapports comptables',
-            'direction' => 'Direction - Vision stratégique et rapports de performance (lecture seule)',
+            'gestionnaire' => 'Gestionnaire Immobilier - Gestion opérationnelle (Biens, Contrats, Loyers)',
+            'comptable' => 'Comptable - Gestion financière (Paiements, Dépenses)',
+            'direction' => 'Direction - Vision stratégique et rapports (Lecture seule)',
         ];
 
         return $descriptions[$role] ?? 'Rôle inconnu';
