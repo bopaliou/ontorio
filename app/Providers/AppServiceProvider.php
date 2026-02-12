@@ -2,6 +2,19 @@
 
 namespace App\Providers;
 
+use App\Models\Bien;
+use App\Models\Contrat;
+use App\Models\Depense;
+use App\Models\Loyer;
+use App\Models\Paiement;
+use App\Observers\DashboardStatsObserver;
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -20,36 +33,44 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         if (app()->environment('production')) {
-            \Illuminate\Support\Facades\URL::forceScheme('https');
+            URL::forceScheme('https');
         }
 
-        // Rate Limiter for System Migration (Task 1.1)
-        \Illuminate\Support\Facades\RateLimiter::for('strict-migration', function (\Illuminate\Http\Request $request) {
-            return \Illuminate\Cache\RateLimiting\Limit::perHour(5)->by($request->ip());
+        RateLimiter::for('strict-migration', function (Request $request) {
+            return Limit::perHour(5)->by($request->ip());
         });
 
-        // Rate Limiter for Sensitive Stats (Task 1.2)
-        \Illuminate\Support\Facades\RateLimiter::for('moderate-stats', function (\Illuminate\Http\Request $request) {
-            return \Illuminate\Cache\RateLimiting\Limit::perMinute(30)->by($request->user()?->id ?: $request->ip());
+        RateLimiter::for('moderate-stats', function (Request $request) {
+            return Limit::perMinute(30)->by($request->user()?->id ?: $request->ip());
         });
 
-        // Global Mutation Rate Limiter (Task 1.3)
-        \Illuminate\Support\Facades\RateLimiter::for('global-mutations', function (\Illuminate\Http\Request $request) {
-            return \Illuminate\Cache\RateLimiting\Limit::perMinute(50)->by($request->user()?->id ?: $request->ip());
+        RateLimiter::for('global-mutations', function (Request $request) {
+            return Limit::perMinute(50)->by($request->user()?->id ?: $request->ip());
         });
 
-        // Dashboard Cache Invalidation (Task 2.2)
-        \App\Models\Bien::observe(\App\Observers\DashboardStatsObserver::class);
-        \App\Models\Contrat::observe(\App\Observers\DashboardStatsObserver::class);
-        \App\Models\Depense::observe(\App\Observers\DashboardStatsObserver::class);
-        \App\Models\Loyer::observe(\App\Observers\DashboardStatsObserver::class);
-        \App\Models\Paiement::observe(\App\Observers\DashboardStatsObserver::class);
+        // Défense en profondeur: gates applicatives (en plus des middlewares de route)
+        foreach ([
+            'biens.create', 'biens.edit', 'biens.delete',
+            'locataires.create', 'locataires.edit', 'locataires.delete',
+            'contrats.create', 'contrats.edit', 'contrats.delete',
+            'proprietaires.create', 'proprietaires.edit', 'proprietaires.delete',
+            'depenses.create', 'depenses.edit', 'depenses.delete',
+            'paiements.create', 'paiements.delete',
+            'documents.upload', 'documents.delete',
+        ] as $ability) {
+            Gate::define($ability, fn ($user) => $user->can($ability));
+        }
 
-        // Slow Query Logging (Task 2.4)
+        Bien::observe(DashboardStatsObserver::class);
+        Contrat::observe(DashboardStatsObserver::class);
+        Depense::observe(DashboardStatsObserver::class);
+        Loyer::observe(DashboardStatsObserver::class);
+        Paiement::observe(DashboardStatsObserver::class);
+
         if (config('app.debug')) {
-            \Illuminate\Support\Facades\DB::listen(function ($query) {
-                if ($query->time > 100) { // 100ms
-                    \Illuminate\Support\Facades\Log::warning('Slow Query Detected', [
+            DB::listen(function ($query) {
+                if ($query->time > 100) {
+                    Log::warning('Slow Query Detected', [
                         'sql' => $query->sql,
                         'bindings' => $query->bindings,
                         'time' => $query->time,

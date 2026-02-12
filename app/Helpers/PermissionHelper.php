@@ -19,7 +19,7 @@ class PermissionHelper
         }
 
         // Admin a tous les droits (Super Admin)
-        if ($user->role === 'admin' || ($user->hasRole('admin'))) {
+        if ($user->hasRole('admin')) {
             return true;
         }
 

@@ -1,113 +1,96 @@
-# Audit des rôles & autorisations — Ontario (2026-02-12)
+# Audit RBAC complet — Ontario Group (2026-02-12, version mise à jour)
 
-## 1) Compréhension globale du projet
+## 1) Compréhension synthétique du projet
 
-L’application est une plateforme Laravel de gestion immobilière multi-modules (biens, locataires, contrats, loyers, paiements, dépenses, rapports), avec un tableau de bord unique décliné par rôle. Le socle sécurité repose sur :
+Le projet est une application Laravel de gestion immobilière couvrant :
+- gestion du patrimoine (biens, propriétaires, locataires, contrats),
+- gestion financière (loyers, paiements, dépenses),
+- reporting (rapports mensuels, impayés, commissions),
+- administration (utilisateurs, rôles, système).
 
-- un RBAC via **Spatie Permission**,
-- un champ legacy `users.role` conservé pour compatibilité,
-- des middlewares maison `role` et `permission`,
-- des contrôles d’affichage côté Blade (`PermissionHelper::can(...)`, `Auth::user()->role`).
+Le contrôle d’accès repose sur :
+1. Spatie Permission (rôles/permissions en base),
+2. un champ legacy `users.role`,
+3. des middlewares `role` et `permission`.
 
-## 2) Modèle cible déclaré
+## 2) Rôles et périmètres observés
 
-### Rôles métiers déclarés
+### Rôles principaux
+- `admin`
+- `direction`
+- `gestionnaire`
+- `comptable`
+- `proprietaire` (présent dans le flux dashboard)
 
-- `admin` : accès complet.
-- `direction` : supervision/lecture + rapports.
-- `gestionnaire` : gestion opérationnelle du patrimoine.
-- `comptable` : gestion financière.
+### Découpage des accès par routes
 
-Ce positionnement est documenté dans le README et dans la commande d’initialisation des permissions.
+Le routage est désormais structuré en groupes explicites :
+- **Lecture opérationnelle** : `admin|direction|gestionnaire|comptable`
+- **Écriture opérationnelle** : `admin|gestionnaire`
+- **Écriture financière** : `admin|comptable`
+- **Administration système** : `admin`
 
-### Permissions disponibles
+Le modèle est globalement cohérent avec une séparation moderne des responsabilités.
 
-Le projet définit des permissions granulaires par domaine (`biens.*`, `locataires.*`, `contrats.*`, `loyers.*`, `paiements.*`, `depenses.*`, `proprietaires.*`, `rapports.*`, `documents.*`, `users.*`, `settings.*`, `roles.manage`).
+## 3) Cohérence avec la gestion immobilière moderne
 
-## 3) Audit de cohérence (écarts observés)
+## ✅ Points cohérents
 
-## 3.1. Écart majeur : la Direction dispose de droits d’écriture via les routes
+1. **Séparation des tâches renforcée**
+   - La direction n’a plus accès aux mutations de gestion patrimoniale/financière.
 
-Le groupe de routes “gestion du patrimoine” inclut `role:admin|direction|gestionnaire` **tout en exposant des endpoints mutatifs** (`resource` + `POST/PUT/DELETE`) sur propriétaires, biens, locataires, contrats, loyers, révisions, dépenses.
+2. **Granularité par permission activement utilisée**
+   - Les routes sensibles sont contrôlées via `permission:*` (ex: `biens.create`, `paiements.delete`, `rapports.mensuel`).
 
-➡️ Cela contredit le cadrage métier de la Direction (supervision/lecture). Dans un modèle moderne, la Direction devrait être en lecture + exports, pas en CRUD opérationnel.
+3. **Stats dashboard protégées**
+   - Les endpoints `/api/stats/*` et `/api/alerts` sont protégés par `auth + role` avec throttle.
 
-## 3.2. Écart finance : la Direction incluse dans un groupe avec mutation paiements
+4. **Fallback legacy toujours présent**
+   - Utile pour continuité pendant migration progressive vers source d’autorité unique.
 
-Le groupe “gestion financière” inclut `role:admin|direction|comptable|gestionnaire`, avec `store` et `destroy` de paiements.
+## ⚠️ Points à surveiller / améliorer
 
-➡️ La Direction peut donc potentiellement agir sur l’encaissement/suppression, ce qui n’est généralement pas souhaitable (séparation des tâches et traçabilité financière).
+1. **Double source d’autorité encore active**
+   - Spatie + `users.role` + fallback middleware.
+   - Risque de divergence si les synchronisations ne sont pas strictes.
 
-## 3.3. Source d’autorité fragmentée (Spatie + legacy + helper statique)
+2. **Rôle `proprietaire` partiellement transversal**
+   - Présent côté dashboard et enum users, mais doit être validé de bout en bout (routes métiers dédiées, UX, policy explicite).
 
-L’autorisation réelle dépend de 3 couches qui peuvent diverger :
+3. **Compatibilité tests/règles d’autorisation**
+   - Le socle semble cohérent, mais chaque refactor de route doit conserver les endpoints utilisés en sécurité (`/api/stats/kpis` notamment).
 
-1. tables Spatie (`roles`, `permissions`, pivots),
-2. `users.role` (fallback middleware + UI),
-3. matrice codée en dur dans `PermissionHelper`.
+## 4) Évaluation globale
 
-➡️ Risque de drift élevé entre backend, UI, et policy.
+- **Architecture RBAC** : Bonne
+- **Séparation métier (opérationnel/finance/direction)** : Bonne
+- **Maturité sécurité authorization** : Intermédiaire+ à avancée
+- **Alignement gestion immobilière moderne** : **Oui, globalement cohérent**, sous réserve d’unification finale vers Spatie-only.
 
-## 3.4. Granularité Spatie sous-exploitée dans les routes
+## 5) Recommandations prioritaires (prochaine itération)
 
-Le middleware `permission` existe et est aliasé, mais le routage principal est gouverné par `role:...` plutôt que `permission:...`.
+1. **Finaliser la migration vers Spatie comme source unique**
+   - Réduire puis supprimer les dépendances à `users.role` dans le contrôle d’accès.
 
-➡️ On perd la finesse attendue d’un RBAC moderne (least privilege par action).
+2. **Formaliser une matrice RBAC contractuelle**
+   - Document unique (rôle × action × module) validé métier + technique.
 
-## 3.5. UI et backend pas toujours alignés
+3. **Ajouter des tests de non-régression orientés sécurité**
+   - Cas d’accès interdit/autorisé par rôle sur routes critiques.
 
-Exemple : section paiements/dépenses. Les boutons d’action sont parfois filtrés par `Auth::user()->role` côté vue, alors que les routes acceptent un périmètre différent.
+4. **Créer des policies (ou gates) par ressource sensible**
+   - Pour une défense en profondeur au-delà du seul routage.
 
-➡️ Un utilisateur peut ne pas voir un bouton mais garder un endpoint accessible (ou l’inverse), ce qui crée incohérence UX/sécurité.
+## 6) Conclusion
 
-## 3.6. Rôle `proprietaire` partiellement implémenté
+L’état actuel est **nettement plus cohérent** avec une gestion immobilière moderne qu’au démarrage de l’audit :
+- meilleure séparation des responsabilités,
+- permissions plus granulaires,
+- endpoints sensibles correctement protégés.
 
-Le dashboard gère un cas `proprietaire`, mais l’enum legacy `users.role` ne contient pas cette valeur.
+La priorité restante est la **convergence vers une source d’autorité unique** (Spatie) pour éliminer définitivement les écarts potentiels legacy.
 
-➡️ Incohérence de modèle pouvant générer blocages fonctionnels selon le chemin d’authentification/provisionnement des comptes.
 
-## 3.7. Seed utilisateurs tests non aligné RBAC Spatie
+## 7) Matrice contractuelle
 
-Le seeder de comptes tests renseigne `role` mais n’assigne pas explicitement les rôles Spatie (`assignRole`).
-
-➡️ En environnement où le fallback legacy serait retiré, le comportement des comptes seedés devient incertain.
-
-## 4) Évaluation par rapport à une gestion immobilière moderne
-
-### Points positifs
-
-- Bonne structuration métier des modules.
-- Permissions déjà nommées de façon exploitable.
-- Intention de migration vers un RBAC standard (Spatie) pertinente.
-
-### Points à corriger pour être “production-grade moderne”
-
-- **Séparation des responsabilités** insuffisante pour la Direction.
-- **Least privilege** non strict (route groups trop larges).
-- **Single source of truth** non atteinte (legacy + helper statique).
-- **Cohérence UI/API** à renforcer.
-
-## 5) Recommandations priorisées
-
-1. **Durcir les routes immédiatement**
-   - Retirer `direction` des routes mutatives (CRUD patrimoine/finance), ne garder que lecture + rapports/export.
-2. **Basculer progressivement vers `permission:` dans le routage**
-   - Exemples : `permission:paiements.create`, `permission:depenses.delete`, etc.
-3. **Unifier le modèle d’autorisation**
-   - Faire de Spatie la source unique, réduire puis supprimer le fallback `users.role`.
-4. **Refactor `PermissionHelper`**
-   - Le brancher sur `$user->can(...)` (Spatie) au lieu d’une matrice locale statique.
-5. **Harmoniser UI avec backend**
-   - Même règle d’autorisation pour boutons, sections et endpoints.
-6. **Clarifier le rôle propriétaire**
-   - Soit le supporter de bout en bout (migrations + rôles + routes + onboarding), soit le retirer du flux tant qu’il n’est pas complet.
-7. **Mettre à niveau les seeders/tests**
-   - Assigner explicitement les rôles Spatie dans les seeders de test.
-
-## 6) Verdict
-
-Le projet est **bien avancé structurellement** et dispose d’une base RBAC solide, mais l’implémentation actuelle est **partiellement cohérente** avec les standards de gestion immobilière moderne.
-
-Le point bloquant principal est la **sur-permission de la Direction** dans des flux opérationnels et financiers mutatifs, combinée à une **coexistence non maîtrisée** entre logique legacy et Spatie.
-
-> Niveau de maturité autorisation estimé : **intermédiaire (5.5/10)**. Avec les correctifs ci-dessus, le projet peut rapidement monter vers un niveau “audit-ready”.
+La matrice de référence a été formalisée dans `RBAC_MATRICE_CONTRACTUELLE.md` pour alignement métier/technique.
