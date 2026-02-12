@@ -40,9 +40,9 @@ class RapportController extends Controller
             ->get();
 
         $impayees = [
-            'en_retard' => $allUnpaid->filter(fn($l) => $l->statut === 'en_retard' || ($l->statut === 'émis' && now()->gt($l->date_echeance))),
-            'partiellement_paye' => $allUnpaid->filter(fn($l) => $l->statut === 'partiellement_payé'),
-            'non_echu' => $allUnpaid->filter(fn($l) => $l->statut === 'émis' && now()->lte($l->date_echeance)),
+            'en_retard' => $allUnpaid->filter(fn ($l) => $l->statut === 'en_retard' || ($l->statut === 'émis' && now()->gt($l->date_echeance))),
+            'partiellement_paye' => $allUnpaid->filter(fn ($l) => $l->statut === 'partiellement_payé'),
+            'non_echu' => $allUnpaid->filter(fn ($l) => $l->statut === 'émis' && now()->lte($l->date_echeance)),
         ];
 
         return view('rapports.impayees', compact('data', 'impayees', 'mois'));
@@ -87,16 +87,16 @@ class RapportController extends Controller
 
         $filename = "rapport_loyers_{$mois}.csv";
         $headers = [
-            "Content-type"        => "text/csv",
-            "Content-Disposition" => "attachment; filename=$filename",
-            "Pragma"              => "no-cache",
-            "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
-            "Expires"             => "0"
+            'Content-type' => 'text/csv',
+            'Content-Disposition' => "attachment; filename=$filename",
+            'Pragma' => 'no-cache',
+            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+            'Expires' => '0',
         ];
 
         $columns = ['Bien', 'Locataire', 'Montant', 'Statut', 'Date Echeance'];
 
-        $callback = function() use($loyers, $columns) {
+        $callback = function () use ($loyers, $columns) {
             $file = fopen('php://output', 'w');
             fputcsv($file, $columns, ';');
 
@@ -126,16 +126,16 @@ class RapportController extends Controller
 
         $filename = "rapport_impayes_{$mois}.csv";
         $headers = [
-            "Content-type"        => "text/csv",
-            "Content-Disposition" => "attachment; filename=$filename",
-            "Pragma"              => "no-cache",
-            "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
-            "Expires"             => "0"
+            'Content-type' => 'text/csv',
+            'Content-Disposition' => "attachment; filename=$filename",
+            'Pragma' => 'no-cache',
+            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+            'Expires' => '0',
         ];
 
         $columns = ['Locataire', 'Bien', 'Montant Total', 'Reste à Payer', 'Jours de Retard', 'Statut'];
 
-        $callback = function() use($allUnpaid, $columns) {
+        $callback = function () use ($allUnpaid, $columns) {
             $file = fopen('php://output', 'w');
             fputcsv($file, $columns, ';');
 

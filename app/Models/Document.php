@@ -16,7 +16,7 @@ class Document extends Model
      */
     public function getReferenceExterneAttribute()
     {
-        return 'DOC-' . strtoupper(substr(md5($this->id . config('app.key')), 0, 8)) . '-' . $this->id;
+        return 'DOC-'.strtoupper(substr(md5($this->id.config('app.key')), 0, 8)).'-'.$this->id;
     }
 
     public function documentable()

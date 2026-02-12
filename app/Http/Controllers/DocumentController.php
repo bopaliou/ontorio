@@ -157,7 +157,7 @@ class DocumentController extends Controller
         if (auth()->check()) {
             \App\Helpers\ActivityLogger::log(
                 'Consultation Document',
-                'Le document a été consulté : ' . basename($filePath),
+                'Le document a été consulté : '.basename($filePath),
                 'info'
             );
         }
