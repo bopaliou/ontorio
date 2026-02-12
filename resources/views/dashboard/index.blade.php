@@ -38,22 +38,7 @@
 
         <!-- SECTION: BIENS -->
         <div id="section-biens" role="tabpanel" aria-labelledby="nav-link-biens" class="section-pane hidden opacity-0 translate-y-4">
-            <div class="section-skeleton h-full">
-                <div class="flex flex-col gap-8">
-                    <x-skeleton variant="rect" height="h-20" width="w-full" />
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <x-skeleton variant="rect" height="h-32" />
-                        <x-skeleton variant="rect" height="h-32" />
-                        <x-skeleton variant="rect" height="h-32" />
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-                        <x-skeleton variant="rect" height="h-64" />
-                        <x-skeleton variant="rect" height="h-64" />
-                        <x-skeleton variant="rect" height="h-64" />
-                        <x-skeleton variant="rect" height="h-64" />
-                    </div>
-                </div>
-            </div>
+            <div class="section-skeleton h-full"> ... </div>
             <div class="section-content hidden">
                 @include('dashboard.sections.biens')
             </div>
@@ -61,164 +46,101 @@
 
         <!-- SECTION: ONTARIO GROUP (Propriétaires) -->
         <div id="section-proprietaires" role="tabpanel" aria-labelledby="nav-link-proprietaires" class="section-pane hidden opacity-0 translate-y-4">
-            <div class="section-skeleton h-full">
-                <div class="flex flex-col gap-8">
-                    <x-skeleton variant="rect" height="h-20" width="w-full" />
-                    <x-skeleton variant="rect" height="h-96" width="w-full" />
-                </div>
-            </div>
+            <div class="section-skeleton h-full"> ... </div>
             <div class="section-content hidden">
+                <?php file_put_contents('debug_test.log', "VIEW: section-proprietaires start\n", FILE_APPEND); ?>
                 @include('dashboard.sections.proprietaires')
+                <?php file_put_contents('debug_test.log', "VIEW: section-proprietaires done\n", FILE_APPEND); ?>
             </div>
         </div>
 
         <!-- SECTION: LOCATAIRES -->
         <div id="section-locataires" role="tabpanel" aria-labelledby="nav-link-locataires" class="section-pane hidden opacity-0 translate-y-4">
-            <div class="section-skeleton h-full">
-                <div class="flex flex-col gap-8">
-                    <x-skeleton variant="rect" height="h-20" width="w-full" />
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <x-skeleton variant="rect" height="h-32" />
-                        <x-skeleton variant="rect" height="h-32" />
-                        <x-skeleton variant="rect" height="h-32" />
-                    </div>
-                    <x-skeleton variant="rect" height="h-96" width="w-full" />
-                </div>
-            </div>
+            <div class="section-skeleton h-full"> ... </div>
             <div class="section-content hidden">
+                <?php file_put_contents('debug_test.log', "VIEW: section-locataires start\n", FILE_APPEND); ?>
                 @include('dashboard.sections.locataires')
+                <?php file_put_contents('debug_test.log', "VIEW: section-locataires done\n", FILE_APPEND); ?>
             </div>
         </div>
 
         <!-- SECTION: CONTRATS -->
         <div id="section-contrats" role="tabpanel" aria-labelledby="nav-link-contrats" class="section-pane hidden opacity-0 translate-y-4">
-            <div class="section-skeleton h-full">
-                <div class="flex flex-col gap-8">
-                    <x-skeleton variant="rect" height="h-20" width="w-full" />
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <x-skeleton variant="rect" height="h-32" />
-                        <x-skeleton variant="rect" height="h-32" />
-                        <x-skeleton variant="rect" height="h-32" />
-                    </div>
-                    <x-skeleton variant="rect" height="h-96" width="w-full" />
-                </div>
-            </div>
+            <div class="section-skeleton h-full"> ... </div>
             <div class="section-content hidden">
+                <?php file_put_contents('debug_test.log', "VIEW: section-contrats start\n", FILE_APPEND); ?>
                 @include('dashboard.sections.contrats')
+                <?php file_put_contents('debug_test.log', "VIEW: section-contrats done\n", FILE_APPEND); ?>
             </div>
         </div>
 
         <!-- SECTION: LOYERS (Finance) -->
         <div id="section-loyers" role="tabpanel" aria-labelledby="nav-link-loyers" class="section-pane hidden opacity-0 translate-y-4">
-            <div class="section-skeleton h-full">
-                <div class="flex flex-col gap-8">
-                    <x-skeleton variant="rect" height="h-20" width="w-full" />
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-                        <x-skeleton variant="rect" height="h-32" />
-                        <x-skeleton variant="rect" height="h-32" />
-                        <x-skeleton variant="rect" height="h-32" />
-                        <x-skeleton variant="rect" height="h-32" />
-                    </div>
-                    <x-skeleton variant="rect" height="h-96" width="w-full" />
-                </div>
-            </div>
+            <div class="section-skeleton h-full"> ... </div>
             <div class="section-content hidden">
+                <?php file_put_contents('debug_test.log', "VIEW: section-loyers start\n", FILE_APPEND); ?>
                 @include('dashboard.sections.loyers')
+                <?php file_put_contents('debug_test.log', "VIEW: section-loyers done\n", FILE_APPEND); ?>
             </div>
         </div>
 
         <!-- SECTION: PAIEMENTS (Compta) -->
         <div id="section-paiements" role="tabpanel" aria-labelledby="nav-link-paiements" class="section-pane hidden opacity-0 translate-y-4">
-            <div class="section-skeleton h-full">
-                <div class="flex flex-col gap-8">
-                    <x-skeleton variant="rect" height="h-20" width="w-full" />
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <x-skeleton variant="rect" height="h-32" />
-                        <x-skeleton variant="rect" height="h-32" />
-                        <x-skeleton variant="rect" height="h-32" />
-                    </div>
-                    <x-skeleton variant="rect" height="h-96" width="w-full" />
-                </div>
-            </div>
+            <div class="section-skeleton h-full"> ... </div>
             <div class="section-content hidden">
+                <?php file_put_contents('debug_test.log', "VIEW: section-paiements start\n", FILE_APPEND); ?>
                 @include('dashboard.sections.paiements')
+                <?php file_put_contents('debug_test.log', "VIEW: section-paiements done\n", FILE_APPEND); ?>
             </div>
         </div>
 
         <!-- SECTION: DEPENSES (Management) -->
         <div id="section-depenses" role="tabpanel" aria-labelledby="nav-link-depenses" class="section-pane hidden opacity-0 translate-y-4">
-            <div class="section-skeleton h-full">
-                <div class="flex flex-col gap-8">
-                    <x-skeleton variant="rect" height="h-20" width="w-full" />
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <x-skeleton variant="rect" height="h-32" />
-                        <x-skeleton variant="rect" height="h-32" />
-                        <x-skeleton variant="rect" height="h-32" />
-                    </div>
-                    <x-skeleton variant="rect" height="h-96" width="w-full" />
-                </div>
-            </div>
+            <div class="section-skeleton h-full"> ... </div>
             <div class="section-content hidden">
+                <?php file_put_contents('debug_test.log', "VIEW: section-depenses start\n", FILE_APPEND); ?>
                 @include('dashboard.sections.depenses')
+                <?php file_put_contents('debug_test.log', "VIEW: section-depenses done\n", FILE_APPEND); ?>
             </div>
         </div>
 
         <!-- SECTION: RELANCES (Communication) -->
         <div id="section-relances" role="tabpanel" aria-labelledby="nav-link-relances" class="section-pane hidden opacity-0 translate-y-4">
-            <div class="section-skeleton h-full">
-                <div class="flex flex-col gap-8">
-                    <x-skeleton variant="rect" height="h-20" width="w-full" />
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <x-skeleton variant="rect" height="h-32" />
-                        <x-skeleton variant="rect" height="h-32" />
-                        <x-skeleton variant="rect" height="h-32" />
-                    </div>
-                </div>
-            </div>
+            <div class="section-skeleton h-full"> ... </div>
             <div class="section-content hidden">
+                <?php file_put_contents('debug_test.log', "VIEW: section-relances start\n", FILE_APPEND); ?>
                 @include('dashboard.sections.relances')
+                <?php file_put_contents('debug_test.log', "VIEW: section-relances done\n", FILE_APPEND); ?>
             </div>
         </div>
 
         <!-- SECTION: ADMINISTRATION -->
         @if(Auth::user()->role === 'admin')
         <div id="section-utilisateurs" role="tabpanel" aria-labelledby="nav-link-utilisateurs" class="section-pane hidden opacity-0 translate-y-4">
-            <div class="section-skeleton">
-                <div class="flex flex-col gap-8">
-                    <x-skeleton variant="rect" height="h-20" width="w-full" />
-                    <x-skeleton variant="rect" height="h-96" width="w-full" />
-                </div>
-            </div>
+            <div class="section-skeleton"> ... </div>
             <div class="section-content hidden">
+                <?php file_put_contents('debug_test.log', "VIEW: section-utilisateurs start\n", FILE_APPEND); ?>
                 @include('dashboard.sections.utilisateurs')
+                <?php file_put_contents('debug_test.log', "VIEW: section-utilisateurs done\n", FILE_APPEND); ?>
             </div>
         </div>
         <div id="section-logs" role="tabpanel" aria-labelledby="nav-link-logs" class="section-pane hidden opacity-0 translate-y-4">
-            <div class="section-skeleton">
-                <div class="flex flex-col gap-8">
-                    <x-skeleton variant="rect" height="h-20" width="w-full" />
-                    <x-skeleton variant="rect" height="h-screen" width="w-full" />
-                </div>
-            </div>
+            <div class="section-skeleton"> ... </div>
             <div class="section-content hidden">
-                @include('dashboard.sections.logs')
+                <?php file_put_contents('debug_test.log', "VIEW: section-logs start\n", FILE_APPEND); ?>
+                @include('dashboard.sections.utilisateurs')
+                <?php file_put_contents('debug_test.log', "VIEW: section-logs done\n", FILE_APPEND); ?>
             </div>
         </div>
         @endif
 
         <!-- SECTION: PARAMÈTRES -->
         <div id="section-parametres" role="tabpanel" aria-labelledby="nav-link-parametres" class="section-pane hidden opacity-0 translate-y-4">
-            <div class="section-skeleton h-full">
-                <div class="flex flex-col gap-8">
-                    <x-skeleton variant="rect" height="h-20" width="w-full" />
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <x-skeleton variant="rect" height="h-64" />
-                        <x-skeleton variant="rect" height="h-64" />
-                    </div>
-                </div>
-            </div>
+            <div class="section-skeleton h-full"> ... </div>
             <div class="section-content hidden">
+                <?php file_put_contents('debug_test.log', "VIEW: section-parametres start\n", FILE_APPEND); ?>
                 @include('dashboard.sections.parametres')
+                <?php file_put_contents('debug_test.log', "VIEW: section-parametres done\n", FILE_APPEND); ?>
             </div>
         </div>
 

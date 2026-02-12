@@ -156,6 +156,7 @@
     </div>
 
     <!-- MODAL: CONFIGURATION AGENCE (Refined) -->
+    @push('modals')
     <div id="prop-modal-wrapper" class="app-modal-root hidden" aria-labelledby="prop-modal-title" role="dialog" aria-modal="true">
         <div id="prop-modal-overlay" class="app-modal-overlay opacity-0"></div>
         <div class="fixed inset-0 z-10 w-screen overflow-y-auto" onclick="if(event.target === this) propSection.closeModal()">
@@ -231,6 +232,8 @@
             </div>
         </div>
     </div>
+    @endpush
+
 </div>
 
 <script>

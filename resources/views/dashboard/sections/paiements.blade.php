@@ -174,6 +174,11 @@
         </div>
     </div>
 
+    <!-- Refresh iframe remains for background updates if needed, but not for form POST -->
+    <iframe id="pai_refresh_iframe" class="hidden"></iframe>
+</div>
+
+@push('modals')
     <!-- MODAL (ULTRA COMPACT GRID) -->
     <div id="pai-modal-wrapper" class="app-modal-root hidden" aria-labelledby="pai-modal-title" role="dialog" aria-modal="true">
         <div id="pai-modal-overlay" class="app-modal-overlay opacity-0 z-[9998]"></div>
@@ -334,10 +339,8 @@
             </div>
         </div>
     </div>
+@endpush
 
-    <!-- Refresh iframe remains for background updates if needed, but not for form POST -->
-    <iframe id="pai_refresh_iframe" class="hidden"></iframe>
-</div>
 
 <script>
     window.paiSection = {

@@ -48,18 +48,8 @@ class AppServiceProvider extends ServiceProvider
             return Limit::perMinute(50)->by($request->user()?->id ?: $request->ip());
         });
 
-        // Défense en profondeur: gates applicatives (en plus des middlewares de route)
-        foreach ([
-            'biens.create', 'biens.edit', 'biens.delete',
-            'locataires.create', 'locataires.edit', 'locataires.delete',
-            'contrats.create', 'contrats.edit', 'contrats.delete',
-            'proprietaires.create', 'proprietaires.edit', 'proprietaires.delete',
-            'depenses.create', 'depenses.edit', 'depenses.delete',
-            'paiements.create', 'paiements.delete',
-            'documents.upload', 'documents.delete',
-        ] as $ability) {
-            Gate::define($ability, fn ($user) => $user->can($ability));
-        }
+        // Les permissions sont gérées par Spatie Laravel Permission (HasRoles sur User).
+        // Il n'est pas nécessaire de redéfinir des Gates récursives ici.
 
         Bien::observe(DashboardStatsObserver::class);
         Contrat::observe(DashboardStatsObserver::class);
