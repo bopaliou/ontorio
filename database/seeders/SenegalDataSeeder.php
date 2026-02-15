@@ -134,5 +134,37 @@ class SenegalDataSeeder extends Seeder
                 'statut' => 'payé',
             ]);
         }
+
+        // 7. IMAGES (Récupération des images existantes dans storage)
+        $imageFiles = [];
+        $bienStoragePath = storage_path('app/public/biens');
+        
+        if (file_exists($bienStoragePath)) {
+            $files = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($bienStoragePath));
+            $basePath = str_replace('\\', '/', storage_path('app/public/'));
+            
+            foreach ($files as $file) {
+                if ($file->isFile() && in_array(strtolower($file->getExtension()), ['jpg', 'jpeg', 'png'])) {
+                    $fullPath = str_replace('\\', '/', $file->getRealPath());
+                    $relativePath = str_replace($basePath, '', $fullPath);
+                    $imageFiles[] = ltrim($relativePath, '/');
+                }
+            }
+        }
+
+        if (!empty($imageFiles)) {
+            foreach ($allBiens as $index => $bien) {
+                if (isset($imageFiles[$index])) {
+                    \App\Models\BienImage::updateOrCreate(
+                        ['bien_id' => $bien->id, 'chemin' => $imageFiles[$index]],
+                        [
+                            'nom_original' => basename($imageFiles[$index]),
+                            'principale' => true,
+                            'ordre' => 0
+                        ]
+                    );
+                }
+            }
+        }
     }
 }

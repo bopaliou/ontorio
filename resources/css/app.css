@@ -89,8 +89,7 @@
 
     /* Transitions fluides et optimisées - ONTARIO SPA ENGINE */
     .section-pane {
-        /* will-change removed to prevent stacking context trapping fixed modals */
-        transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        transition: opacity 0.3s ease-out;
     }
 
     .section-pane.hidden {
@@ -99,13 +98,7 @@
 
     .section-pane.opacity-0 {
         opacity: 0;
-        transform: translateY(20px) scale(0.99);
         pointer-events: none;
-    }
-
-    /* Staggered entrance for children */
-    .section-pane:not(.opacity-0)>* {
-        animation: slide-up-fade 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
     }
 
     /* Transition utility */
@@ -123,6 +116,20 @@
             opacity: 1;
             transform: translateY(0);
         }
+    }
+
+    @keyframes fade-in {
+        from {
+            opacity: 0;
+        }
+
+        to {
+            opacity: 1;
+        }
+    }
+
+    .animate-fade-in {
+        animation: fade-in 0.3s ease-out forwards;
     }
 
     .animate-stagger>* {
@@ -207,7 +214,7 @@
 
 @layer components {
     .app-modal-root {
-        @apply relative z-[100];
+        @apply fixed inset-0 z-[100] w-full h-full;
     }
 
     .app-modal-overlay {
@@ -257,7 +264,10 @@
     }
 
     .form-error-message {
-        @apply mt-1 flex items-center gap-1.5 text-xs font-semibold text-red-600;
+        @apply mt-1 flex items-center gap-1.5 text-xs font-bold text-red-600 relative z-[50];
+        text-shadow: 0 0 1px white;
+        filter: none !important;
+        backdrop-filter: none !important;
     }
 }
 
@@ -727,7 +737,7 @@ table th {
     text-transform: uppercase;
     font-size: 0.75rem !important;
     letter-spacing: 0.05em;
-    background: #f8fafc !important;
+    color: white !important;
 }
 
 table td {

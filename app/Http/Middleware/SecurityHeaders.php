@@ -31,6 +31,19 @@ class SecurityHeaders
         // Referrer Policy - limiter les informations envoyées
         $response->headers->set('Referrer-Policy', 'strict-origin-when-cross-origin');
 
+        // Content Security Policy (CSP) - Défense contre XSS
+        // Note: 'unsafe-inline' est utilisé ici car le dashboard utilise des scripts inline pour SPA
+        // Dans un environnement idéal, on utiliserait des nonces ou des fichiers séparés.
+        $csp = "default-src 'self'; ";
+        $csp .= "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; ";
+        $csp .= "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; ";
+        $csp .= "font-src 'self' https://fonts.gstatic.com; ";
+        $csp .= "img-src 'self' data: blob:; ";
+        $csp .= "frame-ancestors 'none'; ";
+        $csp .= "connect-src 'self';";
+        
+        $response->headers->set('Content-Security-Policy', $csp);
+
         // Permissions Policy - désactiver les fonctionnalités non utilisées
         $response->headers->set('Permissions-Policy', 'geolocation=(), microphone=(), camera=()');
 

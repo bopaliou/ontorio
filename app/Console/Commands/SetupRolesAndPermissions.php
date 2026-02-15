@@ -80,7 +80,7 @@ class SetupRolesAndPermissions extends Command
         $rolesMatrix = [
             'admin' => $permissionNames,
             'direction' => [
-                'biens.view', 'locataires.view', 'contrats.view', 'loyers.view',
+                'biens.view', 'locataires.view', 'contrats.view', 'contrats.print', 'loyers.view',
                 'revisions.view', 'paiements.view', 'depenses.view',
                 'rapports.view', 'rapports.export', 'rapports.mensuel',
                 'documents.view', 'proprietaires.view', 'proprietaires.bilan',

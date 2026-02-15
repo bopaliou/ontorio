@@ -20,7 +20,7 @@ class Locataire extends Model
         'revenus_mensuels',
     ];
 
-    protected $appends = ['cni'];
+    protected $appends = ['cni', 'anciennete_mois'];
 
     protected $casts = [
         'revenus_mensuels' => 'decimal:2',
@@ -60,6 +60,20 @@ class Locataire extends Model
     public function getAGarantAttribute()
     {
         return $this->garants()->exists();
+    }
+
+    /**
+     * Calcule l'ancienneté du locataire en mois depuis son premier contrat.
+     */
+    public function getAncienneteMoisAttribute()
+    {
+        $premierContrat = $this->contrats()->orderBy('date_debut', 'asc')->first();
+
+        if (! $premierContrat) {
+            return 0;
+        }
+
+        return (int) \Carbon\Carbon::parse($premierContrat->date_debut)->diffInMonths(\Carbon\Carbon::now());
     }
 
     /**

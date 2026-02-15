@@ -73,7 +73,7 @@ class PaiementTest extends TestCase
 
     public function test_payment_with_proof_upload()
     {
-        Storage::fake('public');
+        Storage::fake('local');
         $loyer = Loyer::factory()->create();
         $file = UploadedFile::fake()->image('preuve.jpg');
 
@@ -90,7 +90,7 @@ class PaiementTest extends TestCase
 
         $paiement = Paiement::first();
         $this->assertNotNull($paiement->preuve);
-        Storage::disk('public')->assertExists($paiement->preuve);
+        Storage::disk('local')->assertExists($paiement->preuve);
     }
 
     public function test_deleting_payment_restores_loyer_status()

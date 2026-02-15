@@ -27,6 +27,8 @@ class DocumentController extends Controller
      */
     public function storeForLocataire(Request $request, Locataire $locataire)
     {
+        $this->authorize('documents.upload');
+
         $request->validate([
             'document' => 'required|file|mimes:pdf,jpg,jpeg,png,doc,docx|mimetypes:application/pdf,image/jpeg,image/png,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document|max:10240',
             'type' => 'required|string|in:cni,contrat_signe,attestation,justificatif,autre',
@@ -46,11 +48,11 @@ class DocumentController extends Controller
             // Générer un nom unique pour le fichier
             $fileName = Str::slug(pathinfo($originalName, PATHINFO_FILENAME)).'_'.time().'.'.$extension;
 
-            // Stocker le fichier dans storage/app/public/documents/locataires/{id}/
+            // STOCKAGE SÉCURISÉ : On utilise le disque 'local' (privé) au lieu de 'public'
             $path = $file->storeAs(
                 'documents/locataires/'.$locataire->id,
                 $fileName,
-                'public'
+                'local'
             );
 
             $document = Document::create([
@@ -64,13 +66,7 @@ class DocumentController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Document ajouté avec succès',
-                'document' => [
-                    'id' => $document->id,
-                    'type' => $document->type,
-                    'nom_original' => $document->nom_original,
-                    'url' => get_secure_url($document->chemin_fichier),
-                    'created_at' => $document->created_at->format(self::DATE_FORMAT),
-                ],
+                'document' => $document->fresh(),
             ]);
         } catch (\Exception $e) {
             \Log::error('Erreur upload document', ['locataire_id' => $locataire->id, 'error' => $e->getMessage()]);
@@ -87,12 +83,15 @@ class DocumentController extends Controller
      */
     public function getForLocataire(Locataire $locataire)
     {
+        $this->authorize('documents.view');
+
         $documents = $locataire->documents()->latest()->get()->map(function ($doc) {
             return [
                 'id' => $doc->id,
                 'type' => $doc->type,
                 'type_label' => $this->getTypeLabel($doc->type),
                 'nom_original' => $doc->nom_original,
+                'extension' => $doc->extension,
                 'url' => get_secure_url($doc->chemin_fichier),
                 'created_at' => $doc->created_at->format(self::DATE_FORMAT),
             ];
@@ -131,6 +130,7 @@ class DocumentController extends Controller
                 'type' => $document->type,
                 'type_label' => $this->getTypeLabel($document->type),
                 'nom_original' => $document->nom_original,
+                'extension' => $document->extension,
                 'url' => get_secure_url($document->chemin_fichier),
                 'created_at' => $document->created_at->format(self::DATE_FORMAT),
             ],
@@ -140,17 +140,47 @@ class DocumentController extends Controller
     /**
      * Serve a document securely using a signed URL.
      */
-    public function download(Request $request, string $path)
+    public function download(Request $request)
     {
         if (! $request->hasValidSignature()) {
+            \Log::warning('Signature invalide URL', [
+                'full_url' => $request->fullUrl(),
+                'signature' => $request->query('signature'),
+                'app_url' => config('app.url')
+            ]);
             abort(403, 'Lien expiré ou signature invalide.');
         }
 
-        // On décode le chemin qui a été passé en paramètre
-        $filePath = decrypt($path);
+        // On récupère le paramètre 'path' depuis la query string
+        $encryptedPath = $request->query('path');
+        
+        if (!$encryptedPath) {
+            abort(400, 'Paramètre manquant.');
+        }
 
-        if (! Storage::disk('public')->exists($filePath)) {
-            abort(404, 'Fichier introuvable.');
+        // On décode le chemin qui a été passé en paramètre
+        try {
+            $filePath = ltrim(decrypt($encryptedPath), '/');
+            $filePath = str_replace('\\', '/', $filePath);
+            \Log::info('Tentative accès document', ['path' => $filePath]);
+        } catch (\Exception $e) {
+            \Log::error('Erreur décryptage chemin document', ['path' => $encryptedPath, 'error' => $e->getMessage()]);
+            abort(400, 'Lien corrompu.');
+        }
+
+        // On vérifie d'abord sur le disque local (privé) puis sur le public (pour la rétrocompatibilité)
+        $disk = 'local';
+        $fullPathLocal = config('filesystems.disks.local.root') . '/' . $filePath;
+        
+        if (!file_exists($fullPathLocal)) {
+            \Log::warning('Document non trouvé sur local (disk root)', ['fullPath' => $fullPathLocal]);
+            if (Storage::disk('public')->exists($filePath)) {
+                $disk = 'public';
+                \Log::info('Document trouvé sur public (rétrocompatibilité)', ['path' => $filePath]);
+            } else {
+                \Log::error('Fichier introuvable sur tous les disques', ['path' => $filePath, 'tried_local' => $fullPathLocal]);
+                abort(404, 'Fichier introuvable.');
+            }
         }
 
         // Log de consultation
@@ -162,7 +192,26 @@ class DocumentController extends Controller
             );
         }
 
-        return Storage::disk('public')->response($filePath);
+        $mimeType = Storage::disk($disk)->mimeType($filePath);
+
+        // Fallback MIME type si non détecté
+        if (!$mimeType) {
+            $ext = strtolower(pathinfo($filePath, PATHINFO_EXTENSION));
+            $map = [
+                'jpg' => 'image/jpeg', 'jpeg' => 'image/jpeg',
+                'png' => 'image/png', 'gif' => 'image/gif',
+                'webp' => 'image/webp', 'pdf' => 'application/pdf',
+                'doc' => 'application/msword', 
+                'docx' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+            ];
+            $mimeType = $map[$ext] ?? 'application/octet-stream';
+        }
+
+        return Storage::disk($disk)->response($filePath, basename($filePath), [
+            'Content-Type' => $mimeType,
+            'Content-Disposition' => 'inline; filename="'.basename($filePath).'"',
+            'X-Frame-Options' => 'SAMEORIGIN'
+        ]);
     }
 
     /**
@@ -170,10 +219,12 @@ class DocumentController extends Controller
      */
     public function destroy(Document $document)
     {
+        $this->authorize('documents.delete');
+
         try {
-            // Supprimer le fichier du storage
-            if (Storage::disk('public')->exists($document->chemin_fichier)) {
-                Storage::disk('public')->delete($document->chemin_fichier);
+            // Supprimer le fichier du storage PRIVÉ
+            if (Storage::disk('local')->exists($document->chemin_fichier)) {
+                Storage::disk('local')->delete($document->chemin_fichier);
             }
 
             $document->delete();

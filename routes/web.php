@@ -24,10 +24,20 @@ Route::middleware('auth')->group(function () {
     Route::delete($profileRoute, [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+// Route pour servir les documents de manière sécurisée (URL signée + Auth)
+// PLACÉ ICI POUR ÉVITER LES CONFLITS AVEC Route::resource('documents')
+Route::get('/documents/secure-access', [DocumentController::class, 'download'])
+    ->name('documents.secure')
+    ->middleware(['auth', 'signed']);
+
 // Dashboard: accessible à tous les utilisateurs authentifiés
 Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
+
+Route::get('/dashboard/refresh-cache', [DashboardController::class, 'refreshCache'])
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard.refresh-cache');
 
 // ==============================================================================
 // GROUP 1: OPERATIONAL READ
@@ -241,9 +251,8 @@ Route::middleware(['auth', 'role:admin', 'throttle:global-mutations'])->group(fu
         ->name('system.migrate');
 });
 
-// Route pour servir les documents de manière sécurisée (URL signée)
-Route::get('/documents/secure-access/{path}', [DocumentController::class, 'download'])
-    ->name('documents.secure')
-    ->middleware('signed');
+
 
 require __DIR__.'/auth.php';
+
+

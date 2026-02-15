@@ -30,6 +30,10 @@ class ProprietaireService
 
     public function deleteProprietaire(Proprietaire $proprietaire): void
     {
+        if ($proprietaire->biens()->exists()) {
+            throw new \Exception('Impossible de supprimer un propriétaire lié à des biens.');
+        }
+
         DB::transaction(function () use ($proprietaire) {
             $nom = $proprietaire->nom;
             $proprietaire->delete();

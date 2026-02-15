@@ -21,6 +21,8 @@ class LocataireController extends Controller
      */
     public function store(Request $request)
     {
+        $this->authorize('locataires.create');
+
         $validator = Validator::make($request->all(), [
             'nom' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:locataires',
@@ -49,6 +51,8 @@ class LocataireController extends Controller
      */
     public function update(Request $request, Locataire $locataire)
     {
+        $this->authorize('locataires.edit');
+
         $validator = Validator::make($request->all(), [
             'nom' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:locataires,email,'.$locataire->id,
@@ -77,6 +81,8 @@ class LocataireController extends Controller
      */
     public function destroy(Locataire $locataire)
     {
+        $this->authorize('locataires.delete');
+
         try {
             // Task 3.2: Vérifier s'il a des contrats actifs
             if ($locataire->contrats()->whereIn('statut', ['actif', 'en_attente'])->exists()) {

@@ -52,9 +52,16 @@ class TestUsersSeeder extends Seeder
 
             // S'assurer que les rôles Spatie sont bien assignés
             if (isset($userData['role'])) {
-                // On donne tous les droits à l'admin, et les rôles spécifiques aux autres
-                if (! $user->hasRole($userData['role'])) {
-                    $user->assignRole($userData['role']);
+                try {
+                    // Check if role exists for web guard, creating it if missing (fallback)
+                    $roleName = $userData['role'];
+                    $role = \Spatie\Permission\Models\Role::firstOrCreate(['name' => $roleName, 'guard_name' => 'web']);
+                    
+                    if (! $user->hasRole($roleName)) {
+                        $user->assignRole($role);
+                    }
+                } catch (\Exception $e) {
+                    $this->command->error("Erreur lors de l'assignation du rôle {$userData['role']} à {$userData['email']} : " . $e->getMessage());
                 }
             }
         }

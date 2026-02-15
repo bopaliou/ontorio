@@ -32,15 +32,54 @@ class DashboardController extends Controller
             'biens_list' => Bien::with(['contrats.locataire', 'images', 'imagePrincipale', 'proprietaire'])->latest()->paginate(25, ['*'], 'page_biens'),
             'depenses_list' => \App\Models\Depense::with('bien.proprietaire')->latest()->paginate(25, ['*'], 'page_depenses'),
             'categories_depenses' => ['maintenance', 'travaux', 'taxe', 'assurance', 'autre'],
-            'locataires_list' => Locataire::with(['contrats.bien', 'contrats.loyers'])->withCount('contrats')->latest()->paginate(25, ['*'], 'page_locataires'),
+            'locataires_list' => Locataire::with(['contrats.bien', 'contrats.loyers', 'documents'])->withCount('contrats')->latest()->paginate(25, ['*'], 'page_locataires'),
             'contrats_list' => Contrat::with(['bien:id,nom,adresse', 'locataire:id,nom,telephone', 'loyers'])->latest()->paginate(25, ['*'], 'page_contrats'),
-            'loyers_list' => Loyer::withMontantPaye()->with(['contrat.locataire', 'contrat.bien', 'paiements'])->orderBy('id', 'desc')->paginate(50, ['*'], 'page_loyers'),
+            'loyers_list' => Loyer::withMontantPaye()
+                ->with(['contrat.locataire', 'contrat.bien', 'paiements'])
+                ->where(function ($q) {
+                    $q->where('statut', '!=', 'payé')
+                      ->orWhere('mois', '>=', Carbon::now()->subMonths(2)->format('Y-m'));
+                })
+                ->orderBy('mois', 'desc')
+                ->orderBy('id', 'desc')
+                ->paginate(10, ['*'], 'page_loyers'),
             'paiements_list' => Paiement::with(['loyer.contrat.locataire', 'loyer.contrat.bien'])->latest()->paginate(50, ['*'], 'page_paiements'),
             'proprietaires_list' => in_array($user->role, ['admin', 'gestionnaire', 'direction'])
-                ? Proprietaire::withCount(['biens as logements_count'])->get()
+                ? Proprietaire::withCount(['biens as logements_count'])->orderBy('id', 'asc')->get()
+                : collect([]),
+            'agency' => in_array($user->role, ['admin', 'gestionnaire', 'direction'])
+                ? Proprietaire::where('email', 'contact@ontariogroup.net')->first()
+                : null,
+            'owner_stats' => in_array($user->role, ['admin', 'gestionnaire', 'direction'])
+                ? Proprietaire::all()->mapWithKeys(function ($prop) {
+                    $totalBiens = $prop->biens()->count();
+                    $occupes = $prop->biens()->whereHas('contrats', function($q){ $q->where('statut', 'actif'); })->count();
+                    $ca = \App\Models\Paiement::whereHas('loyer.contrat.bien', function($q) use ($prop) {
+                        $q->where('proprietaire_id', $prop->id);
+                    })->whereMonth('created_at', now()->month)->sum('montant');
+                    $arrieres = \App\Models\Loyer::whereHas('contrat.bien', function($q) use ($prop) {
+                        $q->where('proprietaire_id', $prop->id);
+                    })->whereIn('statut', ['émis', 'en_retard', 'partiellement_payé'])->sum('montant') 
+                    - \App\Models\Paiement::whereHas('loyer.contrat.bien', function($q) use ($prop) {
+                        $q->where('proprietaire_id', $prop->id);
+                    })->whereHas('loyer', function($q) {
+                        $q->whereIn('statut', ['émis', 'en_retard', 'partiellement_payé']);
+                    })->sum('montant');
+
+                    return [$prop->id => [
+                        'occupancy_rate' => $totalBiens > 0 ? round(($occupes / $totalBiens) * 100, 1) : 0,
+                        'revenue_this_month' => (float) $ca,
+                        'total_arrears' => (float) max(0, $arrieres),
+                        'total_units' => $totalBiens,
+                        'occupied_units' => $occupes,
+                    ]];
+                })
                 : collect([]),
             'alerts' => $this->statsService->getAlerts(),
             'parc_stats' => $this->statsService->getParcStats(),
+            'financial_stats' => $this->statsService->getFinancialKPIs(),
+            'locataires_all' => Locataire::orderBy('nom')->get(),
+            'biens_all' => Bien::where('statut', 'libre')->orWhereHas('contrats', function($q) { $q->where('statut', '!=', 'actif'); })->orderBy('nom')->get(),
         ];
 
         $roleData = match ($user->role) {
@@ -55,6 +94,12 @@ class DashboardController extends Controller
         $data = array_merge($commonData, $roleData);
 
         return view('dashboard.index', compact('data'));
+    }
+
+    public function refreshCache()
+    {
+        $this->statsService->clearCache();
+        return redirect()->back()->with('success', 'Cache rafraîchi avec succès');
     }
 
     private function getAdminData()

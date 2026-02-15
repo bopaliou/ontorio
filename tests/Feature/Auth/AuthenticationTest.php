@@ -53,4 +53,47 @@ class AuthenticationTest extends TestCase
         $this->assertGuest();
         $response->assertRedirect('/');
     }
+
+    public function test_login_validation_rules(): void
+    {
+        $response = $this->post(self::ROUTE_LOGIN, [
+            'email' => '',
+            'password' => '',
+        ]);
+
+        $response->assertSessionHasErrors(['email', 'password']);
+        
+        $response = $this->post(self::ROUTE_LOGIN, [
+            'email' => 'not-an-email',
+            'password' => 'password',
+        ]);
+
+        $response->assertSessionHasErrors(['email']);
+    }
+
+    public function test_login_throttling_after_multiple_attempts(): void
+    {
+        $user = User::factory()->create();
+
+        for ($i = 0; $i < 6; $i++) {
+            $this->post(self::ROUTE_LOGIN, [
+                'email' => $user->email,
+                'password' => 'wrong-password',
+            ]);
+        }
+
+        $response = $this->post(self::ROUTE_LOGIN, [
+            'email' => $user->email,
+            'password' => 'wrong-password',
+        ]);
+
+        $response->assertSessionHasErrors('email');
+        // Check for common throttling message keywords (English or French)
+        $errorMessage = strtolower(session('errors')->first('email'));
+        $this->assertTrue(
+            str_contains($errorMessage, 'too many') || 
+            str_contains($errorMessage, 'trop de tentatives'),
+            "Expected throttling error message, but got: {$errorMessage}"
+        );
+    }
 }

@@ -33,7 +33,7 @@ class PaymentService
             if (isset($data['preuve']) && $data['preuve'] instanceof \Illuminate\Http\UploadedFile) {
                 $file = $data['preuve'];
                 $filename = 'preuve_'.time().'_'.uniqid().'.'.$file->getClientOriginalExtension();
-                $preuvePath = $file->storeAs('paiements', $filename, 'public');
+                $preuvePath = $file->storeAs('paiements', $filename, 'local');
             }
 
             // 4. Création du paiement
@@ -66,8 +66,8 @@ class PaymentService
             $montant = $paiement->montant;
 
             // Supprimer le fichier de preuve si existant
-            if ($paiement->preuve && Storage::disk('public')->exists($paiement->preuve)) {
-                Storage::disk('public')->delete($paiement->preuve);
+            if ($paiement->preuve && Storage::disk('local')->exists($paiement->preuve)) {
+                Storage::disk('local')->delete($paiement->preuve);
             }
 
             $paiement->delete();

@@ -14,10 +14,10 @@ class StoreBienRequest extends BaseApiFormRequest
     public function rules(): array
     {
         return array_merge($this->bienRules(), [
-            'proprietaire_id' => 'required|exists:proprietaires,id',
+            'proprietaire_id' => 'nullable|exists:proprietaires,id',
             'adresse' => 'required|string|max:255',
-            'ville' => 'required|string|max:100',
-            'surface' => 'required|numeric|min:1',
+            'ville' => 'nullable|string|max:100',
+            'surface' => 'nullable|numeric|min:0',
         ]);
     }
 

@@ -37,15 +37,20 @@
         </div>
 
         <!-- SECTION: BIENS -->
-        <div id="section-biens" role="tabpanel" aria-labelledby="nav-link-biens" class="section-pane hidden opacity-0 translate-y-4">
-            <div class="section-skeleton h-full"> ... </div>
+        <div id="section-biens" role="tabpanel" aria-labelledby="nav-link-biens" class="section-pane hidden">
+            <div class="section-skeleton h-full">
+                <div class="flex flex-col gap-6">
+                   <div class="flex justify-between items-center"><x-skeleton variant="rect" height="h-16" width="w-1/3" /><x-skeleton variant="rect" height="h-12" width="w-48" /></div>
+                   <div class="grid grid-cols-1 md:grid-cols-3 gap-6"><x-skeleton variant="rect" height="h-64" /><x-skeleton variant="rect" height="h-64" /><x-skeleton variant="rect" height="h-64" /></div>
+                </div>
+            </div>
             <div class="section-content hidden">
                 @include('dashboard.sections.biens')
             </div>
         </div>
 
         <!-- SECTION: ONTARIO GROUP (Propriétaires) -->
-        <div id="section-proprietaires" role="tabpanel" aria-labelledby="nav-link-proprietaires" class="section-pane hidden opacity-0 translate-y-4">
+        <div id="section-proprietaires" role="tabpanel" aria-labelledby="nav-link-proprietaires" class="section-pane hidden">
             <div class="section-skeleton h-full"> ... </div>
             <div class="section-content hidden">
                 <?php file_put_contents('debug_test.log', "VIEW: section-proprietaires start\n", FILE_APPEND); ?>
@@ -55,17 +60,15 @@
         </div>
 
         <!-- SECTION: LOCATAIRES -->
-        <div id="section-locataires" role="tabpanel" aria-labelledby="nav-link-locataires" class="section-pane hidden opacity-0 translate-y-4">
+        <div id="section-locataires" role="tabpanel" aria-labelledby="nav-link-locataires" class="section-pane hidden">
             <div class="section-skeleton h-full"> ... </div>
             <div class="section-content hidden">
-                <?php file_put_contents('debug_test.log', "VIEW: section-locataires start\n", FILE_APPEND); ?>
                 @include('dashboard.sections.locataires')
-                <?php file_put_contents('debug_test.log', "VIEW: section-locataires done\n", FILE_APPEND); ?>
             </div>
         </div>
 
         <!-- SECTION: CONTRATS -->
-        <div id="section-contrats" role="tabpanel" aria-labelledby="nav-link-contrats" class="section-pane hidden opacity-0 translate-y-4">
+        <div id="section-contrats" role="tabpanel" aria-labelledby="nav-link-contrats" class="section-pane hidden">
             <div class="section-skeleton h-full"> ... </div>
             <div class="section-content hidden">
                 <?php file_put_contents('debug_test.log', "VIEW: section-contrats start\n", FILE_APPEND); ?>
@@ -75,7 +78,7 @@
         </div>
 
         <!-- SECTION: LOYERS (Finance) -->
-        <div id="section-loyers" role="tabpanel" aria-labelledby="nav-link-loyers" class="section-pane hidden opacity-0 translate-y-4">
+        <div id="section-loyers" role="tabpanel" aria-labelledby="nav-link-loyers" class="section-pane hidden">
             <div class="section-skeleton h-full"> ... </div>
             <div class="section-content hidden">
                 <?php file_put_contents('debug_test.log', "VIEW: section-loyers start\n", FILE_APPEND); ?>
@@ -85,7 +88,7 @@
         </div>
 
         <!-- SECTION: PAIEMENTS (Compta) -->
-        <div id="section-paiements" role="tabpanel" aria-labelledby="nav-link-paiements" class="section-pane hidden opacity-0 translate-y-4">
+        <div id="section-paiements" role="tabpanel" aria-labelledby="nav-link-paiements" class="section-pane hidden">
             <div class="section-skeleton h-full"> ... </div>
             <div class="section-content hidden">
                 <?php file_put_contents('debug_test.log', "VIEW: section-paiements start\n", FILE_APPEND); ?>
@@ -95,7 +98,7 @@
         </div>
 
         <!-- SECTION: DEPENSES (Management) -->
-        <div id="section-depenses" role="tabpanel" aria-labelledby="nav-link-depenses" class="section-pane hidden opacity-0 translate-y-4">
+        <div id="section-depenses" role="tabpanel" aria-labelledby="nav-link-depenses" class="section-pane hidden">
             <div class="section-skeleton h-full"> ... </div>
             <div class="section-content hidden">
                 <?php file_put_contents('debug_test.log', "VIEW: section-depenses start\n", FILE_APPEND); ?>
@@ -105,7 +108,7 @@
         </div>
 
         <!-- SECTION: RELANCES (Communication) -->
-        <div id="section-relances" role="tabpanel" aria-labelledby="nav-link-relances" class="section-pane hidden opacity-0 translate-y-4">
+        <div id="section-relances" role="tabpanel" aria-labelledby="nav-link-relances" class="section-pane hidden">
             <div class="section-skeleton h-full"> ... </div>
             <div class="section-content hidden">
                 <?php file_put_contents('debug_test.log', "VIEW: section-relances start\n", FILE_APPEND); ?>
@@ -116,7 +119,7 @@
 
         <!-- SECTION: ADMINISTRATION -->
         @if(Auth::user()->role === 'admin')
-        <div id="section-utilisateurs" role="tabpanel" aria-labelledby="nav-link-utilisateurs" class="section-pane hidden opacity-0 translate-y-4">
+        <div id="section-utilisateurs" role="tabpanel" aria-labelledby="nav-link-utilisateurs" class="section-pane hidden">
             <div class="section-skeleton"> ... </div>
             <div class="section-content hidden">
                 <?php file_put_contents('debug_test.log', "VIEW: section-utilisateurs start\n", FILE_APPEND); ?>
@@ -124,18 +127,16 @@
                 <?php file_put_contents('debug_test.log', "VIEW: section-utilisateurs done\n", FILE_APPEND); ?>
             </div>
         </div>
-        <div id="section-logs" role="tabpanel" aria-labelledby="nav-link-logs" class="section-pane hidden opacity-0 translate-y-4">
+        <div id="section-logs" role="tabpanel" aria-labelledby="nav-link-logs" class="section-pane hidden">
             <div class="section-skeleton"> ... </div>
             <div class="section-content hidden">
-                <?php file_put_contents('debug_test.log', "VIEW: section-logs start\n", FILE_APPEND); ?>
-                @include('dashboard.sections.utilisateurs')
-                <?php file_put_contents('debug_test.log', "VIEW: section-logs done\n", FILE_APPEND); ?>
+                @include('dashboard.sections.logs')
             </div>
         </div>
         @endif
 
         <!-- SECTION: PARAMÈTRES -->
-        <div id="section-parametres" role="tabpanel" aria-labelledby="nav-link-parametres" class="section-pane hidden opacity-0 translate-y-4">
+        <div id="section-parametres" role="tabpanel" aria-labelledby="nav-link-parametres" class="section-pane hidden">
             <div class="section-skeleton h-full"> ... </div>
             <div class="section-content hidden">
                 <?php file_put_contents('debug_test.log', "VIEW: section-parametres start\n", FILE_APPEND); ?>
@@ -148,16 +149,6 @@
 
     <!-- JAVASCRIPT LOGIC -->
     <script>
-        // Fonction globale d'aperçu de documents (Accessible partout)
-        window.previewDoc = function(doc) {
-            if (!doc || !doc.url) {
-                showToast('Document inaccessible', 'error');
-                return;
-            }
-            // Ouvrir dans un nouvel onglet
-            window.open(doc.url, '_blank');
-        };
-
         /**
          * ONTARIO GROUP - DASHBOARD SPA ENGINE
          * Gestionnaire de navigation fluide avec History API

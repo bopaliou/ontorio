@@ -86,6 +86,38 @@ class BienTest extends TestCase
         ]);
     }
 
+    public function test_updating_bien_rent_propagates_to_contracts_and_loyers(): void
+    {
+        $bien = Bien::factory()->create(['loyer_mensuel' => 100000]);
+        $contrat = \App\Models\Contrat::factory()->create([
+            'bien_id' => $bien->id,
+            'loyer_montant' => 100000,
+            'statut' => 'actif'
+        ]);
+        
+        $loyerEmis = \App\Models\Loyer::factory()->create([
+            'contrat_id' => $contrat->id,
+            'montant' => 100000,
+            'statut' => 'émis'
+        ]);
+
+        $response = $this->actingAs($this->admin)
+            ->putJson(route('dashboard.biens.update', $bien), [
+                'nom' => $bien->nom,
+                'adresse' => $bien->adresse,
+                'ville' => $bien->ville,
+                'proprietaire_id' => $bien->proprietaire_id,
+                'loyer_mensuel' => 150000, // New rent
+                'type' => $bien->type,
+                'surface' => $bien->surface,
+            ]);
+
+        $response->assertStatus(200);
+
+        $this->assertEquals(150000, $contrat->fresh()->loyer_montant);
+        $this->assertEquals(150000, $loyerEmis->fresh()->montant);
+    }
+
     public function test_admin_can_delete_bien(): void
     {
         $bien = Bien::factory()->create([

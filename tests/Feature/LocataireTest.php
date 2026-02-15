@@ -92,6 +92,38 @@ class LocataireTest extends TestCase
         ]);
     }
 
+    public function test_prevent_deletion_of_locataire_with_active_contracts(): void
+    {
+        $locataire = Locataire::factory()->create();
+        \App\Models\Contrat::factory()->create([
+            'locataire_id' => $locataire->id,
+            'statut' => 'actif'
+        ]);
+
+        $response = $this->actingAs($this->admin)
+            ->deleteJson(route('locataires.destroy', $locataire));
+
+        $response->assertStatus(409); // Conflict
+        $this->assertDatabaseHas('locataires', ['id' => $locataire->id]);
+    }
+
+    public function test_gestionnaire_can_manage_locataires(): void
+    {
+        // Setup roles
+        $this->artisan('app:setup-roles-permissions --force');
+        $gestionnaire = User::factory()->create(['role' => 'gestionnaire']);
+        $gestionnaire->assignRole('gestionnaire');
+
+        $response = $this->actingAs($gestionnaire)
+            ->postJson(route('locataires.store'), [
+                'nom' => 'Gestionnaire Tenant',
+                'email' => 'gestionnaire@tenant.com',
+                'telephone' => '770001111',
+            ]);
+
+        $response->assertStatus(201);
+    }
+
     public function test_unauthorized_user_cannot_manage_locataires(): void
     {
         $comptable = User::factory()->create(['role' => 'comptable']);

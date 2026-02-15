@@ -43,7 +43,7 @@ if (! function_exists('get_secure_url')) {
         return URL::temporarySignedRoute(
             'documents.secure',
             now()->addMinutes($minutes),
-            ['path' => encrypt($path)]
+            ['path' => encrypt(str_replace('\\', '/', $path))]
         );
     }
 }

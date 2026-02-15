@@ -215,10 +215,14 @@ class DashboardStatsService
         \Illuminate\Support\Facades\Cache::forget('dashboard_parc_stats');
         \Illuminate\Support\Facades\Cache::forget('dashboard_alerts');
         \Illuminate\Support\Facades\Cache::forget('dashboard_chart_data_6');
-
-        // On ne peut pas facilement tout oublier sans tags, mais vider les clés globales est un bon début.
-        // Pour les clés par mois ou par proprietaire, elles expireront ou seront écrasées.
-        // Idéalement on viderait tout le cache si c'est acceptable, ou on utiliserait un driver supportant les tags.
+        
+        // Vider aussi le mois en cours pour les KPIs financiers
+        $mois = Carbon::now()->format('Y-m');
+        \Illuminate\Support\Facades\Cache::forget("dashboard_financial_kpis_{$mois}");
+        
+        // On pourrait aussi essayer de vider le cache des 2-3 derniers mois au cas où
+        $moisPrec = Carbon::now()->subMonth()->format('Y-m');
+        \Illuminate\Support\Facades\Cache::forget("dashboard_financial_kpis_{$moisPrec}");
     }
 
     private function sumForMonth($query, string $dateColumn, Carbon $date): float

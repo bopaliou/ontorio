@@ -25,6 +25,7 @@ class ProprietaireController extends Controller
 
         $validator = Validator::make($request->all(), [
             'nom' => 'required|string|max:255',
+            'prenom' => 'nullable|string|max:255',
             'email' => 'nullable|email|unique:proprietaires,email',
             'telephone' => 'nullable|string|max:50',
             'adresse' => 'nullable|string',
@@ -52,6 +53,7 @@ class ProprietaireController extends Controller
 
         $validator = Validator::make($request->all(), [
             'nom' => 'required|string|max:255',
+            'prenom' => 'nullable|string|max:255',
             'email' => 'nullable|email|unique:proprietaires,email,'.$proprietaire->id,
             'telephone' => 'nullable|string|max:50',
             'adresse' => 'nullable|string',

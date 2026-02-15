@@ -15,8 +15,12 @@ class LoyerController extends Controller
      */
     public function exporterPDF(Loyer $loyer)
     {
+        // Force locale to French
+        Carbon::setLocale('fr');
+        setlocale(LC_TIME, 'fr_FR.utf8', 'fra');
+
         // On charge les relations nécessaires
-        $loyer->load(['contrat.locataire', 'contrat.bien']);
+        $loyer->load(['contrat.locataire', 'contrat.bien', 'paiements']);
 
         $pdf = Pdf::loadView('pdf.quittance', compact('loyer'));
 
@@ -106,6 +110,7 @@ class LoyerController extends Controller
             'statut' => 'required|in:émis,payé,en_retard,annulé,partiellement_payé',
             'mois' => 'required|date_format:Y-m',
             'note_annulation' => 'nullable|string',
+            'penalite' => 'nullable|numeric|min:0',
         ]);
 
         $oldStatus = $loyer->getOriginal('statut');
@@ -141,8 +146,19 @@ class LoyerController extends Controller
         return response()->json(['message' => 'Loyer mis à jour avec succès', 'loyer' => $loyer]);
     }
 
-    public function destroy()
+    public function destroy(string $id)
     {
-        return abort(404);
+        $loyer = Loyer::find($id);
+
+        if (!$loyer) {
+            return response()->json(['message' => 'Loyer déjà supprimé ou introuvable'], 200);
+        }
+        
+        // Supprimer les paiements associés (ou soft delete si configuré, ici on supprime physiquement pour l'instant)
+        \App\Models\Paiement::where('loyer_id', $loyer->id)->delete();
+        
+        $loyer->delete();
+
+        return response()->json(['message' => 'Loyer supprimé avec succès']);
     }
 }

@@ -1,240 +1,184 @@
 <div class="h-full flex flex-col gap-10" id="proprietaires-section-container">
 
     @php
-        $agence = $data['proprietaires_list']->first();
+        $agence = $data['agency'] ?? $data['proprietaires_list']->first();
     @endphp
 
     <div id="prop-view-list" class="prop-sub-view space-y-10">
         <!-- Header Section -->
         @include('components.section-header', [
-            'title' => 'Identité de l\'Agence',
-            'subtitle' => 'Paramétrez l\'entité légale qui apparaîtra sur vos documents.',
+            'title' => 'Gestion des Propriétaires',
+            'subtitle' => 'Gérez les entités propriétaires des biens (Ontario Group et propriétaires tiers).',
             'icon' => 'building',
-            'actions' => $agence ? '<button onclick="propSection.openModal(\'edit\', '.json_encode($agence).')" class="group flex items-center gap-2 px-5 py-2.5 bg-white border border-gray-200 rounded-2xl text-sm font-bold text-gray-700 hover:border-gray-300 hover:shadow-lg transition-all transform hover:-translate-y-0.5">
-                <svg class="w-4 h-4 text-gray-400 group-hover:text-[#cb2d2d] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
-                Modifier les Infos
-            </button>' : ''
+            'actions' => '<button onclick="propSection.openModal(\'create\')" class="group flex items-center gap-2 px-5 py-2.5 bg-[#cb2d2d] rounded-2xl text-sm font-bold text-white hover:bg-[#a82020] shadow-lg shadow-red-900/20 transition-all transform hover:-translate-y-0.5">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+                Nouveau Propriétaire
+            </button>'
         ])
 
         @if($agence)
-        <!-- Main Identity Card (Premium Redesign) -->
-        <div class="relative group mt-4">
-            {{-- Background Aura --}}
-            <div class="absolute -inset-4 bg-gradient-to-r from-red-500/10 via-blue-500/10 to-red-500/10 rounded-[4rem] blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-1000"></div>
-
-            <div class="bg-white rounded-[3rem] shadow-2xl shadow-gray-200/50 border border-gray-100 ontario-card-lift overflow-hidden relative z-10">
-                {{-- Top Glass Highlight --}}
-                <div class="absolute top-0 inset-x-0 h-40 bg-gradient-to-b from-gray-50/50 to-transparent pointer-events-none"></div>
-                
-                <div class="p-8 lg:p-16 grid grid-cols-1 lg:grid-cols-12 gap-16 relative z-10">
-
-                    <!-- Col 1: Brand Identity -->
-                    <div class="lg:col-span-5 flex flex-col items-center lg:items-start text-center lg:text-left border-b lg:border-b-0 lg:border-r border-gray-100/80 pb-12 lg:pb-0 lg:pr-16">
-                        {{-- Logo Container (Glass Evolution) --}}
-                        <div class="relative mb-12 group/logo">
-                            <div class="absolute inset-0 bg-gradient-to-br from-[#cb2d2d]/20 to-blue-500/20 rounded-[2.5rem] blur-2xl opacity-40 group-hover/logo:opacity-70 transition-opacity duration-700"></div>
-                            <div class="w-56 h-56 bg-white/80 backdrop-blur-md rounded-[2.5rem] flex items-center justify-center p-10 border border-white shadow-[0_20px_50px_-15px_rgba(0,0,0,0.1)] relative z-10 transition-all duration-700 group-hover/logo:scale-[1.03] group-hover/logo:-rotate-1">
-                                <img src="{{ asset('images/ontorio-logo.png') }}" alt="Ontario Logo" class="w-full h-full object-contain">
-                            </div>
+        <!-- Main Identity Card -->
+        <div class="relative group mt-6">
+            <div class="absolute -inset-1 bg-gradient-to-r from-[#cb2d2d] to-[#274256] rounded-[3.5rem] blur opacity-10 group-hover:opacity-20 transition duration-1000"></div>
+            <div class="relative bg-white rounded-[3rem] shadow-2xl border border-gray-100 overflow-hidden z-10">
+                <div class="flex flex-col lg:flex-row text-left">
+                    <div class="lg:w-1/4 bg-[#1a2e3d] p-10 flex flex-col items-center justify-center relative overflow-hidden text-center">
+                        <div class="absolute top-0 right-0 -mr-16 -mt-16 w-48 h-48 bg-white opacity-5 rounded-full"></div>
+                        <div class="relative w-32 h-32 bg-white rounded-3xl p-5 shadow-2xl flex items-center justify-center transform group-hover:scale-105 transition-transform duration-500">
+                            <img src="{{ asset('images/ontorio-logo.png') }}" alt="Logo" class="w-full h-full object-contain">
                         </div>
-
-                        <div class="space-y-4">
-                            <h3 class="text-5xl font-black text-gray-900 leading-none tracking-tighter font-poppins">
-                                {{ $agence->nom }}
-                            </h3>
-                            @if($agence->prenom)
-                            <div class="inline-flex items-center px-4 py-1.5 bg-red-50 border border-red-100 rounded-full">
-                                <span class="text-[10px] font-black text-[#cb2d2d] uppercase tracking-[0.2em]">{{ $agence->prenom }}</span>
-                            </div>
-                            @endif
-                        </div>
-
-                        <div class="mt-12 w-full p-6 bg-gray-50/80 backdrop-blur-sm rounded-2xl border border-gray-100 group/addr hover:bg-white hover:shadow-xl hover:border-red-100 transition-all duration-500">
-                            <div class="flex items-start gap-5">
-                                <div class="w-12 h-12 rounded-xl bg-white flex items-center justify-center shrink-0 shadow-sm text-gray-400 group-hover/addr:text-[#cb2d2d] group-hover/addr:scale-110 transition-all duration-500 border border-gray-50">
-                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-                                </div>
-                                <div class="pt-1">
-                                    <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-1">Siège Social</p>
-                                    <p class="text-sm text-gray-600 leading-relaxed font-semibold">
-                                        {{ $agence->adresse ?? 'Adresse non renseignée.' }}
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
+                        <div class="mt-6"><span class="px-4 py-1.5 bg-[#cb2d2d] text-white text-[10px] font-black uppercase tracking-[0.2em] rounded-full shadow-lg">Officiel</span></div>
                     </div>
-
-                    <!-- Col 2: Info & Digital Presence -->
-                    <div class="lg:col-span-7 flex flex-col justify-center space-y-16">
-                        
-                        {{-- Contact Grid with Vibrant Accents --}}
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-10">
-                            <div class="flex items-center gap-6 group/contact p-2 rounded-3xl transition-all">
-                                <div class="w-16 h-16 rounded-[1.25rem] bg-emerald-50 border border-emerald-100 flex items-center justify-center group-hover/contact:bg-emerald-500 group-hover/contact:text-white group-hover/contact:rotate-6 transition-all duration-500 shadow-sm text-emerald-600">
-                                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
-                                </div>
+                    <div class="flex-1 p-8 lg:p-12">
+                        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-8">
+                            <div class="space-y-4">
                                 <div>
-                                    <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-1.5">Standard Direct</p>
-                                    <p class="text-2xl font-black text-gray-900 font-mono tracking-tight">{{ $agence->telephone ?? '--' }}</p>
+                                    <div class="flex items-center gap-3 mb-1">
+                                        <h3 class="text-3xl font-black text-[#1a2e3d] tracking-tight">{{ $agence->nom }}</h3>
+                                        <svg class="w-6 h-6 text-blue-500 fill-current" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                                    </div>
+                                    <p class="text-[#cb2d2d] font-bold uppercase tracking-[0.2em] text-[11px]">{{ $agence->prenom ?? 'Propriétaire Principal' }}</p>
+                                </div>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-2">
+                                    <div class="flex items-center gap-4">
+                                        <div class="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center text-gray-400"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg></div>
+                                        <div><p class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Téléphone</p><p class="text-sm font-bold text-gray-700">{{ $agence->telephone }}</p></div>
+                                    </div>
+                                    <div class="flex items-center gap-4">
+                                        <div class="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center text-gray-400"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg></div>
+                                        <div><p class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Email</p><p class="text-sm font-bold text-gray-700">{{ $agence->email }}</p></div>
+                                    </div>
                                 </div>
                             </div>
-
-                            <div class="flex items-center gap-6 group/contact p-2 rounded-3xl transition-all">
-                                <div class="w-16 h-16 rounded-[1.25rem] bg-sky-50 border border-sky-100 flex items-center justify-center group-hover/contact:bg-sky-500 group-hover/contact:text-white group-hover/contact:-rotate-6 transition-all duration-500 shadow-sm text-sky-600">
-                                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-                                </div>
-                                <div>
-                                    <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-1.5">Email Officiel</p>
-                                    <p class="text-xl font-bold text-gray-900 tracking-tight break-all">{{ $agence->email ?? '--' }}</p>
-                                </div>
+                            <div class="flex flex-col sm:flex-row lg:flex-col gap-4">
+                                <button onclick="propSection.openModal('edit', {{ json_encode($agence) }})" class="px-6 py-4 bg-gray-50 text-[#1a2e3d] font-bold text-xs uppercase tracking-widest rounded-2xl hover:bg-gray-100 transition-all">Modifier</button>
+                                <a href="{{ route('proprietaires.bilan', $agence->id) }}" target="_blank" class="px-8 py-4 bg-[#1a2e3d] text-white font-black text-xs uppercase tracking-widest rounded-2xl shadow-xl transition-all">Générer Bilan PDF</a>
                             </div>
                         </div>
 
-                        {{-- Liquid Premium Stat Box --}}
-                        <div class="relative group/liquid overflow-hidden rounded-[2.5rem] border border-white/10 shadow-2xl">
-                            {{-- Base Gradient --}}
-                            <div class="absolute inset-0 bg-gradient-to-br from-[#0f172a] via-[#1e293b] to-[#0f172a]"></div>
-                            
-                            {{-- Liquid Glows --}}
-                            <div class="absolute top-[-50%] left-[-20%] w-[100%] h-[200%] bg-[radial-gradient(circle,rgba(59,130,246,0.15)_0%,transparent_60%)] animate-slow-spin"></div>
-                            <div class="absolute bottom-[-50%] right-[-20%] w-[100%] h-[200%] bg-[radial-gradient(circle,rgba(37,99,235,0.1)_0%,transparent_60%)] animate-slow-spin-reverse"></div>
-
-                            {{-- Glass Reflection --}}
-                            <div class="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-transparent pointer-events-none"></div>
-
-                            <div class="relative z-10 p-10 flex flex-col md:flex-row items-center justify-between gap-10">
-                                <div class="text-center md:text-left">
-                                    <div class="flex items-center gap-2 mb-3 justify-center md:justify-start">
-                                        <div class="w-1.5 h-1.5 rounded-full bg-blue-400"></div>
-                                        <p class="text-[10px] font-black text-blue-200 uppercase tracking-[0.2em]">Santé Financière du Mois</p>
-                                    </div>
-                                    <div class="flex items-baseline gap-4 justify-center md:justify-start">
-                                        <span class="text-6xl font-black text-white tracking-tighter drop-shadow-2xl">
-                                            {{ number_format($agence->loyers_encaisses_mois ?? 0, 0, ',', ' ') }}
-                                        </span>
-                                        <span class="text-xl font-bold text-blue-400/80">F CFA</span>
-                                    </div>
-                                </div>
-
-                                <div class="hidden md:block w-px h-20 bg-gradient-to-b from-transparent via-white/10 to-transparent"></div>
-
-                                <div class="flex flex-col items-center md:items-end">
-                                    <div class="inline-flex items-center gap-2.5 px-5 py-2.5 bg-green-500/10 border border-green-500/20 rounded-2xl backdrop-blur-md">
-                                        <div class="relative flex h-2.5 w-2.5">
-                                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                                            <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500 shadow-[0_0_12px_rgba(34,197,94,0.6)]"></span>
-                                        </div>
-                                        <span class="text-[11px] font-black text-green-400 uppercase tracking-widest">Compte Vérifié</span>
-                                    </div>
-                                    <div class="mt-4 flex items-center gap-2">
-                                        <p class="text-[10px] text-white/30 font-medium">LICENCE ID</p>
-                                        <p class="text-[11px] text-white/60 font-mono font-bold">#{{ str_pad($agence->id, 6, '0', STR_PAD_LEFT) }}</p>
-                                    </div>
+                        <!-- KPIs Section -->
+                        @php
+                            $stats = $data['owner_stats'][$agence->id] ?? null;
+                        @endphp
+                        @if($stats)
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8 pt-8 border-t border-gray-100">
+                            <div class="p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                                <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Occupation</p>
+                                <div class="flex items-end gap-2">
+                                    <span class="text-xl font-black text-[#1a2e3d]">{{ $stats['occupancy_rate'] }}%</span>
+                                    <span class="text-[10px] font-bold text-gray-400 mb-1">({{ $stats['occupied_units'] }}/{{ $stats['total_units'] }})</span>
                                 </div>
                             </div>
+                            <div class="p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                                <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Revenu (Mois)</p>
+                                <p class="text-xl font-black text-green-600">{{ number_format($stats['revenue_this_month'], 0, ',', ' ') }} <span class="text-[10px] text-gray-400">F</span></p>
+                            </div>
+                            <div class="p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                                <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Arriérés</p>
+                                <p class="text-xl font-black text-red-600">{{ number_format($stats['total_arrears'], 0, ',', ' ') }} <span class="text-[10px] text-gray-400">F</span></p>
+                            </div>
+                            <div class="p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                                <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Logements</p>
+                                <p class="text-xl font-black text-[#1a2e3d]">{{ $stats['total_units'] }}</p>
+                            </div>
                         </div>
-
+                        @endif
                     </div>
                 </div>
             </div>
         </div>
 
-
-        @else
-        <!-- Empty State (Modern) -->
-        <div class="max-w-xl mx-auto mt-24 text-center">
-            <div class="w-32 h-32 bg-red-50 rounded-[2.5rem] flex items-center justify-center mx-auto mb-10 transform rotate-3 shadow-[0_20px_50px_-12px_rgba(203,45,45,0.2)]">
-                 <svg class="w-16 h-16 text-[#cb2d2d]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+        @if($data['proprietaires_list']->count() > 1)
+        <!-- Secondary Owners -->
+        <div class="space-y-6">
+            <h4 class="text-sm font-black text-[#1a2e3d] uppercase tracking-[0.2em] flex items-center gap-3">
+                <span class="w-8 h-px bg-gray-200"></span>
+                Propriétaires Partenaires
+            </h4>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 text-left">
+                @foreach($data['proprietaires_list']->where('id', '!=', $agence?->id) as $prop)
+                    <div class="bg-white rounded-[2rem] p-6 shadow-xl border border-gray-100 hover:border-[#cb2d2d]/20 transition-all group">
+                        <div class="flex justify-between items-start mb-6">
+                            <div class="w-12 h-12 rounded-2xl bg-gray-50 flex items-center justify-center text-[#1a2e3d] font-black text-lg">
+                                {{ substr($prop->nom, 0, 1) }}
+                            </div>
+                            <div class="flex gap-2">
+                                <button onclick="propSection.openModal('edit', {{ json_encode($prop) }})" class="p-2 text-gray-400 hover:text-[#cb2d2d] transition-colors"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg></button>
+                            </div>
+                        </div>
+                        <h5 class="text-lg font-black text-[#1a2e3d] mb-1">{{ $prop->nom }}</h5>
+                        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-4">{{ $prop->prenom ?? 'Propriétaire' }}</p>
+                        
+                        @php $s = $data['owner_stats'][$prop->id] ?? null; @endphp
+                        @if($s)
+                        <div class="grid grid-cols-2 gap-3 pt-4 border-t border-gray-50">
+                            <div>
+                                <p class="text-[9px] font-black text-gray-400 uppercase tracking-[0.1em]">Occupation</p>
+                                <p class="text-sm font-black text-[#1a2e3d]">{{ $s['occupancy_rate'] }}%</p>
+                            </div>
+                            <div>
+                                <p class="text-[9px] font-black text-gray-400 uppercase tracking-[0.1em]">Revenu</p>
+                                <p class="text-sm font-black text-green-600">{{ number_format($s['revenue_this_month'], 0, ',', ' ') }} F</p>
+                            </div>
+                        </div>
+                        @endif
+                    </div>
+                @endforeach
             </div>
-            <h3 class="text-3xl font-black text-gray-900 mb-4 tracking-tight">Configuration Requise</h3>
-            <p class="text-gray-500 mb-12 leading-relaxed text-lg">Pour activer votre tableau de bord, veuillez configurer l'identité légale de votre agence.</p>
-            <button onclick="propSection.openModal('create')" class="bg-[#cb2d2d] text-white px-10 py-5 rounded-2xl font-bold hover:bg-[#b02222] transition-all shadow-xl shadow-red-900/30 transform hover:-translate-y-1 text-sm uppercase tracking-widest">
-                Configurer l'Agence
-            </button>
         </div>
+        @endif
         @endif
     </div>
 
-    <!-- MODAL: CONFIGURATION AGENCE (Refined) -->
-    <div id="prop-modal-wrapper" class="app-modal-root hidden" aria-labelledby="prop-modal-title" role="dialog" aria-modal="true">
-        <div id="prop-modal-overlay" class="app-modal-overlay opacity-0"></div>
-        <div class="fixed inset-0 z-10 w-screen overflow-y-auto" onclick="if(event.target === this) propSection.closeModal()">
-            <div class="flex min-h-full items-end justify-center p-0 text-center sm:items-center sm:p-0" onclick="if(event.target === this) propSection.closeModal()">
-                <div id="prop-modal-container" class="app-modal-panel app-modal-panel-2xl app-modal-panel-soft opacity-0 scale-95">
-
-                    <!-- Header -->
-                    <div class="app-modal-header px-8 py-6 border-b border-gray-100 flex items-center justify-between bg-white">
-                        <div>
-                            <h3 id="prop-modal-title" class="text-xl font-black text-gray-900 tracking-tight">Identité Agence</h3>
-                            <p class="text-xs text-gray-500 font-medium mt-1">Données légales et publiques.</p>
-                        </div>
-                        <button onclick="propSection.closeModal()" class="w-8 h-8 rounded-full bg-gray-50 text-gray-400 hover:bg-gray-100 hover:text-gray-600 flex items-center justify-center transition" aria-label="Fermer">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-                        </button>
+    @push('modals')
+    <!-- MODAL: CREATE/EDIT (ROUGE ONTARIO) -->
+    <div id="prop-modal-wrapper" class="app-modal-root hidden" style="z-index: 10000;" aria-labelledby="prop-modal-title" role="dialog" aria-modal="true">
+        <div id="prop-modal-overlay" class="app-modal-overlay opacity-0" style="z-index: 10001;"></div>
+        <div class="fixed inset-0 w-screen overflow-y-auto" style="z-index: 10002;" onclick="if(event.target === this) propSection.closeModal()">
+            <div class="flex min-h-full items-center justify-center p-4">
+                <div id="prop-modal-container" class="app-modal-panel max-w-md w-full bg-white rounded-3xl shadow-2xl overflow-hidden opacity-0 scale-95 transition-all duration-300">
+                    <div class="px-8 py-6 bg-[#cb2d2d] text-white text-left flex justify-between items-center border-b border-white/10">
+                        <h3 id="prop-modal-title" class="text-lg font-black text-white">Gestion Propriétaire</h3>
+                        <button onclick="propSection.closeModal()" class="w-10 h-10 flex items-center justify-center rounded-xl bg-white/10 text-white/70 hover:bg-white/20 hover:text-white transition-all text-white"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
                     </div>
-
-                    <!-- Form -->
-                    <form id="prop-main-form" class="p-8 form-stack field-gap">
+                    <form id="prop-main-form" onsubmit="propSection.submitForm(event)" method="POST" class="p-8 space-y-5 text-left">
+                        @csrf
                         <input type="hidden" name="id" id="prop-input-id">
-
-                         <div class="bg-blue-50 rounded-2xl p-4 flex items-start gap-4 mb-6">
-                            <div class="shrink-0 p-2 bg-blue-100 rounded-lg text-blue-600">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        <div class="space-y-5">
+                            <div class="relative group">
+                                <label class="absolute -top-2 left-4 px-2 bg-white text-[10px] font-black text-gray-400 uppercase tracking-widest z-10" for="prop-input-nom">Nom entité / Société</label>
+                                <input type="text" name="nom" id="prop-input-nom" required class="block w-full bg-gray-50 border-2 border-gray-100 rounded-2xl px-5 py-3.5 text-sm font-bold text-gray-900 focus:border-[#cb2d2d] outline-none transition-all">
                             </div>
-                            <p class="text-xs text-blue-800 leading-relaxed font-medium pt-1">
-                                Ces informations (Nom, Adresse, Téléphone) seront automatiquement ajoutées en en-tête de vos quittances, contrats et relances.
-                            </p>
-                        </div>
-
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <!-- Nom -->
-                            <div class="space-y-1.5">
-                                <label class="block text-[11px] font-bold text-gray-400 uppercase tracking-widest pl-1" for="prop-input-nom">Nom de l'Entité</label>
-                                <input type="text" name="nom" id="prop-input-nom" required class="block w-full bg-gray-50 border-gray-200 rounded-xl text-sm font-bold text-gray-900 focus:ring-[#cb2d2d] focus:border-[#cb2d2d] py-3 px-4 transition-shadow" placeholder="Ex: Ontario Group">
+                            <div class="relative group">
+                                <label class="absolute -top-2 left-4 px-2 bg-white text-[10px] font-black text-gray-400 uppercase tracking-widest z-10" for="prop-input-prenom">Prénom / Type (ex: S.A.)</label>
+                                <input type="text" name="prenom" id="prop-input-prenom" class="block w-full bg-gray-50 border-2 border-gray-100 rounded-2xl px-5 py-3.5 text-sm font-bold text-gray-900 focus:border-[#cb2d2d] outline-none transition-all">
                             </div>
-
-                            <!-- Suffixe -->
-                            <div class="space-y-1.5">
-                                <label class="block text-[11px] font-bold text-gray-400 uppercase tracking-widest pl-1" for="prop-input-prenom">Forme Juridique</label>
-                                <input type="text" name="prenom" id="prop-input-prenom" class="block w-full bg-gray-50 border-gray-200 rounded-xl text-sm font-bold text-gray-900 focus:ring-[#cb2d2d] focus:border-[#cb2d2d] py-3 px-4 transition-shadow" placeholder="S.A.R.L / S.A">
+                            <div class="relative group">
+                                <label class="absolute -top-2 left-4 px-2 bg-white text-[10px] font-black text-gray-400 uppercase tracking-widest z-10" for="prop-input-email">Email</label>
+                                <input type="email" name="email" id="prop-input-email" required class="block w-full bg-gray-50 border-2 border-gray-100 rounded-2xl px-5 py-3.5 text-sm font-bold text-gray-900 focus:border-[#cb2d2d] outline-none transition-all">
                             </div>
-
-                            <!-- Téléphone -->
-                            <div class="space-y-1.5">
-                                <label class="block text-[11px] font-bold text-gray-400 uppercase tracking-widest pl-1" for="prop-input-telephone">Téléphone</label>
-                                <input type="text" name="telephone" id="prop-input-telephone" class="block w-full bg-gray-50 border-gray-200 rounded-xl text-sm font-bold text-gray-900 focus:ring-[#cb2d2d] focus:border-[#cb2d2d] py-3 px-4 transition-shadow" placeholder="Ex: 33 822 ...">
+                            <div class="relative group">
+                                <label class="absolute -top-2 left-4 px-2 bg-white text-[10px] font-black text-gray-400 uppercase tracking-widest z-10" for="prop-input-telephone">Téléphone</label>
+                                <input type="text" name="telephone" id="prop-input-telephone" required class="block w-full bg-gray-50 border-2 border-gray-100 rounded-2xl px-5 py-3.5 text-sm font-bold text-gray-900 focus:border-[#cb2d2d] outline-none transition-all">
                             </div>
-
-                            <!-- Email -->
-                            <div class="space-y-1.5">
-                                <label class="block text-[11px] font-bold text-gray-400 uppercase tracking-widest pl-1" for="prop-input-email">Email Officiel</label>
-                                <input type="email" name="email" id="prop-input-email" required class="block w-full bg-gray-50 border-gray-200 rounded-xl text-sm font-bold text-gray-900 focus:ring-[#cb2d2d] focus:border-[#cb2d2d] py-3 px-4 transition-shadow" placeholder="contact@ontariogroup.net">
-                            </div>
-
-                            <!-- Adresse (Full width in grid) -->
-                            <div class="md:col-span-2 space-y-1.5">
-                                <label class="block text-[11px] font-bold text-gray-400 uppercase tracking-widest pl-1" for="prop-input-adresse">Adresse Siège Social</label>
-                                <textarea name="adresse" id="prop-input-adresse" rows="2" class="block w-full bg-gray-50 border-gray-200 rounded-xl text-sm font-bold text-gray-900 focus:ring-[#cb2d2d] focus:border-[#cb2d2d] py-3 px-4 transition-shadow resize-none" placeholder="Adresse complète..."></textarea>
+                            <div class="relative group">
+                                <label class="absolute -top-2 left-4 px-2 bg-white text-[10px] font-black text-gray-400 uppercase tracking-widest z-10" for="prop-input-adresse">Adresse</label>
+                                <textarea name="adresse" id="prop-input-adresse" rows="2" class="block w-full bg-gray-50 border-2 border-gray-100 rounded-2xl px-5 py-3.5 text-sm font-bold text-gray-900 focus:border-[#cb2d2d] outline-none transition-all resize-none"></textarea>
                             </div>
                         </div>
-
-                        <!-- Footer Actions -->
-                        <div class="pt-6 flex items-center justify-end gap-3 border-t border-gray-100">
-                             <button type="button" onclick="propSection.closeModal()" class="px-6 py-3 text-gray-500 font-bold hover:bg-gray-50 rounded-xl transition text-xs uppercase tracking-widest">Annuler</button>
-                            <button type="submit" id="prop-submit-btn" class="bg-[#cb2d2d] text-white px-8 py-3 rounded-xl font-bold hover:bg-[#a82020] transition shadow-lg shadow-red-900/10 text-[11px] uppercase tracking-widest flex items-center gap-2 transform hover:-translate-y-0.5">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                                Enregistrer
-                            </button>
+                        <div class="flex flex-col gap-3 pt-4 border-t border-gray-100">
+                            <button type="submit" id="prop-submit-btn" class="w-full bg-[#cb2d2d] text-white py-4 rounded-2xl font-black hover:bg-[#b02222] transition shadow-xl text-xs uppercase tracking-widest">Enregistrer</button>
+                            <button type="button" onclick="propSection.closeModal()" class="w-full py-3 text-gray-400 font-bold hover:bg-gray-50 rounded-xl transition text-xs uppercase tracking-widest">Annuler</button>
                         </div>
                     </form>
                 </div>
             </div>
-                </div>
-            </div>
         </div>
+    </div>
+    @endpush
+</div>
 
 <script>
-    // Keeping JS Logic intact
     window.propSection = {
         openModal: function(mode, prop = null) {
             const wrapper = document.getElementById('prop-modal-wrapper');
@@ -242,85 +186,60 @@
             const container = document.getElementById('prop-modal-container');
             const form = document.getElementById('prop-main-form');
             const title = document.getElementById('prop-modal-title');
-
+            if (!wrapper) return;
             wrapper.classList.remove('hidden');
             window.modalUX?.activate(wrapper, container);
-            setTimeout(() => {
-                overlay.classList.remove('opacity-0');
-                container.classList.remove('opacity-0', 'scale-95');
-                container.classList.add('opacity-100', 'scale-100');
-            }, 10);
-
-            form.reset();
+            setTimeout(() => { overlay?.classList.remove('opacity-0'); container?.classList.remove('scale-95', 'opacity-0'); }, 10);
+            if (form) form.reset();
             document.getElementById('prop-input-id').value = '';
-
             if(mode === 'edit' && prop) {
-                title.innerText = 'Modifier Identité';
+                title.innerText = 'Modifier Propriétaire';
                 document.getElementById('prop-input-id').value = prop.id;
                 document.getElementById('prop-input-nom').value = prop.nom;
                 document.getElementById('prop-input-prenom').value = prop.prenom || '';
                 document.getElementById('prop-input-email').value = prop.email;
                 document.getElementById('prop-input-telephone').value = prop.telephone;
                 document.getElementById('prop-input-adresse').value = prop.adresse;
-            } else {
-                title.innerText = 'Configurer Agence';
-            }
+            } else { title.innerText = 'Nouveau Propriétaire'; }
         },
-
         closeModal: function() {
             const wrapper = document.getElementById('prop-modal-wrapper');
             const overlay = document.getElementById('prop-modal-overlay');
             const container = document.getElementById('prop-modal-container');
-
-            overlay.classList.add('opacity-0');
-            container.classList.remove('opacity-100', 'scale-100');
-            container.classList.add('opacity-0', 'scale-95');
+            overlay?.classList.add('opacity-0'); container?.classList.add('scale-95', 'opacity-0');
             window.modalUX?.deactivate(wrapper);
-
             setTimeout(() => { wrapper.classList.add('hidden'); }, 300);
+        },
+        submitForm: async function(e) {
+            e.preventDefault();
+            const btn = document.getElementById('prop-submit-btn');
+            if (!btn || btn.disabled) return;
+            const orig = btn.innerHTML; btn.innerHTML = 'Patientez...'; btn.disabled = true;
+            const id = document.getElementById('prop-input-id').value;
+            const url = id ? `/dashboard/proprietaires/${id}` : '/dashboard/proprietaires';
+            const formData = new FormData(e.target);
+            if (id) formData.append('_method', 'PUT');
+
+            try {
+                const res = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content, 'Accept': 'application/json' },
+                    body: formData
+                });
+                const d = await res.json();
+                if(res.ok) { 
+                    showToast('Propriétaire enregistré', 'success'); 
+                    this.closeModal(); 
+                    if(window.dashboard) window.dashboard.refresh(); 
+                    else window.location.reload(); 
+                } else { 
+                    showToast(d.message || 'Erreur lors de l\'enregistrement', 'error'); 
+                    btn.innerHTML = orig; btn.disabled = false; 
+                }
+            } catch(e) { 
+                showToast('Erreur de connexion au serveur', 'error'); 
+                btn.innerHTML = orig; btn.disabled = false; 
+            }
         }
     };
-
-    document.getElementById('prop-main-form').addEventListener('submit', async function(e) {
-        e.preventDefault();
-        const btn = document.getElementById('prop-submit-btn');
-        const originalText = btn.innerHTML;
-        btn.innerHTML = '<svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Patientez...';
-        btn.disabled = true;
-
-        const formData = new FormData(this);
-        const id = document.getElementById('prop-input-id').value;
-        const method = id ? 'PUT' : 'POST';
-        const url = id ? `/dashboard/proprietaires/${id}` : `{{ route('dashboard.proprietaires.store') }}`;
-
-        const jsonData = Object.fromEntries(formData.entries());
-
-        try {
-            const response = await fetch(url, {
-                method: method,
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                    'Accept': 'application/json'
-                },
-                body: JSON.stringify(jsonData)
-            });
-
-            const data = await response.json();
-
-            if(response.ok) {
-                showToast(data.message || 'Identité mise à jour', 'success');
-                propSection.closeModal();
-                window.location.reload();
-            } else {
-                showToast(data.message || 'Erreur lors de la mise à jour', 'error');
-            }
-        } catch(e) {
-            console.error(e);
-            showToast('Erreur serveur', 'error');
-        } finally {
-            btn.innerHTML = originalText;
-            btn.disabled = false;
-        }
-    });
 </script>

@@ -10,7 +10,7 @@ class Proprietaire extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $fillable = ['nom', 'email', 'telephone', 'adresse'];
+    protected $fillable = ['nom', 'prenom', 'email', 'telephone', 'adresse'];
 
     public function biens()
     {

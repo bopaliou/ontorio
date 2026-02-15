@@ -1,4 +1,4 @@
-<div class="h-full flex flex-col gap-8 animate-stagger">
+<div class="h-full flex flex-col gap-8">
     {{-- Header avec titre et actions Premium --}}
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -9,6 +9,12 @@
             <p class="text-gray-500 mt-1 text-sm font-medium">Bienvenue sur votre tableau de bord <span class="text-[#cb2d2d] font-bold">Ontario</span>.</p>
         </div>
         <div class="flex gap-3">
+            <button onclick="window.dashboard.refresh()" class="bg-white border-2 border-gray-100 text-gray-400 px-4 py-2.5 rounded-xl text-sm font-bold hover:border-[#274256] hover:text-[#274256] transition-all flex items-center gap-2 shadow-sm group">
+                <svg class="w-5 h-5 group-active:animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                <span class="hidden sm:inline">Actualiser</span>
+            </button>
             <a href="{{ route('rapports.mensuel') }}" target="_blank"
                class="bg-white border-2 border-[#274256] text-[#274256] px-5 py-2.5 rounded-xl text-sm font-bold hover:bg-[#274256] hover:text-white transition-all flex items-center gap-2 shadow-sm hover:shadow-lg transform hover:-translate-y-0.5">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
