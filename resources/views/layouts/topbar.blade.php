@@ -6,13 +6,17 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
             </svg>
         </button>
-        <nav class="hidden sm:flex text-sm font-medium text-gray-500 gap-2 items-center">
-            <button type="button" class="hover:text-[#274256] cursor-pointer transition-colors"
-                   onclick="dashboard.show('overview')">
-                <svg class="w-4 h-4 inline-block mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+        <nav class="hidden sm:flex text-sm font-medium text-gray-500 gap-1.5 items-center" id="topbar-breadcrumb" aria-label="Fil d'Ariane">
+            <button type="button" class="hover:text-[#274256] cursor-pointer transition-colors p-0.5"
+                   onclick="dashboard.show('overview')" title="Accueil">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
             </button>
-            <span class="text-gray-300">/</span>
-            <span class="text-[#274256] font-bold tracking-wide uppercase text-xs" id="topbar-title">VUE D'ENSEMBLE</span>
+            <svg class="w-3.5 h-3.5 text-gray-300 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+            <span class="text-[#274256] font-bold tracking-wide uppercase text-xs transition-all duration-300" id="topbar-title">VUE D'ENSEMBLE</span>
+            <span id="topbar-breadcrumb-sub" class="hidden items-center gap-1.5">
+                <svg class="w-3.5 h-3.5 text-gray-300 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                <span class="text-[#cb2d2d] font-bold tracking-wide text-xs truncate max-w-[200px]" id="topbar-sub-title"></span>
+            </span>
         </nav>
     </div>
 
@@ -39,6 +43,21 @@
             <span class="absolute top-2 right-2 w-2 h-2 bg-[#cb2d2d] rounded-full ring-2 ring-white animate-pulse"></span>
             <svg class="w-6 h-6 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+            </svg>
+        </button>
+
+        <!-- Dark Mode Toggle -->
+        <button onclick="toggleDarkMode()"
+                class="p-2 text-gray-400 hover:text-[#cb2d2d] hover:bg-red-50 rounded-xl transition-all duration-300 group"
+                title="Basculer le mode sombre"
+                id="dark-mode-toggle">
+            <!-- Sun icon (visible in dark mode) -->
+            <svg id="icon-sun" class="w-5 h-5 hidden group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+            </svg>
+            <!-- Moon icon (visible in light mode) -->
+            <svg id="icon-moon" class="w-5 h-5 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
             </svg>
         </button>
 
@@ -91,39 +110,96 @@
     </div>
 </header>
 <script>
-    // Simple script to update topbar title based on section
-    document.addEventListener('DOMContentLoaded', () => {
-         const observer = new MutationObserver((mutations) => {
-            mutations.forEach((mutation) => {
-                if(mutation.attributeName === 'style' || mutation.attributeName === 'class'){
-                     document.querySelectorAll('[id^="section-content-"]').forEach(section => {
-                         if(!section.classList.contains('hidden')) {
-                             const titleMap = {
-                                 'overview': "VUE D'ENSEMBLE",
-                                 'biens': 'PARC IMMOBILIER',
-                                 'proprietaires': 'PROPRIÉTAIRES',
-                                 'locataires': 'LOCATAIRES',
-                                 'contrats': 'CONTRATS & BAUX',
-                                 'loyers': 'GESTION DES LOYERS',
-                                 'paiements': 'COMPTABILITÉ',
-                                 'depenses': 'DÉPENSES',
-                                 'utilisateurs': 'UTILISATEURS',
-                                 'logs': 'JOURNAUX SYSTÈME',
-                                 'parametres': 'CONFIGURATION',
-                                 'rapports': 'RAPPORTS'
-                             };
-                             const id = section.id.replace('section-content-', '');
-                             const titleEl = document.getElementById('topbar-title');
-                             if(titleEl && titleMap[id]) titleEl.innerText = titleMap[id];
-                         }
-                     });
-                }
-            });
-         });
+    /**
+     * ONTARIO GROUP - Breadcrumb Navigation Manager
+     * Called by the SPA engine (OntarioDashboard.show) to sync breadcrumb with current section.
+     */
+    window.sectionTitleMap = {
+        'overview': "VUE D'ENSEMBLE",
+        'biens': 'PARC IMMOBILIER',
+        'proprietaires': 'PROPRIÉTAIRES',
+        'locataires': 'LOCATAIRES',
+        'contrats': 'CONTRATS & BAUX',
+        'loyers': 'GESTION DES LOYERS',
+        'paiements': 'COMPTABILITÉ',
+        'depenses': 'DÉPENSES',
+        'relances': 'RELANCES',
+        'utilisateurs': 'UTILISATEURS',
+        'logs': 'JOURNAUX SYSTÈME',
+        'parametres': 'CONFIGURATION',
+        'rapports': 'RAPPORTS',
+        'support': 'SUPPORT'
+    };
 
-         const dashboardContent = document.getElementById('dashboard-content');
-         if(dashboardContent) {
-             observer.observe(dashboardContent, {attributes: true, subtree: true, attributeFilter: ['class', 'style']});
-         }
-    });
+    /**
+     * Update the topbar breadcrumb to reflect the current section
+     * @param {string} sectionId - The section identifier (e.g. 'biens', 'loyers')
+     */
+    window.updateBreadcrumb = function(sectionId) {
+        const titleEl = document.getElementById('topbar-title');
+        const subEl = document.getElementById('topbar-breadcrumb-sub');
+        if (!titleEl) return;
+
+        const title = window.sectionTitleMap[sectionId] || sectionId.toUpperCase();
+        titleEl.textContent = title;
+
+        // Reset sub-breadcrumb when navigating to a section
+        if (subEl) {
+            subEl.classList.add('hidden');
+            subEl.classList.remove('flex');
+        }
+
+        // Update document title
+        document.title = title + ' — Ontario Group';
+    };
+
+    /**
+     * Set a sub-breadcrumb for detail views (e.g. "Biens > Villa Mermoz")
+     * @param {string} subTitle - The detail title to show
+     */
+    window.setBreadcrumbDetail = function(subTitle) {
+        const subEl = document.getElementById('topbar-breadcrumb-sub');
+        const subTitleEl = document.getElementById('topbar-sub-title');
+        if (!subEl || !subTitleEl) return;
+
+        if (subTitle) {
+            subTitleEl.textContent = subTitle;
+            subEl.classList.remove('hidden');
+            subEl.classList.add('flex');
+        } else {
+            subEl.classList.add('hidden');
+            subEl.classList.remove('flex');
+        }
+    };
+
+    /**
+     * Dark Mode Toggle — persists to localStorage
+     */
+    function toggleDarkMode() {
+        const html = document.documentElement;
+        const isDark = html.getAttribute('data-theme') === 'dark';
+
+        if (isDark) {
+            html.removeAttribute('data-theme');
+            localStorage.setItem('ontario-theme', 'light');
+        } else {
+            html.setAttribute('data-theme', 'dark');
+            localStorage.setItem('ontario-theme', 'dark');
+        }
+
+        updateThemeIcons();
+    }
+
+    function updateThemeIcons() {
+        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        const sun = document.getElementById('icon-sun');
+        const moon = document.getElementById('icon-moon');
+        if (sun && moon) {
+            sun.classList.toggle('hidden', !isDark);
+            moon.classList.toggle('hidden', isDark);
+        }
+    }
+
+    // Initialize icons on load
+    document.addEventListener('DOMContentLoaded', updateThemeIcons);
 </script>

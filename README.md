@@ -1,77 +1,44 @@
 # 🏢 Ontario Group - Gestion Immobilière
 
-> Plateforme de gestion immobilière complète pour agences et gestionnaires de biens.
+> Plateforme de gestion immobilière complète, sécurisée et optimisée pour les agences et gestionnaires de biens.
 
 ![Laravel](https://img.shields.io/badge/Laravel-12.x-red?style=flat-square&logo=laravel)
 ![PHP](https://img.shields.io/badge/PHP-8.2+-777BB4?style=flat-square&logo=php)
 ![TailwindCSS](https://img.shields.io/badge/TailwindCSS-3.x-06B6D4?style=flat-square&logo=tailwindcss)
 ![MySQL](https://img.shields.io/badge/MySQL-8.0+-4479A1?style=flat-square&logo=mysql)
+![Pest](https://img.shields.io/badge/Testing-Pest_&_PHPUnit-green?style=flat-square)
 
 ---
 
-## 📋 Fonctionnalités
+## 📋 Fonctionnalités Principales
 
-### Gestion des Biens
-- ✅ Création et modification de biens immobiliers
-- ✅ Upload d'images multiples par bien
-- ✅ Suivi des statuts (Libre, Occupé)
-- ✅ Informations détaillées (type, surface, loyer, charges)
+### 🏢 Gestion du Parc Immobilier
+- **Biens & Locataires** : CRUD complet, statuts (Libre/Occupé), historique.
+- **Dossiers Numérisés** : Upload sécurisé de documents, contrats, justificatifs, et CNI.
+- **Contrats & Baux** : Génération fluide, liaison automatique, gestion des résiliations.
 
-### Gestion des Locataires
-- ✅ Dossiers locataires complets
-- ✅ Upload de documents numérisés (CNI, contrats signés, attestations)
-- ✅ Historique des contrats
-- ✅ Informations de contact
+### 💰 Comptabilité & Finance (Audit 2026)
+- **Services Centralisés** : Tous les calculs complexes sont gérés par `DashboardStatsService`, `LoyerService`, et `PaymentService`.
+- **Loyers & Commissions** : Génération automatisée avec calcul exact de la base commissionnaire (excluant les pénalités).
+- **Pénalités Versionnées** : Module de pénalités de retard intelligent selon le type de bail (Résidentiel/Commercial).
+- **Révisions de Loyer** : Historique des révisions avec recalcule automatique des échéances futures et commissions.
+- **Tableau de Bord Financier** : KPIs temps réel (Arriérés, Taux de Recouvrement, Vacance Économique, Gross Potential Rent).
 
-### Gestion des Contrats
-- ✅ Création de baux
-- ✅ Suivi des contrats actifs/résiliés
-- ✅ Génération de PDF des contrats
-- ✅ Liaison automatique bien/locataire
+### 📑 Exports & Rapports PDF Modernisés
+- Quittances de loyer mensuelles.
+- Contrats de bail professionnels.
+- Bilan financier exhaustif par propriétaire (Revenus nets - Commissions - Dépenses).
+- Rapports d'impayés et de vieillissement des arriérés.
 
-### Gestion des Loyers
-- ✅ Génération mensuelle des loyers
-- ✅ Suivi des paiements (Payé, Partiel, Impayé)
-- ✅ Export de quittances PDF
-- ✅ Tableau de bord des impayés
-
-### Gestion des Propriétaires
-- ✅ Fiche propriétaire complète
-- ✅ Configuration de l'agence
-- ✅ Commissions et suivis
-
-### Gestion des Dépenses & Travaux
-- ✅ Suivi des dépenses par bien (maintenance, travaux, taxes)
-- ✅ Upload de justificatifs
-- ✅ Catégorisation automatique
-- ✅ Bilan financier propriétaire (revenus - dépenses)
-
-### Sécurité
-- ✅ Middleware SecurityHeaders (OWASP)
-- ✅ Protection CSRF, XSS, Clickjacking
-- ✅ Logging des erreurs côté serveur
-- ✅ Audit de sécurité intégré
-
-### Administration
-- ✅ Gestion des utilisateurs multi-rôles
-- ✅ Système de permissions granulaires
-- ✅ Logs d'activité
-- ✅ Rapports mensuels
+### 🔒 Sécurité & Robustesse
+- **OWASP HTTP Headers** : Middleware SecurityHeaders (HSTS, X-Frame-Options, X-XSS-Protection).
+- **Rate Limiting** : Protection contre le bruteforce sur l'authentification.
+- **Tests Automatisés** : Suite de tests SQLite in-memory isolée (`.env.testing`) certifiant les calculs financiers complexes.
+- **Rôles & Permissions (RBAC)** : Accès stricts via Spatie Permissions (Admin, Direction, Gestionnaire, Comptable).
 
 ---
 
-## 👥 Rôles et Permissions
-
-| Rôle | Description | Accès |
-|------|-------------|-------|
-| **Admin** | Administrateur système | Accès complet |
-| **Direction** | Direction de l'agence | Rapports, supervision |
-| **Gestionnaire** | Gestionnaire de biens | CRUD complet immobilier |
-| **Comptable** | Service comptabilité | Paiements, rapports financiers |
-
----
-
-## 🚀 Installation
+## 🚀 Installation & Déploiement
 
 ### Prérequis
 - PHP 8.2+
@@ -79,157 +46,79 @@
 - Node.js 18+
 - MySQL 8.0+
 
-### Étapes
+### Déploiement Local
 
 ```bash
 # 1. Cloner le projet
 git clone https://github.com/ontariogroup/gestion-immobiliere.git
 cd gestion-immobiliere
 
-# 2. Installer les dépendances PHP
+# 2. Installer les dépendances
 composer install
-
-# 3. Installer les dépendances Node
 npm install
 
-# 4. Copier le fichier d'environnement
+# 3. Configuration de l'environnement
 cp .env.example .env
-
-# 5. Générer la clé d'application
+# Configurer DB_DATABASE, DB_USERNAME, DB_PASSWORD dans .env
 php artisan key:generate
 
-# 6. Configurer la base de données dans .env
-# DB_DATABASE=gestion_immobiliere
-# DB_USERNAME=root
-# DB_PASSWORD=
-
-# 7. Exécuter les migrations
+# 4. Base de données & Stockage
 php artisan migrate
-
-# 8. Créer le lien symbolique pour le storage
 php artisan storage:link
 
-# 9. (Optionnel) Seeder les données de test
-php artisan db:seed
+# 5. Seeding (Essentiel pour les rôles et le compte Admin de base)
+php artisan db:seed --class=TestUsersSeeder
 
-# 10. Compiler les assets
+# 6. Lancement du serveur
 npm run build
-
-# 11. Lancer le serveur
 php artisan serve
 ```
 
-L'application sera accessible sur `http://localhost:8000`
+Comptes par défaut (mot de passe : `password`) :
+- `admin@test.com` (Admin)
+- `gestionnaire@test.com` (Gestionnaire)
+- `comptable@test.com` (Comptable)
+- `direction@test.com` (Direction)
 
 ---
 
-## 📁 Structure du Projet
+## 🧪 Tests Unitaires
 
-```
-├── app/
-│   ├── Http/
-│   │   ├── Controllers/      # Contrôleurs
-│   │   └── Middleware/       # Middlewares (SecurityHeaders, etc.)
-│   ├── Models/               # Modèles Eloquent
-│   └── Helpers/              # Helpers (Permissions, ActivityLogger)
-├── database/
-│   ├── migrations/           # Migrations de BDD
-│   └── seeders/              # Seeders de données
-├── resources/
-│   ├── views/
-│   │   ├── dashboard/        # Vues du tableau de bord
-│   │   └── auth/             # Vues d'authentification
-│   ├── css/                  # Styles
-│   └── js/                   # JavaScript
-├── routes/
-│   └── web.php               # Routes de l'application
-├── storage/
-│   └── app/public/           # Fichiers uploadés
-└── public/                   # Assets publics
-```
-
----
-
-## 🛠️ Commandes Utiles
+Le système utilise une base SQLite en mémoire pour garantir la vitesse et l'isolation absolue des tests.
 
 ```bash
-# Lancer le serveur de développement
-php artisan serve
+# Lancer toute la suite de tests
+php artisan test
 
-# Compiler les assets en mode watch
-npm run dev
-
-# Exécuter les migrations
-php artisan migrate
-
-# Rollback des migrations
-php artisan migrate:rollback
-
-# Vider le cache
-php artisan cache:clear
-php artisan config:clear
-php artisan view:clear
-
-# Régénérer l'autoload
-composer dump-autoload
-
-# Seeder les biens du site public
-php artisan db:seed --class=OntarioPublicSiteSeeder
+# Tester spécifiquement la logique financière et de pénalités
+php artisan test tests/Unit/Models/LoyerTest.php
+php artisan test tests/Unit/Services/DashboardStatsServiceTest.php
 ```
 
 ---
 
-## 📊 Technologies Utilisées
+## 📁 Architecture
 
-- **Backend**: Laravel 12.x
-- **Frontend**: Blade + TailwindCSS 3.x
-- **Base de données**: MySQL 8.0
-- **Authentification**: Laravel Breeze
-- **PDF**: DomPDF
-- **Storage**: Laravel Storage (local)
+L'application suit scrupuleusement le pattern MVC avec un fort accent sur l'architecture orientée **Services** (Service Layer) pour découpler la logique métier pesante des contrôleurs.
+
+- `app/Services/` : Contient toute la logique de calcul ("Fat Models / Skinny Controllers").
+- `app/Models/` : Contient les relations Eloquent et les Accessors.
+- `app/Http/Controllers/` : Routage HTTP et parsing des requêtes.
+- `docs/` : Contient tous les documents de conception interne, d'audits de sécurité et de spécifications.
 
 ---
 
-## 📝 Changelog
+## 📝 Changelog Récent
 
-### v1.3.0 (2026-02-04)
-- 🔒 **Middleware SecurityHeaders** (X-Frame-Options, X-XSS-Protection, HSTS)
-- 🔒 Correction de 10 erreurs exposées (logging serveur + messages génériques)
-- ✨ **Gestion des dépenses** (maintenance, travaux, taxes, assurances)
-- ✨ Bilan financier global propriétaire (revenus - dépenses = bénéfice net)
-- ✨ **OntarioPublicSiteSeeder** avec 18 biens immobiliers réalistes
-- 🗑️ Nettoyage des fichiers temporaires
+### v1.4.0 (2026-03)
+- 🧹 Grand nettoyage du référentiel (Suppression des logs/debug files de développement).
+- 💰 Résolution et standardisation globale des calculs financiers (Arriérés, Base Commissionnaire, Pénalités).
+- 🧪 Implémentation isolée de `.env.testing` pour éviter les collisions SQLite/MySQL.
+- 🎨 Interface UI modernisée (PDF Premium, KPIs Lazy-loaded).
 
-### v1.2.1 (2026-02-03)
-- 🔒 Audit de sécurité complet
-- 🔒 Protection Mass Assignment (utilisation de `$request->only()`)
-- 🔒 Rate limiting sur les routes d'authentification
-- 🔒 Validation renforcée des uploads (mimetypes)
-- 🔒 Logging des erreurs côté serveur
-- ✨ Ajout de l'upload de documents pour les locataires
-- 🎨 Amélioration de l'UX (boutons d'actions toujours visibles)
-
-### v1.1.0 (2026-01-26)
-- ✨ Upload d'images multiples pour les biens
-- ✨ Génération de PDF des contrats
-- ✨ Système de logs d'activité
-
-### v1.0.0 (2026-01-25)
-- 🎉 Version initiale
-- ✨ CRUD complet (Propriétaires, Biens, Locataires, Contrats, Loyers)
-- ✨ Système de rôles et permissions
-- ✨ Dashboard multi-rôles
+*(Pour l'historique complet, consulter les commits ou les fichiers `docs/`)*
 
 ---
 
 ## 📄 Licence
-
 Ce projet est propriétaire - © 2026 Ontario Group. Tous droits réservés.
-
----
-
-## 👨‍💻 Développement
-
-Développé par l'équipe Ontario Group.
-
-Pour toute question ou support, contactez : support@ontariogroup.net

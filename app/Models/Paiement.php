@@ -12,27 +12,16 @@ class Paiement extends Model
 
     protected $fillable = ['loyer_id', 'montant', 'mode', 'date_paiement', 'preuve', 'reference', 'user_id'];
 
-    protected $casts = ['date_paiement' => 'date'];
+    protected $casts = [
+        'date_paiement' => 'date',
+        'montant' => 'decimal:2'
+    ];
 
     public function loyer()
     {
         return $this->belongsTo(Loyer::class);
     }
 
-    protected static function booted()
-    {
-        static::created(function (self $paiement) {
-            $loyer = $paiement->loyer;
-
-            if (! $loyer) {
-                return;
-            }
-
-            $totalPaid = (int) $loyer->paiements()->sum('montant');
-
-            if ($totalPaid >= (int) $loyer->montant) {
-                $loyer->update(['statut' => 'payé']);
-            }
-        });
-    }
+    // Status update is handled by Loyer::updateStatus() via PaymentService
+    // (includes penalty-aware comparison with tolerance)
 }

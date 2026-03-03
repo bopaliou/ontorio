@@ -3,6 +3,7 @@
 .env
 .env.backup
 .env.production
+.env.testing
 .phpactor.json
 .phpunit.result.cache
 /.fleet
@@ -22,3 +23,16 @@
 Homestead.json
 Homestead.yaml
 Thumbs.db
+
+# --- Security/Cleanup/Temp ---
+*.txt
+!README.txt
+debug_*.log
+temp_*.log
+last_logs.txt
+check_*.php
+verify_*.php
+/apex.js
+/chart.js
+/bi.css
+*.skill

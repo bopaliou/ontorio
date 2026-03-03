@@ -49,7 +49,13 @@
                 </div>
             </div>
             @empty
-                <div class="col-span-full py-20 text-center text-gray-400 font-medium">Aucun bien immobilier disponible.</div>
+                <x-empty-state
+                    icon="building"
+                    title="Aucun bien immobilier"
+                    description="Votre parc est vide. Ajoutez votre premier bien pour commencer à gérer vos propriétés."
+                    actionLabel="Ajouter un Bien"
+                    actionOnclick="bienSection.openModal('create')"
+                />
             @endforelse
         </div>
     </div>
@@ -222,7 +228,7 @@
                             </div>
 
                             <!-- Adresse -->
-                            <div class="col-span-12">
+                            <div class="sm:col-span-2">
                                 <label class="ontario-label">Adresse Complète <span class="text-red-500">*</span></label>
                                 <div class="relative">
                                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -233,13 +239,13 @@
                             </div>
 
                             <!-- Description -->
-                            <div class="col-span-12">
+                            <div class="sm:col-span-2">
                                 <label class="ontario-label">Description / Notes</label>
                                 <textarea name="description" id="bien-input-description" rows="3" class="ontario-input resize-none" placeholder="Détails supplémentaires sur le bien..."></textarea>
                             </div>
 
                             <!-- Photos -->
-                            <div class="col-span-12">
+                            <div class="sm:col-span-2">
                                 <label class="ontario-label">Photos du Bien</label>
                                 <div class="relative group mt-2">
                                     <div class="flex justify-center rounded-2xl border-2 border-dashed border-gray-300 px-6 py-8 hover:border-[#cb2d2d] hover:bg-red-50/30 transition-all cursor-pointer group-hover:shadow-sm" onclick="document.getElementById('bien-input-images').click()">
@@ -308,7 +314,7 @@
 <script>
     window.bienSection = {
         deleteTargetId: null,
-        showView: function(v) { document.querySelectorAll('.bien-sub-view').forEach(x => x.classList.add('hidden')); document.getElementById('bien-view-' + v)?.classList.remove('hidden'); },
+        showView: function(v) { document.querySelectorAll('.bien-sub-view').forEach(x => x.classList.add('hidden')); document.getElementById('bien-view-' + v)?.classList.remove('hidden'); if (v === 'list' && typeof setBreadcrumbDetail === 'function') setBreadcrumbDetail(null); },
         showDetails: function(bien) {
             this.currentBien = bien;
             document.getElementById('det-bien-nom').textContent = bien.nom;
@@ -335,6 +341,7 @@
             const eb = document.getElementById('det-bien-edit-btn'); const db = document.getElementById('det-bien-del-btn');
             if(eb) eb.onclick = () => this.openModal('edit', bien); if(db) db.onclick = () => this.confirmDelete(bien);
             this.showView('details');
+            if (typeof setBreadcrumbDetail === 'function') setBreadcrumbDetail(bien.nom);
         },
         openModal: function(mode, bien = null) {
             const wrapper = document.getElementById('bien-modal-wrapper'); const overlay = document.getElementById('bien-modal-overlay'); const container = document.getElementById('bien-modal-container'); const title = document.getElementById('bien-modal-title'); const form = document.getElementById('bien-main-form');

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+    <script>(function(){var t=localStorage.getItem('ontario-theme');if(t==='dark')document.documentElement.setAttribute('data-theme','dark');})();</script>
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -123,6 +124,52 @@
                 0%, 100% { transform: translateY(0px); }
                 50% { transform: translateY(-15px); }
             }
+
+            /* Geometric shapes */
+            @keyframes geo-spin {
+                from { transform: rotate(0deg); }
+                to { transform: rotate(360deg); }
+            }
+
+            @keyframes geo-drift {
+                0%, 100% { transform: translate(0, 0) rotate(0deg); }
+                25% { transform: translate(20px, -30px) rotate(90deg); }
+                50% { transform: translate(-10px, -50px) rotate(180deg); }
+                75% { transform: translate(-30px, -20px) rotate(270deg); }
+            }
+
+            .geo-shape {
+                position: absolute;
+                border: 2px solid rgba(255, 255, 255, 0.08);
+                pointer-events: none;
+            }
+
+            .geo-shape-1 {
+                width: 80px; height: 80px;
+                bottom: 15%; right: 15%;
+                border-radius: 20%;
+                animation: geo-drift 12s ease-in-out infinite;
+            }
+
+            .geo-shape-2 {
+                width: 40px; height: 40px;
+                top: 25%; right: 20%;
+                border-radius: 50%;
+                animation: geo-drift 8s ease-in-out infinite reverse;
+            }
+
+            .geo-shape-3 {
+                width: 60px; height: 60px;
+                bottom: 30%; left: 10%;
+                border-radius: 30%;
+                animation: geo-spin 20s linear infinite;
+            }
+
+            /* Right panel subtle grid */
+            .login-grid-bg {
+                background-image: radial-gradient(circle, rgba(203, 45, 45, 0.03) 1px, transparent 1px);
+                background-size: 24px 24px;
+            }
         </style>
     </head>
     <body class="antialiased font-inter">
@@ -132,6 +179,9 @@
                 <!-- Decorative elements -->
                 <div class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-white/5 rounded-full blur-[100px]"></div>
                 <div class="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-red-500/10 rounded-full blur-[120px]"></div>
+                <div class="geo-shape geo-shape-1"></div>
+                <div class="geo-shape geo-shape-2"></div>
+                <div class="geo-shape geo-shape-3"></div>
 
                 <div class="px-20 z-10 text-center lg:text-left">
                     <div class="animate-fade-in-left mb-10">
@@ -169,7 +219,7 @@
             </div>
 
             <!-- Right Side - Login Form -->
-            <div class="w-full lg:w-2/5 flex items-center justify-center p-6 bg-slate-50 relative">
+            <div class="w-full lg:w-2/5 flex items-center justify-center p-6 bg-slate-50 relative login-grid-bg">
                 <!-- Background decorative shapes for right side -->
                 <div class="absolute top-20 right-20 w-32 h-32 bg-red-100 rounded-full blur-3xl opacity-50"></div>
                 <div class="absolute bottom-20 left-20 w-40 h-40 bg-blue-100 rounded-full blur-3xl opacity-50"></div>

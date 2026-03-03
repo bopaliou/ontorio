@@ -1,7 +1,7 @@
 <x-app-layout>
     <div id="dashboard-container" class="relative">
 
-        <!-- SECTION: OVERVIEW (Default) -->
+        <!-- SECTION: OVERVIEW (Default — Server-Side Rendered) -->
         <div id="section-overview" role="tabpanel" aria-labelledby="nav-link-overview" class="section-pane">
             <div class="section-skeleton h-full">
                 <div class="flex flex-col gap-8">
@@ -18,7 +18,7 @@
                 </div>
             </div>
             <div class="section-content hidden">
-                {{-- On affiche le dashboard spécifique au rôle si disponible, sinon le générique --}}
+                {{-- Overview is always server-rendered --}}
                 @if(isset($data['role']))
                     @if($data['role'] === 'comptable')
                         @include('dashboard.roles.comptable', ['data' => $data])
@@ -27,7 +27,6 @@
                     @elseif($data['role'] === 'proprietaire')
                         @include('dashboard.roles.proprietaire', ['data' => $data])
                     @else
-                        {{-- Par défaut on utilise la section Overview générique ou Gestionnaire --}}
                         @include('dashboard.sections.overview', ['data' => $data])
                     @endif
                 @else
@@ -36,113 +35,75 @@
             </div>
         </div>
 
-        <!-- SECTION: BIENS -->
-        <div id="section-biens" role="tabpanel" aria-labelledby="nav-link-biens" class="section-pane hidden">
+        <!-- SECTION: BIENS (Lazy Loaded) -->
+        <div id="section-biens" role="tabpanel" aria-labelledby="nav-link-biens" class="section-pane hidden" data-lazy="true" data-section="biens">
             <div class="section-skeleton h-full">
                 <div class="flex flex-col gap-6">
                    <div class="flex justify-between items-center"><x-skeleton variant="rect" height="h-16" width="w-1/3" /><x-skeleton variant="rect" height="h-12" width="w-48" /></div>
                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6"><x-skeleton variant="rect" height="h-64" /><x-skeleton variant="rect" height="h-64" /><x-skeleton variant="rect" height="h-64" /></div>
                 </div>
             </div>
-            <div class="section-content hidden">
-                @include('dashboard.sections.biens')
-            </div>
+            <div class="section-content hidden"></div>
         </div>
 
-        <!-- SECTION: ONTARIO GROUP (Propriétaires) -->
-        <div id="section-proprietaires" role="tabpanel" aria-labelledby="nav-link-proprietaires" class="section-pane hidden">
+        <!-- SECTION: ONTARIO GROUP (Propriétaires — Lazy) -->
+        <div id="section-proprietaires" role="tabpanel" aria-labelledby="nav-link-proprietaires" class="section-pane hidden" data-lazy="true" data-section="proprietaires">
             <div class="section-skeleton h-full"> ... </div>
-            <div class="section-content hidden">
-                <?php file_put_contents('debug_test.log', "VIEW: section-proprietaires start\n", FILE_APPEND); ?>
-                @include('dashboard.sections.proprietaires')
-                <?php file_put_contents('debug_test.log', "VIEW: section-proprietaires done\n", FILE_APPEND); ?>
-            </div>
+            <div class="section-content hidden"></div>
         </div>
 
-        <!-- SECTION: LOCATAIRES -->
-        <div id="section-locataires" role="tabpanel" aria-labelledby="nav-link-locataires" class="section-pane hidden">
+        <!-- SECTION: LOCATAIRES (Lazy) -->
+        <div id="section-locataires" role="tabpanel" aria-labelledby="nav-link-locataires" class="section-pane hidden" data-lazy="true" data-section="locataires">
             <div class="section-skeleton h-full"> ... </div>
-            <div class="section-content hidden">
-                @include('dashboard.sections.locataires')
-            </div>
+            <div class="section-content hidden"></div>
         </div>
 
-        <!-- SECTION: CONTRATS -->
-        <div id="section-contrats" role="tabpanel" aria-labelledby="nav-link-contrats" class="section-pane hidden">
+        <!-- SECTION: CONTRATS (Lazy) -->
+        <div id="section-contrats" role="tabpanel" aria-labelledby="nav-link-contrats" class="section-pane hidden" data-lazy="true" data-section="contrats">
             <div class="section-skeleton h-full"> ... </div>
-            <div class="section-content hidden">
-                <?php file_put_contents('debug_test.log', "VIEW: section-contrats start\n", FILE_APPEND); ?>
-                @include('dashboard.sections.contrats')
-                <?php file_put_contents('debug_test.log', "VIEW: section-contrats done\n", FILE_APPEND); ?>
-            </div>
+            <div class="section-content hidden"></div>
         </div>
 
-        <!-- SECTION: LOYERS (Finance) -->
-        <div id="section-loyers" role="tabpanel" aria-labelledby="nav-link-loyers" class="section-pane hidden">
+        <!-- SECTION: LOYERS (Finance — Lazy) -->
+        <div id="section-loyers" role="tabpanel" aria-labelledby="nav-link-loyers" class="section-pane hidden" data-lazy="true" data-section="loyers">
             <div class="section-skeleton h-full"> ... </div>
-            <div class="section-content hidden">
-                <?php file_put_contents('debug_test.log', "VIEW: section-loyers start\n", FILE_APPEND); ?>
-                @include('dashboard.sections.loyers')
-                <?php file_put_contents('debug_test.log', "VIEW: section-loyers done\n", FILE_APPEND); ?>
-            </div>
+            <div class="section-content hidden"></div>
         </div>
 
-        <!-- SECTION: PAIEMENTS (Compta) -->
-        <div id="section-paiements" role="tabpanel" aria-labelledby="nav-link-paiements" class="section-pane hidden">
+        <!-- SECTION: PAIEMENTS (Compta — Lazy) -->
+        <div id="section-paiements" role="tabpanel" aria-labelledby="nav-link-paiements" class="section-pane hidden" data-lazy="true" data-section="paiements">
             <div class="section-skeleton h-full"> ... </div>
-            <div class="section-content hidden">
-                <?php file_put_contents('debug_test.log', "VIEW: section-paiements start\n", FILE_APPEND); ?>
-                @include('dashboard.sections.paiements')
-                <?php file_put_contents('debug_test.log', "VIEW: section-paiements done\n", FILE_APPEND); ?>
-            </div>
+            <div class="section-content hidden"></div>
         </div>
 
-        <!-- SECTION: DEPENSES (Management) -->
-        <div id="section-depenses" role="tabpanel" aria-labelledby="nav-link-depenses" class="section-pane hidden">
+        <!-- SECTION: DEPENSES (Management — Lazy) -->
+        <div id="section-depenses" role="tabpanel" aria-labelledby="nav-link-depenses" class="section-pane hidden" data-lazy="true" data-section="depenses">
             <div class="section-skeleton h-full"> ... </div>
-            <div class="section-content hidden">
-                <?php file_put_contents('debug_test.log', "VIEW: section-depenses start\n", FILE_APPEND); ?>
-                @include('dashboard.sections.depenses')
-                <?php file_put_contents('debug_test.log', "VIEW: section-depenses done\n", FILE_APPEND); ?>
-            </div>
+            <div class="section-content hidden"></div>
         </div>
 
-        <!-- SECTION: RELANCES (Communication) -->
-        <div id="section-relances" role="tabpanel" aria-labelledby="nav-link-relances" class="section-pane hidden">
+        <!-- SECTION: RELANCES (Communication — Lazy) -->
+        <div id="section-relances" role="tabpanel" aria-labelledby="nav-link-relances" class="section-pane hidden" data-lazy="true" data-section="relances">
             <div class="section-skeleton h-full"> ... </div>
-            <div class="section-content hidden">
-                <?php file_put_contents('debug_test.log', "VIEW: section-relances start\n", FILE_APPEND); ?>
-                @include('dashboard.sections.relances')
-                <?php file_put_contents('debug_test.log', "VIEW: section-relances done\n", FILE_APPEND); ?>
-            </div>
+            <div class="section-content hidden"></div>
         </div>
 
-        <!-- SECTION: ADMINISTRATION -->
+        <!-- SECTION: ADMINISTRATION (Lazy, Admin-only) -->
         @if(Auth::user()->role === 'admin')
-        <div id="section-utilisateurs" role="tabpanel" aria-labelledby="nav-link-utilisateurs" class="section-pane hidden">
+        <div id="section-utilisateurs" role="tabpanel" aria-labelledby="nav-link-utilisateurs" class="section-pane hidden" data-lazy="true" data-section="utilisateurs">
             <div class="section-skeleton"> ... </div>
-            <div class="section-content hidden">
-                <?php file_put_contents('debug_test.log', "VIEW: section-utilisateurs start\n", FILE_APPEND); ?>
-                @include('dashboard.sections.utilisateurs')
-                <?php file_put_contents('debug_test.log', "VIEW: section-utilisateurs done\n", FILE_APPEND); ?>
-            </div>
+            <div class="section-content hidden"></div>
         </div>
-        <div id="section-logs" role="tabpanel" aria-labelledby="nav-link-logs" class="section-pane hidden">
+        <div id="section-logs" role="tabpanel" aria-labelledby="nav-link-logs" class="section-pane hidden" data-lazy="true" data-section="logs">
             <div class="section-skeleton"> ... </div>
-            <div class="section-content hidden">
-                @include('dashboard.sections.logs')
-            </div>
+            <div class="section-content hidden"></div>
         </div>
         @endif
 
-        <!-- SECTION: PARAMÈTRES -->
-        <div id="section-parametres" role="tabpanel" aria-labelledby="nav-link-parametres" class="section-pane hidden">
+        <!-- SECTION: PARAMÈTRES (Lazy) -->
+        <div id="section-parametres" role="tabpanel" aria-labelledby="nav-link-parametres" class="section-pane hidden" data-lazy="true" data-section="parametres">
             <div class="section-skeleton h-full"> ... </div>
-            <div class="section-content hidden">
-                <?php file_put_contents('debug_test.log', "VIEW: section-parametres start\n", FILE_APPEND); ?>
-                @include('dashboard.sections.parametres')
-                <?php file_put_contents('debug_test.log', "VIEW: section-parametres done\n", FILE_APPEND); ?>
-            </div>
+            <div class="section-content hidden"></div>
         </div>
 
     </div>
@@ -150,8 +111,8 @@
     <!-- JAVASCRIPT LOGIC -->
     <script>
         /**
-         * ONTARIO GROUP - DASHBOARD SPA ENGINE
-         * Gestionnaire de navigation fluide avec History API
+         * ONTARIO GROUP - DASHBOARD SPA ENGINE v2
+         * Lazy-loading navigation with History API
          */
         class OntarioDashboard {
             constructor() {
@@ -159,6 +120,8 @@
                 this.loader = document.getElementById('page-loader-bar');
                 this.currentSection = null;
                 this.isNavigating = false;
+                this.loadedSections = new Set(); // Track which sections have been fetched
+                this.loadingPromises = {};       // Prevent duplicate fetches
 
                 this.init();
             }
@@ -194,6 +157,9 @@
                 const initialSection = this.getSectionFromHash() || 'overview';
                 this.show(initialSection, false);
 
+                // Overview is always SSR — mark as loaded
+                this.loadedSections.add('overview');
+
                 // Forcer le skeleton sur l'overview au premier chargement si c'est la section active
                 if (initialSection === 'overview') {
                     const overview = document.getElementById('section-overview');
@@ -213,7 +179,7 @@
              * @param {string} sectionId - L'ID de la section à afficher
              * @param {boolean} updateHistory - Si vrai (par défaut), met à jour l'historique du navigateur
              */
-            show(sectionId, updateHistory = true) {
+            async show(sectionId, updateHistory = true) {
                 const target = document.getElementById('section-' + sectionId);
                 if (!target) {
                     if (sectionId !== 'overview') this.show('overview', updateHistory);
@@ -229,6 +195,11 @@
                 }
                 this.currentSection = sectionId;
 
+                // 1b. Update topbar breadcrumb
+                if (typeof window.updateBreadcrumb === 'function') {
+                    window.updateBreadcrumb(sectionId);
+                }
+
                 // 2. Loader Bar Effect
                 this.loader.style.width = '30%';
                 this.loader.style.opacity = '1';
@@ -240,46 +211,145 @@
                 const activePanes = document.querySelectorAll('.section-pane:not(.hidden)');
                 activePanes.forEach(pane => {
                     if (pane.id !== 'section-' + sectionId) {
-                        pane.classList.add('opacity-0', 'translate-y-4'); // Reset position for exit
+                        pane.classList.add('opacity-0', 'translate-y-4');
                         setTimeout(() => pane.classList.add('hidden'), 500);
                     }
                 });
 
-                // 5. Gestion spécifique du contenu (Skeleton -> Real Content)
+                // 5. Show target pane with skeleton
                 const skeleton = target.querySelector('.section-skeleton');
                 const content = target.querySelector('.section-content');
+                const isLazy = target.hasAttribute('data-lazy');
+                const isLoaded = this.loadedSections.has(sectionId);
 
                 if (skeleton && content) {
-                    skeleton.classList.remove('hidden');
-                    content.classList.add('hidden');
+                    if (!isLoaded) {
+                        skeleton.classList.remove('hidden');
+                        content.classList.add('hidden');
+                    }
                 }
 
-                // Attendre un peu pour donner un effet de chargement premium
-                setTimeout(() => {
+                // 6. Show target panel
+                setTimeout(async () => {
                     target.classList.remove('hidden');
                     this.loader.style.width = '70%';
 
-                    requestAnimationFrame(() => {
-                        target.classList.remove('opacity-0', 'translate-y-4'); // Ensure clean stacking context
+                    requestAnimationFrame(async () => {
+                        target.classList.remove('opacity-0', 'translate-y-4');
 
-                        // Simulation d'un chargement de données (0.8s) pour apprécier le skeleton
-                        setTimeout(() => {
+                        // 7. Lazy Loading: fetch section content if needed
+                        if (isLazy && !isLoaded) {
+                            await this.fetchSection(sectionId, target, skeleton, content);
+                        } else {
+                            // Already loaded — just reveal
                             if (skeleton && content) {
                                 skeleton.classList.add('hidden');
                                 content.classList.remove('hidden');
                             }
+                        }
 
-                            this.loader.style.width = '100%';
+                        this.loader.style.width = '100%';
 
-                            // Terminer le loader avec un léger délai pour stabiliser le rendu
-                            setTimeout(() => {
-                                this.loader.style.opacity = '0';
-                                setTimeout(() => this.loader.style.width = '0', 400);
-                                this.isNavigating = false;
-                            }, 500);
-                        }, 800);
+                        // 8. Terminer le loader
+                        setTimeout(() => {
+                            this.loader.style.opacity = '0';
+                            setTimeout(() => this.loader.style.width = '0', 400);
+                            this.isNavigating = false;
+                        }, 300);
                     });
                 }, activePanes.length > 0 ? 150 : 0);
+            }
+
+            /**
+             * Fetch section HTML from server and inject into the DOM
+             */
+            async fetchSection(sectionId, target, skeleton, content) {
+                // Prevent duplicate parallel fetches for the same section
+                if (this.loadingPromises[sectionId]) {
+                    return this.loadingPromises[sectionId];
+                }
+
+                const sectionName = target.getAttribute('data-section') || sectionId;
+                const url = `/dashboard/section/${sectionName}`;
+
+                this.loadingPromises[sectionId] = (async () => {
+                    try {
+                        const response = await fetch(url, {
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
+                                'Accept': 'text/html',
+                            }
+                        });
+
+                        if (!response.ok) {
+                            throw new Error(`HTTP ${response.status}`);
+                        }
+
+                        const html = await response.text();
+
+                        // Inject using createContextualFragment to execute inline <script> tags
+                        const range = document.createRange();
+                        range.selectNode(content);
+                        const fragment = range.createContextualFragment(html);
+
+                        content.innerHTML = '';
+                        content.appendChild(fragment);
+
+                        // Mark as loaded
+                        this.loadedSections.add(sectionId);
+
+                        // Transition: hide skeleton, show content
+                        if (skeleton) skeleton.classList.add('hidden');
+                        content.classList.remove('hidden');
+
+                    } catch (error) {
+                        console.error(`[Dashboard] Erreur chargement section "${sectionId}":`, error);
+
+                        // Show error state in skeleton area
+                        if (skeleton) {
+                            skeleton.innerHTML = `
+                                <div class="flex flex-col items-center justify-center py-16 text-center">
+                                    <div class="w-16 h-16 rounded-2xl bg-red-50 flex items-center justify-center mb-4">
+                                        <svg class="w-8 h-8 text-[#cb2d2d]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/>
+                                        </svg>
+                                    </div>
+                                    <h3 class="text-lg font-bold text-gray-900 mb-2">Erreur de chargement</h3>
+                                    <p class="text-sm text-gray-500 mb-6">Impossible de charger cette section. Vérifiez votre connexion.</p>
+                                    <button onclick="dashboard.retrySection('${sectionId}')" class="px-6 py-2.5 bg-[#cb2d2d] text-white font-bold text-xs uppercase tracking-widest rounded-xl hover:bg-[#a82020] transition shadow-lg">
+                                        Réessayer
+                                    </button>
+                                </div>
+                            `;
+                        }
+                    } finally {
+                        delete this.loadingPromises[sectionId];
+                    }
+                })();
+
+                return this.loadingPromises[sectionId];
+            }
+
+            /**
+             * Retry loading a failed section
+             */
+            retrySection(sectionId) {
+                this.loadedSections.delete(sectionId);
+                const target = document.getElementById('section-' + sectionId);
+                if (!target) return;
+
+                const skeleton = target.querySelector('.section-skeleton');
+                const content = target.querySelector('.section-content');
+
+                // Reset skeleton to loading state
+                if (skeleton) {
+                    skeleton.innerHTML = '<div class="flex items-center justify-center py-16"><div class="animate-spin w-8 h-8 border-4 border-[#cb2d2d] border-t-transparent rounded-full"></div></div>';
+                    skeleton.classList.remove('hidden');
+                }
+                if (content) content.classList.add('hidden');
+
+                this.fetchSection(sectionId, target, skeleton, content);
             }
 
             updateSidebarUI(sectionId) {
@@ -308,59 +378,69 @@
             async refresh() {
                 if (!this.currentSection) return;
 
+                const sectionId = this.currentSection;
+                const target = document.getElementById('section-' + sectionId);
+                if (!target) return;
+
+                const skeleton = target.querySelector('.section-skeleton');
+                const content = target.querySelector('.section-content');
+                const isLazy = target.hasAttribute('data-lazy');
+
                 // 1. Afficher le skeleton et le loader
                 this.loader.style.width = '20%';
                 this.loader.style.opacity = '1';
 
-                const target = document.getElementById('section-' + this.currentSection);
-                const skeleton = target.querySelector('.section-skeleton');
-                const content = target.querySelector('.section-content');
-
                 if (skeleton && content) {
+                    skeleton.innerHTML = '<div class="flex items-center justify-center py-16"><div class="animate-spin w-8 h-8 border-4 border-[#cb2d2d] border-t-transparent rounded-full"></div></div>';
                     skeleton.classList.remove('hidden');
                     content.classList.add('hidden');
                 }
 
-                try {
-                    // 2. Récupérer la page complète en tâche de fond (Cache-busting enabled)
-                    const url = new URL(window.location.href);
-                    url.searchParams.set('t', Date.now());
-                    const response = await fetch(url.toString(), {
-                        headers: { 'X-Requested-With': 'XMLHttpRequest' }
-                    });
-                    const html = await response.text();
+                // 2. Force re-fetch
+                this.loadedSections.delete(sectionId);
 
-                    // 3. Parser et extraire le nouveau contenu
-                    const parser = new DOMParser();
-                    const doc = parser.parseFromString(html, 'text/html');
-                    const newContent = doc.querySelector('#section-' + this.currentSection + ' .section-content');
+                if (isLazy) {
+                    // For lazy sections, use the dedicated section endpoint
+                    await this.fetchSection(sectionId, target, skeleton, content);
+                } else {
+                    // For overview (SSR), fetch the entire page and extract
+                    try {
+                        const url = new URL(window.location.href);
+                        url.searchParams.set('t', Date.now());
+                        const response = await fetch(url.toString(), {
+                            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                        });
+                        const html = await response.text();
 
-                    if (newContent && content) {
-                        // Utiliser createContextualFragment pour forcer l'exécution des scripts <script>
-                        const range = document.createRange();
-                        range.selectNode(content);
-                        const fragment = range.createContextualFragment(newContent.innerHTML);
+                        const parser = new DOMParser();
+                        const doc = parser.parseFromString(html, 'text/html');
+                        const newContent = doc.querySelector('#section-' + sectionId + ' .section-content');
 
-                        content.innerHTML = '';
-                        content.appendChild(fragment);
-                    }
+                        if (newContent && content) {
+                            const range = document.createRange();
+                            range.selectNode(content);
+                            const fragment = range.createContextualFragment(newContent.innerHTML);
 
-                    this.loader.style.width = '100%';
-
-                    // 4. Masquer le skeleton et afficher le contenu frais
-                    setTimeout(() => {
-                        if (skeleton && content) {
-                            skeleton.classList.add('hidden');
-                            content.classList.remove('hidden');
+                            content.innerHTML = '';
+                            content.appendChild(fragment);
                         }
-                        this.loader.style.opacity = '0';
-                        setTimeout(() => this.loader.style.width = '0', 400);
-                    }, 500);
 
-                } catch (error) {
-                    console.error('Erreur lors du rafraîchissement:', error);
-                    window.location.reload(); // Fallback
+                        this.loadedSections.add(sectionId);
+
+                        if (skeleton) skeleton.classList.add('hidden');
+                        if (content) content.classList.remove('hidden');
+
+                    } catch (error) {
+                        console.error('Erreur lors du rafraîchissement:', error);
+                        window.location.reload();
+                    }
                 }
+
+                this.loader.style.width = '100%';
+                setTimeout(() => {
+                    this.loader.style.opacity = '0';
+                    setTimeout(() => this.loader.style.width = '0', 400);
+                }, 300);
             }
         }
 

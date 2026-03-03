@@ -27,6 +27,7 @@ class Bien extends Model
     protected $casts = [
         'meuble' => 'boolean',
         'surface' => 'decimal:2',
+        'loyer_mensuel' => 'decimal:2',
     ];
 
     public function proprietaire()

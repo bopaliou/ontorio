@@ -32,43 +32,17 @@ class LoyerController extends Controller
     /**
      * Générer les loyers pour le mois en cours pour tous les contrats actifs
      */
-    /**
-     * Générer les loyers pour le mois en cours pour tous les contrats actifs
-     */
     public function genererMois()
     {
         Carbon::setLocale('fr');
-        $moisActuel = Carbon::now()->format('Y-m');
-        $contrats = Contrat::where('statut', 'actif')->get();
-        $countCreated = 0;
-        $countUpdated = 0;
 
-        foreach ($contrats as $contrat) {
-            // Vérifier si le loyer existe déjà pour ce mois
-            $loyer = Loyer::where('contrat_id', $contrat->id)
-                ->where('mois', $moisActuel)
-                ->first();
+        $loyerService = app(\App\Services\LoyerService::class);
+        $result = $loyerService->genererLoyersMensuels();
 
-            if (! $loyer) {
-                Loyer::create([
-                    'contrat_id' => $contrat->id,
-                    'mois' => $moisActuel,
-                    'montant' => $contrat->loyer_montant,
-                    'statut' => 'émis',
-                ]);
-                $countCreated++;
-            } else {
-                // Si le loyer n'est pas encore payé et que le montant du contrat a changé, on met à jour
-                if ($loyer->statut !== 'payé' && $loyer->montant != $contrat->loyer_montant) {
-                    $loyer->update([
-                        'montant' => $contrat->loyer_montant,
-                    ]);
-                    $countUpdated++;
-                }
-            }
+        $msg = "{$result['generes']} quittances générées pour ".Carbon::parse($result['mois'])->translatedFormat('F Y');
+        if ($result['existants'] > 0) {
+            $msg .= " ({$result['existants']} déjà existantes)";
         }
-
-        $msg = "$countCreated quittances générées et $countUpdated mises à jour pour ".Carbon::now()->translatedFormat('F Y');
 
         return response()->json([
             'success' => true,

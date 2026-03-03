@@ -89,8 +89,7 @@
                                         <svg class="h-5 w-5 text-gray-400 group-focus-within:text-[#cb2d2d] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
                                     </div>
                                     <select name="bien_id" id="con-input-bien" required class="ontario-input pl-10 appearance-none">
-                                        <option value="">Choisir un bien...</option>
-                                        @foreach($data['biens_all'] as $b)<option value="{{ $b->id }}">{{ $b->nom }}</option>@endforeach
+                                        <option value="">Chargement des biens...</option>
                                     </select>
                                     <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-gray-500">
                                         <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
@@ -105,8 +104,7 @@
                                         <svg class="h-5 w-5 text-gray-400 group-focus-within:text-[#cb2d2d] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
                                     </div>
                                     <select name="locataire_id" id="con-input-locataire" required class="ontario-input pl-10 appearance-none">
-                                        <option value="">Choisir un locataire...</option>
-                                        @foreach($data['locataires_all'] as $l)<option value="{{ $l->id }}">{{ $l->nom }}</option>@endforeach
+                                        <option value="">Chargement des locataires...</option>
                                     </select>
                                     <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-gray-500">
                                         <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
@@ -245,7 +243,32 @@
 <script>
     window.conSection = {
         deleteTargetId: null,
-        openModal: function(mode, data = null) {
+        dataLoaded: false,
+        initSelects: async function() {
+            if(this.dataLoaded) return;
+            const bienSel = document.getElementById('con-input-bien');
+            const locSel = document.getElementById('con-input-locataire');
+            
+            try {
+                const [biensRes, locatairesRes] = await Promise.all([
+                    fetch('/api/biens/search').then(r => r.json()),
+                    fetch('/api/locataires/search').then(r => r.json())
+                ]);
+                
+                bienSel.innerHTML = '<option value="">Choisir un bien (' + biensRes.length + ' libres)...</option>' + 
+                                    biensRes.map(b => `<option value="${b.id}">${b.nom} - ${Number(b.loyer_mensuel).toLocaleString()} F</option>`).join('');
+                                    
+                locSel.innerHTML = '<option value="">Choisir un locataire...</option>' + 
+                                   locatairesRes.map(l => `<option value="${l.id}">${l.nom} - ${l.telephone}</option>`).join('');
+                                   
+                this.dataLoaded = true;
+            } catch (e) {
+                console.error('Erreur chargement selects:', e);
+                bienSel.innerHTML = '<option value="">Erreur de chargement</option>';
+                locSel.innerHTML = '<option value="">Erreur de chargement</option>';
+            }
+        },
+        openModal: async function(mode, data = null) {
             const wrapper = document.getElementById('con-modal-wrapper');
             const overlay = document.getElementById('con-modal-overlay');
             const container = document.getElementById('con-modal-container');
@@ -257,8 +280,18 @@
             setTimeout(() => { overlay?.classList.remove('opacity-0'); container?.classList.remove('scale-95', 'opacity-0'); }, 10);
             if (form) form.reset();
             document.getElementById('con-input-id').value = '';
+            
+            await this.initSelects();
+            
             if(mode === 'edit' && data) {
                 title.innerText = 'Modifier le Contrat';
+                
+                // Si le bien actuel n'est plus libre, il faut l'ajouter manuellement dans la liste
+                const bienSel = document.getElementById('con-input-bien');
+                if(!Array.from(bienSel.options).some(opt => opt.value == data.bien_id) && data.bien) {
+                    bienSel.insertAdjacentHTML('beforeend', `<option value="${data.bien_id}">${data.bien.nom}</option>`);
+                }
+                
                 document.getElementById('con-input-id').value = data.id;
                 document.getElementById('con-input-bien').value = data.bien_id;
                 document.getElementById('con-input-locataire').value = data.locataire_id;
@@ -332,7 +365,11 @@
             try {
                 const res = await fetch(`/contrats/${this.deleteTargetId}`, { method: 'DELETE', headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content, 'Accept': 'application/json' } });
                 if(res.ok) { showToast('Résilié', 'success'); this.closeDeleteModal(); if(window.dashboard) window.dashboard.refresh(); else window.location.reload(); }
-                else { showToast('Erreur', 'error'); btn.innerText = orig; btn.disabled = false; }
+                else { 
+                    const d = await res.json().catch(() => ({}));
+                    showToast(d.message || 'Erreur lors de la suppression', 'error'); 
+                    btn.innerText = orig; btn.disabled = false; 
+                }
             } catch(e) { showToast('Erreur serveur', 'error'); btn.innerText = orig; btn.disabled = false; }
         }
     };

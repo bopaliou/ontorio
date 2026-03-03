@@ -147,18 +147,18 @@
                             </div>
 
                             <!-- Profession & Revenus -->
-                            <div class="col-span-12 md:col-span-6">
+                            <div>
                                 <label class="ontario-label" for="loc-input-profession">Profession</label>
                                 <input type="text" name="profession" id="loc-input-profession" class="ontario-input" placeholder="Ex: Comptable">
                             </div>
 
-                            <div class="col-span-12 md:col-span-6">
+                            <div>
                                 <label class="ontario-label" for="loc-input-revenus">Revenus mensuels</label>
                                 <input type="number" name="revenus_mensuels" id="loc-input-revenus" class="ontario-input" placeholder="0">
                             </div>
 
                             <!-- Adresse -->
-                            <div class="col-span-12">
+                            <div class="sm:col-span-2">
                                 <label class="ontario-label" for="loc-input-adresse">Adresse Complète</label>
                                 <textarea name="adresse" id="loc-input-adresse" rows="2" class="ontario-input resize-none" placeholder="Adresse du locataire..."></textarea>
                             </div>
@@ -246,7 +246,7 @@
 <script>
     window.locSection = {
         deleteTargetId: null, currentLoc: null,
-        showView: function(v) { document.querySelectorAll('.loc-sub-view').forEach(x => x.classList.add('hidden')); document.getElementById('loc-view-'+v)?.classList.remove('hidden'); },
+        showView: function(v) { document.querySelectorAll('.loc-sub-view').forEach(x => x.classList.add('hidden')); document.getElementById('loc-view-'+v)?.classList.remove('hidden'); if (v === 'list' && typeof setBreadcrumbDetail === 'function') setBreadcrumbDetail(null); },
         showDetails: function(loc) {
              this.currentLoc = loc;
              document.getElementById('det-loc-nom').textContent = loc.nom;
@@ -274,6 +274,7 @@
              }).join('') : '<p class="text-gray-400 text-xs italic text-center py-4">Aucune pièce jointe</p>';
              this.currentLocId = loc.id;
              this.showView('details');
+             if (typeof setBreadcrumbDetail === 'function') setBreadcrumbDetail(loc.nom);
         },
         openModal: function(mode, loc = null) {
             const wrapper = document.getElementById('loc-modal-wrapper'); const overlay = document.getElementById('loc-modal-overlay'); const container = document.getElementById('loc-modal-container'); const title = document.getElementById('loc-modal-title'); const form = document.getElementById('loc-main-form');

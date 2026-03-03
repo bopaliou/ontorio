@@ -22,64 +22,25 @@ class DashboardController extends Controller
         $this->statsService = $statsService;
     }
 
+    /**
+     * Dashboard index — loads ONLY overview + role-specific data.
+     * Sections like biens, locataires, contrats etc. are loaded lazily via section().
+     */
     public function index()
     {
         Carbon::setLocale('fr');
         $user = auth()->user();
 
-        // Données communes optimisées (Pagination systématique et Eager Loading)
-        $commonData = [
-            'biens_list' => Bien::with(['contrats.locataire', 'images', 'imagePrincipale', 'proprietaire'])->latest()->paginate(25, ['*'], 'page_biens'),
-            'depenses_list' => \App\Models\Depense::with('bien.proprietaire')->latest()->paginate(25, ['*'], 'page_depenses'),
-            'categories_depenses' => ['maintenance', 'travaux', 'taxe', 'assurance', 'autre'],
-            'locataires_list' => Locataire::with(['contrats.bien', 'contrats.loyers', 'documents'])->withCount('contrats')->latest()->paginate(25, ['*'], 'page_locataires'),
-            'contrats_list' => Contrat::with(['bien:id,nom,adresse', 'locataire:id,nom,telephone', 'loyers'])->latest()->paginate(25, ['*'], 'page_contrats'),
-            'loyers_list' => Loyer::withMontantPaye()
-                ->with(['contrat.locataire', 'contrat.bien', 'paiements'])
-                ->where(function ($q) {
-                    $q->where('statut', '!=', 'payé')
-                      ->orWhere('mois', '>=', Carbon::now()->subMonths(2)->format('Y-m'));
-                })
-                ->orderBy('mois', 'desc')
-                ->orderBy('id', 'desc')
-                ->paginate(10, ['*'], 'page_loyers'),
-            'paiements_list' => Paiement::with(['loyer.contrat.locataire', 'loyer.contrat.bien'])->latest()->paginate(50, ['*'], 'page_paiements'),
-            'proprietaires_list' => in_array($user->role, ['admin', 'gestionnaire', 'direction'])
-                ? Proprietaire::withCount(['biens as logements_count'])->orderBy('id', 'asc')->get()
-                : collect([]),
-            'agency' => in_array($user->role, ['admin', 'gestionnaire', 'direction'])
-                ? Proprietaire::where('email', 'contact@ontariogroup.net')->first()
-                : null,
-            'owner_stats' => in_array($user->role, ['admin', 'gestionnaire', 'direction'])
-                ? Proprietaire::all()->mapWithKeys(function ($prop) {
-                    $totalBiens = $prop->biens()->count();
-                    $occupes = $prop->biens()->whereHas('contrats', function($q){ $q->where('statut', 'actif'); })->count();
-                    $ca = \App\Models\Paiement::whereHas('loyer.contrat.bien', function($q) use ($prop) {
-                        $q->where('proprietaire_id', $prop->id);
-                    })->whereMonth('created_at', now()->month)->sum('montant');
-                    $arrieres = \App\Models\Loyer::whereHas('contrat.bien', function($q) use ($prop) {
-                        $q->where('proprietaire_id', $prop->id);
-                    })->whereIn('statut', ['émis', 'en_retard', 'partiellement_payé'])->sum('montant') 
-                    - \App\Models\Paiement::whereHas('loyer.contrat.bien', function($q) use ($prop) {
-                        $q->where('proprietaire_id', $prop->id);
-                    })->whereHas('loyer', function($q) {
-                        $q->whereIn('statut', ['émis', 'en_retard', 'partiellement_payé']);
-                    })->sum('montant');
-
-                    return [$prop->id => [
-                        'occupancy_rate' => $totalBiens > 0 ? round(($occupes / $totalBiens) * 100, 1) : 0,
-                        'revenue_this_month' => (float) $ca,
-                        'total_arrears' => (float) max(0, $arrieres),
-                        'total_units' => $totalBiens,
-                        'occupied_units' => $occupes,
-                    ]];
-                })
-                : collect([]),
+        // Lightweight overview data only
+        $overviewData = [
             'alerts' => $this->statsService->getAlerts(),
             'parc_stats' => $this->statsService->getParcStats(),
             'financial_stats' => $this->statsService->getFinancialKPIs(),
-            'locataires_all' => Locataire::orderBy('nom')->get(),
-            'biens_all' => Bien::where('statut', 'libre')->orWhereHas('contrats', function($q) { $q->where('statut', '!=', 'actif'); })->orderBy('nom')->get(),
+            // Empty placeholders — not loaded upfront anymore
+            'locataires_all' => [],
+            'biens_all' => [],
+            // These are needed by the overview section template
+            'biens_list' => Bien::select('id', 'nom', 'statut')->get(),
         ];
 
         $roleData = match ($user->role) {
@@ -91,9 +52,131 @@ class DashboardController extends Controller
             default => abort(403, 'Rôle non autorisé'),
         };
 
-        $data = array_merge($commonData, $roleData);
+        $data = array_merge($overviewData, $roleData);
 
         return view('dashboard.index', compact('data'));
+    }
+
+    /**
+     * Lazy-load a single dashboard section via AJAX.
+     * Returns rendered HTML for the requested section.
+     */
+    public function section(string $name)
+    {
+        Carbon::setLocale('fr');
+        $user = auth()->user();
+
+        // Whitelist of allowed sections
+        $allowed = [
+            'biens', 'proprietaires', 'locataires', 'contrats',
+            'loyers', 'paiements', 'depenses', 'relances',
+            'utilisateurs', 'logs', 'parametres',
+        ];
+
+        if (!in_array($name, $allowed)) {
+            abort(404, 'Section inconnue');
+        }
+
+        // Admin-only sections
+        if (in_array($name, ['utilisateurs', 'logs']) && $user->role !== 'admin') {
+            abort(403);
+        }
+
+        $data = $this->getSectionData($name, $user);
+
+        // Return rendered HTML fragment
+        return view('dashboard.sections.' . $name, compact('data'))->render();
+    }
+
+    /**
+     * Generate data for a specific section.
+     */
+    private function getSectionData(string $section, $user): array
+    {
+        $baseData = [
+            'financial_stats' => $this->statsService->getFinancialKPIs(),
+            'parc_stats' => $this->statsService->getParcStats(),
+            'categories_depenses' => ['maintenance', 'travaux', 'taxe', 'assurance', 'autre'],
+        ];
+
+        return match ($section) {
+            'biens' => array_merge($baseData, [
+                'biens_list' => Bien::with(['contrats.locataire', 'images', 'imagePrincipale', 'proprietaire'])->latest()->paginate(25, ['*'], 'page_biens'),
+                'proprietaires_list' => in_array($user->role, ['admin', 'gestionnaire', 'direction'])
+                    ? Proprietaire::orderBy('id', 'asc')->get()
+                    : collect([]),
+            ]),
+
+            'proprietaires' => array_merge($baseData, [
+                'proprietaires_list' => in_array($user->role, ['admin', 'gestionnaire', 'direction'])
+                    ? Proprietaire::withCount(['biens as logements_count'])->orderBy('id', 'asc')->get()
+                    : collect([]),
+                'agency' => in_array($user->role, ['admin', 'gestionnaire', 'direction'])
+                    ? Proprietaire::where('email', 'contact@ontariogroup.net')->first()
+                    : null,
+                'owner_stats' => in_array($user->role, ['admin', 'gestionnaire', 'direction'])
+                    ? $this->getOptimizedOwnerStats()
+                    : collect([]),
+            ]),
+
+            'locataires' => array_merge($baseData, [
+                'locataires_list' => Locataire::with(['contrats.bien', 'contrats.loyers', 'documents'])->withCount('contrats')->latest()->paginate(25, ['*'], 'page_locataires'),
+            ]),
+
+            'contrats' => array_merge($baseData, [
+                'contrats_list' => Contrat::with(['bien:id,nom,adresse', 'locataire:id,nom,telephone', 'loyers'])->latest()->paginate(25, ['*'], 'page_contrats'),
+                // Needed for the contrat creation form select dropdowns
+                'locataires_all' => [],
+                'biens_all' => [],
+            ]),
+
+            'loyers' => array_merge($baseData, [
+                'loyers_list' => Loyer::withMontantPaye()
+                    ->with(['contrat.locataire', 'contrat.bien', 'paiements'])
+                    ->where(function ($q) {
+                        $q->where('statut', '!=', 'payé')
+                          ->orWhere('mois', '>=', Carbon::now()->subMonths(2)->format('Y-m'));
+                    })
+                    ->orderBy('mois', 'desc')
+                    ->orderBy('id', 'desc')
+                    ->paginate(10, ['*'], 'page_loyers'),
+                'contrats_list' => Contrat::where('statut', 'actif')->with('bien', 'locataire')->get(),
+            ]),
+
+            'paiements' => array_merge($baseData, [
+                'paiements_list' => Paiement::with(['loyer.contrat.locataire', 'loyer.contrat.bien'])->latest()->paginate(50, ['*'], 'page_paiements'),
+                'loyers_list' => Loyer::withMontantPaye()
+                    ->with(['contrat.locataire', 'contrat.bien'])
+                    ->whereIn('statut', ['émis', 'en_retard', 'partiellement_payé'])
+                    ->orderBy('mois', 'desc')
+                    ->get(),
+            ]),
+
+            'depenses' => array_merge($baseData, [
+                'depenses_list' => \App\Models\Depense::with('bien.proprietaire')->latest()->paginate(25, ['*'], 'page_depenses'),
+                'biens_list' => Bien::select('id', 'nom')->orderBy('nom')->get(),
+            ]),
+
+            'relances' => array_merge($baseData, [
+                'loyers_list' => Loyer::withMontantPaye()
+                    ->with(['contrat.locataire', 'contrat.bien'])
+                    ->whereIn('statut', ['émis', 'en_retard', 'partiellement_payé'])
+                    ->orderBy('mois', 'desc')
+                    ->get(),
+            ]),
+
+            'utilisateurs' => array_merge($baseData, [
+                'users_list' => User::all(),
+            ]),
+
+            'logs' => array_merge($baseData, [
+                'logs_list' => ActivityLog::with('user')->latest()->limit(50)->get(),
+            ]),
+
+            'parametres' => $baseData,
+
+            default => $baseData,
+        };
     }
 
     public function refreshCache()
@@ -195,11 +278,11 @@ class DashboardController extends Controller
                 'taux_occupation' => $parc['taux_occupation'],
                 'revenu_mensuel' => $financial['loyers_encaisses'],
                 'taux_collecte' => $financial['taux_recouvrement'],
-                'commission_mensuelle' => round($financial['loyers_encaisses'] * $commissionRate),
+                'commission_mensuelle' => round($financial['loyers_encaisses'] * $commissionRate, 2),
                 'impayes' => $financial['arrieres_total'],
                 'valeur_portefeuille' => $financial['gross_potential_rent'],
                 'loyer_moyen' => $parc['total_biens'] > 0 ? round($financial['gross_potential_rent'] / $parc['total_biens']) : 0,
-                'projection_annuelle' => round($financial['loyers_encaisses'] * $commissionRate) * 12,
+                'projection_annuelle' => round($financial['loyers_encaisses'] * $commissionRate, 2) * 12,
                 'taux_vacance_economique' => $financial['economic_vacancy_rate'],
                 'perte_vacance_economique' => $financial['economic_vacancy_loss'],
             ],
@@ -242,7 +325,7 @@ class DashboardController extends Controller
                 'loyers_emis' => $financial['loyers_factures'],
                 'loyers_payes' => $financial['loyers_encaisses'],
                 'total_impaye' => $financial['arrieres_total'],
-                'commission_mensuelle' => round($financial['loyers_encaisses'] * $commissionRate),
+                'commission_mensuelle' => round($financial['loyers_encaisses'] * $commissionRate, 2),
                 'taux_vacance_economique' => $financial['economic_vacancy_rate'],
                 'perte_vacance_economique' => $financial['economic_vacancy_loss'],
             ],
@@ -256,5 +339,46 @@ class DashboardController extends Controller
         $filename = 'Rapport_Mensuel_'.Carbon::parse($mois)->translatedFormat('F_Y').'.pdf';
 
         return $pdf->stream($filename);
+    }
+
+    private function getOptimizedOwnerStats()
+    {
+        $proprietaires = Proprietaire::withCount([
+            'biens as total_units',
+            'biens as occupied_units' => function ($query) {
+                $query->whereHas('contrats', function ($q) {
+                    $q->where('statut', 'actif');
+                });
+            }
+        ])->get();
+
+        return $proprietaires->mapWithKeys(function ($prop) {
+            $totalBiens = $prop->total_units;
+            $occupes = $prop->occupied_units;
+            
+            $ca = \App\Models\Paiement::whereHas('loyer.contrat.bien', function($q) use ($prop) {
+                $q->where('proprietaire_id', $prop->id);
+            })->whereMonth('date_paiement', now()->month)->whereYear('date_paiement', now()->year)->sum('montant');
+            
+            $arrieresFactures = \App\Models\Loyer::whereHas('contrat.bien', function($q) use ($prop) {
+                $q->where('proprietaire_id', $prop->id);
+            })->whereIn('statut', ['émis', 'en_retard', 'partiellement_payé'])->selectRaw('SUM(montant + COALESCE(penalite, 0)) as total')->value('total') ?? 0;
+            
+            $arrieresPayes = \App\Models\Paiement::whereHas('loyer.contrat.bien', function($q) use ($prop) {
+                $q->where('proprietaire_id', $prop->id);
+            })->whereHas('loyer', function($q) {
+                $q->whereIn('statut', ['émis', 'en_retard', 'partiellement_payé']);
+            })->sum('montant');
+
+            $arrieres = $arrieresFactures - $arrieresPayes;
+
+            return [$prop->id => [
+                'occupancy_rate' => $totalBiens > 0 ? round(($occupes / $totalBiens) * 100, 1) : 0,
+                'revenue_this_month' => (float) $ca,
+                'total_arrears' => (float) max(0, $arrieres),
+                'total_units' => $totalBiens,
+                'occupied_units' => $occupes,
+            ]];
+        });
     }
 }

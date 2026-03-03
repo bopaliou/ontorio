@@ -127,7 +127,7 @@ class DashboardStatsService
             })->where('date_depense', 'like', $moisActuel.'%')->sum('montant');
 
             $commissionRate = (float) config('real_estate.commission.rate', 0.10);
-            $commissionMois = round($revenusMois * $commissionRate);
+            $commissionMois = round($revenusMois * $commissionRate, 2);
 
             $biensPerformance = Bien::where('proprietaire_id', $proprietaire->id)
                 ->withCount(['contrats as is_active' => fn ($q) => $q->where('statut', ContratStatus::ACTIF->value)])

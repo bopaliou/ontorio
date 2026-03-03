@@ -10,9 +10,9 @@
         }
         body {
             font-family: 'Helvetica', 'Arial', sans-serif;
-            font-size: 10px;
-            color: #1e293b;
-            line-height: 1.5;
+            font-size: 9px;
+            color: #334155;
+            line-height: 1.4;
             background-color: #fff;
             margin: 0;
             padding: 0;
@@ -21,118 +21,144 @@
         .page {
             position: relative;
             padding: 30px 40px;
+            height: 100%;
             box-sizing: border-box;
         }
 
         /* Branding Colors */
-        .text-primary { color: #cb2d2d; }
-        .text-secondary { color: #1a2e3d; }
+        .text-brand-red { color: #cb2d2d; }
+        .text-brand-blue { color: #0f172a; }
 
-        /* Profile Card */
+        /* Profile Block */
         .profile-section {
             background-color: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            padding: 15px;
+            border: 1px solid #f1f5f9;
+            border-left: 3px solid #cb2d2d;
+            border-radius: 6px;
+            padding: 12px 15px;
             margin-bottom: 25px;
         }
         .profile-label {
-            font-size: 8px;
-            font-weight: 900;
-            color: #cb2d2d;
+            font-size: 7px;
+            font-weight: 800;
+            color: #94a3b8;
             text-transform: uppercase;
             letter-spacing: 1px;
-            margin-bottom: 5px;
+            margin-bottom: 4px;
         }
         .profile-name {
             font-size: 14px;
             font-weight: 900;
-            color: #1a2e3d;
-        }
-
-        /* Section Headings */
-        .section-header {
-            font-size: 9px;
-            font-weight: 900;
-            color: #1a2e3d;
+            color: #0f172a;
             text-transform: uppercase;
-            margin-bottom: 12px;
-            border-left: 4px solid #cb2d2d;
-            padding-left: 12px;
+        }
+        .profile-meta {
+            font-size: 8.5px;
+            color: #64748b;
+            margin-top: 4px;
         }
 
         /* Tables */
+        .section-header {
+            font-size: 10px;
+            font-weight: 900;
+            color: #0f172a;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 5px;
+            margin-top: 25px;
+        }
+
         .data-table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 25px;
+            margin-bottom: 15px;
             page-break-inside: avoid;
         }
         .data-table th {
-            background-color: #1a2e3d;
-            color: #fff;
+            background-color: #f8fafc;
+            color: #475569;
             text-align: left;
-            padding: 10px 12px;
-            font-size: 8px;
+            padding: 8px 12px;
+            font-size: 7.5px;
             font-weight: 900;
             text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 2px solid #e2e8f0;
         }
         .data-table td {
-            padding: 10px 12px;
+            padding: 8px 12px;
             border-bottom: 1px solid #f1f5f9;
-            font-size: 9.5px;
+            font-size: 9px;
+            vertical-align: middle;
         }
         .data-table .amount {
             text-align: right;
             font-weight: 800;
+            color: #0f172a;
         }
-        .data-table tr.total-row td {
-            background-color: #f8fafc;
-            font-weight: 900;
-            border-top: 2px solid #e2e8f0;
+        
+        .row-sub { color: #64748b; font-size: 8px; }
+
+        /* Empty State */
+        .empty-row td {
+            text-align: center;
+            padding: 15px;
+            color: #94a3b8;
+            font-style: italic;
+            font-size: 8.5px;
         }
 
-        /* Financial Synthesis Box */
-        .synthesis-box {
-            background-color: #1a2e3d;
-            color: #fff;
-            border-radius: 12px;
-            padding: 20px;
-            margin-top: 10px;
+        /* Synthesis / Totals */
+        .totals-container {
+            width: 100%;
+            margin-top: 20px;
             page-break-inside: avoid;
         }
-        .synth-item {
-            margin-bottom: 10px;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            padding-bottom: 8px;
+        .totals-table {
+            width: 280px;
+            float: right;
+            border-collapse: collapse;
         }
-        .synth-label {
-            font-size: 10px;
+        .totals-table td {
+            padding: 6px 0;
+            text-align: right;
+        }
+        .total-label {
+            font-size: 9px;
+            color: #64748b;
             font-weight: 700;
-            color: #94a3b8;
+            padding-right: 15px;
             text-transform: uppercase;
         }
-        .synth-val {
-            font-size: 14px;
+        .total-value {
+            font-size: 11px;
             font-weight: 800;
-            float: right;
-            margin-top: -3px;
+            color: #334155;
         }
-        .net-result {
-            margin-top: 15px;
-            padding-top: 15px;
-            border-top: 2px dashed rgba(255,255,255,0.2);
+        
+        .grand-total-row td {
+            padding-top: 12px;
+            padding-bottom: 12px;
+            border-top: 2px solid #cb2d2d; 
+            background-color: #fffafa;
         }
-        .net-label {
-            font-size: 12px;
+        .grand-total-label {
+            font-size: 10px;
             font-weight: 900;
+            color: #cb2d2d;
             text-transform: uppercase;
+            letter-spacing: 1px;
+            padding-right: 15px;
+            padding-left: 10px;
         }
-        .net-val {
-            font-size: 24px;
+        .grand-total-value {
+            font-size: 14px;
             font-weight: 900;
-            float: right;
-            margin-top: -10px;
+            color: #cb2d2d;
+            padding-right: 10px;
         }
 
         .clearfix { clear: both; }
@@ -143,15 +169,18 @@
         <!-- HEADER -->
         @include('pdf.partials.header', [
             'title' => 'Bilan Financier Propriétaire',
-            'ref' => 'BIL-' . date('Ym') . '-' . $proprietaire->id,
+            'ref' => 'BIL-' . date('Ym') . '-' . str_pad($proprietaire->id, 3, '0', STR_PAD_LEFT),
             'date' => date('d/m/Y')
         ])
 
         <!-- PROFILE -->
         <div class="profile-section">
-            <div class="profile-label">Identité du Propriétaire</div>
-            <div class="profile-name">{{ strtoupper($proprietaire->nom) }} {{ strtoupper($proprietaire->prenom ?? '') }}</div>
-            <div style="font-size: 9px; color: #64748b; margin-top: 4px;">Nombre de biens en gestion : <strong>{{ $biens->count() }}</strong></div>
+            <div class="profile-label">Identité du Propriétaire / Mandant</div>
+            <div class="profile-name">{{ $proprietaire->nom }} {{ $proprietaire->prenom ?? '' }}</div>
+            <div class="profile-meta">
+                Contact : {{ $proprietaire->telephone ?? '--' }} &nbsp;|&nbsp; 
+                Parc immobilier : <strong>{{ $biens->count() }}</strong> bien(s) en gestion
+            </div>
         </div>
 
         <!-- REVENUES Table -->
@@ -159,38 +188,50 @@
         <table class="data-table">
             <thead>
                 <tr>
-                    <th style="width: 45%">Bien</th>
-                    <th style="width: 30%">Locataire</th>
+                    <th style="width: 45%">Désignation du Bien</th>
+                    <th style="width: 30%">Locataire Principal</th>
                     <th style="width: 25%; text-align: right;">Montant Perçu</th>
                 </tr>
             </thead>
             <tbody>
-                @php $totalRecettes = 0; @endphp
+                @php $totalRecettes = 0; $baseCommission = 0; $hasRecettes = false; @endphp
                 @foreach($biens as $bien)
                     @php
+                        // Calcul des encaissements sur ce bien
                         $encaisséBien = $bien->contrats->flatMap->paiements->sum('montant');
+                        // Base commissionnaire = min(loyer facturé, paiements reçus) pour exclure les pénalités
+                        $loyersMontant = $bien->contrats->flatMap->loyers->sum('montant');
+                        $baseCommission += min($loyersMontant, $encaisséBien);
+                        if($encaisséBien > 0) $hasRecettes = true;
                         $totalRecettes += $encaisséBien;
                     @endphp
+                    @if($encaisséBien > 0)
                     <tr>
-                        <td style="font-weight: 700;">{{ $bien->nom }}</td>
+                        <td>
+                            <strong style="color: #0f172a;">{{ $bien->nom }}</strong>
+                            <div class="row-sub">{{ ucfirst($bien->type) }}</div>
+                        </td>
                         <td>{{ $bien->contrats->where('statut', 'actif')->first()->locataire->nom ?? '---' }}</td>
-                        <td class="amount text-primary">{{ format_money($encaisséBien) }}</td>
+                        <td class="amount">{{ format_money($encaisséBien, '') }} <span style="font-size: 8px; font-weight: 400; color: #94a3b8;">FCFA</span></td>
                     </tr>
+                    @endif
                 @endforeach
-                <tr class="total-row">
-                    <td colspan="2">TOTAL DES REVENUS LOCATIFS</td>
-                    <td class="amount text-primary">{{ format_money($totalRecettes) }}</td>
-                </tr>
+                
+                @if(!$hasRecettes)
+                    <tr class="empty-row">
+                        <td colspan="3">Aucun encaissement sur la période.</td>
+                    </tr>
+                @endif
             </tbody>
         </table>
 
         <!-- EXPENSES Table -->
-        <div class="section-header">Charges & Maintenance Déductibles</div>
+        <div class="section-header">Charges & Frais Déductibles</div>
         <table class="data-table">
             <thead>
                 <tr>
                     <th style="width: 15%">Date</th>
-                    <th style="width: 60%">Libellé / Catégorie</th>
+                    <th style="width: 60%">Libellé / Catégorie Intervention</th>
                     <th style="width: 25%; text-align: right;">Montant</th>
                 </tr>
             </thead>
@@ -200,41 +241,56 @@
                     @foreach($bien->depenses as $dep)
                         @php $totalDepenses += $dep->montant; $hasDepenses = true; @endphp
                         <tr>
-                            <td>{{ $dep->date_depense->format('d/m/y') }}</td>
-                            <td>{{ $dep->titre }} <span style="color: #94a3b8; font-size: 8px;">({{ $dep->categorie }})</span></td>
-                            <td class="amount" style="color: #64748b;">{{ format_money($dep->montant) }}</td>
+                            <td style="color: #64748b;">{{ $dep->date_depense->format('d/m/Y') }}</td>
+                            <td>
+                                <strong style="color: #0f172a;">{{ $dep->titre }}</strong>
+                                <div class="row-sub">{{ $bien->nom }} — {{ ucfirst($dep->categorie) }}</div>
+                            </td>
+                            <td class="amount">{{ format_money($dep->montant, '') }} <span style="font-size: 8px; font-weight: 400; color: #94a3b8;">FCFA</span></td>
                         </tr>
                     @endforeach
                 @endforeach
+                
                 @if(!$hasDepenses)
-                    <tr>
-                        <td colspan="3" style="text-align: center; padding: 15px; color: #94a3b8; font-style: italic;">Aucune charge enregistrée sur la période.</td>
+                    <tr class="empty-row">
+                        <td colspan="3">Aucune charge ou dépense enregistrée sur la période.</td>
                     </tr>
                 @endif
-                <tr class="total-row">
-                    <td colspan="2">TOTAL DES DÉPENSES OPÉRATIONNELLES</td>
-                    <td class="amount" style="color: #64748b;">{{ format_money($totalDepenses) }}</td>
-                </tr>
             </tbody>
         </table>
 
-        <!-- SYNTHESIS -->
-        <div class="synthesis-box">
-            <div class="synth-item">
-                <span class="synth-label">Recettes Brutes</span>
-                <span class="synth-val">{{ format_money($totalRecettes) }}</span>
-                <div class="clearfix"></div>
-            </div>
-            <div class="synth-item">
-                <span class="synth-label">Charges & Dépenses</span>
-                <span class="synth-val">- {{ format_money($totalDepenses) }}</span>
-                <div class="clearfix"></div>
-            </div>
-            <div class="net-result">
-                <span class="net-label">Net de Gestion à Reverser</span>
-                <span class="net-val">{{ format_money($totalRecettes - $totalDepenses) }}</span>
-                <div class="clearfix"></div>
-            </div>
+        <!-- SYNTHESIS / TOTALS -->
+        <div class="totals-container clearfix">
+            <table class="totals-table">
+                <tr>
+                    <td class="total-label">Total des Recettes</td>
+                    <td class="total-value">{{ format_money($totalRecettes, '') }} <span style="font-size: 9px; color: #94a3b8;">FCFA</span></td>
+                </tr>
+                <tr>
+                    <td class="total-label">Total des Charges</td>
+                    <td class="total-value" style="color: #cb2d2d;">- {{ format_money($totalDepenses, '') }} <span style="font-size: 9px; color: #94a3b8;">FCFA</span></td>
+                </tr>
+                
+                <!-- Commission Agence calculation (10% par défaut) -->
+                @php
+                    $commissionRate = config('real_estate.commission.rate', 0.10);
+                    $commission = round($baseCommission * $commissionRate, 2);
+                    $netAReverser = $totalRecettes - $totalDepenses - $commission;
+                @endphp
+                
+                <tr>
+                    <td class="total-label">Frais de Gestion ({{ $commissionRate * 100 }}%)</td>
+                    <td class="total-value" style="color: #cb2d2d;">- {{ format_money($commission, '') }} <span style="font-size: 9px; color: #94a3b8;">FCFA</span></td>
+                </tr>
+                
+                <tr class="grand-total-row">
+                    <td class="grand-total-label">NET À REVERSER</td>
+                    <td class="grand-total-value">
+                        {{ format_money($netAReverser, '') }} 
+                        <span style="font-size: 10px;">FCFA</span>
+                    </td>
+                </tr>
+            </table>
         </div>
 
         @include('pdf.partials.footer')

@@ -98,4 +98,18 @@ class LocataireController extends Controller
             return ApiResponse::error('Une erreur est survenue lors de la suppression.', 500);
         }
     }
+
+    /**
+     * Search Locataires via AJAX for exact dropdown population
+     */
+    public function searchAjax(Request $request)
+    {
+        $this->authorize('locataires.view');
+        
+        $locataires = Locataire::select('id', 'nom', 'telephone')
+            ->orderBy('nom')
+            ->get();
+
+        return response()->json($locataires);
+    }
 }

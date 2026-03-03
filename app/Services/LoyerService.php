@@ -95,11 +95,15 @@ class LoyerService
         // Mettre à jour le contrat
         $contrat->update(['loyer_montant' => $nouveauMontant]);
 
-        // Mettre à jour les loyers futurs non payés
+        // Mettre à jour les loyers futurs non payés (montant + commission)
+        $commissionRate = (float) config('real_estate.commission.rate', 0.10);
         Loyer::where('contrat_id', $contrat->id)
             ->where('mois', '>=', now()->format('Y-m'))
             ->whereIn('statut', ['émis', 'en_retard'])
-            ->update(['montant' => $nouveauMontant]);
+            ->update([
+                'montant' => $nouveauMontant,
+                'commission' => round($nouveauMontant * $commissionRate, 2),
+            ]);
 
         ActivityLogger::log(
             'Révision Loyer',

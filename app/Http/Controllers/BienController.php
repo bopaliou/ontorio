@@ -174,4 +174,22 @@ class BienController extends Controller
             return ApiResponse::error($e->getMessage(), 500);
         }
     }
+
+    /**
+     * Search Biens via AJAX for dropdown population (Only free or inactive contracts)
+     */
+    public function searchAjax(Request $request)
+    {
+        $this->authorize('biens.view');
+        
+        $biens = Bien::select('id', 'nom', 'adresse', 'loyer_mensuel', 'type')
+            ->where('statut', 'libre')
+            ->orWhereHas('contrats', function($q) { 
+                $q->where('statut', '!=', 'actif'); 
+            })
+            ->orderBy('nom')
+            ->get();
+
+        return response()->json($biens);
+    }
 }

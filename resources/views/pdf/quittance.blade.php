@@ -10,9 +10,9 @@
         }
         body {
             font-family: 'Helvetica', 'Arial', sans-serif;
-            font-size: 9px; /* Reduced from 10px */
+            font-size: 9px;
             color: #334155; 
-            line-height: 1.3; /* Reduced from 1.4 */
+            line-height: 1.4;
             background-color: #fff;
             margin: 0;
             padding: 0;
@@ -20,84 +20,84 @@
 
         .page-container {
             position: relative;
-            padding: 25px 40px; /* Reduced from 40px 50px */
+            padding: 30px 40px;
+            height: 100%;
+            box-sizing: border-box;
         }
 
         /* ----- COLORS ----- */
         .text-brand-red { color: #cb2d2d; }
         .text-brand-blue { color: #1a2e3d; }
-        .bg-brand-red { background-color: #cb2d2d; }
-        .bg-brand-blue { background-color: #1a2e3d; }
-        .border-brand-red { border-color: #cb2d2d; }
         
         /* ----- WATERMARK ----- */
         .watermark {
             position: absolute;
-            top: 45%;
+            top: 40%;
             left: 50%;
-            transform: translate(-50%, -50%) rotate(-30deg);
-            font-size: 80px; /* Reduced from 100px */
+            transform: translate(-50%, -50%) rotate(-35deg);
+            font-size: 90px;
             font-weight: 900;
             color: #cb2d2d;
-            opacity: 0.04; 
+            opacity: 0.03; 
             white-space: nowrap;
             z-index: -10;
             text-transform: uppercase;
-            letter-spacing: 15px;
+            letter-spacing: 20px;
             pointer-events: none;
         }
 
         /* ----- INFO CARDS (Tenant / Property) ----- */
         .info-section {
             width: 100%;
-            margin-top: 15px; /* Reduced from 30px */
-            margin-bottom: 20px; /* Reduced from 25px */
-            border-collapse: separate;
-            border-spacing: 15px 0; 
+            margin-bottom: 20px;
+            border-collapse: collapse;
         }
         
         .info-box {
             background-color: #f8fafc;
-            border-left: 4px solid #cb2d2d;
-            border-radius: 4px; 
-            padding: 10px 15px; /* Reduced from 15px 20px */
-            width: 46%; 
+            border: 1px solid #f1f5f9;
+            border-left: 3px solid #cb2d2d;
+            border-radius: 6px; 
+            padding: 12px 15px;
+            width: 48%; 
+            vertical-align: top;
         }
 
         .box-title {
-            font-size: 7px; /* Reduced from 8px */
+            font-size: 7px;
             text-transform: uppercase;
             letter-spacing: 1px;
             color: #94a3b8; 
-            font-weight: 700;
-            margin-bottom: 5px; /* Reduced from 8px */
+            font-weight: 800;
+            margin-bottom: 4px;
         }
         .box-main {
-            font-size: 11px; /* Reduced from 13px */
-            font-weight: 800;
-            color: #1a2e3d;
-            margin-bottom: 2px; /* Reduced from 4px */
+            font-size: 11px;
+            font-weight: 900;
+            color: #0f172a;
+            margin-bottom: 2px;
             text-transform: uppercase;
         }
         .box-detail {
-            font-size: 8px; /* Reduced from 9px */
+            font-size: 8.5px;
             color: #64748b;
+            line-height: 1.3;
         }
 
         /* ----- NARRATION BLOCK ----- */
         .narration-box {
-            background-color: #fff;
-            border: 1px dashed #cbd5e1;
+            background-color: #fafaf9;
             border-radius: 6px;
-            padding: 10px 15px; /* Reduced from 15px 20px */
-            margin-bottom: 20px; /* Reduced from 30px */
-            font-size: 10px; /* Reduced from 11px */
-            color: #334155;
+            padding: 12px 15px;
+            margin-bottom: 20px;
+            font-size: 9.5px;
+            color: #475569;
             text-align: justify;
-            line-height: 1.5; /* Reduced from 1.6 */
+            line-height: 1.5;
+            border-left: 2px solid #e2e8f0;
         }
         .narration-box strong {
-            color: #1a2e3d;
+            color: #0f172a;
             font-weight: 800;
         }
 
@@ -105,48 +105,51 @@
         .invoice-table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 15px; /* Reduced from 20px */
+            margin-bottom: 15px;
         }
         .invoice-table th {
             text-align: left;
-            padding: 8px 12px; /* Reduced from 12px 15px */
-            background-color: #1a2e3d;
-            color: #ffffff;
-            font-size: 8px; /* Reduced from 9px */
-            font-weight: 700;
+            padding: 8px 12px;
+            background-color: #f8fafc;
+            color: #475569;
+            font-size: 7.5px;
+            font-weight: 900;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 1px;
+            border-bottom: 2px solid #e2e8f0;
         }
         .invoice-table td {
-            padding: 10px 12px; /* Reduced from 15px */
-            border-bottom: 1px solid #e2e8f0;
-            vertical-align: top;
+            padding: 10px 12px;
+            border-bottom: 1px solid #f1f5f9;
+            vertical-align: middle;
         }
         .invoice-table tr:last-child td {
-            border-bottom: 2px solid #1a2e3d; 
+            border-bottom: 1px solid #cbd5e1; 
         }
 
         .item-title {
-            font-size: 10px; /* Reduced from 11px */
+            font-size: 9.5px;
             font-weight: 800;
-            color: #1a2e3d;
-            margin-bottom: 2px;
+            color: #0f172a;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
         .item-desc {
-            font-size: 8px; /* Reduced from 9px */
+            font-size: 8px;
             color: #64748b;
+            margin-top: 2px;
         }
         .item-amount {
-            font-size: 11px; /* Reduced from 12px */
-            font-weight: 700;
-            color: #334155;
+            font-size: 11px;
+            font-weight: 800;
+            color: #0f172a;
             text-align: right;
         }
 
         /* ----- TOTALS SECTION ----- */
         .totals-container {
             width: 100%;
-            margin-top: 5px; /* Reduced from 10px */
+            margin-top: 5px;
         }
         .totals-table {
             width: 250px;
@@ -154,46 +157,51 @@
             border-collapse: collapse;
         }
         .totals-table td {
-            padding: 4px 0; /* Reduced from 6px */
+            padding: 5px 0;
             text-align: right;
         }
         .total-label {
-            font-size: 9px; /* Reduced from 10px */
+            font-size: 8.5px;
             color: #64748b;
-            font-weight: 600;
+            font-weight: 700;
             padding-right: 15px;
+            text-transform: uppercase;
         }
         .total-value-sm {
-            font-size: 10px; /* Reduced from 11px */
-            font-weight: 700;
+            font-size: 10px;
+            font-weight: 800;
             color: #334155;
         }
         
         .grand-total-row td {
-            padding-top: 8px; /* Reduced from 12px */
-            padding-bottom: 8px; /* Reduced from 12px */
+            padding-top: 10px;
+            padding-bottom: 10px;
             border-top: 2px solid #cb2d2d; 
+            background-color: #fffafa;
         }
         .grand-total-label {
-            font-size: 10px; /* Reduced from 11px */
+            font-size: 10px;
             font-weight: 900;
             color: #cb2d2d;
             text-transform: uppercase;
+            letter-spacing: 1px;
             padding-right: 15px;
+            padding-left: 10px;
         }
         .grand-total-value {
-            font-size: 14px; /* Reduced from 18px */
+            font-size: 14px;
             font-weight: 900;
             color: #cb2d2d;
+            padding-right: 10px;
         }
 
         .payment-info {
-            position: absolute;
-            bottom: 110px; /* Adjusted from 130px */
-            left: 40px; /* Adjusted from 50px */
-            font-size: 8px; /* Reduced from 9px */
+            float: left;
+            width: 50%;
+            font-size: 8px;
             color: #64748b;
-            line-height: 1.4;
+            line-height: 1.5;
+            padding-top: 10px;
         }
 
         .clearfix::after {
@@ -201,11 +209,28 @@
             clear: both;
             display: table;
         }
+        
+        .signature-zone {
+            margin-top: 40px;
+            width: 200px;
+            float: right;
+            text-align: center;
+        }
+        .signature-line {
+            border-bottom: 1px dashed #cbd5e1;
+            height: 60px;
+            margin-bottom: 5px;
+        }
+        .signature-label {
+            font-size: 7px;
+            font-weight: 800;
+            color: #94a3b8;
+            text-transform: uppercase;
+        }
     </style>
 </head>
 <body>
     <div class="page-container">
-        <!-- Watermark -->
         @php
             $isPaid = $loyer->statut === 'payé';
             $isPartial = $loyer->statut === 'partiellement_payé';
@@ -244,7 +269,7 @@
         <!-- HEADER INCLUDE -->
         @include('pdf.partials.header', [
             'title' => $title,
-            'ref' => $refPrefix . date('Y') . '-' . str_pad($loyer->id, 4, '0', STR_PAD_LEFT),
+            'ref' => $refPrefix . date('Y') . '-' . str_pad($loyer->id, 5, '0', STR_PAD_LEFT),
             'date' => date('d/m/Y')
         ])
 
@@ -253,69 +278,41 @@
             <tr>
                 <!-- Tenant Card -->
                 <td class="info-box">
-                    <div class="box-title">Locataire</div>
-                    <div class="box-main">{{ strtoupper($loyer->contrat->locataire->nom) }}</div>
+                    <div class="box-title">Identité du Locataire</div>
+                    <div class="box-main">{{ $loyer->contrat->locataire->nom }}</div>
                     <div class="box-detail">
-                        Réf : LOC-{{ str_pad($loyer->contrat->locataire->id, 3, '0', STR_PAD_LEFT) }}<br>
-                        Tél : {{ $loyer->contrat->locataire->telephone ?? 'N/A' }}
+                        Réf : LOC-{{ str_pad($loyer->contrat->locataire->id, 4, '0', STR_PAD_LEFT) }}<br>
+                        Contact : {{ $loyer->contrat->locataire->telephone ?? '--' }}
                     </div>
                 </td>
                 
                 <!-- Spacer -->
-                <td style="width: 20px;"></td>
+                <td style="width: 4%;"></td>
 
                 <!-- Property Card -->
-                <td class="info-box" style="border-left-color: #1a2e3d;"> <!-- Blue accent for property -->
-                    <div class="box-title">Bien Loué</div>
+                <td class="info-box" style="border-left-color: #1a2e3d;">
+                    <div class="box-title">Désignation du Bien</div>
                     <div class="box-main">{{ $loyer->contrat->bien->nom }}</div>
                     <div class="box-detail">
-                        {{ ucfirst($loyer->contrat->bien->type) }}<br>
-                        {{ $loyer->contrat->bien->adresse ?? 'Dakar, Sénégal' }}
+                        Type : {{ ucfirst($loyer->contrat->bien->type) }}<br>
+                        Adresse : {{ $loyer->contrat->bien->adresse ?? 'Sénégal' }}
                     </div>
                 </td>
             </tr>
         </table>
 
         <!-- NARRATION -->
-        <!-- NARRATION -->
         <div class="narration-box">
             @if($isPaid)
-                Nous, <strong>ONTARIO GROUP S.A.</strong>, certifions avoir reçu de 
-                <strong>{{ $loyer->contrat->locataire->nom }}</strong>
-                la somme de <strong>{{ format_money($totalDu) }}</strong>
-                en règlement libératoire du loyer pour la période de 
-                <strong style="text-transform: uppercase;">{{ \Carbon\Carbon::parse($loyer->mois)->translatedFormat('F Y') }}</strong>.
+                Nous soussignés, <strong>ONTARIO GROUP S.A.</strong>, reconnaissons avoir reçu la somme de <strong>{{ format_money($totalDu) }}</strong> en règlement libératoire intégral du loyer pour la période de <strong style="text-transform: uppercase;">{{ \Carbon\Carbon::parse($loyer->mois)->translatedFormat('F Y') }}</strong>, dont quittance sans préjudice de toutes autres causes ou créances éventuelles.
             @elseif($isPartial)
-                Nous, <strong>ONTARIO GROUP S.A.</strong>, certifions avoir reçu de 
-                <strong>{{ $loyer->contrat->locataire->nom }}</strong>
-                un acompte de <strong>{{ format_money($dejaPaye) }}</strong>
-                sur un total de <strong>{{ format_money($totalDu) }}</strong>
-                pour le loyer de la période de 
-                <strong style="text-transform: uppercase;">{{ \Carbon\Carbon::parse($loyer->mois)->translatedFormat('F Y') }}</strong>.
-                <br>
-                <strong>Reste à payer : {{ format_money($resteAPayer) }} FCFA.</strong>
+                Nous accusons réception d'un paiement partiel de <strong>{{ format_money($dejaPaye) }}</strong> sur le loyer couvrant la période de <strong style="text-transform: uppercase;">{{ \Carbon\Carbon::parse($loyer->mois)->translatedFormat('F Y') }}</strong>. <strong>Reste à charge : {{ format_money($resteAPayer) }} FCFA.</strong>
             @elseif($isLate)
-                <strong>MISE EN DEMEURE :</strong><br>
-                Sauf erreur ou omission de notre part, nous constatons que le loyer pour la période de 
-                <strong style="text-transform: uppercase;">{{ \Carbon\Carbon::parse($loyer->mois)->translatedFormat('F Y') }}</strong>
-                concernant le bien <strong>{{ $loyer->contrat->bien->nom }} ({{ ucfirst($loyer->contrat->bien->type) }})</strong> 
-                n'a pas été réglé à ce jour.
-                <br>
-                <strong>Montant total réclamé : {{ format_money($totalDu) }} FCFA</strong> 
-                (incluant les éventuelles pénalités de retard).
-                <br>
-                Nous vous prions de régulariser votre situation dans les plus brefs délais.
+                Sauf erreur de notre part, votre loyer de la période de <strong style="text-transform: uppercase;">{{ \Carbon\Carbon::parse($loyer->mois)->translatedFormat('F Y') }}</strong> présente un arriéré. Veuillez régulariser ce montant de <strong>{{ format_money($totalDu) }} FCFA</strong> dans les plus brefs délais pour éviter des poursuites.
             @elseif($isCancelled)
-                <strong>DOCUMENT ANNULÉ :</strong><br>
-                Ce document annule et remplace tout document précédent concernant le loyer de la période de 
-                <strong style="text-transform: uppercase;">{{ \Carbon\Carbon::parse($loyer->mois)->translatedFormat('F Y') }}</strong>.
-                <br>
-                Motif : {{ $loyer->note_annulation ?? 'Annulation administrative' }}
+                Ce document annule et remplace tout avis d'émission précédent concernant la période de <strong style="text-transform: uppercase;">{{ \Carbon\Carbon::parse($loyer->mois)->translatedFormat('F Y') }}</strong>. (Motif : {{ $loyer->note_annulation ?? 'Annulation administrative' }})
             @else
-                <strong>AVIS D'ÉCHÉANCE :</strong><br>
-                Nous vous prions de bien vouloir procéder au règlement du loyer pour la période de 
-                <strong style="text-transform: uppercase;">{{ \Carbon\Carbon::parse($loyer->mois)->translatedFormat('F Y') }}</strong>
-                concernant le bien <strong>{{ $loyer->contrat->bien->nom }} ({{ ucfirst($loyer->contrat->bien->type) }})</strong> situé à <strong>{{ $loyer->contrat->bien->adresse }}</strong>.
+                Le présent avis tient lieu d'appel formel pour le loyer couvrant la période de <strong style="text-transform: uppercase;">{{ \Carbon\Carbon::parse($loyer->mois)->translatedFormat('F Y') }}</strong>. Le paiement doit nous parvenir avant l'échéance convenue.
             @endif
         </div>
 
@@ -323,28 +320,28 @@
         <table class="invoice-table">
             <thead>
                 <tr>
-                    <th style="width: 65%; border-top-left-radius: 4px; border-bottom-left-radius: 4px;">Désignation</th>
-                    <th style="width: 35%; text-align: right; border-top-right-radius: 4px; border-bottom-right-radius: 4px;">Montant</th>
+                    <th style="width: 65%;">Description des charges</th>
+                    <th style="width: 35%; text-align: right;">Montant Total</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
                     <td>
                         <div class="item-title">Loyer Principal</div>
-                        <div class="item-desc">Période : {{ \Carbon\Carbon::parse($loyer->mois)->translatedFormat('F Y') }}</div>
+                        <div class="item-desc">Mensualité contractuelle - {{ \Carbon\Carbon::parse($loyer->mois)->translatedFormat('F Y') }}</div>
                     </td>
                     <td class="item-amount">
-                        {{ format_money($loyer->montant, '') }} <span style="font-size: 9px; font-weight: 400; color: #94a3b8;">FCFA</span>
+                        {{ format_money($loyer->montant, '') }} <span style="font-size: 8px; color: #94a3b8;">FCFA</span>
                     </td>
                 </tr>
                 @if($loyer->penalite > 0)
                 <tr>
                     <td>
                         <div class="item-title text-brand-red">Pénalités de Retard</div>
-                        <div class="item-desc">Frais appliqués pour retard de paiement</div>
+                        <div class="item-desc">Frais administratifs suite au dépassement de l'échéance</div>
                     </td>
                     <td class="item-amount text-brand-red">
-                        {{ format_money($loyer->penalite, '') }} <span style="font-size: 9px; font-weight: 400; color: #cbd5e1;">FCFA</span>
+                        {{ format_money($loyer->penalite, '') }} <span style="font-size: 8px; color: #cbd5e1;">FCFA</span>
                     </td>
                 </tr>
                 @endif
@@ -355,16 +352,17 @@
         <div class="totals-container clearfix">
             <div class="payment-info">
                 @if($isPaid || $isPartial)
-                    <strong>Mode de paiement :</strong> {{ ucfirst($loyer->mode_paiement ?? 'Espèces / Virement') }}<br>
-                    <strong>Date de valeur :</strong> {{ $loyer->date_paiement ? \Carbon\Carbon::parse($loyer->date_paiement)->format('d/m/Y') : date('d/m/Y') }}
+                    <strong style="color: #0f172a; font-size: 9px; text-transform: uppercase;">Détails d'encaissement :</strong><br>
+                    Mode : {{ ucfirst($loyer->mode_paiement ?? 'Non défini') }}<br>
+                    Date de valeur : {{ $loyer->date_paiement ? \Carbon\Carbon::parse($loyer->date_paiement)->format('d/m/Y') : date('d/m/Y') }}
                 @elseif($isLate)
-                     <span style="color: #cb2d2d; font-weight: bold;">PAIEMENT EN RETARD</span><br>
-                     Merci de régulariser immédiatement.
+                     <strong style="color: #cb2d2d; font-size: 9px; text-transform: uppercase;">Mise en demeure</strong><br>
+                     Échéance initiale : {{ \Carbon\Carbon::parse($loyer->mois)->endOfMonth()->format('d/m/Y') }}
                 @elseif($isCancelled)
-                     <span style="color: #cb2d2d; font-weight: bold;">ANNULÉ</span>
+                     <strong style="color: #94a3b8; font-size: 9px; text-transform: uppercase;">Statut annulé</strong>
                 @else
-                    <strong>Date d'échéance :</strong> {{ \Carbon\Carbon::parse($loyer->mois)->endOfMonth()->format('d/m/Y') }}<br>
-                    <span style="color: #cb2d2d; font-weight: bold;">À régler avant l'échéance.</span>
+                    <strong style="color: #0f172a; font-size: 9px; text-transform: uppercase;">Échéance :</strong> {{ \Carbon\Carbon::parse($loyer->mois)->endOfMonth()->format('d/m/Y') }}<br>
+                    Le non-paiement aux dates convenues entraînera des pénalités.
                 @endif
             </div>
 
@@ -376,45 +374,52 @@
 
                 @if($isPartial)
                 <tr>
-                    <td class="total-label" style="color: #1a2e3d;">Déjà Versé</td>
+                    <td class="total-label" style="color: #1a2e3d;">Acompte Versé</td>
                     <td class="total-value-sm" style="color: #1a2e3d;">{{ format_money($dejaPaye, '') }} FCFA</td>
                 </tr>
                 <tr class="grand-total-row">
                     <td class="grand-total-label">RESTE À PAYER</td>
                     <td class="grand-total-value">
                         {{ format_money($resteAPayer, '') }} 
-                        <span style="font-size: 11px; font-weight: 600;">FCFA</span>
+                        <span style="font-size: 10px;">FCFA</span>
                     </td>
                 </tr>
                 @elseif($isPaid)
                 <tr class="grand-total-row">
-                    <td class="grand-total-label">NET PAYÉ</td>
+                    <td class="grand-total-label">MONTANT RÉGLÉ</td>
                     <td class="grand-total-value">
                         {{ format_money($totalDu, '') }} 
-                        <span style="font-size: 11px; font-weight: 600;">FCFA</span>
+                        <span style="font-size: 10px;">FCFA</span>
                     </td>
                 </tr>
                 @elseif($isLate)
                 <tr class="grand-total-row">
-                    <td class="grand-total-label">TOTAL EXIGIBLE</td>
-                    <td class="grand-total-value" style="color: #cb2d2d;">
+                    <td class="grand-total-label">EXIGIBLE IMMÉDIAT</td>
+                    <td class="grand-total-value">
                         {{ format_money($totalDu, '') }} 
-                        <span style="font-size: 11px; font-weight: 600;">FCFA</span>
+                        <span style="font-size: 10px;">FCFA</span>
                     </td>
                 </tr>
                 @else
                 <tr class="grand-total-row">
-                    <td class="grand-total-label">NET À PAYER</td>
+                    <td class="grand-total-label">NET À PAYER HT</td>
                     <td class="grand-total-value">
                         {{ format_money($totalDu, '') }} 
-                        <span style="font-size: 11px; font-weight: 600;">FCFA</span>
+                        <span style="font-size: 10px;">FCFA</span>
                     </td>
                 </tr>
                 @endif
             </table>
         </div>
-
-
+        
+        <div class="clearfix"></div>
+        
+        @if($isPaid || $isPartial)
+        <div class="signature-zone">
+            <div class="signature-line"></div>
+            <div class="signature-label">Le Gestionnaire / L'Agence<br><span style="color: #cb2d2d;">POUR ACQUIT</span></div>
+        </div>
+        @endif
 
         <!-- FOOTER INCLUDE -->
         @include('pdf.partials.footer')

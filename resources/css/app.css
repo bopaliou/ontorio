@@ -10,20 +10,46 @@
    ======================================== */
 
 :root {
-    /* Couleurs principales Ontario - CONFIRMÉES */
+    /* ── Brand Colors ─────────────────────── */
     --ontario-blue: #274256;
-    /* Bleu Pétrole Nuit */
     --ontario-blue-light: #375a76;
     --ontario-blue-dark: #1a2e3d;
     --ontario-blue-gradient: linear-gradient(135deg, #274256 0%, #1a2e3d 100%);
 
     --ontario-red: #cb2d2d;
-    /* Rouge Vif Ontario */
     --ontario-red-light: #ef4444;
     --ontario-red-dark: #991b1b;
     --ontario-red-gradient: linear-gradient(135deg, #cb2d2d 0%, #ef4444 100%);
 
-    /* Couleurs neutres & Surface */
+    /* ── Semantic Surfaces ─────────────────── */
+    --surface-app: #f8fafc;
+    --surface-card: #ffffff;
+    --surface-card-hover: #f8fafc;
+    --surface-muted: #f1f5f9;
+    --surface-inset: #f8fafc;
+    --surface-overlay: rgba(15, 23, 42, 0.55);
+
+    /* ── Semantic Text ─────────────────────── */
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --text-muted: #94a3b8;
+    --text-heading: #1a2e3d;
+    --text-on-brand: #ffffff;
+
+    /* ── Semantic Borders ──────────────────── */
+    --border-default: #e2e8f0;
+    --border-light: #f1f5f9;
+    --border-strong: #cbd5e1;
+    --border-focus: var(--ontario-red);
+
+    /* ── Shadows ───────────────────────────── */
+    --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.04);
+    --shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.07), 0 2px 4px -1px rgba(15, 23, 42, 0.04);
+    --shadow-lg: 0 10px 15px -3px rgba(15, 23, 42, 0.08), 0 4px 6px -2px rgba(15, 23, 42, 0.04);
+    --shadow-xl: 0 20px 25px -5px rgba(15, 23, 42, 0.1), 0 10px 10px -5px rgba(15, 23, 42, 0.03);
+    --shadow-brand: 0 10px 20px -10px rgba(203, 45, 45, 0.4);
+
+    /* ── Grays (raw palette) ───────────────── */
     --gray-50: #f8fafc;
     --gray-100: #f1f5f9;
     --gray-200: #e2e8f0;
@@ -35,22 +61,147 @@
     --gray-800: #1e293b;
     --gray-900: #0f172a;
 
+    /* ── Radii ─────────────────────────────── */
     --radius-sm: 0.5rem;
-    /* 8px */
     --radius-md: 0.75rem;
-    /* 12px */
     --radius-lg: 1rem;
-    /* 16px */
     --radius-xl: 1.5rem;
-    /* 24px */
 
-    /* Form tokens */
+    /* ── Sidebar ───────────────────────────── */
+    --sidebar-bg: var(--ontario-blue-gradient);
+    --sidebar-text: rgba(255, 255, 255, 0.7);
+    --sidebar-text-active: #ffffff;
+    --sidebar-hover-bg: rgba(255, 255, 255, 0.1);
+    --sidebar-active-bg: linear-gradient(135deg, rgba(211, 47, 47, 0.4), rgba(211, 47, 47, 0.1));
+
+    /* ── Topbar ────────────────────────────── */
+    --topbar-bg: #ffffff;
+    --topbar-border: #f1f5f9;
+    --topbar-text: var(--text-secondary);
+
+    /* ── Table ─────────────────────────────── */
+    --table-header-bg: var(--ontario-blue);
+    --table-header-text: #ffffff;
+    --table-row-hover: #f8fafc;
+    --table-border: #f1f5f9;
+
+    /* ── KPI / Stat Cards ──────────────────── */
+    --kpi-bg: var(--surface-card);
+    --kpi-border: var(--border-default);
+    --kpi-label: var(--text-muted);
+    --kpi-value: var(--text-primary);
+
+    /* ── Forms ─────────────────────────────── */
     --form-stack-gap: 0.75rem;
     --field-gap: 0.5rem;
+    --input-bg: var(--surface-muted);
+    --input-border: var(--border-strong);
+    --input-text: var(--text-primary);
+    --input-placeholder: var(--text-muted);
+    --input-focus-ring: rgba(203, 45, 45, 0.15);
+
+    /* ── Modals ────────────────────────────── */
     --modal-surface: #ffffff;
     --modal-muted-surface: #f8fafc;
     --modal-border: #e2e8f0;
     --modal-input-border: #cbd5e1;
+
+    /* ── Status Colors ─────────────────────── */
+    --status-success-bg: #f0fdf4;
+    --status-success-text: #15803d;
+    --status-warning-bg: #fffbeb;
+    --status-warning-text: #b45309;
+    --status-danger-bg: #fef2f2;
+    --status-danger-text: #b91c1c;
+    --status-info-bg: #eff6ff;
+    --status-info-text: #1d4ed8;
+}
+
+/* ========================================
+   DARK MODE — Ontario Midnight
+   Activated via data-theme="dark" on <html>
+   ======================================== */
+[data-theme="dark"] {
+    /* Surfaces — shifted lighter for comfort */
+    --surface-app: #1a2332;
+    --surface-card: #212d40;
+    --surface-card-hover: #283750;
+    --surface-muted: #1e2a3a;
+    --surface-inset: #1c2636;
+    --surface-overlay: rgba(0, 0, 0, 0.6);
+
+    /* Text — brighter for readability */
+    --text-primary: #e8edf5;
+    --text-secondary: #a0aec0;
+    --text-muted: #718096;
+    --text-heading: #f7fafc;
+
+    /* Borders — more visible */
+    --border-default: #2d3e53;
+    --border-light: #263344;
+    --border-strong: #3d5068;
+
+    /* Shadows */
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.25);
+    --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.3);
+    --shadow-lg: 0 10px 20px rgba(0, 0, 0, 0.35);
+    --shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.4);
+    --shadow-brand: 0 10px 20px -10px rgba(203, 45, 45, 0.5);
+
+    /* Grays (inverted for dark) */
+    --gray-50: #1a2332;
+    --gray-100: #212d40;
+    --gray-200: #2d3e53;
+    --gray-300: #4a5c73;
+    --gray-400: #718096;
+    --gray-500: #a0aec0;
+    --gray-600: #cbd5e1;
+    --gray-700: #e2e8f0;
+    --gray-800: #f1f5f9;
+    --gray-900: #f8fafc;
+
+    /* Topbar */
+    --topbar-bg: #1e2a3a;
+    --topbar-border: #2d3e53;
+    --topbar-text: #a0aec0;
+
+    /* Table */
+    --table-header-bg: #263344;
+    --table-header-text: #e8edf5;
+    --table-row-hover: #283750;
+    --table-border: #2d3e53;
+
+    /* KPI */
+    --kpi-bg: var(--surface-card);
+    --kpi-border: var(--border-default);
+    --kpi-label: var(--text-muted);
+    --kpi-value: #f7fafc;
+
+    /* Forms — better contrast against card surfaces */
+    --input-bg: #1a2332;
+    --input-border: #3d5068;
+    --input-text: #e8edf5;
+    --input-placeholder: #5c7089;
+    --input-focus-ring: rgba(203, 45, 45, 0.3);
+
+    /* Modals */
+    --modal-surface: #212d40;
+    --modal-muted-surface: #1e2a3a;
+    --modal-border: #2d3e53;
+    --modal-input-border: #3d5068;
+
+    /* Status Colors */
+    --status-success-bg: rgba(22, 163, 74, 0.15);
+    --status-success-text: #4ade80;
+    --status-warning-bg: rgba(234, 179, 8, 0.15);
+    --status-warning-text: #fbbf24;
+    --status-danger-bg: rgba(220, 38, 38, 0.15);
+    --status-danger-text: #f87171;
+    --status-info-bg: rgba(59, 130, 246, 0.15);
+    --status-info-text: #60a5fa;
+
+    /* Red brand adjustment for dark bg */
+    --ontario-red-light: #f87171;
 }
 
 /* Force branding on standardized elements */
@@ -417,49 +568,52 @@
    DESIGN SYSTÈME ONTARIO - FORMULAIRES
    ======================================== */
 
-/* Classes Ontario uniformes */
-.ontario-form-group {
-    margin-bottom: 1.5rem;
-}
+@layer components {
 
-.ontario-label {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 0.875rem;
-    font-weight: 600;
-    color: var(--gray-700);
-    margin-bottom: 0.75rem;
-}
+    /* Classes Ontario uniformes */
+    .ontario-form-group {
+        margin-bottom: 1.5rem;
+    }
 
-.ontario-label svg {
-    color: var(--ontario-red);
-}
+    .ontario-label {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: var(--gray-700);
+        margin-bottom: 0.75rem;
+    }
 
-.ontario-input {
-    width: 100%;
-    padding: 1rem 1.25rem;
-    font-size: 1rem;
-    font-weight: 500;
-    border: 2px solid var(--gray-200);
-    border-radius: 0.75rem;
-    background-color: var(--gray-50);
-    transition: all 0.2s ease;
-}
+    .ontario-label svg {
+        color: var(--ontario-red);
+    }
 
-.ontario-input:hover {
-    border-color: var(--gray-300);
-}
+    .ontario-input {
+        width: 100%;
+        padding: 1rem 1.25rem;
+        font-size: 1rem;
+        font-weight: 500;
+        border: 2px solid var(--gray-200);
+        border-radius: 0.75rem;
+        background-color: var(--gray-50);
+        transition: all 0.2s ease;
+    }
 
-.ontario-input:focus {
-    background-color: white;
-    border-color: var(--ontario-red);
-    box-shadow: 0 0 0 4px rgba(211, 47, 47, 0.1);
-    outline: none;
-}
+    .ontario-input:hover {
+        border-color: var(--gray-300);
+    }
 
-.ontario-input::placeholder {
-    color: var(--gray-400);
+    .ontario-input:focus {
+        background-color: white;
+        border-color: var(--ontario-red);
+        box-shadow: 0 0 0 4px rgba(211, 47, 47, 0.1);
+        outline: none;
+    }
+
+    .ontario-input::placeholder {
+        color: var(--gray-400);
+    }
 }
 
 /* Inputs généraux - MODE ULTRA COMPACT */
@@ -1128,7 +1282,7 @@ input:focus+svg,
     box-shadow: 0 35px 90px -35px rgba(15, 23, 42, 0.55) !important;
 }
 
-.app-modal-panel > div:first-child {
+.app-modal-panel>div:first-child {
     background: linear-gradient(135deg, #274256 0%, #1a2e3d 100%) !important;
     color: #ffffff !important;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
@@ -1189,4 +1343,570 @@ input:focus+svg,
 
 .app-modal-panel button[type="button"] {
     border-radius: 0.85rem !important;
+}
+
+/* ========================================
+   MICRO-ANIMATIONS & PREMIUM INTERACTIONS
+   GPU-accelerated, reduced-motion aware
+   ======================================== */
+
+/* Table row hover: subtle blue-left-border + bg shift */
+table tbody tr {
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+    position: relative;
+}
+
+table tbody tr::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: var(--ontario-red);
+    transform: scaleY(0);
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    border-radius: 0 2px 2px 0;
+}
+
+table tbody tr:hover::before {
+    transform: scaleY(1);
+}
+
+table tbody tr:hover {
+    background-color: #f8fafc !important;
+    box-shadow: inset 0 0 0 1px rgba(39, 66, 86, 0.04);
+}
+
+/* KPI Cards: lift + glow on hover */
+[class*="kpi-"],
+.ontario-stat,
+div[class*="rounded-2xl"][class*="shadow-sm"][class*="border-gray-100"] {
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+        box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+        border-color 0.3s ease;
+    will-change: transform;
+}
+
+[class*="kpi-"]:hover,
+.ontario-stat:hover,
+div[class*="rounded-2xl"][class*="shadow-sm"][class*="border-gray-100"]:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 24px -8px rgba(15, 23, 42, 0.08),
+        0 4px 8px -4px rgba(15, 23, 42, 0.04);
+    border-color: rgba(39, 66, 86, 0.12) !important;
+}
+
+/* Sidebar nav: gentle pulse on active */
+.sidebar-nav-link-active {
+    animation: sidebar-pulse 2.5s ease-in-out infinite;
+}
+
+@keyframes sidebar-pulse {
+
+    0%,
+    100% {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    50% {
+        box-shadow: 0 4px 16px rgba(211, 47, 47, 0.2);
+    }
+}
+
+/* Button press feedback */
+button,
+a[class*="btn"],
+[role="button"] {
+    transition: transform 0.15s ease, box-shadow 0.25s ease, background-color 0.2s ease, color 0.2s ease, opacity 0.2s ease !important;
+}
+
+button:active,
+a[class*="btn"]:active,
+[role="button"]:active {
+    transform: scale(0.97) !important;
+}
+
+/* Section entrance animation */
+@keyframes section-slide-in {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.section-pane:not(.hidden):not(.opacity-0) {
+    animation: section-slide-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Toast entrance */
+@keyframes toast-slide-in {
+    from {
+        opacity: 0;
+        transform: translateX(100%) scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0) scale(1);
+    }
+}
+
+.toast-enter {
+    animation: toast-slide-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Skeleton loading shimmer */
+@keyframes shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+.skeleton {
+    background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s ease-in-out infinite;
+    border-radius: 0.5rem;
+}
+
+/* Number counter animation */
+@keyframes count-up {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.ontario-stat-value,
+.text-3xl.font-black,
+.text-2xl.font-black {
+    animation: count-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Status badges: subtle bounce on appear */
+@keyframes badge-pop {
+    0% {
+        transform: scale(0.85);
+        opacity: 0;
+    }
+
+    60% {
+        transform: scale(1.05);
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+span[class*="rounded-full"][class*="font-black"][class*="uppercase"] {
+    animation: badge-pop 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Action button group: stagger entrance */
+td .flex.items-center.gap-2>* {
+    opacity: 0;
+    animation: slide-up-fade 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+td:hover .flex.items-center.gap-2>* {
+    opacity: 1;
+}
+
+td .flex.items-center.gap-2>*:nth-child(1) {
+    animation-delay: 0s;
+}
+
+td .flex.items-center.gap-2>*:nth-child(2) {
+    animation-delay: 0.05s;
+}
+
+td .flex.items-center.gap-2>*:nth-child(3) {
+    animation-delay: 0.1s;
+}
+
+td .flex.items-center.gap-2>*:nth-child(4) {
+    animation-delay: 0.15s;
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* ========================================
+   DARK MODE — Semantic Token Application
+   Maps design tokens to actual elements
+   ======================================== */
+
+/* Smooth theme transition */
+html,
+body,
+.bg-white,
+.bg-gray-50,
+.bg-slate-50,
+header,
+nav,
+main,
+section,
+aside,
+table,
+th,
+td,
+tr,
+input,
+select,
+textarea,
+.app-modal-panel,
+.glass-card {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* App background */
+[data-theme="dark"] body,
+[data-theme="dark"] .bg-slate-50,
+[data-theme="dark"] .bg-gray-50 {
+    background-color: var(--surface-app) !important;
+    color: var(--text-primary) !important;
+}
+
+/* Card surfaces */
+[data-theme="dark"] .bg-white {
+    background-color: var(--surface-card) !important;
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .bg-white\/85 {
+    background-color: rgba(21, 29, 46, 0.85) !important;
+}
+
+/* Main content area */
+[data-theme="dark"] #dashboard-container {
+    background-color: var(--surface-app) !important;
+}
+
+/* Topbar */
+[data-theme="dark"] header.bg-white,
+[data-theme="dark"] header {
+    background-color: var(--topbar-bg) !important;
+    border-color: var(--topbar-border) !important;
+}
+
+/* Table headers */
+[data-theme="dark"] table th,
+[data-theme="dark"] .ontario-table thead,
+[data-theme="dark"] thead {
+    background: var(--table-header-bg) !important;
+    color: var(--table-header-text) !important;
+}
+
+/* Table rows */
+[data-theme="dark"] table tbody tr {
+    border-color: var(--table-border) !important;
+}
+
+[data-theme="dark"] table tbody tr:hover {
+    background-color: var(--table-row-hover) !important;
+}
+
+[data-theme="dark"] table td {
+    color: var(--text-primary) !important;
+}
+
+/* Table wrapper */
+[data-theme="dark"] .divide-y>*+* {
+    border-color: var(--table-border) !important;
+}
+
+/* Cards and panels */
+[data-theme="dark"] .border-gray-100,
+[data-theme="dark"] .border-gray-200 {
+    border-color: var(--border-default) !important;
+}
+
+[data-theme="dark"] .shadow-sm {
+    box-shadow: var(--shadow-sm) !important;
+}
+
+/* Text colors */
+[data-theme="dark"] .text-gray-900,
+[data-theme="dark"] .text-gray-800 {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .text-gray-700,
+[data-theme="dark"] .text-gray-600 {
+    color: var(--text-secondary) !important;
+}
+
+[data-theme="dark"] .text-gray-500,
+[data-theme="dark"] .text-gray-400 {
+    color: var(--text-muted) !important;
+}
+
+/* Dark text for branded colors */
+[data-theme="dark"] h1,
+[data-theme="dark"] h2,
+[data-theme="dark"] h3,
+[data-theme="dark"] h4 {
+    color: var(--text-heading) !important;
+}
+
+/* Heading colors - dark mode */
+[data-theme="dark"] h2,
+[data-theme="dark"] h3,
+[data-theme="dark"] h4 {
+    color: var(--text-heading) !important;
+}
+
+/* Input fields */
+[data-theme="dark"] input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+[data-theme="dark"] select,
+[data-theme="dark"] textarea {
+    background-color: var(--input-bg) !important;
+    border-color: var(--input-border) !important;
+    color: var(--input-text) !important;
+}
+
+[data-theme="dark"] input:focus,
+[data-theme="dark"] select:focus,
+[data-theme="dark"] textarea:focus {
+    border-color: var(--ontario-red) !important;
+    box-shadow: 0 0 0 3px var(--input-focus-ring) !important;
+    background-color: var(--surface-card) !important;
+}
+
+[data-theme="dark"] input::placeholder,
+[data-theme="dark"] textarea::placeholder {
+    color: var(--input-placeholder) !important;
+}
+
+/* Labels — brighter for form readability */
+[data-theme="dark"] label {
+    color: var(--text-secondary) !important;
+}
+
+/* Modals */
+[data-theme="dark"] .app-modal-panel {
+    background: var(--modal-surface) !important;
+    border-color: var(--modal-border) !important;
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .app-modal-panel form,
+[data-theme="dark"] .app-modal-panel .space-y-3,
+[data-theme="dark"] .app-modal-panel .space-y-4,
+[data-theme="dark"] .app-modal-panel .space-y-5,
+[data-theme="dark"] .app-modal-panel .space-y-6 {
+    background: transparent !important;
+    border-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+[data-theme="dark"] .app-modal-overlay {
+    background-color: var(--surface-overlay) !important;
+}
+
+[data-theme="dark"] .app-modal-header {
+    background: linear-gradient(180deg, #263344 0%, #212d40 100%) !important;
+    border-color: var(--modal-border) !important;
+}
+
+/* Modal form inputs — explicit high-contrast styling */
+[data-theme="dark"] .app-modal-panel input:not([type="checkbox"]):not([type="radio"]),
+[data-theme="dark"] .app-modal-panel select,
+[data-theme="dark"] .app-modal-panel textarea {
+    background-color: var(--input-bg) !important;
+    border: 2px solid var(--modal-input-border) !important;
+    color: var(--input-text) !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03), 0 1px 2px rgba(0, 0, 0, 0.15) !important;
+}
+
+[data-theme="dark"] .app-modal-panel input:focus,
+[data-theme="dark"] .app-modal-panel select:focus,
+[data-theme="dark"] .app-modal-panel textarea:focus {
+    border-color: var(--ontario-red) !important;
+    box-shadow: 0 0 0 3px var(--input-focus-ring), inset 0 1px 0 rgba(255, 255, 255, 0.03) !important;
+    background-color: var(--surface-card) !important;
+}
+
+[data-theme="dark"] .app-modal-panel label {
+    color: #a0aec0 !important;
+}
+
+/* Select dropdown arrow in dark mode */
+[data-theme="dark"] select {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23718096' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e") !important;
+    background-position: right 0.5rem center !important;
+    background-repeat: no-repeat !important;
+    background-size: 1.5em 1.5em !important;
+}
+
+/* Modal buttons */
+[data-theme="dark"] .app-modal-panel button[type="button"]:not(.btn-ontario) {
+    background-color: var(--surface-muted) !important;
+    border-color: var(--border-strong) !important;
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .app-modal-panel button[type="button"]:not(.btn-ontario):hover {
+    background-color: var(--surface-card-hover) !important;
+}
+
+/* Checkbox in dark */
+[data-theme="dark"] input[type="checkbox"] {
+    accent-color: var(--ontario-red);
+}
+
+/* Dark mode info boxes */
+[data-theme="dark"] .bg-blue-50\/80,
+[data-theme="dark"] .bg-yellow-50 {
+    background-color: var(--surface-muted) !important;
+    border-color: var(--border-default) !important;
+}
+
+/* KPI / Stat cards */
+[data-theme="dark"] .bg-blue-50,
+[data-theme="dark"] .bg-green-50,
+[data-theme="dark"] .bg-red-50,
+[data-theme="dark"] .bg-amber-50,
+[data-theme="dark"] .bg-gray-50\/50 {
+    background-color: var(--surface-muted) !important;
+}
+
+/* Status badges in dark mode */
+[data-theme="dark"] .bg-green-100 {
+    background-color: var(--status-success-bg) !important;
+}
+
+[data-theme="dark"] .text-green-700 {
+    color: var(--status-success-text) !important;
+}
+
+[data-theme="dark"] .bg-red-100 {
+    background-color: var(--status-danger-bg) !important;
+}
+
+[data-theme="dark"] .text-red-700 {
+    color: var(--status-danger-text) !important;
+}
+
+[data-theme="dark"] .bg-amber-100 {
+    background-color: var(--status-warning-bg) !important;
+}
+
+[data-theme="dark"] .text-amber-700 {
+    color: var(--status-warning-text) !important;
+}
+
+[data-theme="dark"] .bg-blue-100 {
+    background-color: var(--status-info-bg) !important;
+}
+
+[data-theme="dark"] .text-blue-700 {
+    color: var(--status-info-text) !important;
+}
+
+/* Rounded card borders */
+[data-theme="dark"] .rounded-2xl,
+[data-theme="dark"] .rounded-3xl {
+    box-shadow: var(--shadow-md) !important;
+}
+
+/* Background utilities */
+[data-theme="dark"] .bg-gray-50 {
+    background-color: var(--surface-muted) !important;
+}
+
+[data-theme="dark"] .bg-gray-100 {
+    background-color: var(--surface-inset) !important;
+}
+
+/* Scrollbar dark */
+[data-theme="dark"] ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-track {
+    background: var(--surface-app);
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb {
+    background: #334155;
+    border-radius: 3px;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+    background: #475569;
+}
+
+/* Ontario-specific overrides */
+[data-theme="dark"] .ontario-card-header {
+    background: var(--surface-muted) !important;
+    border-color: var(--border-default) !important;
+}
+
+[data-theme="dark"] .ontario-stat {
+    background: var(--surface-card) !important;
+    border-color: var(--border-default) !important;
+}
+
+/* Dark hover effects */
+[data-theme="dark"] tr:hover td {
+    background-color: var(--surface-card-hover) !important;
+}
+
+/* Font mono in dark */
+[data-theme="dark"] .font-mono {
+    color: var(--text-secondary) !important;
+}
+
+/* Empty state dark */
+[data-theme="dark"] .shadow-inner {
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Data-table wrapper in dark */
+[data-theme="dark"] .overflow-x-auto {
+    border-color: var(--border-default) !important;
+}
+
+/* Section header spans */
+[data-theme="dark"] p {
+    color: var(--text-secondary);
+}
+
+[data-theme="dark"] span {
+    color: inherit;
+}
+
+/* Force select padding for icons (prevents overlapping) */
+select.ontario-input.pl-10,
+select.ontario-input.pl-10:focus,
+select.ontario-input.pl-10:active {
+    padding-left: 2.5rem !important;
+    text-indent: 1rem !important;
 }

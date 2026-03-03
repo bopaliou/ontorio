@@ -1,5 +1,9 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+    <script>
+        // FOUC prevention: apply theme before paint
+        (function(){var t=localStorage.getItem('ontario-theme');if(t==='dark')document.documentElement.setAttribute('data-theme','dark');})();
+    </script>
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -134,7 +138,6 @@
             };
 
             window.previewDoc = function(doc) {
-                console.log('Opening preview for:', doc);
                 if (!doc || !doc.url) {
                     showToast('Document invalide', 'error');
                     return;
@@ -167,7 +170,7 @@
                     }
                 }
                 
-                console.log('Detected extension:', ext);
+
 
                 const modal = document.getElementById('global-doc-preview-modal');
                 const container = document.getElementById('global-doc-preview-container');
@@ -201,12 +204,12 @@
                               url.includes('/bilan');
 
                 if (isImg) {
-                    console.log('Treating as image');
+
                     imgCont.classList.remove('hidden');
                     
                     // Reset error handler
                     img.onload = function() {
-                        console.log('Image loaded successfully');
+
                     };
                     
                     img.onerror = function() {
@@ -219,17 +222,17 @@
                     
                     img.src = doc.url;
                 } else if (isPdf) {
-                    console.log('Treating as PDF/iframe');
+
                     frameCont.classList.remove('hidden');
                     frame.src = doc.url;
                 } else {
                     // Fallback: si c'est un lien sécurisé sans extension claire, on tente l'iframe (souvent PDF)
                     if (url.includes('/secure-access')) {
-                        console.log('Fallback to iframe for secure-access');
+
                         frameCont.classList.remove('hidden');
                         frame.src = doc.url;
                     } else {
-                        console.log('Unsupported format');
+
                         unsuppCont.classList.remove('hidden');
                     }
                 }

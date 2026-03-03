@@ -39,6 +39,11 @@ Route::get('/dashboard/refresh-cache', [DashboardController::class, 'refreshCach
     ->middleware(['auth', 'verified'])
     ->name('dashboard.refresh-cache');
 
+// Lazy-load individual dashboard sections via AJAX
+Route::get('/dashboard/section/{section}', [DashboardController::class, 'section'])
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard.section');
+
 // ==============================================================================
 // GROUP 1: OPERATIONAL READ
 // Accessible à : Admin, Direction, Gestionnaire, Comptable
@@ -174,6 +179,13 @@ Route::middleware(['auth', 'role:admin|gestionnaire', 'throttle:global-mutations
         ->name('documents.destroy');
 
     // Contrats (Write)
+    Route::get('api/biens/search', [BienController::class, 'searchAjax'])
+         ->middleware('permission:biens.view')
+         ->name('api.biens.search');
+    Route::get('api/locataires/search', [LocataireController::class, 'searchAjax'])
+         ->middleware('permission:locataires.view')
+         ->name('api.locataires.search');
+
     Route::post('contrats', [ContratController::class, 'store'])
         ->middleware('permission:contrats.create')
         ->name('contrats.store');
