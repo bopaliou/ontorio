@@ -39,7 +39,7 @@ class ProprietaireTest extends TestCase
 
         $response->assertStatus(422)
             ->assertJson(['success' => false]);
-            
+
         $this->assertDatabaseHas('proprietaires', ['id' => $prop->id]);
     }
 

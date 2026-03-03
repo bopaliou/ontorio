@@ -215,11 +215,11 @@ class DashboardStatsService
         \Illuminate\Support\Facades\Cache::forget('dashboard_parc_stats');
         \Illuminate\Support\Facades\Cache::forget('dashboard_alerts');
         \Illuminate\Support\Facades\Cache::forget('dashboard_chart_data_6');
-        
+
         // Vider aussi le mois en cours pour les KPIs financiers
         $mois = Carbon::now()->format('Y-m');
         \Illuminate\Support\Facades\Cache::forget("dashboard_financial_kpis_{$mois}");
-        
+
         // On pourrait aussi essayer de vider le cache des 2-3 derniers mois au cas où
         $moisPrec = Carbon::now()->subMonth()->format('Y-m');
         \Illuminate\Support\Facades\Cache::forget("dashboard_financial_kpis_{$moisPrec}");

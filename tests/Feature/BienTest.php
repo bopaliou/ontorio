@@ -92,13 +92,13 @@ class BienTest extends TestCase
         $contrat = \App\Models\Contrat::factory()->create([
             'bien_id' => $bien->id,
             'loyer_montant' => 100000,
-            'statut' => 'actif'
+            'statut' => 'actif',
         ]);
-        
+
         $loyerEmis = \App\Models\Loyer::factory()->create([
             'contrat_id' => $contrat->id,
             'montant' => 100000,
-            'statut' => 'émis'
+            'statut' => 'émis',
         ]);
 
         $response = $this->actingAs($this->admin)

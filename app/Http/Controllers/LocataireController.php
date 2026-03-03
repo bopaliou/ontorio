@@ -105,7 +105,7 @@ class LocataireController extends Controller
     public function searchAjax(Request $request)
     {
         $this->authorize('locataires.view');
-        
+
         $locataires = Locataire::select('id', 'nom', 'telephone')
             ->orderBy('nom')
             ->get();

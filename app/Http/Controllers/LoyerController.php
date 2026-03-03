@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Contrat;
 use App\Models\Loyer;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
@@ -124,13 +123,13 @@ class LoyerController extends Controller
     {
         $loyer = Loyer::find($id);
 
-        if (!$loyer) {
+        if (! $loyer) {
             return response()->json(['message' => 'Loyer déjà supprimé ou introuvable'], 200);
         }
-        
+
         // Supprimer les paiements associés (ou soft delete si configuré, ici on supprime physiquement pour l'instant)
         \App\Models\Paiement::where('loyer_id', $loyer->id)->delete();
-        
+
         $loyer->delete();
 
         return response()->json(['message' => 'Loyer supprimé avec succès']);

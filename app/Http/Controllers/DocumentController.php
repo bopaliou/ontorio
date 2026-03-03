@@ -146,15 +146,15 @@ class DocumentController extends Controller
             \Log::warning('Signature invalide URL', [
                 'full_url' => $request->fullUrl(),
                 'signature' => $request->query('signature'),
-                'app_url' => config('app.url')
+                'app_url' => config('app.url'),
             ]);
             abort(403, 'Lien expiré ou signature invalide.');
         }
 
         // On récupère le paramètre 'path' depuis la query string
         $encryptedPath = $request->query('path');
-        
-        if (!$encryptedPath) {
+
+        if (! $encryptedPath) {
             abort(400, 'Paramètre manquant.');
         }
 
@@ -170,9 +170,9 @@ class DocumentController extends Controller
 
         // On vérifie d'abord sur le disque local (privé) puis sur le public (pour la rétrocompatibilité)
         $disk = 'local';
-        $fullPathLocal = config('filesystems.disks.local.root') . '/' . $filePath;
-        
-        if (!file_exists($fullPathLocal)) {
+        $fullPathLocal = config('filesystems.disks.local.root').'/'.$filePath;
+
+        if (! file_exists($fullPathLocal)) {
             \Log::warning('Document non trouvé sur local (disk root)', ['fullPath' => $fullPathLocal]);
             if (Storage::disk('public')->exists($filePath)) {
                 $disk = 'public';
@@ -195,14 +195,14 @@ class DocumentController extends Controller
         $mimeType = Storage::disk($disk)->mimeType($filePath);
 
         // Fallback MIME type si non détecté
-        if (!$mimeType) {
+        if (! $mimeType) {
             $ext = strtolower(pathinfo($filePath, PATHINFO_EXTENSION));
             $map = [
                 'jpg' => 'image/jpeg', 'jpeg' => 'image/jpeg',
                 'png' => 'image/png', 'gif' => 'image/gif',
                 'webp' => 'image/webp', 'pdf' => 'application/pdf',
-                'doc' => 'application/msword', 
-                'docx' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+                'doc' => 'application/msword',
+                'docx' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
             ];
             $mimeType = $map[$ext] ?? 'application/octet-stream';
         }
@@ -210,7 +210,7 @@ class DocumentController extends Controller
         return Storage::disk($disk)->response($filePath, basename($filePath), [
             'Content-Type' => $mimeType,
             'Content-Disposition' => 'inline; filename="'.basename($filePath).'"',
-            'X-Frame-Options' => 'SAMEORIGIN'
+            'X-Frame-Options' => 'SAMEORIGIN',
         ]);
     }
 

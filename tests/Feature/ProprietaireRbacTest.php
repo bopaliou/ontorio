@@ -12,8 +12,11 @@ class ProprietaireRbacTest extends TestCase
     use RefreshDatabase;
 
     private $admin;
+
     private $gestionnaire;
+
     private $comptable;
+
     private $direction;
 
     protected function setUp(): void
@@ -114,7 +117,7 @@ class ProprietaireRbacTest extends TestCase
     public function test_direction_can_access_bilan_proprietaire()
     {
         $prop = Proprietaire::factory()->create();
-        
+
         $response = $this->actingAs($this->direction)->get(route('proprietaires.bilan', $prop));
 
         $response->assertStatus(200);
@@ -123,7 +126,7 @@ class ProprietaireRbacTest extends TestCase
     public function test_comptable_can_access_bilan_proprietaire()
     {
         $prop = Proprietaire::factory()->create();
-        
+
         $response = $this->actingAs($this->comptable)->get(route('proprietaires.bilan', $prop));
 
         $response->assertStatus(200);

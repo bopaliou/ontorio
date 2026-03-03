@@ -180,11 +180,11 @@ Route::middleware(['auth', 'role:admin|gestionnaire', 'throttle:global-mutations
 
     // Contrats (Write)
     Route::get('api/biens/search', [BienController::class, 'searchAjax'])
-         ->middleware('permission:biens.view')
-         ->name('api.biens.search');
+        ->middleware('permission:biens.view')
+        ->name('api.biens.search');
     Route::get('api/locataires/search', [LocataireController::class, 'searchAjax'])
-         ->middleware('permission:locataires.view')
-         ->name('api.locataires.search');
+        ->middleware('permission:locataires.view')
+        ->name('api.locataires.search');
 
     Route::post('contrats', [ContratController::class, 'store'])
         ->middleware('permission:contrats.create')
@@ -263,8 +263,4 @@ Route::middleware(['auth', 'role:admin', 'throttle:global-mutations'])->group(fu
         ->name('system.migrate');
 });
 
-
-
 require __DIR__.'/auth.php';
-
-

@@ -14,7 +14,7 @@ class Paiement extends Model
 
     protected $casts = [
         'date_paiement' => 'date',
-        'montant' => 'decimal:2'
+        'montant' => 'decimal:2',
     ];
 
     public function loyer()

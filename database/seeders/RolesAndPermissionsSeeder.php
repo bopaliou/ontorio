@@ -3,8 +3,8 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
 
 class RolesAndPermissionsSeeder extends Seeder
@@ -24,7 +24,7 @@ class RolesAndPermissionsSeeder extends Seeder
             'biens.create',
             'biens.edit',
             'biens.delete',
-            
+
             // Propriétaires
             'proprietaires.view',
             'proprietaires.create',
@@ -112,7 +112,7 @@ class RolesAndPermissionsSeeder extends Seeder
             'depenses.view', 'depenses.create', 'depenses.edit', 'depenses.delete',
             'documents.view', 'documents.upload', 'documents.delete',
             'rapports.view', 'rapports.mensuel',
-            'relances.view', 'relances.create', 'relances.edit'
+            'relances.view', 'relances.create', 'relances.edit',
         ]);
 
         // COMPTABLE
@@ -127,7 +127,7 @@ class RolesAndPermissionsSeeder extends Seeder
             'depenses.view', 'depenses.create', 'depenses.edit',
             'documents.view',
             'rapports.view', 'rapports.mensuel',
-            'relances.view'
+            'relances.view',
         ]);
 
         // DIRECTION
@@ -144,7 +144,7 @@ class RolesAndPermissionsSeeder extends Seeder
             'rapports.view', 'rapports.mensuel',
             'relances.view',
             'logs.view',
-            'parametres.view'
+            'parametres.view',
         ]);
 
         // PROPRIETAIRE

@@ -62,7 +62,7 @@ class AuthenticationTest extends TestCase
         ]);
 
         $response->assertSessionHasErrors(['email', 'password']);
-        
+
         $response = $this->post(self::ROUTE_LOGIN, [
             'email' => 'not-an-email',
             'password' => 'password',
@@ -91,7 +91,7 @@ class AuthenticationTest extends TestCase
         // Check for common throttling message keywords (English or French)
         $errorMessage = strtolower(session('errors')->first('email'));
         $this->assertTrue(
-            str_contains($errorMessage, 'too many') || 
+            str_contains($errorMessage, 'too many') ||
             str_contains($errorMessage, 'trop de tentatives'),
             "Expected throttling error message, but got: {$errorMessage}"
         );

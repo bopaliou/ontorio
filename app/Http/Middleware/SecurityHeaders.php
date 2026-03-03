@@ -41,7 +41,7 @@ class SecurityHeaders
         $csp .= "img-src 'self' data: blob:; ";
         $csp .= "frame-ancestors 'none'; ";
         $csp .= "connect-src 'self';";
-        
+
         $response->headers->set('Content-Security-Policy', $csp);
 
         // Permissions Policy - désactiver les fonctionnalités non utilisées

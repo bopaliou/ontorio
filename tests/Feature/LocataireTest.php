@@ -97,7 +97,7 @@ class LocataireTest extends TestCase
         $locataire = Locataire::factory()->create();
         \App\Models\Contrat::factory()->create([
             'locataire_id' => $locataire->id,
-            'statut' => 'actif'
+            'statut' => 'actif',
         ]);
 
         $response = $this->actingAs($this->admin)

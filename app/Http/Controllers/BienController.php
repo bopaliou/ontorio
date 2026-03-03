@@ -181,11 +181,11 @@ class BienController extends Controller
     public function searchAjax(Request $request)
     {
         $this->authorize('biens.view');
-        
+
         $biens = Bien::select('id', 'nom', 'adresse', 'loyer_mensuel', 'type')
             ->where('statut', 'libre')
-            ->orWhereHas('contrats', function($q) { 
-                $q->where('statut', '!=', 'actif'); 
+            ->orWhereHas('contrats', function ($q) {
+                $q->where('statut', '!=', 'actif');
             })
             ->orderBy('nom')
             ->get();

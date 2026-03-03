@@ -3,11 +3,10 @@
 namespace Tests\Feature;
 
 use App\Models\Bien;
-use App\Models\User;
 use App\Models\Proprietaire;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
-use Spatie\Permission\Models\Role;
 
 class GestionnaireBienTest extends TestCase
 {
@@ -40,7 +39,7 @@ class GestionnaireBienTest extends TestCase
     public function test_gestionnaire_can_create_bien(): void
     {
         $proprietaire = Proprietaire::factory()->create();
-        
+
         $response = $this->actingAs($this->gestionnaire)
             ->postJson(route('dashboard.biens.store'), [
                 'nom' => 'Residence Gestionnaire',

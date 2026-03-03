@@ -7,7 +7,6 @@ use App\Models\Contrat;
 use App\Models\Locataire;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Spatie\Permission\Models\Role;
 use Tests\TestCase;
 
 class ContratRbacTest extends TestCase
@@ -15,8 +14,11 @@ class ContratRbacTest extends TestCase
     use RefreshDatabase;
 
     private $admin;
+
     private $gestionnaire;
+
     private $comptable;
+
     private $direction;
 
     protected function setUp(): void
@@ -141,7 +143,7 @@ class ContratRbacTest extends TestCase
     public function test_direction_can_print_contrat()
     {
         $contrat = Contrat::factory()->create();
-        
+
         $response = $this->actingAs($this->direction)->get(route('contrats.print', $contrat));
 
         // 200 OK means authorized (PDF generation is complex to mock, but status is enough)

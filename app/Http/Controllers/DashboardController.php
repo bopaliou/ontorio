@@ -73,7 +73,7 @@ class DashboardController extends Controller
             'utilisateurs', 'logs', 'parametres',
         ];
 
-        if (!in_array($name, $allowed)) {
+        if (! in_array($name, $allowed)) {
             abort(404, 'Section inconnue');
         }
 
@@ -85,7 +85,7 @@ class DashboardController extends Controller
         $data = $this->getSectionData($name, $user);
 
         // Return rendered HTML fragment
-        return view('dashboard.sections.' . $name, compact('data'))->render();
+        return view('dashboard.sections.'.$name, compact('data'))->render();
     }
 
     /**
@@ -135,7 +135,7 @@ class DashboardController extends Controller
                     ->with(['contrat.locataire', 'contrat.bien', 'paiements'])
                     ->where(function ($q) {
                         $q->where('statut', '!=', 'payé')
-                          ->orWhere('mois', '>=', Carbon::now()->subMonths(2)->format('Y-m'));
+                            ->orWhere('mois', '>=', Carbon::now()->subMonths(2)->format('Y-m'));
                     })
                     ->orderBy('mois', 'desc')
                     ->orderBy('id', 'desc')
@@ -182,6 +182,7 @@ class DashboardController extends Controller
     public function refreshCache()
     {
         $this->statsService->clearCache();
+
         return redirect()->back()->with('success', 'Cache rafraîchi avec succès');
     }
 
@@ -349,24 +350,24 @@ class DashboardController extends Controller
                 $query->whereHas('contrats', function ($q) {
                     $q->where('statut', 'actif');
                 });
-            }
+            },
         ])->get();
 
         return $proprietaires->mapWithKeys(function ($prop) {
             $totalBiens = $prop->total_units;
             $occupes = $prop->occupied_units;
-            
-            $ca = \App\Models\Paiement::whereHas('loyer.contrat.bien', function($q) use ($prop) {
+
+            $ca = \App\Models\Paiement::whereHas('loyer.contrat.bien', function ($q) use ($prop) {
                 $q->where('proprietaire_id', $prop->id);
             })->whereMonth('date_paiement', now()->month)->whereYear('date_paiement', now()->year)->sum('montant');
-            
-            $arrieresFactures = \App\Models\Loyer::whereHas('contrat.bien', function($q) use ($prop) {
+
+            $arrieresFactures = \App\Models\Loyer::whereHas('contrat.bien', function ($q) use ($prop) {
                 $q->where('proprietaire_id', $prop->id);
             })->whereIn('statut', ['émis', 'en_retard', 'partiellement_payé'])->selectRaw('SUM(montant + COALESCE(penalite, 0)) as total')->value('total') ?? 0;
-            
-            $arrieresPayes = \App\Models\Paiement::whereHas('loyer.contrat.bien', function($q) use ($prop) {
+
+            $arrieresPayes = \App\Models\Paiement::whereHas('loyer.contrat.bien', function ($q) use ($prop) {
                 $q->where('proprietaire_id', $prop->id);
-            })->whereHas('loyer', function($q) {
+            })->whereHas('loyer', function ($q) {
                 $q->whereIn('statut', ['émis', 'en_retard', 'partiellement_payé']);
             })->sum('montant');
 
