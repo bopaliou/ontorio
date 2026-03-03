@@ -123,17 +123,18 @@ class PaiementControllerTest extends TestCase
      */
     public function test_paiement_met_a_jour_loyer_status()
     {
-        Paiement::create([
+        $response = $this->actingAs($this->user)->postJson(self::BASE_URI, [
             'loyer_id' => $this->loyer->id,
             'montant' => 100000, // Montant complet
-            'date_paiement' => now()->toDateString(),
             'mode' => 'virement',
-            'user_id' => $this->user->id,
+            'date_paiement' => now()->toDateString(),
+            'reference' => 'PAY123456',
         ]);
+
+        $response->assertStatus(201);
 
         // Le loyer devrait passer à 'payé'
         $this->loyer->refresh();
-        // Note: vérifier que le controller met bien à jour le statut
         $this->assertSame('payé', $this->loyer->statut);
     }
 }

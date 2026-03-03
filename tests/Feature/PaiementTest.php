@@ -98,7 +98,7 @@ class PaiementTest extends TestCase
         $loyer = Loyer::factory()->create([
             'montant' => 100000,
             'statut' => 'payé',
-            'mois' => now()->subMonth()->format('Y-m-01'),
+            'mois' => now()->subMonths(2)->format('Y-m-01'),
         ]);
 
         $paiement = Paiement::factory()->create([
